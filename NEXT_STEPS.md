@@ -48,8 +48,6 @@
 - Download: Windows 64-bit versions of Tic-Tac-Toe, Tennis, and Curve
 - Save to: `F:\Vietnam-Lab-Kit\Installers\Educational\`
 
-> **Note:** 7-Zip has been removed from the software stack. Windows 11 (24H2) has built-in support for ZIP, 7z, RAR, and other archive formats.
-
 ---
 
 ## STEP 2: Test Deployment (Next Week)

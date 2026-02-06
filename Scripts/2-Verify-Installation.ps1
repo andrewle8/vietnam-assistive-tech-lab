@@ -79,7 +79,6 @@ $checks = @(
         )
         Critical = $false
     }
-    # Note: 7-Zip removed - Windows 11 has built-in support for ZIP, 7z, RAR, TAR, etc.
 )
 
 $results = @{

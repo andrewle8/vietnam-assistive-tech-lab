@@ -36,8 +36,6 @@ This repository contains everything needed to deploy a fully **offline, open-sou
 | **VLC NVDA Add-on** | GPL-2.0 | VLC accessibility enhancement for NVDA |
 | **LEAP Games** | Apache-2.0 | Educational audio games for blind children |
 
-> **Note:** 7-Zip removed - Windows 11 (24H2) has built-in support for ZIP, 7z, RAR, TAR, and other archive formats.
-
 > **Architecture:** This kit assumes Windows 11 on **x86-64** (Intel/AMD). If the PCs use ARM processors (e.g. Snapdragon), the software stack will need to be replaced with ARM-compatible builds.
 
 **Total Software Cost: $0**

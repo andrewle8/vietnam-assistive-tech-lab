@@ -35,8 +35,6 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 | **VLC NVDA Add-on** | Latest | GPL-2.0 | VLC accessibility enhancement |
 | **LEAP Games** | Latest | Apache-2.0 | Educational audio games (Tic-Tac-Toe, Tennis, Curve) |
 
-> **Note:** File compression handled by Windows 11's built-in support for ZIP, 7z, RAR, TAR formats.
-
 ### Total Software Cost: $0
 
 ---

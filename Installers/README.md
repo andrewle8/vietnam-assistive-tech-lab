@@ -51,8 +51,6 @@ The installer files are **NOT included in this git repository** because they are
 - **Notes:** Educational audio games designed for blind children by SciFY
 - **Size:** ~50 MB total
 
-> **Note:** 7-Zip has been removed from the software stack. Windows 11 (24H2) has built-in support for ZIP, 7z, RAR, TAR, GZ, BZ2, and XZ archive formats.
-
 ## Pre-Deployment Checklist
 
 Before traveling to Vietnam, verify all files are present:

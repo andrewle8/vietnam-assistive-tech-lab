@@ -75,7 +75,6 @@ $installations = @(
         Args = @("/S")
         WaitTime = 30
     }
-    # Note: 7-Zip removed - Windows 11 has built-in support for ZIP, 7z, RAR, TAR, etc.
 )
 
 $successCount = 0
