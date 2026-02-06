@@ -68,12 +68,6 @@ This repository contains everything needed to deploy a fully **offline, open-sou
    ```
 4. **Test complete workflow** on each station
 
-### For Contributors
-
-```bash
-git clone https://github.com/YourUsername/vietnam-assistive-tech-lab.git
-cd vietnam-assistive-tech-lab
-```
 
 **Note:** Installer files are NOT included in git (too large). Download separately from [Software Sources](#download-urls).
 
