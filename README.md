@@ -50,7 +50,7 @@ This repository contains everything needed to deploy a fully **offline, open-sou
 
 ### For Deployment (On-Site in Vietnam)
 
-1. **Download all installers** (BEFORE traveling - run on your main PC)
+1. **Download all installers** 
    ```powershell
    cd F:\Vietnam-Lab-Kit\Scripts
    .\0-Download-Installers.ps1
