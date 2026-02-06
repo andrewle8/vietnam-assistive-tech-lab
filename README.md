@@ -146,7 +146,7 @@ Vietnam-Lab-Kit/
 
 ## Deployment Timeline
 
-### Pre-Deployment (2-3 weeks before travel)
+### Pre-Deployment
 - Build USB deployment kit
 - Test scripts on one PC
 - Coordinate with Sao Mai Center
@@ -162,7 +162,7 @@ Vietnam-Lab-Kit/
 ### Day 2 (6-8 hours): Configuration & Testing
 - Fix any issues from Day 1
 - Deploy training materials
-- Train Sao Mai staff on troubleshooting
+- Train staff on troubleshooting
 - Pilot test with students
 
 ### Day 3 (4-6 hours): Handoff
