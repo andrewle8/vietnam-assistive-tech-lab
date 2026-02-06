@@ -39,6 +39,7 @@ Training/**/*.mov
 Thumbs.db
 desktop.ini
 *.lnk
+nul
 
 # macOS system files
 .DS_Store
