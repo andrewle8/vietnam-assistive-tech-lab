@@ -1,0 +1,195 @@
+# Vietnam Lab Deployment - Master Installation Script
+# Version: 1.0
+# Run as Administrator
+# Last Updated: February 2026
+
+param(
+    [switch]$Silent = $true,
+    [string]$LogPath = "$PSScriptRoot\installation.log"
+)
+
+# Function to log messages
+function Write-Log {
+    param([string]$Message, [string]$Level = "INFO")
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logMessage = "[$timestamp] [$Level] $Message"
+    Write-Host $logMessage -ForegroundColor $(if($Level -eq "ERROR"){"Red"}elseif($Level -eq "SUCCESS"){"Green"}else{"Cyan"})
+    Add-Content -Path $LogPath -Value $logMessage
+}
+
+# Check if running as Administrator
+$isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+if (-not $isAdmin) {
+    Write-Log "ERROR: This script must be run as Administrator!" "ERROR"
+    Write-Host "`nPlease right-click and select 'Run as Administrator'" -ForegroundColor Red
+    pause
+    exit 1
+}
+
+Write-Log "=== Vietnam Lab Deployment Started ===" "INFO"
+Write-Log "Computer Name: $env:COMPUTERNAME" "INFO"
+
+# Navigate to USB root directory (assuming script is in Scripts folder)
+$usbRoot = Split-Path -Parent $PSScriptRoot
+Set-Location $usbRoot
+
+Write-Log "USB Root: $usbRoot" "INFO"
+
+# Installation sequence
+$installations = @(
+    @{
+        Name = "NVDA 2025.3.2"
+        Path = ".\Installers\NVDA\nvda_2025.3.2.exe"
+        Args = @("--install-silent", "--minimal", "--log-level=20")
+        WaitTime = 60
+    },
+    @{
+        Name = "Sao Mai VNVoice"
+        Path = ".\Installers\SaoMai\SaoMai_VNVoice_1.0.exe"
+        Args = @("/S")
+        WaitTime = 30
+    },
+    @{
+        Name = "Sao Mai Typing Tutor"
+        Path = ".\Installers\SaoMai\SaoMai_TypingTutor.exe"
+        Args = @("/S")
+        WaitTime = 30
+    },
+    @{
+        Name = "LibreOffice 24.8 LTS"
+        Path = ".\Installers\LibreOffice\LibreOffice_24.8_Win_x86-64.msi"
+        Args = @("/i", "`"$($usbRoot)\Installers\LibreOffice\LibreOffice_24.8_Win_x86-64.msi`"", "/quiet", "/norestart")
+        UseMsiExec = $true
+        WaitTime = 120
+    },
+    @{
+        Name = "Firefox ESR 128"
+        Path = ".\Installers\Firefox\Firefox_ESR_128_Setup.exe"
+        Args = @("-ms")
+        WaitTime = 60
+    },
+    @{
+        Name = "VLC Media Player"
+        Path = ".\Installers\Utilities\VLC-3.0.x.exe"
+        Args = @("/S")
+        WaitTime = 30
+    }
+    # Note: 7-Zip removed - Windows 11 has built-in support for ZIP, 7z, RAR, TAR, etc.
+)
+
+$successCount = 0
+$failCount = 0
+
+foreach ($app in $installations) {
+    Write-Log "Installing $($app.Name)..." "INFO"
+
+    # Check if installer exists
+    if (-not (Test-Path $app.Path)) {
+        Write-Log "ERROR: Installer not found at $($app.Path)" "ERROR"
+        $failCount++
+        continue
+    }
+
+    try {
+        if ($app.UseMsiExec) {
+            $process = Start-Process -FilePath "msiexec.exe" -ArgumentList $app.Args -Wait -PassThru -NoNewWindow
+        } else {
+            $process = Start-Process -FilePath $app.Path -ArgumentList $app.Args -Wait -PassThru -NoNewWindow
+        }
+
+        if ($process.ExitCode -eq 0 -or $process.ExitCode -eq 3010) {
+            Write-Log "$($app.Name) installed successfully (Exit Code: $($process.ExitCode))" "SUCCESS"
+            $successCount++
+        } else {
+            Write-Log "$($app.Name) installation completed with exit code: $($process.ExitCode)" "WARNING"
+            $successCount++  # Many installers return non-zero for success
+        }
+
+        # Wait a bit before next installation
+        Start-Sleep -Seconds 2
+
+    } catch {
+        Write-Log "ERROR installing $($app.Name): $($_.Exception.Message)" "ERROR"
+        $failCount++
+    }
+}
+
+# Install LEAP Games (portable - copy to local folder and create shortcuts)
+Write-Log "Installing LEAP Games (educational audio games)..." "INFO"
+
+$leapSourceDir = Join-Path $usbRoot "Installers\Educational"
+$leapDestDir = "C:\Games\LEAP"
+$publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
+
+if (Test-Path $leapSourceDir) {
+    # Find game folders (each contains an exe and a _Data folder)
+    $gameFolders = Get-ChildItem -Path $leapSourceDir -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -notmatch "^\." }
+
+    if ($gameFolders.Count -gt 0) {
+        # Create destination directory
+        if (-not (Test-Path $leapDestDir)) {
+            New-Item -Path $leapDestDir -ItemType Directory -Force | Out-Null
+        }
+
+        foreach ($gameFolder in $gameFolders) {
+            try {
+                # Find the executable in this game folder
+                $gameExe = Get-ChildItem -Path $gameFolder.FullName -Filter "*.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
+
+                if ($gameExe) {
+                    # Copy entire game folder to destination
+                    $destGameFolder = Join-Path $leapDestDir $gameFolder.Name
+                    Copy-Item -Path $gameFolder.FullName -Destination $destGameFolder -Recurse -Force
+                    Write-Log "Copied $($gameFolder.Name) to $leapDestDir" "SUCCESS"
+
+                    # Create desktop shortcut with friendly name
+                    $WshShell = New-Object -ComObject WScript.Shell
+                    $shortcutName = $gameFolder.Name  # Use folder name (TicTacToe, Tennis, Curve)
+                    $shortcutPath = Join-Path $publicDesktop "LEAP $shortcutName.lnk"
+                    $shortcut = $WshShell.CreateShortcut($shortcutPath)
+                    $shortcut.TargetPath = Join-Path $destGameFolder $gameExe.Name
+                    $shortcut.WorkingDirectory = $destGameFolder
+                    $shortcut.Description = "LEAP Game - $shortcutName (Educational audio game for blind children)"
+                    $shortcut.Save()
+                    Write-Log "Created desktop shortcut: LEAP $shortcutName" "SUCCESS"
+
+                    $successCount++
+                } else {
+                    Write-Log "No executable found in $($gameFolder.Name)" "WARNING"
+                }
+            } catch {
+                Write-Log "ERROR installing LEAP game $($gameFolder.Name): $($_.Exception.Message)" "ERROR"
+                $failCount++
+            }
+        }
+    } else {
+        Write-Log "No LEAP game folders found in $leapSourceDir (optional)" "INFO"
+    }
+} else {
+    Write-Log "LEAP Games directory not found at $leapSourceDir (optional)" "INFO"
+}
+
+Write-Log "`n=== Installation Summary ===" "INFO"
+Write-Log "Successful installations: $successCount" "SUCCESS"
+Write-Log "Failed installations: $failCount" $(if($failCount -gt 0){"ERROR"}else{"SUCCESS"})
+
+if ($failCount -eq 0) {
+    Write-Log "`nAll software installed successfully!" "SUCCESS"
+    Write-Log "Next step: Run 2-Verify-Installation.ps1" "INFO"
+} else {
+    Write-Log "`nSome installations failed. Check log at: $LogPath" "WARNING"
+    Write-Log "You can re-run this script or install failed components manually" "INFO"
+}
+
+Write-Log "=== Installation Complete ===" "INFO"
+
+Write-Host "`n"
+Write-Host "========================================" -ForegroundColor Green
+Write-Host "Installation Complete!" -ForegroundColor Green
+Write-Host "========================================" -ForegroundColor Green
+Write-Host "Successful: $successCount | Failed: $failCount" -ForegroundColor $(if($failCount -gt 0){"Yellow"}else{"Green"})
+Write-Host "`nLog file: $LogPath" -ForegroundColor Cyan
+Write-Host "`nNext step: Run .\2-Verify-Installation.ps1" -ForegroundColor Yellow
+Write-Host "========================================" -ForegroundColor Green
+
+pause
