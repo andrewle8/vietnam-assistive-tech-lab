@@ -134,16 +134,16 @@ Write-Log "Verification Summary - Pass: $($results.Pass), Fail: $($results.Fail)
 
 if ($results.Critical -gt 0) {
     Write-Host "`n" -NoNewline
-    Write-Host "⚠️  CRITICAL SOFTWARE MISSING!" -ForegroundColor Red
+    Write-Host "CRITICAL SOFTWARE MISSING!" -ForegroundColor Red
     Write-Host "The lab cannot function without these components." -ForegroundColor Red
     Write-Host "Please re-run 1-Install-All.ps1 or install manually." -ForegroundColor Yellow
 } elseif ($results.Fail -gt 0) {
     Write-Host "`n" -NoNewline
-    Write-Host "⚠️  Some optional software is missing" -ForegroundColor Yellow
+    Write-Host "Some optional software is missing" -ForegroundColor Yellow
     Write-Host "The lab will function, but some features may be unavailable." -ForegroundColor Yellow
 } else {
     Write-Host "`n" -NoNewline
-    Write-Host "✅ All software verified successfully!" -ForegroundColor Green
+    Write-Host "All software verified successfully!" -ForegroundColor Green
     Write-Host "`nNext step: Run .\3-Configure-NVDA.ps1" -ForegroundColor Yellow
 }
 
