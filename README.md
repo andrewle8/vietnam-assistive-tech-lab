@@ -9,7 +9,7 @@
 
 ## Project Overview
 
-This repository contains everything needed to deploy a fully **offline, open-source** assistive technology lab for blind children in Vietnam. The lab enables students to learn computing through **simultaneous speech and braille output** from day one.
+This repository contains everything needed to deploy a fully **offline, open-source** assistive technology lab for blind children in Vietnam.
 
 ### Key Features
 - 100% Free/Open Source software stack
