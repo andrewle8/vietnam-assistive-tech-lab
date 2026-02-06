@@ -45,32 +45,33 @@ $installations = @(
     },
     @{
         Name = "Sao Mai VNVoice"
-        Path = ".\Installers\SaoMai\SaoMai_VNVoice_1.0.exe"
+        Path = ".\Installers\SaoMai\SaoMai_voice1.0.exe"
         Args = @("/S")
         WaitTime = 30
     },
     @{
         Name = "Sao Mai Typing Tutor"
-        Path = ".\Installers\SaoMai\SaoMai_TypingTutor.exe"
+        Path = ".\Installers\SaoMai\SMTTSetup.exe"
         Args = @("/S")
         WaitTime = 30
     },
     @{
-        Name = "LibreOffice 24.8 LTS"
-        Path = ".\Installers\LibreOffice\LibreOffice_24.8_Win_x86-64.msi"
-        Args = @("/i", "`"$($usbRoot)\Installers\LibreOffice\LibreOffice_24.8_Win_x86-64.msi`"", "/quiet", "/norestart")
+        Name = "LibreOffice 26.2.0"
+        Path = ".\Installers\LibreOffice\LibreOffice_26.2.0_Win_x86-64.msi"
+        Args = @("/i", "`"$($usbRoot)\Installers\LibreOffice\LibreOffice_26.2.0_Win_x86-64.msi`"", "/quiet", "/norestart")
         UseMsiExec = $true
         WaitTime = 120
     },
     @{
-        Name = "Firefox ESR 128"
-        Path = ".\Installers\Firefox\Firefox_ESR_128_Setup.exe"
-        Args = @("-ms")
+        Name = "Firefox 147"
+        Path = ".\Installers\Firefox\Firefox Setup 147.0.3.msi"
+        Args = @("/i", "`"$($usbRoot)\Installers\Firefox\Firefox Setup 147.0.3.msi`"", "/quiet", "/norestart")
+        UseMsiExec = $true
         WaitTime = 60
     },
     @{
         Name = "VLC Media Player"
-        Path = ".\Installers\Utilities\VLC-3.0.x.exe"
+        Path = ".\Installers\Utilities\vlc-3.0.23-win64.exe"
         Args = @("/S")
         WaitTime = 30
     }

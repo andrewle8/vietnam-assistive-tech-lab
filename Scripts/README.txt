@@ -23,8 +23,8 @@ DEPLOYMENT ORDER:
 -----------------
 
 0. Run: 0-Download-Installers.ps1 (FIRST TIME ONLY - on your main PC)
-   → Downloads most software automatically
-   → Sao Mai software must be downloaded manually
+   → Downloads ALL software automatically from GitHub Releases
+   → No manual downloads needed
    → Run this BEFORE going to Vietnam
 
 1. Run: 1-Install-All.ps1

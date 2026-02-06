@@ -2,7 +2,7 @@
 
 **Project:** Blind Children's Computer Lab - Vietnam Orphanages
 **Deployment:** April 2026 (1-3 days on-site)
-**Equipment:** 10 Windows 11 PCs / Laptops
+**Equipment:** 10 Windows 11 PCs / Laptops (x86-64)
 **Partner:** Sao Mai Center for the Blind
 
 ---
@@ -30,13 +30,15 @@ This repository contains everything needed to deploy a fully **offline, open-sou
 | **NVDA 2025.3.2** | GPL-2.0 | Screen reader with Vietnamese interface |
 | **Sao Mai VNVoice** | Free (non-commercial) | Vietnamese text-to-speech (SAPI5) |
 | **Sao Mai Typing Tutor** | Free | Vietnamese typing lessons with audio |
-| **LibreOffice 24.8 LTS** | MPL-2.0 | Office suite (Word/Excel alternative) |
-| **Firefox ESR 128** | MPL-2.0 | Accessible web browser |
-| **VLC Media Player** | GPL-2.0 | Media playback |
+| **LibreOffice 26.2.0** | MPL-2.0 | Office suite (Word/Excel alternative) |
+| **Firefox 147** | MPL-2.0 | Accessible web browser |
+| **VLC Media Player 3.0.23** | GPL-2.0 | Media playback |
 | **VLC NVDA Add-on** | GPL-2.0 | VLC accessibility enhancement for NVDA |
-| **LEAP Games** | Apache-2.0 | Educational audio games for blind children (includes Music) |
+| **LEAP Games** | Apache-2.0 | Educational audio games for blind children |
 
 > **Note:** 7-Zip removed - Windows 11 (24H2) has built-in support for ZIP, 7z, RAR, TAR, and other archive formats.
+
+> **Architecture:** This kit assumes Windows 11 on **x86-64** (Intel/AMD). If the PCs use ARM processors (e.g. Snapdragon), the software stack will need to be replaced with ARM-compatible builds.
 
 **Total Software Cost: $0**
 
@@ -50,12 +52,11 @@ This repository contains everything needed to deploy a fully **offline, open-sou
 
 ### For Deployment (On-Site in Vietnam)
 
-1. **Download all installers** 
+1. **Download all installers** (fully automated from GitHub Releases)
    ```powershell
    cd F:\Vietnam-Lab-Kit\Scripts
    .\0-Download-Installers.ps1
    ```
-   Then manually download the 2 Sao Mai programs (see script output)
 
 2. **Copy entire folder to USB drive** (8GB+)
 
@@ -70,7 +71,7 @@ This repository contains everything needed to deploy a fully **offline, open-sou
 4. **Test complete workflow** on each station
 
 
-**Note:** Installer files are NOT included in git (too large). Download separately from [Software Sources](#download-urls).
+**Note:** Installer files are NOT included in git (too large). Run `0-Download-Installers.ps1` to download everything automatically from [GitHub Releases](#download-urls).
 
 ---
 
@@ -109,30 +110,20 @@ Vietnam-Lab-Kit/
 
 ## Download URLs
 
+All installers are hosted on GitHub Releases and downloaded automatically by `0-Download-Installers.ps1`. No manual downloads required.
+
+**GitHub Releases:** https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/tag/installers-v1
+
+For reference, the original software sources:
+
 1. **NVDA:** https://www.nvaccess.org/download/
-   - Get "Installer" version + "Portable" backup
-
 2. **Sao Mai VNVoice:** https://saomaicenter.org/en/downloads
-   - Vietnamese TTS with Minh Du/Mai Dung voices
-
 3. **Sao Mai Typing Tutor:** https://saomaicenter.org/en/downloads/vietnamese-talking-software/sao-mai-typing-tutor-smtt
-
 4. **LibreOffice:** https://www.libreoffice.org/download/download/
-   - Select "Windows x86-64 (MSI)"
-
-5. **Firefox ESR:** https://www.mozilla.org/en-US/firefox/enterprise/
-   - Download "Windows 64-bit MSI" installer
-
+5. **Firefox:** https://www.mozilla.org/en-US/firefox/
 6. **VLC:** https://www.videolan.org/vlc/
-
 7. **VLC NVDA Add-on:** https://addons.nvda-project.org/
-   - Search for "VLC" or download from NVDA add-ons store
-   - Place `.nvda-addon` file in `Installers/NVDA/addons/`
-
-8. **LEAP Games:** https://www.gamesfortheblind.org/
-   - Download Windows 64-bit versions of Tic-Tac-Toe, Tennis, Music, and Curve (math)
-   - Need to test if all games appropriate for educational stack
-   - Place `.exe` files in `Installers/Educational/`
+8. **LEAP Games:** https://www.gamesfortheblind.org/ (Tic-Tac-Toe, Tennis, Curve)
 
 ---
 

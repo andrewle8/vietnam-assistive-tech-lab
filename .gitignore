@@ -3,6 +3,7 @@
 # Installer files (too large for git - download separately)
 Installers/**/*.exe
 Installers/**/*.msi
+Installers/**/*.nvda-addon
 Installers/**/*.zip
 Installers/**/*.tar.gz
 Installers/**/*.dll
