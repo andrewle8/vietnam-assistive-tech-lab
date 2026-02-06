@@ -4,7 +4,7 @@
 # Last Updated: February 2026
 
 param(
-    [string]$DestinationRoot = "..\Installers"
+    [string]$DestinationRoot = (Join-Path (Split-Path -Parent $PSScriptRoot) "Installers")
 )
 
 $ErrorActionPreference = "Stop"
