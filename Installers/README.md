@@ -2,7 +2,7 @@
 
 This folder should contain all software installers needed for deployment.
 
-## ⚠️ IMPORTANT: Download Required
+## IMPORTANT: Download Required
 
 The installer files are **NOT included in this git repository** because they are too large. You must download them separately before deployment.
 
@@ -29,15 +29,15 @@ The installer files are **NOT included in this git repository** because they are
 - **Notes:** Vietnamese typing lessons
 
 ### 3. LibreOffice/
-- **File:** `LibreOffice_24.8_Win_x86-64.msi`
+- **File:** `LibreOffice_26.2.0_Win_x86-64.msi`
 - **Source:** https://www.libreoffice.org/download/download/
 - **Type:** Windows x86-64 MSI installer
 - **Size:** ~300 MB
 
 ### 4. Firefox/
-- **File:** `Firefox_ESR_128_Setup.exe` (or latest ESR)
-- **Source:** https://www.mozilla.org/en-US/firefox/enterprise/
-- **Type:** Windows 64-bit MSI or EXE
+- **File:** `Firefox Setup 147.0.3.msi`
+- **Source:** https://www.mozilla.org/en-US/firefox/
+- **Type:** Windows 64-bit MSI
 - **Size:** ~60 MB
 
 ### 5. Utilities/
@@ -60,27 +60,27 @@ Before traveling to Vietnam, verify all files are present:
 ```
 Installers/
 ├── NVDA/
-│   ├── nvda_2025.3.2.exe          ✓
-│   ├── nvda-portable.zip           ✓ (backup)
+│   ├── nvda_2025.3.2.exe
+│   ├── nvda-portable.zip           (backup)
 │   └── addons/
-│       └── VLC.nvda-addon          ✓ (VLC accessibility)
+│       └── VLC.nvda-addon
 ├── SaoMai/
-│   ├── SaoMai_VNVoice_1.0.exe     ✓
-│   └── SaoMai_TypingTutor.exe     ✓
+│   ├── SaoMai_VNVoice_1.0.exe
+│   └── SaoMai_TypingTutor.exe
 ├── LibreOffice/
-│   └── LibreOffice_24.8_Win_x86-64.msi  ✓
+│   └── LibreOffice_26.2.0_Win_x86-64.msi
 ├── Firefox/
-│   └── Firefox_ESR_128_Setup.exe   ✓
+│   └── Firefox Setup 147.0.3.msi
 ├── Utilities/
-│   └── VLC-3.0.x.exe               ✓
+│   └── VLC-3.0.x.exe
 └── Educational/
-    ├── TicTacToe/                  ✓ (LEAP Game folder)
+    ├── TicTacToe/
     │   ├── tictactoe_eng_win64.exe
     │   └── tictactoe_eng_win64_Data/
-    ├── Tennis/                     ✓ (LEAP Game folder)
+    ├── Tennis/
     │   ├── tennis_eng_win64.exe
     │   └── tennis_eng_win64_Data/
-    └── Curve/                      ✓ (LEAP Game folder)
+    └── Curve/
         ├── curve_eng_win64.exe
         └── curve_eng_win64_Data/
 ```
@@ -88,8 +88,8 @@ Installers/
 ## Version Notes
 
 - **NVDA:** Use latest stable (2025.3.2 or newer)
-- **Firefox:** Use ESR (Extended Support Release) for stability
-- **LibreOffice:** Use LTS (Long Term Support) version
+- **Firefox:** 147 or newer
+- **LibreOffice:** 26.2.0 or newer
 - **VLC:** Use stable release (3.0.x)
 
 ## Storage Requirements
