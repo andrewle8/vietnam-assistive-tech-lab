@@ -3,7 +3,6 @@
 **Project:** Blind Children's Computer Lab - Vietnam Orphanages
 **Deployment:** April 2026 (1-3 days on-site)
 **Equipment:** 10 Windows 11 PCs / Laptops (x86-64)
-**Partner:** Sao Mai Center for the Blind
 
 ---
 
@@ -17,7 +16,6 @@ This repository contains everything needed to deploy a fully **offline, open-sou
 - Vietnamese language support (interface + TTS)
 - Automated PowerShell deployment scripts
 - Complete documentation in Vietnamese and English
-- Partnership with Sao Mai Center
 
 ---
 
@@ -182,12 +180,7 @@ If the lab has internet access, the laptops can automatically back up student US
 | `backup-usb.ps1` | Runs on a schedule to sync student USB contents to Google Drive via rclone |
 | `Setup-Rclone-Auth.ps1` | One-time setup to authorize rclone with a Google Drive account |
 
-> **Note:** This approach is still under evaluation. Alternatives (e.g., per-student Windows profiles, a shared network folder) may be considered depending on the on-site environment and feedback from Sao Mai Center.
-
----
-
-## Partnership with Sao Mai Center
-- Training materials in Vietnamese
+> **Note:** This approach is still under evaluation. Alternatives (e.g., per-student Windows profiles, a shared network folder) may be considered depending on the on-site environment.
 
 ---
 
@@ -210,7 +203,6 @@ This deployment kit uses 100% free and open-source software:
 
 ## Acknowledgments
 
-- **Sao Mai Center for the Blind** - Vietnamese TTS, typing tutor, and ongoing support
 - **NV Access** - NVDA screen reader
 - **LibreOffice Community** - Free office suite
 - **Mozilla Foundation** - Firefox browser
