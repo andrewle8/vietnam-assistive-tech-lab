@@ -116,8 +116,6 @@ Vietnam-Lab-Kit/
 
 ## Download URLs
 
-**Download these installers BEFORE traveling to Vietnam:**
-
 1. **NVDA:** https://www.nvaccess.org/download/
    - Get "Installer" version + "Portable" backup
 
