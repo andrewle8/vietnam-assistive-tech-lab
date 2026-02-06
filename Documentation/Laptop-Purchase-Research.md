@@ -58,7 +58,7 @@ No active coupon codes apply to the Latitude 5420 as of Feb 6, 2026. The $319 pr
 | **Dell Refurbished** | Low | Retail website, not a B2B sales team. 10 units is a small order for Dell. | TechSoup nonprofit 10% → $287/unit ($2,870). Requires 501(c)(3). |
 | **Discount Computer Depot** | Moderate | Built for bulk orders (lots of 5/10/20+), phone sales suggests pricing flexibility. | 5-10% off, plus 1-year warranty included vs Dell's 100-day. |
 
-Outreach emails drafted in Vendor-Outreach-Emails.md. Don't delay purchase waiting for a deal — $319 with 30+ in stock is solid and stock could drop.
+Outreach emails drafted in Vendor-Outreach-Emails.md.
 
 ---
 
