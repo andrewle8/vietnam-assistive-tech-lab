@@ -17,7 +17,7 @@ This repository contains everything needed to deploy a fully **offline, open-sou
 - Vietnamese language support (interface + TTS)
 - Automated PowerShell deployment scripts
 - Complete documentation in Vietnamese and English
-- Partnership with Sao Mai Center for ongoing support
+- Partnership with Sao Mai Center
 
 ---
 
