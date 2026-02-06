@@ -8,13 +8,13 @@
 
 ## Decision: Dell Latitude 5420 (Refurbished)
 
-After researching new and refurbished options across multiple vendors, I'm going with **refurbished Dell Latitude 5420** laptops. At ~$219/unit from Dell Refurbished, they're half the price of comparable new laptops while being far more durable — exactly what a children's lab needs.
+After researching new and refurbished options across multiple vendors, I'm going with **refurbished Dell Latitude 5420** laptops. **$319/unit** from Dell Refurbished (Grade A, Windows 10 Pro — free upgrade to Win 11). MIL-STD-810G durability, spill-resistant keyboard, built-in Ethernet. 30+ units in stock as of Feb 6, 2026.
 
 ---
 
 ## Why x86-64 Is Required
 
-ARM/Snapdragon laptops run NVDA, Sao Mai VNVoice, LibreOffice MSI, and LEAP Games through emulation, which adds latency to speech output. That's a dealbreaker for screen reader users. I ruled out all ARM devices.
+ARM/Snapdragon laptops run NVDA, Sao Mai VNVoice, LibreOffice MSI, and LEAP Games through emulation, which adds latency to speech output. Not suitable for screen reader users.
 
 ---
 
@@ -22,7 +22,7 @@ ARM/Snapdragon laptops run NVDA, Sao Mai VNVoice, LibreOffice MSI, and LEAP Game
 
 | | Dell Latitude 5420 (Refurb) | HP 15-fd0095wm (New) |
 |---|---|---|
-| **Price** | **~$219** | $377 |
+| **Price** | **$319** | $377 |
 | **CPU** | i5-1145G7 (11th gen) | i5-1235U (12th gen) |
 | **PassMark Multi** | 9,246 | 12,715 |
 | **PassMark Single** | 2,673 | 3,099 |
@@ -33,22 +33,22 @@ ARM/Snapdragon laptops run NVDA, Sao Mai VNVoice, LibreOffice MSI, and LEAP Game
 | **Ethernet** | **Built-in RJ-45** | None (need $15-20 adapter) |
 | **USB-C** | 2x Thunderbolt 4 | 1x basic USB-C |
 | **USB-A** | 2x USB 3.2 | 2x USB-A |
-| **Windows** | Likely Win 11 Pro | Win 11 Home |
+| **Windows** | Win 10 Pro (free upgrade to 11) | Win 11 Home |
 | **Weight** | 3.03 lbs | 3.51 lbs |
 | **Display** | 14" FHD IPS | 15.6" FHD IPS |
 | **Warranty** | 90-day to 1-year (seller) | 1-year manufacturer |
 
-The HP is 37% faster in multi-thread and 16% faster in single-thread benchmarks, but both CPUs are massively overpowered for NVDA + Sao Mai TTS + LibreOffice + LEAP Games. There's zero perceptible difference for screen reader workloads.
+The HP is 37% faster in multi-thread and 16% faster in single-thread, but both CPUs are overpowered for NVDA + Sao Mai TTS + LibreOffice + LEAP Games. No perceptible difference for screen reader workloads.
 
-The Dell wins where it matters for a children's lab: MIL-STD durability, spill-resistant keyboard, built-in Ethernet, and enterprise serviceability (replacement keyboards cost $15-25, batteries $30-50). The laptops will stay plugged in at desks, so refurbished battery wear isn't a concern.
+Dell advantages: MIL-STD-810G durability, spill-resistant keyboard, built-in Ethernet, enterprise serviceability (replacement keyboards $15-25, batteries $30-50). Laptops will stay plugged in at desks, so refurbished battery wear is not a concern.
 
 ### 10-Unit Cost
 
 | | Dell Latitude 5420 | HP 15-fd0095wm |
 |---|---|---|
-| Per unit | $219 | $377 + $15 adapter |
-| **10 units** | **$2,190** | **$3,920** |
-| **Savings** | — | **$1,730 with Dell** |
+| Per unit | $319 | $377 + $15 adapter |
+| **10 units** | **$3,190** | **$3,920** |
+| **Savings** | — | **$730 with Dell** |
 
 ---
 
@@ -59,7 +59,7 @@ The Dell wins where it matters for a children's lab: MIL-STD durability, spill-r
 | Lenovo IdeaPad 1i (83B40006US) | i5-1335U (13th gen) | 8GB / 256GB | $299-379 | Best new option if I want to avoid refurb |
 | HP 15-fd0075tg | i5-1335U (13th gen) | 8GB / 512GB | ~$300-380 | Newer HP with double storage |
 | Dell Inspiron 15 3530 | i5-1334U (13th gen) | 8GB / 512GB | $330-380 | Solid but consumer-grade |
-| Acer Aspire Go 15 (AG15-51P) | i5-1334U (13th gen) | 8GB / 256GB | $315-350 | Nice display, irrelevant for blind students |
+| Acer Aspire Go 15 (AG15-51P) | i5-1334U (13th gen) | 8GB / 256GB | $315-350 | Display-focused, not relevant for this use case |
 | Acer Aspire 3 (Ryzen 5 7520U) | Ryzen 5 7520U | 8GB / 256GB | $310-350 | **Avoid** — misleading name, actually old Zen 2, 41% slower than i5-1235U |
 
 ---
@@ -72,13 +72,13 @@ The Dell wins where it matters for a children's lab: MIL-STD durability, spill-r
 | HP EliteBook 840 G7 | i5-10210U (10th gen) | 8-16GB / 256GB | $250-330 | Micro Center, Walmart, Amazon |
 | Dell Latitude 5420 (16GB) | i5-1145G7 (11th gen) | 16GB / 256GB | $280-349 | Dell Refurbished, Best Buy |
 
-The ThinkPad T14 has a legendary keyboard, but at $309-349 it's $100+ more per unit than the Dell Latitude 5420 for similar performance.
+The ThinkPad T14 is $309-349, comparable in price to the Dell Latitude 5420 but with a weaker CPU (i5-10210U vs i5-1145G7).
 
 ---
 
 ## Nonprofit Discount Programs
 
-I found several programs that could reduce costs further if I'm purchasing through a US 501(c)(3):
+Programs available when purchasing through a US 501(c)(3):
 
 | Program | Discount | How to Access |
 |---------|----------|---------------|
@@ -87,7 +87,7 @@ I found several programs that could reduce costs further if I'm purchasing throu
 | HP for Nonprofits | 8% off | Register through TechSoup |
 | Amazon Business | ~5% quantity discount | Register at business.amazon.com |
 
-**TechSoup** (techsoup.org) is the gateway to all of these — register first, then access OEM discounts. Lenovo's 25% off is the best deal if going the new laptop route.
+**TechSoup** (techsoup.org) is the registration gateway for all of the above. Lenovo's 25% is the largest discount if going the new laptop route.
 
 ---
 
@@ -108,7 +108,7 @@ I found several programs that could reduce costs further if I'm purchasing throu
 
 | Seller | Est. Price | Notes |
 |--------|-----------|-------|
-| **Dell Refurbished** (dellrefurbished.com) | ~$219 (8GB), ~$280-349 (16GB) | Official Dell channel, frequent coupon codes (40-50% off) |
+| **Dell Refurbished** (dellrefurbished.com) | $319 (8GB), $339 (16GB) | Official Dell channel, 30+ units in stock, 100-day warranty (1-year for $49) |
 | **Discount Computer Depot** (discountcomputerdepot.com) | Call (844) 466-9142 | Microsoft Authorized Refurbisher, sells in lots of 5/10/20+, 1-year warranty |
 | **LaptopCloseout** (laptopcloseout.com) | $309-349 | Grade A condition, 1-year warranty |
 | **Walmart Business** (business.walmart.com) | Varies | Restored units available |
@@ -127,17 +127,16 @@ I found several programs that could reduce costs further if I'm purchasing throu
 | i5-10210U | 10th | Comet Lake | 4 | 8 | 4.2 GHz | ~7,100 | ~2,200 |
 | Ryzen 5 7520U | — | Zen 2 (old) | 4 | 8 | 4.3 GHz | 9,018 | 2,400 |
 
-All of these are overkill for NVDA + LibreOffice + LEAP Games. The i5-1145G7 in the Dell Latitude 5420 is more than sufficient.
+All sufficient for NVDA + LibreOffice + LEAP Games.
 
 ---
 
 ## Next Steps
 
-1. Send outreach emails to Dell Refurbished, Discount Computer Depot, Computers for the Blind, and TechSoup
-2. Verify Dell Latitude 5420 stock (Dell Refurbished showed 9 units — need to confirm 10 available)
-3. Compare quotes from multiple sellers
-4. If going nonprofit route, register with TechSoup first
-5. Contact Perkins School for the Blind International about potential partnership
+1. Send outreach emails to Dell Refurbished and Discount Computer Depot (drafted in Vendor-Outreach-Emails.md)
+2. Compare quotes from both sellers
+3. Purchase 10 units — upgrade Windows 10 Pro to Windows 11 Pro (free) before imaging
+4. If going nonprofit route, register with TechSoup for Dell 10% discount
 
 ---
 
