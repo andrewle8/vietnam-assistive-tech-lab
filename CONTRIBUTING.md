@@ -56,7 +56,6 @@ Before submitting a PR, verify:
 - [ ] Scripts run without errors on clean Windows 11
 - [ ] All software installs successfully offline
 - [ ] NVDA launches and speaks in Vietnamese
-- [ ] Orbit Reader 20 connects and displays braille
 - [ ] Documentation is clear and accurate
 - [ ] No personal information or API keys in commits
 
@@ -65,7 +64,6 @@ Before submitting a PR, verify:
 ### High Priority
 - **Vietnamese Translation:** Many documents need professional translation
 - **Sao Mai Materials:** Integration of official training content
-- **Hardware Testing:** Verify Orbit Reader 20 compatibility
 
 ### Medium Priority
 - **Script Optimization:** Reduce installation time
@@ -80,8 +78,6 @@ Before submitting a PR, verify:
 ## Questions?
 
 - **GitHub Issues:** For bugs and feature requests
-- **Email:** [Project lead email]
-- **Sao Mai Center:** https://saomaicenter.org/en/contact
 
 ## Code of Conduct
 
@@ -97,4 +93,4 @@ By contributing, you agree that your contributions will be licensed under the sa
 
 ---
 
-Thank you for helping make technology accessible to blind children in Vietnam! 🇻🇳
+Thank you for helping make technology accessible to blind children in Vietnam!
