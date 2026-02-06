@@ -2,7 +2,7 @@
 
 **Project:** Blind Children's Computer Lab - Vietnam Orphanages
 **Timeline:** April 2026 deployment (1-3 days on-site)
-**Equipment:** 10 Windows 11 PCs (purchased), 10 Orbit Reader 20 devices (purchased)
+**Equipment:** 10 Windows 11 PCs / Laptops (x86-64)
 **Support Partner:** Sao Mai Center for the Blind (active partnership)
 **Users:** 10+ children, complete beginners to basic computer familiarity
 
@@ -10,7 +10,7 @@
 
 ## Executive Summary
 
-Deploy a fully **offline, open-source** assistive technology lab enabling blind children to learn computing through **simultaneous speech and braille output** from day one. The deployment must be completed in 1-3 days on-site, with Sao Mai Center staff providing ongoing support and training.
+Deploy a fully **offline, open-source** assistive technology lab enabling blind children to learn computing through **speech output** from day one. The deployment must be completed in 1-3 days on-site.
 
 **Critical Success Factors:**
 - Pre-configure everything before arrival (USB deployment kit)
@@ -29,15 +29,15 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 | **NVDA** | 2025.3.2 (latest stable) | GPL-2.0 | Includes Vietnamese interface |
 | **Sao Mai VNVoice** | v1.0 | Free for non-commercial | Vietnamese TTS (Minh Du/Mai Dung voices), SAPI5 |
 | **Sao Mai Typing Tutor (SMTT)** | Latest | Free | Vietnamese typing lessons with speech |
-| **LibreOffice** | 24.8.x LTS | MPL-2.0 | Replace MS Office - free, fully accessible |
-| **Firefox** | ESR 128.x | MPL-2.0 | Better accessibility than Chrome, offline installer |
+| **LibreOffice** | 26.2.0 | MPL-2.0 | Replace MS Office - free, fully accessible |
+| **Firefox** | 147 | MPL-2.0 | Better accessibility than Chrome, offline installer |
 | **VLC Media Player** | 3.0.x | GPL-2.0 | Media playback |
 | **VLC NVDA Add-on** | Latest | GPL-2.0 | VLC accessibility enhancement |
 | **LEAP Games** | Latest | Apache-2.0 | Educational audio games (Tic-Tac-Toe, Tennis, Curve) |
 
 > **Note:** File compression handled by Windows 11's built-in support for ZIP, 7z, RAR, TAR formats.
 
-### Total Software Cost: $0 ✅
+### Total Software Cost: $0
 
 ---
 
@@ -67,14 +67,7 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
    - Adjust volume levels
    - Verify auto-start functionality
 
-4. **Connect Orbit Reader 20 devices** (2 hours)
-   - Plug in one Orbit Reader per PC
-   - Verify NVDA auto-detects as "APH Orbit Reader 20"
-   - Test braille output with sample text
-   - Configure braille translation table (Vietnamese Grade 1)
-   - Label each Orbit Reader to match PC number
-
-5. **End-of-day verification** (30 min)
+4. **End-of-day verification** (30 min)
    - Run verification script on all 10 PCs
    - Document any failures
    - Plan fixes for Day 2
@@ -104,13 +97,6 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 ---
 
 ## Technical Configuration Details
-
-### NVDA Setup for Orbit Reader 20
-
-1. **Auto-Detection:** Orbit Reader 20 uses HID mode (no drivers needed)
-2. **Connection:** USB preferred over Bluetooth
-3. **Braille Table:** Vietnamese Grade 1 (`vietnamese-g1.utb`)
-4. **Tether Mode:** Set to "focus" (braille follows keyboard cursor)
 
 ### LibreOffice Accessibility
 
