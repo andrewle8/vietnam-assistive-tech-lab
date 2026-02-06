@@ -68,7 +68,12 @@ This repository contains everything needed to deploy a fully **offline, open-sou
    .\2-Verify-Installation.ps1
    .\3-Configure-NVDA.ps1
    ```
-4. **Test complete workflow** on each station
+4. **(Optional) Prepare student USB drives:**
+   ```powershell
+   .\4-Prepare-Student-USB.ps1
+   .\5-Configure-Loaner-Laptop.ps1
+   ```
+5. **Test complete workflow** on each station
 
 
 **Note:** Installer files are NOT included in git (too large). Run `0-Download-Installers.ps1` to download everything automatically from [GitHub Releases](#download-urls).
@@ -94,6 +99,10 @@ Vietnam-Lab-Kit/
 │   ├── 1-Install-All.ps1
 │   ├── 2-Verify-Installation.ps1
 │   ├── 3-Configure-NVDA.ps1
+│   ├── 4-Prepare-Student-USB.ps1    # (Proposed) Set up a student USB drive
+│   ├── 5-Configure-Loaner-Laptop.ps1 # (Proposed) Configure PC for USB backups
+│   ├── backup-usb.ps1               # (Proposed) Scheduled USB-to-cloud sync
+│   ├── Setup-Rclone-Auth.ps1        # (Proposed) One-time Google Drive auth
 │   └── README.txt
 ├── Training/             # Vietnamese training materials
 │   ├── NVDA-Basics-VN/
@@ -154,6 +163,31 @@ For reference, the original software sources:
 
 ---
 
+
+## Student Personal Files (Proposed Solution)
+
+Since the PCs are shared and students cannot keep them, we need a way for each student to save and access their personal files across sessions. The current proposed approach uses **personal USB drives**:
+
+### How It Works
+1. Each student receives a USB drive labeled with a unique ID (e.g., `STU-001`, `STU-002`)
+2. The USB contains pre-created folders: **Documents**, **Audio**, and **Schoolwork**
+3. Students plug in their USB when they check out a PC, and save all work to the USB
+4. When done, they take their USB with them — their files go wherever they go
+
+### Cloud Backup (Optional, requires internet)
+If the lab has internet access, the laptops can automatically back up student USBs to Google Drive every 15 minutes using rclone. This protects against lost or damaged USB drives. Backups are organized per student under `VietnamLabBackups/STU-###/` on Google Drive.
+
+### Scripts
+| Script | Purpose |
+|--------|---------|
+| `4-Prepare-Student-USB.ps1` | Formats and labels a USB drive for one student (sets volume label, creates folders, writes a hidden `.student-id` file) |
+| `5-Configure-Loaner-Laptop.ps1` | Configures a lab PC for USB backups — deploys rclone, creates a scheduled backup task, sets AutoPlay to open folders, adds a "My USB" desktop shortcut |
+| `backup-usb.ps1` | Runs on a schedule to sync student USB contents to Google Drive via rclone |
+| `Setup-Rclone-Auth.ps1` | One-time setup to authorize rclone with a Google Drive account |
+
+> **Note:** This approach is still under evaluation. Alternatives (e.g., per-student Windows profiles, a shared network folder) may be considered depending on the on-site environment and feedback from Sao Mai Center.
+
+---
 
 ## Partnership with Sao Mai Center
 - Training materials in Vietnamese
