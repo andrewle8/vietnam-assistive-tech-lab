@@ -58,13 +58,12 @@ No active coupon codes apply to the Latitude 5420 as of Feb 6, 2026. The $319 pr
 | **Dell Refurbished** | Low | Retail website, not a B2B sales team. 10 units is a small order for Dell. | TechSoup nonprofit 10% → $287/unit ($2,870). Requires 501(c)(3). |
 | **Discount Computer Depot** | Moderate | Built for bulk orders (lots of 5/10/20+), phone sales suggests pricing flexibility. | 5-10% off, plus 1-year warranty included vs Dell's 100-day. |
 
-Outreach emails drafted in Vendor-Outreach-Emails.md.
 
 ---
 
 ## Next Steps
 
-1. Send outreach emails to Dell Refurbished and Discount Computer Depot (drafted in Vendor-Outreach-Emails.md)
+1. Send outreach emails to Dell Refurbished and Discount Computer Depot
 2. Compare quotes from both sellers
 3. Purchase 10 units — upgrade Windows 10 Pro to Windows 11 Pro (free) before imaging
 4. If going nonprofit route, register with TechSoup for Dell 10% discount
