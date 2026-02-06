@@ -34,7 +34,7 @@ This repository contains everything needed to deploy a fully **offline, open-sou
 | **Firefox ESR 128** | MPL-2.0 | Accessible web browser |
 | **VLC Media Player** | GPL-2.0 | Media playback |
 | **VLC NVDA Add-on** | GPL-2.0 | VLC accessibility enhancement for NVDA |
-| **LEAP Games** | Apache-2.0 | Educational audio games for blind children |
+| **LEAP Games** | Apache-2.0 | Educational audio games for blind children (includes Music) |
 
 > **Note:** 7-Zip removed - Windows 11 (24H2) has built-in support for ZIP, 7z, RAR, TAR, and other archive formats.
 
