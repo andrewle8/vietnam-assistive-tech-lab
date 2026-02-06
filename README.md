@@ -180,20 +180,6 @@ Vietnam-Lab-Kit/
 - **During deployment:** On-site or remote technical support
 - **Post-deployment:** Ongoing student training and troubleshooting
 
-### Post-Deployment Support Plan
-- **Week 1-2:** Daily check-ins
-- **Week 3-4:** Check-ins every 2-3 days
-- **Month 2+:** Weekly calls, monthly reviews
-
----
-
-## Success Metrics (3-Month Evaluation)
-
-- All students can independently log in and use NVDA
-- 80%+ students complete typing tutor Lesson 3
-- No major hardware failures
-- Sao Mai staff handle 90%+ of issues independently
-
 ---
 
 ## Language Support
