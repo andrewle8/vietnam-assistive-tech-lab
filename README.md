@@ -223,7 +223,6 @@ This deployment kit uses 100% free and open-source software:
 
 For questions about this deployment:
 - **Project Lead:** Andrew Le - andrewle@monarchmissions.org
-- **Sao Mai Center:** https://saomaicenter.org/en/contact
 
 ---
 
