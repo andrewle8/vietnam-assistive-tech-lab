@@ -2,7 +2,7 @@
 
 **Project:** Blind Children's Computer Lab - Vietnam Orphanages
 **Deployment:** April 2026 (1-3 days on-site)
-**Equipment:** 10 Windows 11 PCs + 10 Orbit Reader 20 Braille Displays
+**Equipment:** 10 Windows 11 PCs / Laptops
 **Partner:** Sao Mai Center for the Blind
 
 ---
@@ -41,8 +41,7 @@ This repository contains everything needed to deploy a fully **offline, open-sou
 
 ### Hardware (Already Purchased)
 - 10x Windows 11 PCs
-- 10x Orbit Reader 20 Braille Displays
-- Headphones, USB cables, accessories
+- Headphones
 
 ---
 
@@ -67,8 +66,7 @@ This repository contains everything needed to deploy a fully **offline, open-sou
    .\2-Verify-Installation.ps1
    .\3-Configure-NVDA.ps1
    ```
-4. **Connect Orbit Reader 20** devices via USB
-5. **Test complete workflow** on each station
+4. **Test complete workflow** on each station
 
 ### For Contributors
 
@@ -149,12 +147,10 @@ Vietnam-Lab-Kit/
 - Test scripts on one PC
 - Coordinate with Sao Mai Center
 - Prepare all documentation
-- Update all Orbit Reader firmware
 
 ### Day 1 (6-8 hours): Installation
 - Physical setup and PC arrangement
 - Run automated deployment scripts
-- Connect and configure Orbit Readers
 - Verify all 10 stations
 
 ### Day 2 (6-8 hours): Configuration & Testing
@@ -198,7 +194,6 @@ This deployment kit uses 100% free and open-source software:
 
 - **Sao Mai Center for the Blind** - Vietnamese TTS, typing tutor, and ongoing support
 - **NV Access** - NVDA screen reader
-- **APH (American Printing House for the Blind)** - Orbit Reader 20
 - **LibreOffice Community** - Free office suite
 - **Mozilla Foundation** - Firefox browser
 - **SciFY** - LEAP educational games for blind children
