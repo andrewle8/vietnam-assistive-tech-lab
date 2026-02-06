@@ -129,7 +129,8 @@ Vietnam-Lab-Kit/
    - Place `.nvda-addon` file in `Installers/NVDA/addons/`
 
 8. **LEAP Games:** https://www.gamesfortheblind.org/
-   - Download Windows 64-bit versions of Tic-Tac-Toe, Tennis, and Curve
+   - Download Windows 64-bit versions of Tic-Tac-Toe, Tennis, Music, and Curve (math)
+   - Need to test if all games appropriate for educational stack
    - Place `.exe` files in `Installers/Educational/`
 
 ---
