@@ -51,11 +51,14 @@ New laptops in the $300-350 range (Lenovo IdeaPad 1i, HP 15-fd0095wm, Dell Inspi
 
 No active coupon codes apply to the Latitude 5420 as of Feb 6, 2026. The $319 price already includes a 30% markdown from $459.
 
----
+### Discount Likelihood
 
-## Nonprofit Discount
+| Seller | Chance | Path | Best Case |
+|--------|--------|------|-----------|
+| **Dell Refurbished** | Low | Retail website, not a B2B sales team. 10 units is a small order for Dell. | TechSoup nonprofit 10% → $287/unit ($2,870). Requires 501(c)(3). |
+| **Discount Computer Depot** | Moderate | Built for bulk orders (lots of 5/10/20+), phone sales suggests pricing flexibility. | 5-10% off, plus 1-year warranty included vs Dell's 100-day. |
 
-Dell for Nonprofits offers 10% off via TechSoup (techsoup.org). Requires a US 501(c)(3).
+Outreach emails drafted in Vendor-Outreach-Emails.md. Don't delay purchase waiting for a deal — $319 with 30+ in stock is solid and stock could drop.
 
 ---
 
