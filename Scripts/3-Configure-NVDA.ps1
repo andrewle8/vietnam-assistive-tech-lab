@@ -121,20 +121,7 @@ if (Test-Path $addonsSourceDir) {
     Write-Log "To add VLC accessibility: download VLC.nvda-addon and place in Installers\NVDA\addons\" "INFO"
 }
 
-# Step 5: Configure braille settings for Orbit Reader 20
-Write-Log "Configuring braille display settings..." "INFO"
-
-# Note: NVDA braille settings are in nvda.ini which we already copied
-# The Orbit Reader 20 uses HID mode and should auto-detect when plugged in
-
-Write-Host "`n" -NoNewline
-Write-Host "📝 IMPORTANT: Orbit Reader 20 Setup" -ForegroundColor Yellow
-Write-Host "  1. Connect Orbit Reader 20 via USB" -ForegroundColor White
-Write-Host "  2. NVDA should auto-detect it as 'APH Orbit Reader 20'" -ForegroundColor White
-Write-Host "  3. If not detected, press NVDA+Control+A to open braille settings" -ForegroundColor White
-Write-Host "  4. Select 'APH Orbit Reader 20' from the display list`n" -ForegroundColor White
-
-# Step 6: Start NVDA now (if not already running)
+# Step 5: Start NVDA now (if not already running)
 $nvdaProcess = Get-Process -Name "nvda" -ErrorAction SilentlyContinue
 
 if (-not $nvdaProcess) {
@@ -148,7 +135,7 @@ if (-not $nvdaProcess) {
     }
 } else {
     Write-Log "NVDA is already running" "INFO"
-    Write-Host "`nℹ️  NVDA is already running. Restart NVDA to apply new settings:" -ForegroundColor Yellow
+    Write-Host "`nNVDA is already running. Restart NVDA to apply new settings:" -ForegroundColor Yellow
     Write-Host "   Press NVDA+Q (Insert+Q), then start NVDA again`n" -ForegroundColor White
 }
 
@@ -156,19 +143,16 @@ Write-Host "`n========================================" -ForegroundColor Green
 Write-Host "NVDA Configuration Complete!" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Green
 
-Write-Host "`n✅ Configuration Summary:" -ForegroundColor Cyan
-Write-Host "  • NVDA profile configured for Vietnamese" -ForegroundColor White
-Write-Host "  • NVDA add-ons installed (if present in Installers\NVDA\addons\)" -ForegroundColor White
-Write-Host "  • Auto-start on Windows login enabled" -ForegroundColor White
-Write-Host "  • Braille settings pre-configured for Orbit Reader 20" -ForegroundColor White
-Write-Host "  • Speech synthesizer set to VNVoice (Minh Du voice)`n" -ForegroundColor White
+Write-Host "`nConfiguration Summary:" -ForegroundColor Cyan
+Write-Host "  - NVDA profile configured for Vietnamese" -ForegroundColor White
+Write-Host "  - NVDA add-ons installed (if present in Installers\NVDA\addons\)" -ForegroundColor White
+Write-Host "  - Auto-start on Windows login enabled" -ForegroundColor White
+Write-Host "  - Speech synthesizer set to VNVoice (Minh Du voice)`n" -ForegroundColor White
 
-Write-Host "🎯 Next Steps:" -ForegroundColor Yellow
-Write-Host "  1. Connect the Orbit Reader 20 via USB" -ForegroundColor White
-Write-Host "  2. Test speech output (NVDA should speak in Vietnamese)" -ForegroundColor White
-Write-Host "  3. Test braille output on the Orbit Reader" -ForegroundColor White
-Write-Host "  4. Copy training materials to Desktop" -ForegroundColor White
-Write-Host "  5. Repeat for remaining PCs`n" -ForegroundColor White
+Write-Host "Next Steps:" -ForegroundColor Yellow
+Write-Host "  1. Test speech output (NVDA should speak in Vietnamese)" -ForegroundColor White
+Write-Host "  2. Copy training materials to Desktop" -ForegroundColor White
+Write-Host "  3. Repeat for remaining PCs`n" -ForegroundColor White
 
 Write-Host "Log file: $LogPath" -ForegroundColor Cyan
 Write-Host "========================================`n" -ForegroundColor Green
