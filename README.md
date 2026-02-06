@@ -22,6 +22,7 @@ This repository contains everything needed to deploy a fully **offline, open-sou
 ## Software Stack (All Free/Open Source)
 
 > If Office is already provided with the PCs, omit LibreOffice.
+
 | Component | License | Purpose |
 |-----------|---------|---------|
 | **NVDA 2025.3.2** | GPL-2.0 | Screen reader with Vietnamese interface |
