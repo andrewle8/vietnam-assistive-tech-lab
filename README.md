@@ -22,7 +22,7 @@ This repository contains everything needed to deploy a fully **offline, open-sou
 ---
 
 ## What's Included
--  Note: If office is provided with with Windows 11 PCs/Laptops, omit LibreOffice
+-  Note: If office is provided with Windows 11 PCs/Laptops, omit LibreOffice
 
 ### Software Stack (All Free/Open Source)
 | Component | License | Purpose |
