@@ -29,7 +29,7 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 | **Sao Mai Typing Tutor (SMTT)** | Latest | Free | Vietnamese typing lessons with speech |
 | **LibreOffice** | 26.2.0 | MPL-2.0 | Replace MS Office - free, fully accessible |
 | **Firefox** | 147 | MPL-2.0 | Better accessibility than Chrome, offline installer |
-| **VLC Media Player** | 3.0.x | GPL-2.0 | Media playback |
+| **VLC Media Player** | 3.0.23 | GPL-2.0 | Media playback |
 | **VLC NVDA Add-on** | Latest | GPL-2.0 | VLC accessibility enhancement |
 | **LEAP Games** | Latest | Apache-2.0 | Educational audio games (Tic-Tac-Toe, Tennis, Curve) |
 

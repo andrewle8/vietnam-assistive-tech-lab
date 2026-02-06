@@ -2,58 +2,34 @@
 
 This folder should contain all software installers needed for deployment.
 
-## IMPORTANT: Download Required
+## How to Download
 
-The installer files are **NOT included in this git repository** because they are too large. You must download them separately before deployment.
+The installer files are **NOT included in this git repository** because they are too large. All installers are hosted on **GitHub Releases** and downloaded automatically:
 
-## Required Downloads
+```powershell
+cd F:\Vietnam-Lab-Kit\Scripts
+.\0-Download-Installers.ps1
+```
 
-### 1. NVDA/
-- **File:** `nvda_2025.3.2.exe` (or latest stable)
-- **Source:** https://www.nvaccess.org/download/
-- **Type:** Installer + Portable backup
-- **Size:** ~50 MB
+**No manual downloads required.** The script pulls everything from:
+https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/tag/installers-v1
 
-#### NVDA Add-ons (in `NVDA/addons/` subfolder)
-- **File:** `VLC.nvda-addon` (or similar name)
-- **Source:** https://addons.nvda-project.org/ (search for "VLC")
-- **Notes:** Provides enhanced VLC accessibility (tab navigation, status announcements)
+## What Gets Downloaded
 
-### 2. SaoMai/
-- **File:** `SaoMai_VNVoice_1.0.exe`
-- **Source:** https://saomaicenter.org/en/downloads
-- **Notes:** Vietnamese TTS engine (SAPI5)
-
-- **File:** `SaoMai_TypingTutor.exe`
-- **Source:** https://saomaicenter.org/en/downloads/vietnamese-talking-software/sao-mai-typing-tutor-smtt
-- **Notes:** Vietnamese typing lessons
-
-### 3. LibreOffice/
-- **File:** `LibreOffice_26.2.0_Win_x86-64.msi`
-- **Source:** https://www.libreoffice.org/download/download/
-- **Type:** Windows x86-64 MSI installer
-- **Size:** ~300 MB
-
-### 4. Firefox/
-- **File:** `Firefox Setup 147.0.3.msi`
-- **Source:** https://www.mozilla.org/en-US/firefox/
-- **Type:** Windows 64-bit MSI
-- **Size:** ~60 MB
-
-### 5. Utilities/
-- **File:** `VLC-3.0.x.exe`
-- **Source:** https://www.videolan.org/vlc/
-- **Size:** ~40 MB
-
-### 6. Educational/
-- **Files:** LEAP Games (Tic-Tac-Toe, Tennis, Curve) - Windows 64-bit executables
-- **Source:** https://www.gamesfortheblind.org/
-- **Notes:** Educational audio games designed for blind children by SciFY
-- **Size:** ~50 MB total
+| Folder | File | Size |
+|--------|------|------|
+| `NVDA/` | `nvda_2025.3.2.exe` | ~50 MB |
+| `NVDA/addons/` | `VLC.nvda-addon` | ~1 MB |
+| `SaoMai/` | `SaoMai_VNVoice_1.0.exe` | — |
+| `SaoMai/` | `SaoMai_TypingTutor.exe` | — |
+| `LibreOffice/` | `LibreOffice_26.2.0_Win_x86-64.msi` | ~300 MB |
+| `Firefox/` | `Firefox Setup 147.0.3.msi` | ~60 MB |
+| `Utilities/` | `VLC-3.0.23.exe` | ~40 MB |
+| `Educational/` | LEAP Games (Tic-Tac-Toe, Tennis, Curve) | ~50 MB |
 
 ## Pre-Deployment Checklist
 
-Before deployment, verify all files are present:
+After running `0-Download-Installers.ps1`, verify all files are present:
 
 ```
 Installers/
@@ -70,7 +46,7 @@ Installers/
 ├── Firefox/
 │   └── Firefox Setup 147.0.3.msi
 ├── Utilities/
-│   └── VLC-3.0.x.exe
+│   └── VLC-3.0.23.exe
 └── Educational/
     ├── TicTacToe/
     │   ├── tictactoe_eng_win64.exe
@@ -88,7 +64,7 @@ Installers/
 - **NVDA:** Use latest stable (2025.3.2 or newer)
 - **Firefox:** 147 or newer
 - **LibreOffice:** 26.2.0 or newer
-- **VLC:** Use stable release (3.0.x)
+- **VLC:** Use stable release (3.0.23 or newer)
 
 ## Storage Requirements
 

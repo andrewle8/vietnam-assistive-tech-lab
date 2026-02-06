@@ -5,7 +5,7 @@ Use this checklist to ensure you're fully prepared before deployment.
 ## 2-3 Weeks Before Deployment
 
 ### Software & USB Kit
-- [ ] All installer files downloaded (see `Installers/README.md`)
+- [ ] Run `0-Download-Installers.ps1` to download all installers from GitHub Releases
 - [ ] NVDA 2025.3.2+ downloaded
 - [ ] Sao Mai VNVoice + Typing Tutor downloaded
 - [ ] LibreOffice 26.2.0 MSI downloaded

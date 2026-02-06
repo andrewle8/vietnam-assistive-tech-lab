@@ -2,51 +2,16 @@
 
 ## STEP 1: Download Software (This Week)
 
-### Download these installers and save to `F:\Vietnam-Lab-Kit\Installers\`:
+All installers are hosted on **GitHub Releases** and downloaded automatically — no manual downloads needed.
 
-**1. NVDA (50 MB)**
-- Go to: https://www.nvaccess.org/download/
-- Download: "NVDA 2025.3.2 installer" (or latest stable)
-- Save to: `F:\Vietnam-Lab-Kit\Installers\NVDA\nvda_2025.3.2.exe`
-- Also download: Portable version as backup
+```powershell
+cd F:\Vietnam-Lab-Kit\Scripts
+.\0-Download-Installers.ps1
+```
 
-**2. Sao Mai VNVoice (Vietnamese TTS)**
-- Go to: https://saomaicenter.org/en/downloads
-- Look for: "VNVoice" or "Vietnamese Voice"
-- Save to: `F:\Vietnam-Lab-Kit\Installers\SaoMai\SaoMai_VNVoice_1.0.exe`
+This downloads everything from: https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/tag/installers-v1
 
-**3. Sao Mai Typing Tutor**
-- Go to: https://saomaicenter.org/en/downloads/vietnamese-talking-software/sao-mai-typing-tutor-smtt
-- Download latest version
-- Save to: `F:\Vietnam-Lab-Kit\Installers\SaoMai\SaoMai_TypingTutor.exe`
-
-**4. LibreOffice (300 MB)**
-- Go to: https://www.libreoffice.org/download/download/
-- Select: "Windows x86-64 (MSI)"
-- Version: 26.2.0
-- Save to: `F:\Vietnam-Lab-Kit\Installers\LibreOffice\LibreOffice_26.2.0_Win_x86-64.msi`
-
-**5. Firefox (60 MB)**
-- Go to: https://www.mozilla.org/en-US/firefox/
-- Download: "Windows 64-bit MSI" or EXE
-- Version: 147
-- Save to: `F:\Vietnam-Lab-Kit\Installers\Firefox\Firefox Setup 147.0.3.msi`
-
-**6. VLC Media Player (40 MB)**
-- Go to: https://www.videolan.org/vlc/
-- Download: Windows 64-bit installer
-- Save to: `F:\Vietnam-Lab-Kit\Installers\Utilities\VLC-3.0.x.exe`
-
-**7. VLC NVDA Add-on (for VLC accessibility)**
-- Go to: https://addons.nvda-project.org/
-- Search for: "VLC"
-- Download: `.nvda-addon` file
-- Save to: `F:\Vietnam-Lab-Kit\Installers\NVDA\addons\VLC.nvda-addon`
-
-**8. LEAP Games (Educational audio games)**
-- Go to: https://www.gamesfortheblind.org/
-- Download: Windows 64-bit versions of Tic-Tac-Toe, Tennis, and Curve
-- Save to: `F:\Vietnam-Lab-Kit\Installers\Educational\`
+After the script finishes, verify the `Installers/` folder contains all files (see `Installers/README.md` for the full list).
 
 ---
 
@@ -186,7 +151,7 @@ Since students share PCs and cannot keep them, each student gets a personal USB 
 - [x] Deployment scripts written
 - [x] NVDA configuration prepared
 - [x] Documentation completed
-- [ ] **→ NEXT: Download software installers**
+- [ ] **→ NEXT: Run `0-Download-Installers.ps1` to download all software**
 - [ ] Test deployment
 - [ ] Prepare student USB drives
 - [ ] Prepare PCs
