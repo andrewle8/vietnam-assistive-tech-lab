@@ -173,12 +173,9 @@ Vietnam-Lab-Kit/
 
 ---
 
-## Support Structure
 
-### Partnership with Sao Mai Center
-- **Pre-deployment:** Training materials in Vietnamese
-- **During deployment:** On-site or remote technical support
-- **Post-deployment:** Ongoing student training and troubleshooting
+## Partnership with Sao Mai Center
+- Training materials in Vietnamese
 
 ---
 
