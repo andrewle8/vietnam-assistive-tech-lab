@@ -53,7 +53,7 @@ The installer files are **NOT included in this git repository** because they are
 
 ## Pre-Deployment Checklist
 
-Before traveling to Vietnam, verify all files are present:
+Before deployment, verify all files are present:
 
 ```
 Installers/
@@ -110,4 +110,4 @@ Create **3 USB drives** with identical content:
 2. Backup drive #1
 3. Backup drive #2 (emergency)
 
-Store drives separately during travel to prevent loss.
+Store drives separately to prevent loss.
