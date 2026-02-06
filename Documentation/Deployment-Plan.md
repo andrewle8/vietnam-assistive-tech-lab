@@ -3,7 +3,6 @@
 **Project:** Blind Children's Computer Lab - Vietnam Orphanages
 **Timeline:** April 2026 deployment (1-3 days on-site)
 **Equipment:** 10 Windows 11 PCs / Laptops (x86-64)
-**Support Partner:** Sao Mai Center for the Blind (active partnership)
 **Users:** 10+ children, complete beginners to basic computer familiarity
 
 ---
@@ -16,7 +15,6 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 - Pre-configure everything before arrival (USB deployment kit)
 - Automated, scripted installation for speed
 - Zero internet dependency
-- Sao Mai partnership for post-deployment support
 - Documentation in Vietnamese and English
 
 ---
@@ -78,7 +76,7 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 3. **Configure user experience** (1 hour)
 
 **Afternoon (1 PM - 5 PM):**
-4. **Conduct walkthrough with Sao Mai staff** (2-3 hours)
+4. **Conduct walkthrough with staff** (2-3 hours)
 5. **Create station documentation** (1 hour)
 6. **Pilot test with 1-2 students** (1 hour)
 
@@ -86,7 +84,7 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 
 **Morning (9 AM - 12 PM):**
 1. **Full lab walkthrough** (1 hour)
-2. **Train Sao Mai staff on maintenance** (2 hours)
+2. **Train staff on maintenance** (2 hours)
 
 **Afternoon (1 PM - 3 PM):**
 3. **Documentation handoff** (1 hour)
@@ -108,7 +106,7 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 ## Post-Deployment Support Plan
 
 ### Week 1-2: Intensive Monitoring
-- Daily check-in with Sao Mai staff
+- Daily check-in with staff
 - Remote troubleshooting as needed
 - Document all issues
 
@@ -129,7 +127,7 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 2. **User Adoption:** All students can independently log in and launch NVDA
 3. **Skill Progression:** 80%+ students complete typing tutor Lesson 3
 4. **Equipment Durability:** No major hardware failures
-5. **Staff Confidence:** Sao Mai staff handle 90%+ of issues independently
+5. **Staff Confidence:** Staff handle 90%+ of issues independently
 
 ---
 
@@ -142,7 +140,7 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 **Mitigation:** Test deployment beforehand, backup installers, portable NVDA version
 
 ### Risk 3: Language Barriers
-**Mitigation:** All documentation in Vietnamese/English, Sao Mai staff bilingual
+**Mitigation:** All documentation in Vietnamese/English
 
 ### Risk 4: No Internet for Troubleshooting
 **Mitigation:** 100% offline stack, USB kit contains everything, printed guides

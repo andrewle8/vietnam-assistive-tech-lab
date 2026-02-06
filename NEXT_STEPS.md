@@ -73,7 +73,7 @@
 
 ## STEP 3: Prepare Student USB Drives (Proposed)
 
-Since students share PCs and cannot keep them, each student gets a personal USB drive to store their files. This step is optional and depends on the final approach chosen with Sao Mai Center.
+Since students share PCs and cannot keep them, each student gets a personal USB drive to store their files. This step is optional and depends on the final approach chosen.
 
 1. **Purchase USB drives** (one per student, 4GB+ recommended)
 

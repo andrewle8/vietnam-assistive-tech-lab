@@ -63,7 +63,7 @@ Before submitting a PR, verify:
 
 ### High Priority
 - **Vietnamese Translation:** Many documents need professional translation
-- **Sao Mai Materials:** Integration of official training content
+- **Vietnamese Training Materials:** Integration of official training content
 
 ### Medium Priority
 - **Script Optimization:** Reduce installation time
