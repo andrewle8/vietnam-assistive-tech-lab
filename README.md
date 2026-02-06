@@ -139,7 +139,6 @@ For reference, the original software sources:
 ### Pre-Deployment
 - Build USB deployment kit
 - Test scripts on one PC
-- Coordinate with Sao Mai Center
 - Prepare all documentation
 
 ### Day 1 (6-8 hours): Installation
