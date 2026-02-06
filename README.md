@@ -234,8 +234,7 @@ For questions about this deployment:
 
 ## Version History
 
-- **v1.0** (February 2026): Initial deployment kit created
-- **v1.1** (April 2026): Post-deployment updates and lessons learned
+- **v0.1** (February 2026): Initial deployment kit created
 
 ---
 
