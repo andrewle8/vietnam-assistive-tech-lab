@@ -19,7 +19,7 @@ Use this checklist to ensure you're fully prepared before deployment.
 - [ ] Test complete offline deployment on one PC
 
 ### Hardware Preparation
-- [ ] All 10 Windows 11 PCs fully updated
+- [ ] All 10 Dell Latitude 5420 laptops upgraded from Win 10 Pro to Win 11 Pro
 - [ ] Windows updates completed (before disabling internet)
 - [ ] Manufacturer bloatware removed
 - [ ] User accounts created (document passwords)
@@ -58,7 +58,7 @@ Use this checklist to ensure you're fully prepared before deployment.
 ## Equipment Inventory
 
 ### For Each of 10 Stations
-- [ ] Windows 11 PC
+- [ ] Dell Latitude 5420 (Win 11 Pro)
 - [ ] Wired headphones
 - [ ] Label (PC-1 through PC-10)
 - [ ] Student USB drive (if using proposed USB approach)

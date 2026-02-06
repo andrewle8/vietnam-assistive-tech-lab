@@ -2,7 +2,7 @@
 
 **Project:** Blind Children's Computer Lab - Vietnam Orphanages
 **Timeline:** April 2026 deployment (1-3 days on-site)
-**Equipment:** 10 Windows 11 PCs / Laptops (x86-64)
+**Equipment:** 10x Dell Latitude 5420 (refurbished, i5-1145G7, 8GB RAM, 256GB SSD)
 **Users:** 10+ children, complete beginners to basic computer familiarity
 
 ---
@@ -23,7 +23,7 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 
 | Component | Version | License | Notes |
 |-----------|---------|---------|-------|
-| **Windows 11** | Pre-installed OEM | OEM License | Already on purchased PCs |
+| **Windows 11** | Upgraded from Win 10 Pro | OEM License | Dell Latitude 5420 ships with Win 10 Pro, free upgrade to 11 |
 | **NVDA** | 2025.3.2 (latest stable) | GPL-2.0 | Includes Vietnamese interface |
 | **Sao Mai VNVoice** | v1.0 | Free for non-commercial | Vietnamese TTS (Minh Du/Mai Dung voices), SAPI5 |
 | **Sao Mai Typing Tutor (SMTT)** | Latest | Free | Vietnamese typing lessons with speech |

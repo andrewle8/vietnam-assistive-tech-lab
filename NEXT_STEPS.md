@@ -17,7 +17,7 @@ After the script finishes, verify the `Installers/` folder contains all files (s
 
 ## STEP 2: Test Deployment (Next Week)
 
-1. **Find a test Windows 11 PC** (or use one of the 10 PCs you purchased)
+1. **Use one of the 10 Dell Latitude 5420 laptops as a test unit**
 
 2. **Copy the entire `F:\Vietnam-Lab-Kit` folder to a USB drive** (8GB or larger)
 
@@ -66,13 +66,13 @@ Since students share PCs and cannot keep them, each student gets a personal USB 
 
 ---
 
-## STEP 4: Prepare the 10 Windows 11 PCs (1-2 Weeks Before April)
+## STEP 4: Prepare the 10 Dell Latitude 5420 Laptops (1-2 Weeks Before April)
 
-**For each PC:**
+**For each Dell Latitude 5420:**
 
-1. **Update Windows fully**
-   - Run Windows Update multiple times
-   - Install all updates (may take 2-3 hours per PC)
+1. **Upgrade Windows 10 Pro to Windows 11 Pro** (free via Windows Update)
+   - Run Windows Update to trigger the Win 11 upgrade
+   - Install all updates (may take 2-3 hours per laptop)
    - Restart as needed
 
 2. **Remove bloatware**
@@ -158,5 +158,4 @@ Since students share PCs and cannot keep them, each student gets a personal USB 
 
 ---
 
-**You're on track for April 2026 deployment!**
-Start with downloading the software installers this week, then test on one PC to make sure everything works.
+**Target: April 2026 deployment.**

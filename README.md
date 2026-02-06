@@ -2,7 +2,7 @@
 
 **Project:** Blind Children's Computer Lab - Vietnam Orphanages
 **Deployment:** April 2026 (1-3 days on-site)
-**Equipment:** 10 Windows 11 PCs / Laptops (x86-64)
+**Equipment:** 10x Dell Latitude 5420 (refurbished, i5-1145G7, 8GB RAM, 256GB SSD)
 
 ---
 
@@ -37,12 +37,12 @@ This repository contains everything needed to deploy a fully **offline, open-sou
 
 > **NVDA Add-ons:** [NVDA Add-on Store](https://addonstore.nvaccess.org/)
 
-> **Architecture:** This kit assumes Windows 11 on **x86-64** (Intel/AMD). If the PCs use ARM processors (e.g. Snapdragon), the software stack will need to be replaced with ARM-compatible builds.
+> **Architecture:** This kit targets the Dell Latitude 5420 on **x86-64** (Intel i5-1145G7). ARM processors (e.g. Snapdragon) are not supported due to emulation latency with screen readers.
 
 **Total Software Cost: $0**
 
-### Hardware (Already Purchased)
-- 10x Windows 11 PCs
+### Hardware
+- 10x Dell Latitude 5420 (refurbished, Grade A, Win 10 Pro — free upgrade to 11)
 - Headphones
 
 ---
