@@ -24,6 +24,7 @@ $paths = @{
     LibreOffice = Join-Path $DestinationRoot "LibreOffice"
     Firefox    = Join-Path $DestinationRoot "Firefox"
     Utilities  = Join-Path $DestinationRoot "Utilities"
+    Rclone     = Join-Path $DestinationRoot "Utilities\rclone"
     Educational = Join-Path $DestinationRoot "Educational"
 }
 
@@ -94,7 +95,7 @@ $leapDownloads = @(
 $successCount = 0
 $failCount = 0
 $skippedCount = 0
-$totalItems = $downloads.Count + $leapDownloads.Count
+$totalItems = $downloads.Count + $leapDownloads.Count + 1  # +1 for rclone
 
 # Download direct installer files
 foreach ($item in $downloads) {
@@ -156,6 +157,52 @@ foreach ($item in $leapDownloads) {
     } catch {
         Write-Host "[FAIL] $($_.Exception.Message)" -ForegroundColor Red
         if (Test-Path $zipPath) { Remove-Item -Path $zipPath -Force -ErrorAction SilentlyContinue }
+        $failCount++
+    }
+}
+
+# Download rclone (portable zip from GitHub)
+$rcloneIndex = $downloads.Count + $leapDownloads.Count + 1
+Write-Host "`n[$rcloneIndex/$totalItems] Rclone (Google Drive sync tool)" -ForegroundColor Yellow
+
+$rcloneExeDest = Join-Path $paths.Rclone "rclone.exe"
+if (Test-Path $rcloneExeDest) {
+    Write-Host "[SKIP] Already exists: $rcloneExeDest" -ForegroundColor DarkYellow
+    $skippedCount++
+} else {
+    $rcloneVersion = "v1.68.2"
+    $rcloneZipName = "rclone-$rcloneVersion-windows-amd64.zip"
+    $rcloneUrl = "https://github.com/rclone/rclone/releases/download/$rcloneVersion/$rcloneZipName"
+    $rcloneZipPath = Join-Path $paths.Rclone $rcloneZipName
+    $rcloneTempDir = Join-Path $paths.Rclone "temp-extract"
+
+    try {
+        Write-Host "Downloading: $rcloneZipName" -ForegroundColor Cyan
+        $ProgressPreference = 'SilentlyContinue'
+        Invoke-WebRequest -Uri $rcloneUrl -OutFile $rcloneZipPath -UseBasicParsing
+        $ProgressPreference = 'Continue'
+
+        Write-Host "Extracting rclone.exe..." -ForegroundColor Cyan
+        Expand-Archive -Path $rcloneZipPath -DestinationPath $rcloneTempDir -Force
+
+        # rclone zip contains a subfolder like rclone-v1.68.2-windows-amd64/rclone.exe
+        $extractedExe = Get-ChildItem -Path $rcloneTempDir -Filter "rclone.exe" -Recurse | Select-Object -First 1
+        if ($extractedExe) {
+            Copy-Item -Path $extractedExe.FullName -Destination $rcloneExeDest -Force
+            Write-Host "[OK] Extracted rclone.exe" -ForegroundColor Green
+            $successCount++
+        } else {
+            Write-Host "[FAIL] rclone.exe not found in archive" -ForegroundColor Red
+            $failCount++
+        }
+
+        # Clean up
+        Remove-Item -Path $rcloneZipPath -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path $rcloneTempDir -Recurse -Force -ErrorAction SilentlyContinue
+    } catch {
+        Write-Host "[FAIL] $($_.Exception.Message)" -ForegroundColor Red
+        if (Test-Path $rcloneZipPath) { Remove-Item -Path $rcloneZipPath -Force -ErrorAction SilentlyContinue }
+        if (Test-Path $rcloneTempDir) { Remove-Item -Path $rcloneTempDir -Recurse -Force -ErrorAction SilentlyContinue }
         $failCount++
     }
 }
