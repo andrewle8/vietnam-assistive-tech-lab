@@ -31,6 +31,7 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 | **Firefox** | 147 | MPL-2.0 | Better accessibility than Chrome, offline installer |
 | **VLC Media Player** | 3.0.23 | GPL-2.0 | Media playback |
 | **VLC NVDA Add-on** | Latest | GPL-2.0 | VLC accessibility enhancement |
+| **Access8Math NVDA Add-on** | 4.3 | GPL-3.0 | Math content reading/writing via speech |
 | **LEAP Games** | Latest | Apache-2.0 | Educational audio games (Tic-Tac-Toe, Tennis, Curve) |
 
 ### Total Software Cost: $0

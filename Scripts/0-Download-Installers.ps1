@@ -47,6 +47,11 @@ $downloads = @(
         Destination = Join-Path $paths.NVDAAddons "VLC-2025.1.0.nvda-addon"
     },
     @{
+        Name        = "Access8Math NVDA Add-on"
+        Filename    = "access8math-4.3.nvda-addon"
+        Destination = Join-Path $paths.NVDAAddons "access8math-4.3.nvda-addon"
+    },
+    @{
         Name        = "Sao Mai VNVoice"
         Filename    = "SaoMai_voice1.0.exe"
         Destination = Join-Path $paths.SaoMai "SaoMai_voice1.0.exe"

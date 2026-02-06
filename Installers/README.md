@@ -19,7 +19,8 @@ https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/tag/installers-
 | Folder | File | Size |
 |--------|------|------|
 | `NVDA/` | `nvda_2025.3.2.exe` | ~50 MB |
-| `NVDA/addons/` | `VLC.nvda-addon` | ~1 MB |
+| `NVDA/addons/` | `VLC-2025.1.0.nvda-addon` | ~1 MB |
+| `NVDA/addons/` | `access8math-4.3.nvda-addon` | ~1 MB |
 | `SaoMai/` | `SaoMai_VNVoice_1.0.exe` | — |
 | `SaoMai/` | `SaoMai_TypingTutor.exe` | — |
 | `LibreOffice/` | `LibreOffice_26.2.0_Win_x86-64.msi` | ~300 MB |
@@ -37,7 +38,8 @@ Installers/
 │   ├── nvda_2025.3.2.exe
 │   ├── nvda-portable.zip           (backup)
 │   └── addons/
-│       └── VLC.nvda-addon
+│       ├── VLC-2025.1.0.nvda-addon
+│       └── access8math-4.3.nvda-addon
 ├── SaoMai/
 │   ├── SaoMai_VNVoice_1.0.exe
 │   └── SaoMai_TypingTutor.exe

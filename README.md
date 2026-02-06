@@ -19,10 +19,9 @@ This repository contains everything needed to deploy a fully **offline, open-sou
 
 ---
 
-## What's Included
--  Note: If office is provided with Windows 11 PCs/Laptops, omit LibreOffice
+## Software Stack (All Free/Open Source)
 
-### Software Stack (All Free/Open Source)
+> If Office is already provided with the PCs, omit LibreOffice.
 | Component | License | Purpose |
 |-----------|---------|---------|
 | **NVDA 2025.3.2** | GPL-2.0 | Screen reader with Vietnamese interface |
@@ -32,7 +31,10 @@ This repository contains everything needed to deploy a fully **offline, open-sou
 | **Firefox 147** | MPL-2.0 | Accessible web browser |
 | **VLC Media Player 3.0.23** | GPL-2.0 | Media playback |
 | **VLC NVDA Add-on** | GPL-2.0 | VLC accessibility enhancement for NVDA |
+| **Access8Math NVDA Add-on** | GPL-3.0 | Math content reading/writing via speech |
 | **LEAP Games** | Apache-2.0 | Educational audio games for blind children |
+
+> **NVDA Add-ons:** [NVDA Add-on Store](https://addonstore.nvaccess.org/)
 
 > **Architecture:** This kit assumes Windows 11 on **x86-64** (Intel/AMD). If the PCs use ARM processors (e.g. Snapdragon), the software stack will need to be replaced with ARM-compatible builds.
 
@@ -115,80 +117,44 @@ Vietnam-Lab-Kit/
 
 ## Download URLs
 
-All installers are hosted on GitHub Releases and downloaded automatically by `0-Download-Installers.ps1`. No manual downloads required.
+All installers are downloaded automatically by `0-Download-Installers.ps1` from [GitHub Releases](https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/tag/installers-v1). See `Installers/README.md` for the full file list and original source URLs.
 
-**GitHub Releases:** https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/tag/installers-v1
+---
 
-For reference, the original software sources:
+## Optional Software (Under Evaluation)
 
-1. **NVDA:** https://www.nvaccess.org/download/
-2. **Sao Mai VNVoice:** https://saomaicenter.org/en/downloads
-3. **Sao Mai Typing Tutor:** https://saomaicenter.org/en/downloads/vietnamese-talking-software/sao-mai-typing-tutor-smtt
-4. **LibreOffice:** https://www.libreoffice.org/download/download/
-5. **Firefox:** https://www.mozilla.org/en-US/firefox/
-6. **VLC:** https://www.videolan.org/vlc/
-7. **VLC NVDA Add-on:** https://addons.nvda-project.org/
-8. **LEAP Games:** https://www.gamesfortheblind.org/ (Tic-Tac-Toe, Tennis, Curve)
+Not yet in deployment scripts — to be tested separately.
+
+| Software | Purpose | Notes |
+|----------|---------|-------|
+| **Python 3.14** | Programming + IDLE editor | Works with NVDA, ~30MB |
+| **Audacity 3.7** | Audio recording/editing | GPL-3.0, ~30MB |
+| **VSCodium** | Open-source code editor | Best NVDA support of any IDE |
+| **Quorum Studio** | IDE for blind students | Purpose-built accessible language |
 
 ---
 
 ## Deployment Timeline
 
-### Pre-Deployment
-- Build USB deployment kit
-- Test scripts on one PC
-- Prepare all documentation
+See `Documentation/Deployment-Plan.md` for the full plan. Summary:
 
-### Day 1 (6-8 hours): Installation
-- Physical setup and PC arrangement
-- Run automated deployment scripts
-- Verify all 10 stations
-
-### Day 2 (6-8 hours): Configuration & Testing
-- Fix any issues from Day 1
-- Deploy training materials
-- Train staff on troubleshooting
-- Pilot test with students
-
-### Day 3 (4-6 hours): Handoff
-- Final testing and validation
-- Staff training on maintenance
-- Documentation handoff
-- Schedule follow-up support
+- **Pre-Deployment:** Build USB kit, test on one PC
+- **Day 1 (6-8h):** Install software on all 10 PCs
+- **Day 2 (6-8h):** Configure, test, train staff
+- **Day 3 (4-6h):** Final testing and handoff
 
 ---
 
+## Student Personal Files (Proposed)
 
-## Student Personal Files (Proposed Solution)
+Each student gets a labeled USB drive (`STU-001`, etc.) with pre-created folders (Documents, Audio, Schoolwork). Optional Google Drive backup via rclone syncs every 15 minutes if internet is available.
 
-Since the PCs are shared and students cannot keep them, we need a way for each student to save and access their personal files across sessions. The current proposed approach uses **personal USB drives**:
-
-### How It Works
-1. Each student receives a USB drive labeled with a unique ID (e.g., `STU-001`, `STU-002`)
-2. The USB contains pre-created folders: **Documents**, **Audio**, and **Schoolwork**
-3. Students plug in their USB when they check out a PC, and save all work to the USB
-4. When done, they take their USB with them — their files go wherever they go
-
-### Cloud Backup (Optional, requires internet)
-If the lab has internet access, the laptops can automatically back up student USBs to Google Drive every 15 minutes using rclone. This protects against lost or damaged USB drives. Backups are organized per student under `VietnamLabBackups/STU-###/` on Google Drive.
-
-### Scripts
 | Script | Purpose |
 |--------|---------|
-| `4-Prepare-Student-USB.ps1` | Formats and labels a USB drive for one student (sets volume label, creates folders, writes a hidden `.student-id` file) |
-| `5-Configure-Loaner-Laptop.ps1` | Configures a lab PC for USB backups — deploys rclone, creates a scheduled backup task, sets AutoPlay to open folders, adds a "My USB" desktop shortcut |
-| `backup-usb.ps1` | Runs on a schedule to sync student USB contents to Google Drive via rclone |
-| `Setup-Rclone-Auth.ps1` | One-time setup to authorize rclone with a Google Drive account |
-
-> **Note:** This approach is still under evaluation. Alternatives (e.g., per-student Windows profiles, a shared network folder) may be considered depending on the on-site environment.
-
----
-
-## Language Support
-
-All materials available in:
-- **Vietnamese** (primary)
-- **English** (backup/technical reference)
+| `4-Prepare-Student-USB.ps1` | Format and label a student USB |
+| `5-Configure-Loaner-Laptop.ps1` | Set up a lab PC for USB backups |
+| `backup-usb.ps1` | Scheduled USB-to-Google-Drive sync |
+| `Setup-Rclone-Auth.ps1` | One-time Google Drive authorization |
 
 ---
 
@@ -198,6 +164,14 @@ This deployment kit uses 100% free and open-source software:
 - Code and scripts: MIT License
 - Documentation: CC BY-SA 4.0
 - Individual software components: See respective licenses (GPL, MPL, LGPL)
+
+---
+
+## License
+
+- Code and scripts: MIT License
+- Documentation: CC BY-SA 4.0
+- Individual software: See respective licenses (GPL, MPL, LGPL)
 
 ---
 
@@ -212,8 +186,7 @@ This deployment kit uses 100% free and open-source software:
 
 ## Contact
 
-For questions about this deployment:
-- **Project Lead:** Andrew Le - andrewle@monarchmissions.org
+**Project Lead:** Andrew Le - andrewle@monarchmissions.org
 
 ---
 
@@ -223,5 +196,4 @@ For questions about this deployment:
 
 ---
 
-**Last Updated:** February 5, 2026
-**Status:** Ready for deployment preparation
+**Last Updated:** February 6, 2026
