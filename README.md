@@ -95,12 +95,14 @@ Vietnam-Lab-Kit/
 ├── Config/               # Pre-configured settings
 │   ├── nvda-config/      # NVDA Vietnamese profile
 │   └── firefox-profile/  # Accessibility-optimized Firefox
+├── HANDOFF.md            # One-page reference card for center staff
 ├── Scripts/              # PowerShell deployment automation
 │   ├── 1-Install-All.ps1
 │   ├── 2-Verify-Installation.ps1
 │   ├── 3-Configure-NVDA.ps1
 │   ├── 4-Prepare-Student-USB.ps1    # (Proposed) Set up a student USB drive
 │   ├── 5-Configure-Loaner-Laptop.ps1 # (Proposed) Configure PC for USB backups
+│   ├── 6-Health-Check.ps1           # Post-deployment diagnostic check
 │   ├── backup-usb.ps1               # (Proposed) Scheduled USB-to-cloud sync
 │   ├── Setup-Rclone-Auth.ps1        # (Proposed) One-time Google Drive auth
 │   └── README.txt

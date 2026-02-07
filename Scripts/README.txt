@@ -58,12 +58,22 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
 Then run scripts normally.
 
+POST-DEPLOYMENT:
+-----------------
+
+6. Run: 6-Health-Check.ps1 (anytime, after deployment)
+   → Checks all software is still installed
+   → Verifies NVDA is running and auto-start is enabled
+   → Reports disk space and USB drives
+   → Creates health-check.log file
+
 LOGS:
 -----
 All scripts create log files in the Scripts folder:
 - installation.log
 - verification.log
 - configuration.log
+- health-check.log
 
 Review logs if any issues occur.
 
