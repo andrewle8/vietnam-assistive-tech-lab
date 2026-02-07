@@ -44,6 +44,7 @@ This repository contains everything needed to deploy a fully **offline, open-sou
 ### Hardware
 - 10x Dell Latitude 5420 (refurbished, Grade A, Win 10 Pro — free upgrade to 11)
 - Headphones
+- Student Personal USB Drives
 
 ---
 
