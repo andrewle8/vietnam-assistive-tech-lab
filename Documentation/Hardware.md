@@ -29,6 +29,11 @@ Serviceability (Latitude is built for easy service):
 
 Upgradeability: $18-25 for additional stick of 8GB DDR4-3200 SO-DIMM RAM. Easily available for at least 10 years.
 
+Meets all Win11 Upgrade requirements:
+- i5-1145G7 (11th gen Intel)
+- TPM 2.0 built-in
+- UEFI + Secure Boot capable
+
 ### 10x Laptop Cost
 
 | | Cost |
