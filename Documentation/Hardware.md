@@ -17,7 +17,6 @@
 | **Keyboard** | 1.5 mm key travel (Tactile keyboard feel is crucial), spill-resistant, full-size arrow keys|
 | **Webcam** | Privacy shutter |
 | **Microphone** | Dual-array noise-reducing |
-| **Battery** | 3-cell 42 Wh or 4-cell 63 Wh, ExpressCharge — ~10-19 h depending on config |
 | **Wi-Fi / BT** | Wi-Fi 6 AX201 (802.11ax, 2x2) — Bluetooth 5.1 |
 | **Display** | 14" FHD IPS (Irrelevant) |
 | **Weight** | 3.03 lbs |
