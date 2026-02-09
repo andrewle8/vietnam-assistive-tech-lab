@@ -61,7 +61,7 @@ Used at:
 - National Federation of the Blind recommended
 - JAWS/NVDA training centers
   
-Studio monitor design with flat frequency response. Clear at critical speech range 2000-8000 Hz. Critical for NVDA speech at fast rates (blind users often run 200-400% speed).
+Flat Freq. response (clear at critical speech range 2000-8000 Hz). Critical for NVDA speech at fast rates.
 
 ### Detachable Cable
 Cable breaks → Replace $15 cable instead of $79 headphone. Only failure point.
