@@ -19,7 +19,7 @@
 | **Microphone** | Dual-array noise-reducing |
 | **Battery** | 3-cell 42 Wh or 4-cell 63 Wh, ExpressCharge — ~10-19 h depending on config |
 | **Wi-Fi / BT** | Wi-Fi 6 AX201 (802.11ax, 2x2) — Bluetooth 5.1 |
-| **Display** | 14" FHD IPS |
+| **Display** | 14" FHD IPS (Irrelevant) |
 | **Weight** | 3.03 lbs |
 | **OS** | Windows 10 Pro (free upgrade to 11) |
 | **Warranty** | 100-day included, 1-year extended for $49 |
