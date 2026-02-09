@@ -72,8 +72,6 @@ Required for classrooms. 10 screen readers running simultaneously need sound iso
 ### ATHM40x vs M20x
 Detachable cable, better clarity, build quality and comfort are worth the $30 difference for a long term deployment.
 
-**Audio-Technica Educational Program**  
-Email: edu@audio-technica.com   
 
 ### Specs
 
@@ -92,6 +90,9 @@ Email: edu@audio-technica.com
 | ATH-M40x | 10 | $80 | $800 |
 | Spare cables | 3 | $18 | $54 |
 | **Total** | | | **$854** |
+
+**Audio-Technica Educational Program**  
+Email: edu@audio-technica.com
 
 ---
 ## - Personal Student USB Drives
