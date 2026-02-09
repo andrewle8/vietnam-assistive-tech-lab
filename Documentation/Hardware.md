@@ -65,7 +65,7 @@ Used at:
 Studio monitor design with flat frequency response. Clear at critical speech range 2000-8000 Hz. Critical for NVDA speech at fast rates (blind users often run 200-400% speed).
 
 ### Detachable Cable
-Cable breaks → Replace $15 cable instead of $79 headphone. Common failure point.
+Cable breaks → Replace $15 cable instead of $79 headphone. Only failure point.
 
 ### Closed-Back
 Required for classrooms. 10 screen readers running simultaneously need sound isolation.
