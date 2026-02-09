@@ -17,8 +17,8 @@ This repository contains everything needed to deploy a fully offline assistive t
 |-----------|---------|---------|
 | **NVDA 2025.3.2** | GPL-2.0 | Screen reader with Vietnamese interface |
 | **Sao Mai VNVoice** | Free (non-commercial) | Vietnamese text-to-speech (SAPI5) |
-| **Sao Mai Typing Tutor** | Free | Vietnamese typing lessons with audio |
-| **LibreOffice 26.2.0** | MPL-2.0 | Office suite (Word/Excel alternative) |
+| **Sao Mai Typing Tutor** | Free (non-commercial) | Vietnamese typing lessons with audio |
+| **LibreOffice 26.2.0** | MPL-2.0 | Office suite |
 | **Firefox 147** | MPL-2.0 | Accessible web browser |
 | **VLC Media Player 3.0.23** | GPL-2.0 | Media playback |
 | **VLC NVDA Add-on** | GPL-2.0 | VLC accessibility enhancement for NVDA |
