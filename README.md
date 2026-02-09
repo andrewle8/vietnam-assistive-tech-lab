@@ -46,7 +46,7 @@ This repository contains everything needed to deploy a fully offline assistive t
    .\0-Download-Installers.ps1
    ```
 
-2. **Copy entire folder to USB drive** (8GB+)
+2. **Copy entire folder to USB drive**
 
 3. **Run deployment scripts** on each PC:
    ```powershell
