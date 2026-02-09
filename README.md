@@ -91,7 +91,7 @@ This deployment kit uses 100% free and open-source software:
 
 ## Contact
 
-**Project Lead:** Andrew Le - andrewle@monarchmissions.org
+**Project Lead:** Andrew Le - andrew@monarchmissions.org
 
 ---
 
