@@ -128,16 +128,9 @@ See `Documentation/Deployment-Plan.md` for the full plan. Summary:
 
 ---
 
-## Student Personal Files (Proposed)
+## Student Personal USB Drives
 
-Each student gets a braille-labeled USB drive (`STU-001`, etc.) with pre-created folders (Documents, Audio, Schoolwork). Optional Google Drive backup via rclone syncs every 15 minutes if internet is available.
-
-| Script | Purpose |
-|--------|---------|
-| `4-Prepare-Student-USB.ps1` | Format and label a student USB |
-| `5-Configure-Loaner-Laptop.ps1` | Set up a lab PC for USB backups |
-| `backup-usb.ps1` | Scheduled USB-to-Google-Drive sync |
-| `Setup-Rclone-Auth.ps1` | One-time Google Drive authorization |
+Each student gets a braille-labeled USB drive (`STU-001`, etc.) with pre-created folders (Documents, Audio, Schoolwork).
 
 ---
 
