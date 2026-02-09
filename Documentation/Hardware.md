@@ -1,7 +1,7 @@
 # Deployment Hardware
 
 **Budget:** $300-350 per unit (10 units needed)
-**Requirements:** x86-64, 8GB RAM, 256GB+ SSD, NVDA-compatible
+**Requirements:** x86-64 CPU: NVDA-compatible
 
 ## **Decision:**
 **$319/unit** from Dell Refurbished (Grade A, Windows 10 Pro — free upgrade to Win 11).
