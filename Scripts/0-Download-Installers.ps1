@@ -26,7 +26,9 @@ $paths = @{
     Audacity   = Join-Path $DestinationRoot "Audacity"
     Quorum     = Join-Path $DestinationRoot "Quorum"
     Utilities  = Join-Path $DestinationRoot "Utilities"
+    UniKey     = Join-Path $DestinationRoot "Utilities\UniKey"
     Rclone     = Join-Path $DestinationRoot "Utilities\rclone"
+    Kiwix      = Join-Path $DestinationRoot "Kiwix"
     Educational = Join-Path $DestinationRoot "Educational"
 }
 
@@ -67,6 +69,21 @@ $downloads = @(
         Name        = "Focus Highlight NVDA Add-on"
         Filename    = "focusHighlight-2.4.nvda-addon"
         Destination = Join-Path $paths.NVDAAddons "focusHighlight-2.4.nvda-addon"
+    },
+    @{
+        Name        = "Audacity Access Enhancement NVDA Add-on"
+        Filename    = "audacityAccessEnhancement-3.3.2.nvda-addon"
+        Destination = Join-Path $paths.NVDAAddons "audacityAccessEnhancement-3.3.2.nvda-addon"
+    },
+    @{
+        Name        = "Clock and Calendar NVDA Add-on"
+        Filename    = "clock-20250714.nvda-addon"
+        Destination = Join-Path $paths.NVDAAddons "clock-20250714.nvda-addon"
+    },
+    @{
+        Name        = "MathCAT NVDA Add-on"
+        Filename    = "MathCAT.nvda-addon"
+        Destination = Join-Path $paths.NVDAAddons "MathCAT.nvda-addon"
     },
     @{
         Name        = "Sao Mai VNVoice"
@@ -127,7 +144,7 @@ $leapDownloads = @(
 $successCount = 0
 $failCount = 0
 $skippedCount = 0
-$totalItems = $downloads.Count + $leapDownloads.Count + 1  # +1 for rclone
+$totalItems = $downloads.Count + $leapDownloads.Count + 4  # +1 UniKey, +1 rclone, +1 Kiwix, +1 Wikipedia ZIM
 
 # Download direct installer files
 foreach ($item in $downloads) {
@@ -193,8 +210,39 @@ foreach ($item in $leapDownloads) {
     }
 }
 
+# Download UniKey (Vietnamese keyboard - portable zip from GitHub Release)
+$unikeyIndex = $downloads.Count + $leapDownloads.Count + 1
+Write-Host "`n[$unikeyIndex/$totalItems] UniKey (Vietnamese keyboard)" -ForegroundColor Yellow
+
+$unikeyExeDest = Join-Path $paths.UniKey "UniKeyNT.exe"
+if (Test-Path $unikeyExeDest) {
+    Write-Host "[SKIP] Already exists: $unikeyExeDest" -ForegroundColor DarkYellow
+    $skippedCount++
+} else {
+    $unikeyZipName = "unikey46RC2-230919-win64.zip"
+    $unikeyUrl = "$releaseBase/$unikeyZipName"
+    $unikeyZipPath = Join-Path $paths.UniKey $unikeyZipName
+
+    try {
+        Write-Host "Downloading: $unikeyZipName" -ForegroundColor Cyan
+        $ProgressPreference = 'SilentlyContinue'
+        Invoke-WebRequest -Uri $unikeyUrl -OutFile $unikeyZipPath -UseBasicParsing
+        $ProgressPreference = 'Continue'
+
+        Write-Host "Extracting UniKey..." -ForegroundColor Cyan
+        Expand-Archive -Path $unikeyZipPath -DestinationPath $paths.UniKey -Force
+        Remove-Item -Path $unikeyZipPath -Force -ErrorAction SilentlyContinue
+        Write-Host "[OK] Extracted UniKey" -ForegroundColor Green
+        $successCount++
+    } catch {
+        Write-Host "[FAIL] $($_.Exception.Message)" -ForegroundColor Red
+        if (Test-Path $unikeyZipPath) { Remove-Item -Path $unikeyZipPath -Force -ErrorAction SilentlyContinue }
+        $failCount++
+    }
+}
+
 # Download rclone (portable zip from GitHub)
-$rcloneIndex = $downloads.Count + $leapDownloads.Count + 1
+$rcloneIndex = $downloads.Count + $leapDownloads.Count + 2
 Write-Host "`n[$rcloneIndex/$totalItems] Rclone (Google Drive sync tool)" -ForegroundColor Yellow
 
 $rcloneExeDest = Join-Path $paths.Rclone "rclone.exe"
@@ -235,6 +283,64 @@ if (Test-Path $rcloneExeDest) {
         Write-Host "[FAIL] $($_.Exception.Message)" -ForegroundColor Red
         if (Test-Path $rcloneZipPath) { Remove-Item -Path $rcloneZipPath -Force -ErrorAction SilentlyContinue }
         if (Test-Path $rcloneTempDir) { Remove-Item -Path $rcloneTempDir -Recurse -Force -ErrorAction SilentlyContinue }
+        $failCount++
+    }
+}
+
+# Download Kiwix portable (direct from kiwix.org - too large for GitHub Release)
+$kiwixIndex = $downloads.Count + $leapDownloads.Count + 3
+Write-Host "`n[$kiwixIndex/$totalItems] Kiwix (offline encyclopedia reader)" -ForegroundColor Yellow
+
+$kiwixExeDest = Join-Path $paths.Kiwix "kiwix-desktop.exe"
+if (Test-Path $kiwixExeDest) {
+    Write-Host "[SKIP] Already exists: $kiwixExeDest" -ForegroundColor DarkYellow
+    $skippedCount++
+} else {
+    $kiwixZipName = "kiwix-desktop_windows_x64_2.5.1.zip"
+    $kiwixUrl = "https://download.kiwix.org/release/kiwix-desktop/$kiwixZipName"
+    $kiwixZipPath = Join-Path $paths.Kiwix $kiwixZipName
+
+    try {
+        Write-Host "Downloading: $kiwixZipName (150 MB)" -ForegroundColor Cyan
+        $ProgressPreference = 'SilentlyContinue'
+        Invoke-WebRequest -Uri $kiwixUrl -OutFile $kiwixZipPath -UseBasicParsing
+        $ProgressPreference = 'Continue'
+
+        Write-Host "Extracting Kiwix..." -ForegroundColor Cyan
+        Expand-Archive -Path $kiwixZipPath -DestinationPath $paths.Kiwix -Force
+        Remove-Item -Path $kiwixZipPath -Force -ErrorAction SilentlyContinue
+        Write-Host "[OK] Extracted Kiwix" -ForegroundColor Green
+        $successCount++
+    } catch {
+        Write-Host "[FAIL] $($_.Exception.Message)" -ForegroundColor Red
+        if (Test-Path $kiwixZipPath) { Remove-Item -Path $kiwixZipPath -Force -ErrorAction SilentlyContinue }
+        $failCount++
+    }
+}
+
+# Download Vietnamese Wikipedia ZIM (direct from kiwix.org - 2 GB)
+$zimIndex = $downloads.Count + $leapDownloads.Count + 4
+Write-Host "`n[$zimIndex/$totalItems] Vietnamese Wikipedia (offline encyclopedia)" -ForegroundColor Yellow
+
+$zimDest = Join-Path $paths.Kiwix "wikipedia_vi_all_nopic_2026-01.zim"
+if (Test-Path $zimDest) {
+    Write-Host "[SKIP] Already exists: $zimDest" -ForegroundColor DarkYellow
+    $skippedCount++
+} else {
+    $zimUrl = "https://download.kiwix.org/zim/wikipedia/wikipedia_vi_all_nopic_2026-01.zim"
+
+    try {
+        Write-Host "Downloading: wikipedia_vi_all_nopic_2026-01.zim (2 GB - this will take a while)" -ForegroundColor Cyan
+        $ProgressPreference = 'SilentlyContinue'
+        Invoke-WebRequest -Uri $zimUrl -OutFile $zimDest -UseBasicParsing
+        $ProgressPreference = 'Continue'
+
+        $fileSize = (Get-Item $zimDest).Length / 1GB
+        Write-Host "[OK] Downloaded Vietnamese Wikipedia ($([math]::Round($fileSize, 1)) GB)" -ForegroundColor Green
+        $successCount++
+    } catch {
+        Write-Host "[FAIL] $($_.Exception.Message)" -ForegroundColor Red
+        if (Test-Path $zimDest) { Remove-Item -Path $zimDest -Force -ErrorAction SilentlyContinue }
         $failCount++
     }
 }

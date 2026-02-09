@@ -121,7 +121,46 @@ if (Test-Path $addonsSourceDir) {
     Write-Log "To add VLC accessibility: download VLC.nvda-addon and place in Installers\NVDA\addons\" "INFO"
 }
 
-# Step 5: Start NVDA now (if not already running)
+# Step 5: Install UniKey (Vietnamese keyboard input)
+Write-Log "Installing UniKey Vietnamese keyboard..." "INFO"
+
+$unikeySourceDir = Join-Path $usbRoot "Installers\Utilities\UniKey"
+$unikeyDestDir = "C:\Program Files\UniKey"
+$publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
+
+if (Test-Path $unikeySourceDir) {
+    try {
+        if (-not (Test-Path $unikeyDestDir)) {
+            New-Item -Path $unikeyDestDir -ItemType Directory -Force | Out-Null
+        }
+        Copy-Item -Path "$unikeySourceDir\*" -Destination $unikeyDestDir -Recurse -Force
+        Write-Log "Copied UniKey to $unikeyDestDir" "SUCCESS"
+
+        # Create startup shortcut so UniKey runs on login
+        $startupPath = Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs\Startup"
+        $unikeyExe = Join-Path $unikeyDestDir "UniKeyNT.exe"
+        if (Test-Path $unikeyExe) {
+            $WshShell = New-Object -ComObject WScript.Shell
+            $shortcut = $WshShell.CreateShortcut((Join-Path $startupPath "UniKey.lnk"))
+            $shortcut.TargetPath = $unikeyExe
+            $shortcut.WorkingDirectory = $unikeyDestDir
+            $shortcut.Description = "UniKey Vietnamese Keyboard"
+            $shortcut.Save()
+            Write-Log "UniKey auto-start on login enabled" "SUCCESS"
+
+            # Start UniKey now
+            Start-Process -FilePath $unikeyExe -WorkingDirectory $unikeyDestDir
+            Write-Log "UniKey started" "SUCCESS"
+        }
+    } catch {
+        Write-Log "ERROR installing UniKey: $($_.Exception.Message)" "ERROR"
+    }
+} else {
+    Write-Log "UniKey not found at $unikeySourceDir (optional)" "INFO"
+    Write-Log "Vietnamese input: use Windows Settings > Language > Add Vietnamese" "INFO"
+}
+
+# Step 6: Start NVDA now (if not already running)
 $nvdaProcess = Get-Process -Name "nvda" -ErrorAction SilentlyContinue
 
 if (-not $nvdaProcess) {
@@ -147,6 +186,7 @@ Write-Host "`nConfiguration Summary:" -ForegroundColor Cyan
 Write-Host "  - NVDA profile configured for Vietnamese" -ForegroundColor White
 Write-Host "  - NVDA add-ons installed (if present in Installers\NVDA\addons\)" -ForegroundColor White
 Write-Host "  - Auto-start on Windows login enabled" -ForegroundColor White
+Write-Host "  - UniKey Vietnamese keyboard installed and auto-starting" -ForegroundColor White
 Write-Host "  - Speech synthesizer set to VNVoice (Minh Du voice)`n" -ForegroundColor White
 
 Write-Host "Next Steps:" -ForegroundColor Yellow

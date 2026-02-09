@@ -24,13 +24,18 @@ https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/tag/installers-
 | `NVDA/addons/` | `speechHistory-2024.3.1.nvda-addon` | ~1 MB |
 | `NVDA/addons/` | `nvdaRemote-2.6.4.nvda-addon` | ~1 MB |
 | `NVDA/addons/` | `focusHighlight-2.4.nvda-addon` | ~1 MB |
+| `NVDA/addons/` | `audacityAccessEnhancement-3.3.2.nvda-addon` | ~1 MB |
+| `NVDA/addons/` | `clock-20250714.nvda-addon` | ~7 MB |
+| `NVDA/addons/` | `MathCAT.nvda-addon` | ~1 MB |
 | `SaoMai/` | `SaoMai_VNVoice_1.0.exe` | — |
 | `SaoMai/` | `SaoMai_TypingTutor.exe` | — |
 | `LibreOffice/` | `LibreOffice_26.2.0_Win_x86-64.msi` | ~300 MB |
 | `Firefox/` | `Firefox Setup 147.0.3.msi` | ~60 MB |
 | `Utilities/` | `VLC-3.0.23.exe` | ~40 MB |
+| `Utilities/UniKey/` | `UniKeyNT.exe` (extracted from zip) | ~1 MB |
 | `Audacity/` | `audacity-win-3.7.3-64bit.exe` | ~30 MB |
 | `Quorum/` | `QuorumStudio-win64.exe` | ~335 MB |
+| `Kiwix/` | Kiwix portable + Vietnamese Wikipedia ZIM | ~2.2 GB |
 | `Educational/` | LEAP Games (Tic-Tac-Toe, Tennis, Curve) | ~50 MB |
 
 ## Pre-Deployment Checklist
@@ -47,7 +52,10 @@ Installers/
 │       ├── access8math-4.3.nvda-addon
 │       ├── speechHistory-2024.3.1.nvda-addon
 │       ├── nvdaRemote-2.6.4.nvda-addon
-│       └── focusHighlight-2.4.nvda-addon
+│       ├── focusHighlight-2.4.nvda-addon
+│       ├── audacityAccessEnhancement-3.3.2.nvda-addon
+│       ├── clock-20250714.nvda-addon
+│       └── MathCAT.nvda-addon
 ├── SaoMai/
 │   ├── SaoMai_VNVoice_1.0.exe
 │   └── SaoMai_TypingTutor.exe
@@ -60,7 +68,12 @@ Installers/
 ├── Quorum/
 │   └── QuorumStudio-win64.exe
 ├── Utilities/
-│   └── VLC-3.0.23.exe
+│   ├── VLC-3.0.23.exe
+│   └── UniKey/
+│       └── UniKeyNT.exe
+├── Kiwix/
+│   ├── kiwix-desktop.exe (+ dependencies)
+│   └── wikipedia_vi_all_nopic_2026-01.zim
 └── Educational/
     ├── TicTacToe/
     │   ├── tictactoe_eng_win64.exe
@@ -79,8 +92,11 @@ Installers/
 - **Firefox:** 147 or newer
 - **LibreOffice:** 26.2.0 or newer
 - **VLC:** Use stable release (3.0.23 or newer)
+- **UniKey:** 4.6 RC2 or newer (Vietnamese keyboard)
 - **Audacity:** 3.7.3 or newer
 - **Quorum Studio:** Latest release from quorumlanguage.com
+- **Kiwix:** 2.5.1 or newer (downloaded directly from kiwix.org)
+- **Vietnamese Wikipedia ZIM:** January 2026 or newer (downloaded from download.kiwix.org)
 
 ## Storage Requirements
 

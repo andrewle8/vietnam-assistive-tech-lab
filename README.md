@@ -22,8 +22,14 @@ This repo contains everything needed to deploy a fully offline assistive technol
 | **Speech History NVDA Add-on** | GPL | Review/copy last 100 NVDA utterances (F12) |
 | **NVDA Remote Support** | GPL | Remote control between NVDA computers for post-deployment support |
 | **Focus Highlight NVDA Add-on** | GPL | Visual focus indicator — helps sighted teachers follow student activity |
+| **Audacity Access Enhancement** | GPL | NVDA scripts for Audacity (position, selection, transport) |
+| **Clock and Calendar NVDA Add-on** | GPL | Time/date announcements (NVDA+F12) |
+| **MathCAT NVDA Add-on** | MIT | Math speech/braille with Vietnamese support |
 | **Audacity 3.7** | GPL-3.0 | Audio recording/editing |
 | **Quorum Studio** | BSD | Accessible IDE purpose-built for blind students |
+| **UniKey 4.6** | GPL | Vietnamese Telex keyboard input |
+| **Kiwix 2.5.1** | GPL-3.0 | Offline encyclopedia reader |
+| **Vietnamese Wikipedia** | CC BY-SA | Offline Vietnamese encyclopedia (2 GB) |
 | **LEAP Games** | Apache-2.0 | Educational audio games for blind children |
 
 > **NVDA Add-ons:** [NVDA Add-on Store](https://addonstore.nvaccess.org/)

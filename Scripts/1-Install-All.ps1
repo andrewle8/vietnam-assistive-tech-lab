@@ -181,6 +181,46 @@ if (Test-Path $leapSourceDir) {
     Write-Log "LEAP Games directory not found at $leapSourceDir (optional)" "INFO"
 }
 
+# Install Kiwix + Vietnamese Wikipedia (portable - copy to local folder and create shortcut)
+Write-Log "Installing Kiwix offline encyclopedia..." "INFO"
+
+$kiwixSourceDir = Join-Path $usbRoot "Installers\Kiwix"
+$kiwixDestDir = "C:\Program Files\Kiwix"
+
+if (Test-Path $kiwixSourceDir) {
+    $kiwixExe = Get-ChildItem -Path $kiwixSourceDir -Filter "kiwix-desktop.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($kiwixExe) {
+        try {
+            if (-not (Test-Path $kiwixDestDir)) {
+                New-Item -Path $kiwixDestDir -ItemType Directory -Force | Out-Null
+            }
+            Copy-Item -Path "$kiwixSourceDir\*" -Destination $kiwixDestDir -Recurse -Force
+            Write-Log "Copied Kiwix to $kiwixDestDir" "SUCCESS"
+
+            # Create desktop shortcut
+            $destExe = Join-Path $kiwixDestDir "kiwix-desktop.exe"
+            if (Test-Path $destExe) {
+                $WshShell = New-Object -ComObject WScript.Shell
+                $shortcutPath = Join-Path $publicDesktop "Wikipedia (Offline).lnk"
+                $shortcut = $WshShell.CreateShortcut($shortcutPath)
+                $shortcut.TargetPath = $destExe
+                $shortcut.WorkingDirectory = $kiwixDestDir
+                $shortcut.Description = "Kiwix - Offline Vietnamese Wikipedia"
+                $shortcut.Save()
+                Write-Log "Created desktop shortcut: Wikipedia (Offline)" "SUCCESS"
+            }
+
+            $successCount++
+        } catch {
+            Write-Log "ERROR installing Kiwix: $($_.Exception.Message)" "ERROR"
+            $failCount++
+        }
+    } else {
+        Write-Log "Kiwix executable not found in $kiwixSourceDir (optional)" "INFO"
+    }
+} else {
+    Write-Log "Kiwix directory not found at $kiwixSourceDir (optional)" "INFO"
+}
 
 Write-Log "`n=== Installation Summary ===" "INFO"
 Write-Log "Successful installations: $successCount" "SUCCESS"
