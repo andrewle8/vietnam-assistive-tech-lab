@@ -1,4 +1,4 @@
-# Deployment Hardware
+# Hardware
 
 **Budget:** $300-350 per unit (10 units needed)
 **Requirements:** x86-64 CPU: NVDA-compatible
