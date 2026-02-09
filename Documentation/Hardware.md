@@ -5,7 +5,7 @@
 
 ## - **Laptop Dell Latitude 5420:**
 (Product ID: dell-latitude-5420-000402)
-**$319/unit** from Dell Refurbished (Grade A, Windows 10 Pro — free upgrade to Win 11).
+**$319/unit** from Dell Refurbished (**Grade A**, Windows 10 Pro — free upgrade to Win 11).
 
 | Spec | Detail |
 |------|--------|
@@ -25,7 +25,7 @@ Serviceability (Latitude is built for easy service):
 
 Upgradeability: $18-25 for additional stick of 8GB DDR4-3200 SO-DIMM RAM. Easily available for at least 10 years.
 
-### 10x Deployment Cost
+### 10x Laptop Cost
 
 | | Cost |
 |---|---|
