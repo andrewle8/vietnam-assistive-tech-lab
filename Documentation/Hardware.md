@@ -5,7 +5,7 @@
 
 ## - **Laptop Dell Latitude 5420:**
 **$319/unit** from Dell Refurbished (**Grade A**).
-< (Product ID: dell-latitude-5420-000402)
+(Product ID: dell-latitude-5420-000402)
 
 | Spec | Detail |
 |------|--------|
