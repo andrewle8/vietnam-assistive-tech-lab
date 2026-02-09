@@ -12,8 +12,13 @@
 | **CPU** | i5-1145G7 (11th gen, 4C/8T, 4.4 GHz) — PassMark: 9,246 multi / 2,673 single |
 | **RAM** | 8GB DDR4-3200 (2 slots, upgradeable) |
 | **Storage** | 256GB NVMe SSD |
-| **Build** | Carbon-fiber, MIL-STD-810G, spill-resistant keyboard |
+| **Build** | Carbon-fiber, MIL-STD-810G |
 | **Ports** | 2x Thunderbolt 4, 2x USB 3.2, RJ-45 Ethernet |
+| **Keyboard** | 1.5 mm key travel, spill-resistant, full-size arrow keys |
+| **Webcam** | Privacy shutter |
+| **Microphone** | Dual-array noise-reducing |
+| **Battery** | 3-cell 42 Wh or 4-cell 63 Wh, ExpressCharge — ~10-19 h depending on config |
+| **Wi-Fi / BT** | Wi-Fi 6 AX201 (802.11ax, 2x2) — Bluetooth 5.1 |
 | **Display** | 14" FHD IPS |
 | **Weight** | 3.03 lbs |
 | **OS** | Windows 10 Pro (free upgrade to 11) |
