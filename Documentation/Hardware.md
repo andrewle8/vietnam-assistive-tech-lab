@@ -14,7 +14,7 @@
 | **Storage** | 256GB NVMe SSD |
 | **Build** | Carbon-fiber, MIL-STD-810G |
 | **Ports** | 2x Thunderbolt 4, 2x USB 3.2, RJ-45 Ethernet |
-| **Keyboard** | 1.5 mm key travel (Keyboard feel is crucial), spill-resistant, full-size arrow keys|
+| **Keyboard** | 1.5 mm key travel (Tactile keyboard feel is crucial), spill-resistant, full-size arrow keys|
 | **Webcam** | Privacy shutter |
 | **Microphone** | Dual-array noise-reducing |
 | **Battery** | 3-cell 42 Wh or 4-cell 63 Wh, ExpressCharge — ~10-19 h depending on config |
