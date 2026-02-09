@@ -64,6 +64,9 @@ Flat Freq. response (clear at critical speech range 2000-8000 Hz). Critical for 
 ### Detachable Cable
 Cable breaks → Replace $15 cable instead of $79 headphone. Only failure point.
 
+### Replacement Earpads
+Replace after heavy use ~3 years. $15-$30 simple installation.
+
 ### Closed-Back
 Required for classrooms. 10 screen readers running simultaneously need sound isolation.
 
