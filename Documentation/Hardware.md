@@ -18,9 +18,11 @@
 | **OS** | Windows 10 Pro (free upgrade to 11) |
 | **Warranty** | 100-day included, 1-year extended for $49 |
 
-Serviceability: replacement keyboards $15-25, batteries $30-50. Laptops will stay plugged in at desks, so refurbished battery wear is not a concern.
+Serviceability: replacement keyboards $15-25,  batteries $30-50.
 
-### 10-Unit Cost
+Upgradeability: $18-25 for additional stick of 8GB DDR4-3200 SO-DIMM RAM. Easily available for at least 10 years.
+
+### 10x Deployment Cost
 
 | | Cost |
 |---|---|
@@ -28,16 +30,15 @@ Serviceability: replacement keyboards $15-25, batteries $30-50. Laptops will sta
 | **10 units** | **$3,190** |
 | With 1-year warranty ($49/unit) | **$3,680** |
 
-### x64 vs ARM
+### x86-x64 vs ARM
 
-ARM/Snapdragon laptops run NVDA, Sao Mai VNVoice, LibreOffice MSI, and LEAP Games through emulation, adding latency to speech output. Not suitable for screen reader users.
+ARM/Snapdragon laptops run NVDA, Sao Mai VNVoice, LibreOffice MSI, and LEAP Games through **emulation**, adding latency to speech output. Not suitable for screen reader users.
 
 # Headphones: Audio-Technica ATH-M40x
 
 ## Decision
 **Selected:** Audio-Technica ATH-M40x @ $75-85/unit  
 **Quantity:** 10 units + 2-3 spare cables ($15-18 each)  
-**Total Budget:** $850-900
 
 ### For Blind Users, Headphones = Computer Output
 Screen reader audio is 100% of the interface. Bad headphones = unusable computer. CPU speed doesn't matter if you can't hear the screen reader clearly.
@@ -100,13 +101,7 @@ Required: 501(c)(3) docs
 | Spare cables | 3 | $18 | $54 |
 | **Total** | | | **$854** |
 
-Funded by $810 savings from choosing Latitude 5420 over Costco Inspiron.
-
 ---
 
 ## Conclusion
-
 Enterprise laptop durability and professional headphone clarity is best for an accessible deployment.
-
-Latitude 5420 savings pay for the headphones that actually matter.
-
