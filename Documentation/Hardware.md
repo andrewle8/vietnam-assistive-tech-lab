@@ -7,7 +7,7 @@
 
 | Spec | Detail |
 |------|--------|
-| **CPU** | i5-1145G7 (11th gen, 4C/8T, 4.4 GHz) — PassMark: 9,246 multi / 2,673 single |
+| **CPU** | i5-1145G7 (11th gen, 4C/8T, 4.4 GHz) — (NVDA screen reader is Intel-optimized) |
 | **RAM** | 8GB DDR4-3200 (2 slots, upgradeable) |
 | **Storage** | 256GB NVMe SSD |
 | **Build** | Carbon-fiber, MIL-STD-810G |
