@@ -81,28 +81,19 @@ Vietnam-Lab-Kit/
 │   ├── Utilities/
 │   └── Educational/      # LEAP Games for blind children
 ├── Config/               # Pre-configured settings
-│   ├── nvda-config/      # NVDA Vietnamese profile
-│   └── firefox-profile/  # Accessibility-optimized Firefox
-├── HANDOFF.md            # One-page reference card for center staff
+│   └── nvda-config/      # NVDA Vietnamese profile
 ├── Scripts/              # PowerShell deployment automation
+│   ├── 0-Download-Installers.ps1    # Download all installers from GitHub Releases
 │   ├── 1-Install-All.ps1
 │   ├── 2-Verify-Installation.ps1
 │   ├── 3-Configure-NVDA.ps1
-│   ├── 4-Prepare-Student-USB.ps1    # (Proposed) Set up a student USB drive
-│   ├── 5-Configure-Loaner-Laptop.ps1 # (Proposed) Configure PC for USB backups
 │   ├── 6-Health-Check.ps1           # Post-deployment diagnostic check
-│   ├── backup-usb.ps1               # (Proposed) Scheduled USB-to-cloud sync
-│   ├── Setup-Rclone-Auth.ps1        # (Proposed) One-time Google Drive auth
 │   └── README.txt
-├── Training/             # Vietnamese training materials
-│   ├── NVDA-Basics-VN/
-│   ├── Typing-Lessons-VN/
-│   └── LibreOffice-VN/
 ├── Documentation/        # Guides and troubleshooting
-│   ├── Deployment-Plan.md
-│   ├── Troubleshooting-Guide-VN.docx
-│   └── Quick-Start-Guide-VN.docx
-└── Backup/              # Backup copies for redundancy
+│   ├── Hardware.md       # Laptop, headphone, and USB drive specs
+│   └── Deployment-Plan.md
+├── HANDOFF.md            # One-page reference card for center staff
+└── CONTRIBUTING.md
 ```
 
 ---
