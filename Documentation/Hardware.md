@@ -1,4 +1,4 @@
-# Laptop: Dell Latitude 5420
+# Deployment Hardware
 
 **Budget:** $300-350 per unit (10 units needed)
 **Requirements:** x86-64, 8GB RAM, 256GB+ SSD, NVDA-compatible
@@ -35,6 +35,8 @@ Upgradeability: $18-25 for additional stick of 8GB DDR4-3200 SO-DIMM RAM. Easily
 ### x86-x64 vs ARM
 
 ARM/Snapdragon laptops run NVDA, Sao Mai VNVoice, LibreOffice MSI, and LEAP Games through **emulation**, adding latency to speech output. Not suitable for screen reader users.
+
+---
 
 # Headphones: Audio-Technica ATH-M40x
 
