@@ -9,12 +9,12 @@
 
 ## Executive Summary
 
-Deploy a fully **offline, open-source** assistive technology lab enabling blind children to learn computing through **speech output** from day one. The deployment must be completed in 1-3 days on-site.
+Deploy a fully **offline, open-source** assistive technology lab enabling blind children to learn computing through **speech output** from day one.
 
-**Critical Success Factors:**
-- Pre-configure everything before arrival (USB deployment kit)
-- Automated, scripted installation for speed
-- Zero internet dependency
+**Pre-trip**
+- Pre-configure computers before arrival using install scripts
+- Label each computer
+- Prep Personal USB sticks with Asset ID's and 3D Print Braille identifiers.
 - Documentation in Vietnamese and English
 
 ---
@@ -34,62 +34,39 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 | **Access8Math NVDA Add-on** | 4.3 | GPL-3.0 | Math content reading/writing via speech |
 | **LEAP Games** | Latest | Apache-2.0 | Educational audio games (Tic-Tac-Toe, Tennis, Curve) |
 
-### Total Software Cost: $0
-
 ---
 
 ## On-Site Deployment Timeline
 
-### Day 1: Physical Setup & Software Installation (6-8 hours)
+Day 1: Physical Setup & Software Installation
 
-**Morning (9 AM - 12 PM):**
-1. **Unpack and arrange equipment** (1 hour)
+1. **Unpack and arrange equipment**
    - Set up all 10 PCs on desks
    - Label each PC (1-10) with physical labels
    - Connect power, keyboards, mice
    - Test power and boot sequence
 
-2. **Run deployment script on all PCs** (2-3 hours)
-   - PC #1: Run full installation, verify success
-   - PCs #2-10: Run in parallel (batch of 3-4 at a time)
-   - Monitor for errors using verification script
-   - Document any issues immediately
-
-**Lunch Break (12 PM - 1 PM)**
-
-**Afternoon (1 PM - 5 PM):**
-3. **Configure NVDA and test speech** (2 hours)
+3. **Configure NVDA and test speech**
    - Run configuration script on all PCs
    - Test VNVoice speech output on each PC
    - Adjust volume levels
    - Verify auto-start functionality
 
-4. **End-of-day verification** (30 min)
-   - Run verification script on all 10 PCs
+4. **End-of-day verification**
    - Document any failures
    - Plan fixes for Day 2
 
-### Day 2: Configuration, Testing & Training Prep (6-8 hours)
+### Day 2: Configuration, Testing & Training Prep
+1. **Fix any Day 1 issues**
+2. **Deploy training materials**
+3. **Configure user experience**
+4. **Conduct walkthrough with staff**
+5. **Create station documentation**
+6. **Pilot test with 1-2 students**
 
-**Morning (9 AM - 12 PM):**
-1. **Fix any Day 1 issues** (1-2 hours)
-2. **Deploy training materials** (1 hour)
-3. **Configure user experience** (1 hour)
-
-**Afternoon (1 PM - 5 PM):**
-4. **Conduct walkthrough with staff** (2-3 hours)
-5. **Create station documentation** (1 hour)
-6. **Pilot test with 1-2 students** (1 hour)
-
-### Day 3: Final Testing & Handoff (4-6 hours)
-
-**Morning (9 AM - 12 PM):**
-1. **Full lab walkthrough** (1 hour)
-2. **Train staff on maintenance** (2 hours)
-
-**Afternoon (1 PM - 3 PM):**
-3. **Documentation handoff** (1 hour)
-4. **Final sign-off** (30 min)
+### Day 3: Final Testing & Handoff
+1. **Full lab walkthrough and checks**
+2. **Train staff on maintenance**
 
 ---
 
@@ -116,8 +93,7 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 - Review student feedback
 
 ### Month 2+: Ongoing Support
-- Weekly check-in calls
-- Monthly progress reviews
+- Monthly progress reviews / check-in calls
 - Quarterly maintenance planning
 
 ---
@@ -132,25 +108,4 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 
 ---
 
-## Risk Assessment & Mitigation
-
-### Risk 1: Limited On-Site Time (1-3 days)
-**Mitigation:** Pre-configured USB kit, automated scripts, parallel installation
-
-### Risk 2: Hardware Compatibility Issues
-**Mitigation:** Test deployment beforehand, backup installers, portable NVDA version
-
-### Risk 3: Language Barriers
-**Mitigation:** All documentation in Vietnamese/English
-
-### Risk 4: No Internet for Troubleshooting
-**Mitigation:** 100% offline stack, USB kit contains everything, printed guides
-
-### Risk 5: Student Overwhelm
-**Mitigation:** Gradual introduction, experienced instructors, self-paced materials
-
----
-
-**Document Version:** 1.0
-**Last Updated:** February 5, 2026
 **Status:** Ready for implementation
