@@ -2,7 +2,7 @@
 
 **Project:** Blind Children's Computer Lab - Vietnam Orphanages
 **Timeline:** April 2026 deployment (1-3 days on-site)
-**Equipment:** 10x Dell Latitude 5420 (refurbished, i5-1145G7, 8GB RAM, 256GB SSD)
+**Equipment:** 10x Dell Latitude 5420
 **Users:** 10+ children, complete beginners to basic computer familiarity
 
 ---
