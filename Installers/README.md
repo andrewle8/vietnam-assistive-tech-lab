@@ -35,7 +35,7 @@ https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/tag/installers-
 | `Utilities/UniKey/` | `UniKeyNT.exe` (extracted from zip) | ~1 MB |
 | `Audacity/` | `audacity-win-3.7.3-64bit.exe` | ~30 MB |
 | `Quorum/` | `QuorumStudio-win64.exe` | ~335 MB |
-| `Kiwix/` | Kiwix portable + Vietnamese Wikipedia ZIM | ~2.2 GB |
+| `Kiwix/` | Kiwix portable + Vietnamese Wikipedia ZIM | ~700 MB |
 | `Educational/` | LEAP Games (Tic-Tac-Toe, Tennis, Curve) | ~50 MB |
 
 ## Pre-Deployment Checklist
@@ -73,7 +73,7 @@ Installers/
 │       └── UniKeyNT.exe
 ├── Kiwix/
 │   ├── kiwix-desktop.exe (+ dependencies)
-│   └── wikipedia_vi_all_nopic_2026-01.zim
+│   └── wikipedia_vi_all_mini_2025-11.zim
 └── Educational/
     ├── TicTacToe/
     │   ├── tictactoe_eng_win64.exe
@@ -96,7 +96,7 @@ Installers/
 - **Audacity:** 3.7.3 or newer
 - **Quorum Studio:** Latest release from quorumlanguage.com
 - **Kiwix:** 2.5.1 or newer (downloaded directly from kiwix.org)
-- **Vietnamese Wikipedia ZIM:** January 2026 or newer (downloaded from download.kiwix.org)
+- **Vietnamese Wikipedia ZIM:** November 2025 edition (all articles, mini summaries)
 
 ## Storage Requirements
 

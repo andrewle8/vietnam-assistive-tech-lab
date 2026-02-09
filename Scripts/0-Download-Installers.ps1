@@ -119,6 +119,11 @@ $downloads = @(
         Name        = "Quorum Studio 7.3.0"
         Filename    = "QuorumStudio-win64.exe"
         Destination = Join-Path $paths.Quorum "QuorumStudio-win64.exe"
+    },
+    @{
+        Name        = "Vietnamese Wikipedia (offline)"
+        Filename    = "wikipedia_vi_all_mini_2025-11.zim"
+        Destination = Join-Path $paths.Kiwix "wikipedia_vi_all_mini_2025-11.zim"
     }
 )
 
@@ -144,7 +149,7 @@ $leapDownloads = @(
 $successCount = 0
 $failCount = 0
 $skippedCount = 0
-$totalItems = $downloads.Count + $leapDownloads.Count + 4  # +1 UniKey, +1 rclone, +1 Kiwix, +1 Wikipedia ZIM
+$totalItems = $downloads.Count + $leapDownloads.Count + 3  # +1 UniKey, +1 Kiwix, +1 rclone
 
 # Download direct installer files
 foreach ($item in $downloads) {
@@ -287,7 +292,7 @@ if (Test-Path $rcloneExeDest) {
     }
 }
 
-# Download Kiwix portable (direct from kiwix.org - too large for GitHub Release)
+# Download and extract Kiwix portable (zip from GitHub Release)
 $kiwixIndex = $downloads.Count + $leapDownloads.Count + 3
 Write-Host "`n[$kiwixIndex/$totalItems] Kiwix (offline encyclopedia reader)" -ForegroundColor Yellow
 
@@ -297,7 +302,7 @@ if (Test-Path $kiwixExeDest) {
     $skippedCount++
 } else {
     $kiwixZipName = "kiwix-desktop_windows_x64_2.5.1.zip"
-    $kiwixUrl = "https://download.kiwix.org/release/kiwix-desktop/$kiwixZipName"
+    $kiwixUrl = "$releaseBase/$kiwixZipName"
     $kiwixZipPath = Join-Path $paths.Kiwix $kiwixZipName
 
     try {
@@ -314,33 +319,6 @@ if (Test-Path $kiwixExeDest) {
     } catch {
         Write-Host "[FAIL] $($_.Exception.Message)" -ForegroundColor Red
         if (Test-Path $kiwixZipPath) { Remove-Item -Path $kiwixZipPath -Force -ErrorAction SilentlyContinue }
-        $failCount++
-    }
-}
-
-# Download Vietnamese Wikipedia ZIM (direct from kiwix.org - 2 GB)
-$zimIndex = $downloads.Count + $leapDownloads.Count + 4
-Write-Host "`n[$zimIndex/$totalItems] Vietnamese Wikipedia (offline encyclopedia)" -ForegroundColor Yellow
-
-$zimDest = Join-Path $paths.Kiwix "wikipedia_vi_all_nopic_2026-01.zim"
-if (Test-Path $zimDest) {
-    Write-Host "[SKIP] Already exists: $zimDest" -ForegroundColor DarkYellow
-    $skippedCount++
-} else {
-    $zimUrl = "https://download.kiwix.org/zim/wikipedia/wikipedia_vi_all_nopic_2026-01.zim"
-
-    try {
-        Write-Host "Downloading: wikipedia_vi_all_nopic_2026-01.zim (2 GB - this will take a while)" -ForegroundColor Cyan
-        $ProgressPreference = 'SilentlyContinue'
-        Invoke-WebRequest -Uri $zimUrl -OutFile $zimDest -UseBasicParsing
-        $ProgressPreference = 'Continue'
-
-        $fileSize = (Get-Item $zimDest).Length / 1GB
-        Write-Host "[OK] Downloaded Vietnamese Wikipedia ($([math]::Round($fileSize, 1)) GB)" -ForegroundColor Green
-        $successCount++
-    } catch {
-        Write-Host "[FAIL] $($_.Exception.Message)" -ForegroundColor Red
-        if (Test-Path $zimDest) { Remove-Item -Path $zimDest -Force -ErrorAction SilentlyContinue }
         $failCount++
     }
 }
