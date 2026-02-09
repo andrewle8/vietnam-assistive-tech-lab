@@ -1,9 +1,12 @@
 # Deployment Hardware
 
+
+
 **Budget:** $300-350 per unit (10 units needed)
 **Requirements:** x86-64 CPU: NVDA-compatible
 
-## **Decision:**
+## **Laptop Dell Latitude 5420:**
+(Product ID: dell-latitude-5420-000402)
 **$319/unit** from Dell Refurbished (Grade A, Windows 10 Pro — free upgrade to Win 11).
 
 | Spec | Detail |
