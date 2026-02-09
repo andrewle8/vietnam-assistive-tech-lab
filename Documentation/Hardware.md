@@ -45,7 +45,7 @@ Audio-Technica ATH-M40x @ $75-85/unit
 10 units + 2-3 spare cables ($15-18 each)  
 
 ### For Blind Users, Headphones = Computer Output
-Screen reader audio is 100% of the interface. Bad headphones = unusable computer. CPU speed doesn't matter if you can't hear the screen reader clearly.
+Screen reader audio is 100% of the interface.
 
 Used at:
 - Perkins School for the Blind computer labs
@@ -53,7 +53,6 @@ Used at:
 - JAWS/NVDA training centers
 - Audio describers (Netflix, PBS) for professional voice work
 
-### Speech Clarity
 Studio monitor design with flat frequency response. Clear at critical speech range 2000-8000 Hz. Critical for NVDA speech at fast rates (blind users often run 200-400% speed).
 
 ### Detachable Cable
