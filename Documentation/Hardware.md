@@ -109,6 +109,15 @@ Required: 501(c)(3) docs
 | **Total** | | | **$854** |
 
 ---
+## USB Drives
+- Used for each student's personal files
+- Each USB drive is assigned an Asset Number (STU-001, etc.)
+  - Asset number is labeled on every USB drive in both print and Braille using a label maker and a 3D printer.
+- Pre-created folders (Documents, Audio, Schoolwork)
+- Optional Google Drive backup via rclone syncs every 15 minutes if internet is available.
+- Asset numbers are also stored as hidden file on USB drive
+
+---
 
 ## Conclusion
 Enterprise laptop durability and professional headphone clarity is best for an accessible deployment.
