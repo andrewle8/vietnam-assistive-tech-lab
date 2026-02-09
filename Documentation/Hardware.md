@@ -4,8 +4,8 @@
 **Requirements:** x86-64 CPU: NVDA-compatible
 
 ## - **Laptop Dell Latitude 5420:**
-(Product ID: dell-latitude-5420-000402)
 **$319/unit** from Dell Refurbished (**Grade A**, Windows 10 Pro — free upgrade to Win 11).
+< (Product ID: dell-latitude-5420-000402)
 
 | Spec | Detail |
 |------|--------|
