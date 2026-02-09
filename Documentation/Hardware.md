@@ -60,8 +60,7 @@ Used at:
 - Perkins School for the Blind computer labs
 - National Federation of the Blind recommended
 - JAWS/NVDA training centers
-- Audio describers (Netflix, PBS) for professional voice work
-
+  
 Studio monitor design with flat frequency response. Clear at critical speech range 2000-8000 Hz. Critical for NVDA speech at fast rates (blind users often run 200-400% speed).
 
 ### Detachable Cable
