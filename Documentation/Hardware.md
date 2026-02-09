@@ -18,7 +18,9 @@
 | **OS** | Windows 10 Pro (free upgrade to 11) |
 | **Warranty** | 100-day included, 1-year extended for $49 |
 
-Serviceability: replacement keyboards $15-25,  batteries $30-50.
+Serviceability (Latitude is built for easy service): 
+- Replacement keyboards $15-25
+- Replacement batteries $30-50.
 
 Upgradeability: $18-25 for additional stick of 8GB DDR4-3200 SO-DIMM RAM. Easily available for at least 10 years.
 
