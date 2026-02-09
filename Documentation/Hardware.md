@@ -59,7 +59,7 @@ Studio monitor design with flat frequency response. Clear at critical speech ran
 Cable breaks → Replace $15 cable instead of $79 headphone. Common failure point.
 
 ### Closed-Back
-Required for classrooms. 10 screen readers running simultaneously need sound isolation or it's chaos.
+Required for classrooms. 10 screen readers running simultaneously need sound isolation.
 
 ## ATHM40x vs M20x
 Detachable cable, better clarity, build quality and comfort are worth the $30 difference for a long term deployment.
