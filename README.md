@@ -13,8 +13,6 @@ This repository contains everything needed to deploy a fully offline assistive t
 
 ## Software Stack (All Free/Open Source)
 
-> If Office is already provided with the PCs, omit LibreOffice.
-
 | Component | License | Purpose |
 |-----------|---------|---------|
 | **NVDA 2025.3.2** | GPL-2.0 | Screen reader with Vietnamese interface |
@@ -66,7 +64,7 @@ This repository contains everything needed to deploy a fully offline assistive t
 5. **Test complete workflow** on each station
 
 
-**Note:** Installer files are NOT included in git (too large). Run `0-Download-Installers.ps1` to download everything automatically from [GitHub Releases](#download-urls).
+**Note:** Run `0-Download-Installers.ps1` to download everything automatically from [GitHub Releases](#download-urls).
 
 ---
 
