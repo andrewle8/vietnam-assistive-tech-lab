@@ -117,32 +117,13 @@ Not yet in deployment scripts — to be tested separately.
 
 ---
 
-## Deployment Timeline
-
-See `Documentation/Deployment-Plan.md` for the full plan. Summary:
-
-- **Pre-Deployment:** Build USB kit, test on one PC
-- **Day 1 (6-8h):** Install software on all 10 PCs
-- **Day 2 (6-8h):** Configure, test, train staff
-- **Day 3 (4-6h):** Final testing and handoff
-
----
-
 ## License
 
 This deployment kit uses 100% free and open-source software:
 - Code and scripts: MIT License
 - Documentation: CC BY-SA 4.0
 - Individual software components: See respective licenses (GPL, MPL, LGPL)
-
----
-
-## License
-
-- Code and scripts: MIT License
-- Documentation: CC BY-SA 4.0
-- Individual software: See respective licenses (GPL, MPL, LGPL)
-
+- 
 ---
 
 ## Acknowledgments
@@ -164,7 +145,3 @@ This deployment kit uses 100% free and open-source software:
 ## Version History
 
 - **v0.1** (February 2026): Initial deployment kit created
-
----
-
-**Last Updated:** February 6, 2026
