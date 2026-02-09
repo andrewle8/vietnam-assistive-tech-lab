@@ -1,7 +1,5 @@
 # Deployment Hardware
 
-
-
 **Budget:** $300-350 per unit (10 units needed)
 **Requirements:** x86-64 CPU: NVDA-compatible
 
@@ -41,23 +39,22 @@ ARM/Snapdragon laptops run NVDA, Sao Mai VNVoice, LibreOffice MSI, and LEAP Game
 
 ---
 
-# - Headphones: Audio-Technica ATH-M40x
+## - Headphones: Audio-Technica ATH-M40x
 
-## Decision
-**Selected:** Audio-Technica ATH-M40x @ $75-85/unit  
-**Quantity:** 10 units + 2-3 spare cables ($15-18 each)  
+Audio-Technica ATH-M40x @ $75-85/unit  
+10 units + 2-3 spare cables ($15-18 each)  
 
 ### For Blind Users, Headphones = Computer Output
 Screen reader audio is 100% of the interface. Bad headphones = unusable computer. CPU speed doesn't matter if you can't hear the screen reader clearly.
 
-### Speech Clarity
-Studio monitor design with flat frequency response. Clear at critical speech range 2000-8000 Hz. Critical for NVDA speech at fast rates (blind users often run 200-400% speed).
-
-### Proven Standard
+Used at:
 - Perkins School for the Blind computer labs
 - National Federation of the Blind recommended
 - JAWS/NVDA training centers
 - Audio describers (Netflix, PBS) for professional voice work
+
+### Speech Clarity
+Studio monitor design with flat frequency response. Clear at critical speech range 2000-8000 Hz. Critical for NVDA speech at fast rates (blind users often run 200-400% speed).
 
 ### Detachable Cable
 Cable breaks → Replace $15 cable instead of $79 headphone. Common failure point.
@@ -72,7 +69,7 @@ Detachable cable, better clarity, build quality and comfort are worth the $30 di
 Email: edu@audio-technica.com   
 Required: 501(c)(3) docs
 
-## Specs
+### Specs
 
 - Type: Closed-back over-ear
 - Drivers: 40mm neodymium
@@ -82,7 +79,7 @@ Required: 501(c)(3) docs
 - Weight: 240g
 - Warranty: 1 year
 
-## Total Cost
+### Total Cost
 
 | Item | Qty | Cost | Total |
 |------|-----|------|-------|
@@ -100,5 +97,5 @@ Required: 501(c)(3) docs
 
 ---
 
-## Conclusion
+# Conclusion
 Enterprise laptop durability and professional headphone clarity is best for an accessible deployment.
