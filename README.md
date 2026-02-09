@@ -7,13 +7,7 @@
 
 ## Project Overview
 
-This repository contains everything needed to deploy an assistive technology lab for blind children in Vietnam.
-
-### Key Features
-- Fully offline operation (no internet required)
-- Vietnamese language support (interface + TTS)
-- Automated PowerShell deployment scripts
-- Complete documentation in Vietnamese and English
+This repository contains everything needed to deploy a fully offline assistive technology lab for blind children in Vietnam.
 
 ---
 
@@ -34,10 +28,6 @@ This repository contains everything needed to deploy an assistive technology lab
 | **LEAP Games** | Apache-2.0 | Educational audio games for blind children |
 
 > **NVDA Add-ons:** [NVDA Add-on Store](https://addonstore.nvaccess.org/)
-
-> **Architecture:** This kit targets the Dell Latitude 5420 on **x86-64** (Intel i5-1145G7). ARM processors (e.g. Snapdragon) are not supported due to emulation latency with screen readers.
-
-**Total Software Cost: $0**
 
 ### Hardware
 - 10x Dell Latitude 5420 (enterprise grade) upgraded to Windows 11
