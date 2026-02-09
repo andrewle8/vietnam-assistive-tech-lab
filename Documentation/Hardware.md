@@ -5,7 +5,7 @@
 **Budget:** $300-350 per unit (10 units needed)
 **Requirements:** x86-64 CPU: NVDA-compatible
 
-## **Laptop Dell Latitude 5420:**
+## - **Laptop Dell Latitude 5420:**
 (Product ID: dell-latitude-5420-000402)
 **$319/unit** from Dell Refurbished (Grade A, Windows 10 Pro — free upgrade to Win 11).
 
@@ -41,7 +41,7 @@ ARM/Snapdragon laptops run NVDA, Sao Mai VNVoice, LibreOffice MSI, and LEAP Game
 
 ---
 
-# Headphones: Audio-Technica ATH-M40x
+# - Headphones: Audio-Technica ATH-M40x
 
 ## Decision
 **Selected:** Audio-Technica ATH-M40x @ $75-85/unit  
@@ -60,33 +60,17 @@ Studio monitor design with flat frequency response. Clear at critical speech ran
 - Audio describers (Netflix, PBS) for professional voice work
 
 ### Detachable Cable
-Cable breaks → Replace $15 cable instead of $79 headphone. Common failure point in institutional use.
+Cable breaks → Replace $15 cable instead of $79 headphone. Common failure point.
 
 ### Closed-Back
 Required for classrooms. 10 screen readers running simultaneously need sound isolation or it's chaos.
 
----
-
-## M40x vs M20x
-
-| Feature | M20x ($49) | M40x ($79-99) |
-|---------|------------|---------------|
-| Speech clarity | Good | Excellent |
-| Cable | Fixed | Detachable ($15 replacement) |
-| Comfort (4hr) | Average | Very good |
-| Build quality | Basic plastic | Reinforced |
-
-**Decision:** Detachable cable + better clarity worth the $30 difference.
-
----
-
-## Pricing Strategy
+## ATHM40x vs M20x
+Detachable cable, better clarity, build quality and comfort are worth the $30 difference for a long term deployment.
 
 **Audio-Technica Educational Program**  
 Email: edu@audio-technica.com   
 Required: 501(c)(3) docs
-
----
 
 ## Specs
 
@@ -98,8 +82,6 @@ Required: 501(c)(3) docs
 - Weight: 240g
 - Warranty: 1 year
 
----
-
 ## Total Cost
 
 | Item | Qty | Cost | Total |
@@ -109,8 +91,7 @@ Required: 501(c)(3) docs
 | **Total** | | | **$854** |
 
 ---
-## USB Drives
-- Used for each student's personal files
+## - Personal Student USB Drives
 - Each USB drive is assigned an Asset Number (STU-001, etc.)
   - Asset number is labeled on every USB drive in both print and Braille using a label maker and a 3D printer.
 - Pre-created folders (Documents, Audio, Schoolwork)
