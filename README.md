@@ -44,6 +44,8 @@ This repository contains everything needed to deploy an assistive technology lab
 - 10x Dell Latitude 5420 (enterprise grade) upgraded to Windows 11
 - 10x Audio Technica ATH-M40x Headphones (trusted by blind professionals and schools)
 - Student Personal USB Drives
+  
+[Hardware Details](https://github.com/andrewle8/vietnam-assistive-tech-lab/blob/main/Documentation/Hardware)
 
 ---
 
