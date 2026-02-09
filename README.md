@@ -3,11 +3,7 @@
 **Project:** Blind Children's Computer Lab - Vietnam Orphanages
 **Deployment:** April 2026 (1-3 days on-site)
 
----
-
-## Project Overview
-
-This repository contains everything needed to deploy a fully offline assistive technology lab for blind children in Vietnam.
+This repo contains everything needed to deploy a fully offline assistive technology lab for blind children in Vietnam.
 
 ---
 
