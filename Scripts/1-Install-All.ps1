@@ -74,6 +74,18 @@ $installations = @(
         Path = ".\Installers\Utilities\vlc-3.0.23-win64.exe"
         Args = @("/S")
         WaitTime = 30
+    },
+    @{
+        Name = "Audacity 3.7.3"
+        Path = ".\Installers\Audacity\audacity-win-3.7.3-64bit.exe"
+        Args = @("/S")
+        WaitTime = 30
+    },
+    @{
+        Name = "Quorum Studio 7.3.0"
+        Path = ".\Installers\Quorum\QuorumStudio-win64.exe"
+        Args = @("/S")
+        WaitTime = 60
     }
 )
 
@@ -168,6 +180,7 @@ if (Test-Path $leapSourceDir) {
 } else {
     Write-Log "LEAP Games directory not found at $leapSourceDir (optional)" "INFO"
 }
+
 
 Write-Log "`n=== Installation Summary ===" "INFO"
 Write-Log "Successful installations: $successCount" "SUCCESS"

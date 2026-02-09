@@ -19,6 +19,11 @@ This repo contains everything needed to deploy a fully offline assistive technol
 | **VLC Media Player 3.0.23** | GPL-2.0 | Media playback |
 | **VLC NVDA Add-on** | GPL-2.0 | VLC accessibility enhancement for NVDA |
 | **Access8Math NVDA Add-on** | GPL-3.0 | Math content reading/writing via speech |
+| **Speech History NVDA Add-on** | GPL | Review/copy last 100 NVDA utterances (F12) |
+| **NVDA Remote Support** | GPL | Remote control between NVDA computers for post-deployment support |
+| **Focus Highlight NVDA Add-on** | GPL | Visual focus indicator — helps sighted teachers follow student activity |
+| **Audacity 3.7** | GPL-3.0 | Audio recording/editing |
+| **Quorum Studio** | BSD | Accessible IDE purpose-built for blind students |
 | **LEAP Games** | Apache-2.0 | Educational audio games for blind children |
 
 > **NVDA Add-ons:** [NVDA Add-on Store](https://addonstore.nvaccess.org/)
@@ -59,17 +64,6 @@ This repo contains everything needed to deploy a fully offline assistive technol
 All installers are downloaded automatically by `0-Download-Installers.ps1` from [GitHub Releases](https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/tag/installers-v1). See `Installers/README.md` for the full file list and original source URLs.
 
 ---
-
-## Optional Software (Under Evaluation)
-
-Not yet in deployment scripts — to be tested separately.
-
-| Software | Purpose | Notes |
-|----------|---------|-------|
-| **Python 3.14** | Programming + IDLE editor | Works with NVDA, ~30MB |
-| **Audacity 3.7** | Audio recording/editing | GPL-3.0, ~30MB |
-| **VSCodium** | Open-source code editor | Best NVDA support of any IDE |
-| **Quorum Studio** | IDE for blind students | Purpose-built accessible language |
 
 ---
 

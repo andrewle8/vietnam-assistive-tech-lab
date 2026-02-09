@@ -23,6 +23,8 @@ $paths = @{
     SaoMai     = Join-Path $DestinationRoot "SaoMai"
     LibreOffice = Join-Path $DestinationRoot "LibreOffice"
     Firefox    = Join-Path $DestinationRoot "Firefox"
+    Audacity   = Join-Path $DestinationRoot "Audacity"
+    Quorum     = Join-Path $DestinationRoot "Quorum"
     Utilities  = Join-Path $DestinationRoot "Utilities"
     Rclone     = Join-Path $DestinationRoot "Utilities\rclone"
     Educational = Join-Path $DestinationRoot "Educational"
@@ -52,6 +54,21 @@ $downloads = @(
         Destination = Join-Path $paths.NVDAAddons "access8math-4.3.nvda-addon"
     },
     @{
+        Name        = "Speech History NVDA Add-on"
+        Filename    = "speechHistory-2024.3.1.nvda-addon"
+        Destination = Join-Path $paths.NVDAAddons "speechHistory-2024.3.1.nvda-addon"
+    },
+    @{
+        Name        = "NVDA Remote Support Add-on"
+        Filename    = "nvdaRemote-2.6.4.nvda-addon"
+        Destination = Join-Path $paths.NVDAAddons "nvdaRemote-2.6.4.nvda-addon"
+    },
+    @{
+        Name        = "Focus Highlight NVDA Add-on"
+        Filename    = "focusHighlight-2.4.nvda-addon"
+        Destination = Join-Path $paths.NVDAAddons "focusHighlight-2.4.nvda-addon"
+    },
+    @{
         Name        = "Sao Mai VNVoice"
         Filename    = "SaoMai_voice1.0.exe"
         Destination = Join-Path $paths.SaoMai "SaoMai_voice1.0.exe"
@@ -75,6 +92,16 @@ $downloads = @(
         Name        = "VLC Media Player 3.0.23"
         Filename    = "vlc-3.0.23-win64.exe"
         Destination = Join-Path $paths.Utilities "vlc-3.0.23-win64.exe"
+    },
+    @{
+        Name        = "Audacity 3.7.3"
+        Filename    = "audacity-win-3.7.3-64bit.exe"
+        Destination = Join-Path $paths.Audacity "audacity-win-3.7.3-64bit.exe"
+    },
+    @{
+        Name        = "Quorum Studio 7.3.0"
+        Filename    = "QuorumStudio-win64.exe"
+        Destination = Join-Path $paths.Quorum "QuorumStudio-win64.exe"
     }
 )
 

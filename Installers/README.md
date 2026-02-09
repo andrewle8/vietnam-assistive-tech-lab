@@ -21,11 +21,16 @@ https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/tag/installers-
 | `NVDA/` | `nvda_2025.3.2.exe` | ~50 MB |
 | `NVDA/addons/` | `VLC-2025.1.0.nvda-addon` | ~1 MB |
 | `NVDA/addons/` | `access8math-4.3.nvda-addon` | ~1 MB |
+| `NVDA/addons/` | `speechHistory-2024.3.1.nvda-addon` | ~1 MB |
+| `NVDA/addons/` | `nvdaRemote-2.6.4.nvda-addon` | ~1 MB |
+| `NVDA/addons/` | `focusHighlight-2.4.nvda-addon` | ~1 MB |
 | `SaoMai/` | `SaoMai_VNVoice_1.0.exe` | — |
 | `SaoMai/` | `SaoMai_TypingTutor.exe` | — |
 | `LibreOffice/` | `LibreOffice_26.2.0_Win_x86-64.msi` | ~300 MB |
 | `Firefox/` | `Firefox Setup 147.0.3.msi` | ~60 MB |
 | `Utilities/` | `VLC-3.0.23.exe` | ~40 MB |
+| `Audacity/` | `audacity-win-3.7.3-64bit.exe` | ~30 MB |
+| `Quorum/` | `QuorumStudio-win64.exe` | ~335 MB |
 | `Educational/` | LEAP Games (Tic-Tac-Toe, Tennis, Curve) | ~50 MB |
 
 ## Pre-Deployment Checklist
@@ -39,7 +44,10 @@ Installers/
 │   ├── nvda-portable.zip           (backup)
 │   └── addons/
 │       ├── VLC-2025.1.0.nvda-addon
-│       └── access8math-4.3.nvda-addon
+│       ├── access8math-4.3.nvda-addon
+│       ├── speechHistory-2024.3.1.nvda-addon
+│       ├── nvdaRemote-2.6.4.nvda-addon
+│       └── focusHighlight-2.4.nvda-addon
 ├── SaoMai/
 │   ├── SaoMai_VNVoice_1.0.exe
 │   └── SaoMai_TypingTutor.exe
@@ -47,6 +55,10 @@ Installers/
 │   └── LibreOffice_26.2.0_Win_x86-64.msi
 ├── Firefox/
 │   └── Firefox Setup 147.0.3.msi
+├── Audacity/
+│   └── audacity-win-3.7.3-64bit.exe
+├── Quorum/
+│   └── QuorumStudio-win64.exe
 ├── Utilities/
 │   └── VLC-3.0.23.exe
 └── Educational/
@@ -67,6 +79,8 @@ Installers/
 - **Firefox:** 147 or newer
 - **LibreOffice:** 26.2.0 or newer
 - **VLC:** Use stable release (3.0.23 or newer)
+- **Audacity:** 3.7.3 or newer
+- **Quorum Studio:** Latest release from quorumlanguage.com
 
 ## Storage Requirements
 
