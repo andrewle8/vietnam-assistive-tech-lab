@@ -27,7 +27,7 @@ Serviceability (Latitude is built for easy service):
 - Replacement keyboards $15-25
 - Replacement batteries $30-50.
 
-Upgradeability: $18-25 for additional stick of 8GB DDR4-3200 SO-DIMM RAM. Easily available for at least 10 years.
+Upgradeability: $18-25 for additional stick of 8GB DDR4-3200 SO-DIMM RAM. Extensive availability for at least 10 years. Still available long after.
 
 Meets all Win11 Upgrade requirements:
 - i5-1145G7 (11th gen Intel)
