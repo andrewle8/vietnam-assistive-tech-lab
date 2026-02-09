@@ -51,7 +51,7 @@ ARM/Snapdragon laptops run NVDA, Sao Mai VNVoice, LibreOffice MSI, and LEAP Game
 Audio-Technica ATH-M40x @ $75-85/unit  
 10 units + 2-3 spare cables ($15-18 each)  
 
-### For Blind Users, Headphones = Computer Output
+### For Blind Users, Headphones = SINGLE Computer Output
 Screen reader audio is 100% of the interface.
 
 Used at:
