@@ -32,7 +32,7 @@ This repository contains everything needed to deploy a fully offline assistive t
 - 10x Audio Technica ATH-M40x Headphones (trusted by blind professionals and schools)
 - Student Personal USB Drives with unique identifiers labeled in braiile
   
-> [Hardware Details](https://github.com/andrewle8/vietnam-assistive-tech-lab/blob/main/Documentation/Hardware)
+> [Hardware Details](https://github.com/andrewle8/vietnam-assistive-tech-lab/blob/main/Documentation/Hardware.md)
 
 ---
 
