@@ -8,10 +8,9 @@
 
 ## Project Overview
 
-This repository contains everything needed to deploy a fully **offline, open-source** assistive technology lab for blind children in Vietnam.
+This repository contains everything needed to deploy an assistive technology lab for blind children in Vietnam.
 
 ### Key Features
-- 100% Free/Open Source software stack
 - Fully offline operation (no internet required)
 - Vietnamese language support (interface + TTS)
 - Automated PowerShell deployment scripts
@@ -42,8 +41,8 @@ This repository contains everything needed to deploy a fully **offline, open-sou
 **Total Software Cost: $0**
 
 ### Hardware
-- 10x Dell Latitude 5420 (refurbished, Grade A, Win 10 Pro — free upgrade to 11)
-- Headphones
+- 10x Dell Latitude 5420 (enterprise grade) upgraded to Windows 11
+- 10x Audio Technica ATH-M40x Headphones (trusted by blind professionals and schools)
 - Student Personal USB Drives
 
 ---
@@ -182,6 +181,7 @@ This deployment kit uses 100% free and open-source software:
 ## Acknowledgments
 
 - **NV Access** - NVDA screen reader
+- **Sao Mai Center** NVDA Vietnamese modules
 - **LibreOffice Community** - Free office suite
 - **Mozilla Foundation** - Firefox browser
 - **SciFY** - LEAP educational games for blind children
