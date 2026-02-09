@@ -40,7 +40,7 @@ Meets all Win11 Upgrade requirements:
 |---|---|
 | Per unit | $319 |
 | **10 units** | **$3,190** |
-| With 1-year warranty ($49/unit) | **$3,680** |
+| With 1-year warranty ($49/unit) (Likely not needed)| **$3,680** |
 
 ### x86-x64 vs ARM
 
