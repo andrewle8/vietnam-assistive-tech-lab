@@ -139,7 +139,7 @@ See `Documentation/Deployment-Plan.md` for the full plan. Summary:
 
 ## Student Personal Files (Proposed)
 
-Each student gets a labeled USB drive (`STU-001`, etc.) with pre-created folders (Documents, Audio, Schoolwork). Optional Google Drive backup via rclone syncs every 15 minutes if internet is available.
+Each student gets a braille-labeled USB drive (`STU-001`, etc.) with pre-created folders (Documents, Audio, Schoolwork). Optional Google Drive backup via rclone syncs every 15 minutes if internet is available.
 
 | Script | Purpose |
 |--------|---------|
