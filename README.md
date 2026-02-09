@@ -56,11 +56,6 @@ This repository contains everything needed to deploy a fully offline assistive t
    .\2-Verify-Installation.ps1
    .\3-Configure-NVDA.ps1
    ```
-4. **(Optional) Prepare student USB drives:**
-   ```powershell
-   .\4-Prepare-Student-USB.ps1
-   .\5-Configure-Loaner-Laptop.ps1
-   ```
 5. **Test complete workflow** on each station
 
 
@@ -120,16 +115,13 @@ Not yet in deployment scripts — to be tested separately.
 ## License
 
 This deployment kit uses 100% free and open-source software:
-- Code and scripts: MIT License
-- Documentation: CC BY-SA 4.0
-- Individual software components: See respective licenses (GPL, MPL, LGPL)
-- 
+- See respective licenses (GPL, MPL, LGPL)
 ---
 
 ## Acknowledgments
 
 - **NV Access** - NVDA screen reader
-- **Sao Mai Center** NVDA Vietnamese modules
+- **Sao Mai Center** - NVDA Vietnamese modules
 - **LibreOffice Community** - Free office suite
 - **Mozilla Foundation** - Firefox browser
 - **SciFY** - LEAP educational games for blind children
