@@ -38,7 +38,7 @@ This repository contains everything needed to deploy a fully offline assistive t
 
 ## Quick Start
 
-### For Deployment (On-Site in Vietnam)
+### For Deployment
 
 1. **Download all installers** (fully automated from GitHub Releases)
    ```powershell
@@ -56,41 +56,6 @@ This repository contains everything needed to deploy a fully offline assistive t
    .\2-Verify-Installation.ps1
    .\3-Configure-NVDA.ps1
    ```
-5. **Test complete workflow** on each station
-
-
-**Note:** Run `0-Download-Installers.ps1` to download everything automatically from [GitHub Releases](#download-urls).
-
----
-
-## Repository Structure
-
-```
-Vietnam-Lab-Kit/
-├── Installers/           # Software installers (download separately)
-│   ├── NVDA/
-│   │   └── addons/       # NVDA add-on files (.nvda-addon)
-│   ├── SaoMai/
-│   ├── LibreOffice/
-│   ├── Firefox/
-│   ├── Utilities/
-│   └── Educational/      # LEAP Games for blind children
-├── Config/               # Pre-configured settings
-│   └── nvda-config/      # NVDA Vietnamese profile
-├── Scripts/              # PowerShell deployment automation
-│   ├── 0-Download-Installers.ps1    # Download all installers from GitHub Releases
-│   ├── 1-Install-All.ps1
-│   ├── 2-Verify-Installation.ps1
-│   ├── 3-Configure-NVDA.ps1
-│   ├── 6-Health-Check.ps1           # Post-deployment diagnostic check
-│   └── README.txt
-├── Documentation/        # Guides and troubleshooting
-│   ├── Hardware.md       # Laptop, headphone, and USB drive specs
-│   └── Deployment-Plan.md
-├── HANDOFF.md            # One-page reference card for center staff
-└── CONTRIBUTING.md
-```
-
 ---
 
 ## Download URLs
