@@ -66,7 +66,6 @@ Detachable cable, better clarity, build quality and comfort are worth the $30 di
 
 **Audio-Technica Educational Program**  
 Email: edu@audio-technica.com   
-Required: 501(c)(3) docs
 
 ### Specs
 
