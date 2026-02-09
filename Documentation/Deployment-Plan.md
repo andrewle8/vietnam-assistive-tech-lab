@@ -14,7 +14,7 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 **Pre-trip**
 - Pre-configure computers before arrival using install scripts
 - Label each computer
-- Prep Personal USB sticks with Asset ID's and 3D Print Braille identifiers.
+- Prep Personal USB sticks with Asset ID's and 3D Print Braille identifiers
 - Documentation in Vietnamese and English
 
 ---
