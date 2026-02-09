@@ -128,12 +128,6 @@ See `Documentation/Deployment-Plan.md` for the full plan. Summary:
 
 ---
 
-## Student Personal USB Drives
-
-Each student gets a braille-labeled USB drive (`STU-001`, etc.) with pre-created folders (Documents, Audio, Schoolwork).
-
----
-
 ## License
 
 This deployment kit uses 100% free and open-source software:
