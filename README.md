@@ -11,7 +11,7 @@ This repository contains everything needed to deploy a fully offline assistive t
 
 ---
 
-## Software Stack (All Free/Open Source)
+## Software Stack
 
 | Component | License | Purpose |
 |-----------|---------|---------|
