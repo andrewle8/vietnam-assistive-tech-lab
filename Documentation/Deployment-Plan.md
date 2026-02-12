@@ -16,6 +16,7 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 - Label each computer
 - Prep Personal USB sticks with Asset ID's and 3D Print Braille identifiers
 - Documentation in Vietnamese and English
+- Contact Sao Mai Center to obtain accessible Vietnamese books (see Pre-Trip: Content Sourcing below)
 
 ---
 
@@ -33,6 +34,23 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 | **VLC NVDA Add-on** | Latest | GPL-2.0 | VLC accessibility enhancement |
 | **Access8Math NVDA Add-on** | 4.3 | GPL-3.0 | Math content reading/writing via speech |
 | **LEAP Games** | Latest | Apache-2.0 | Educational audio games (Tic-Tac-Toe, Tennis, Curve) |
+
+---
+
+## Pre-Trip: Content Sourcing
+
+### Sao Mai Center for the Blind (sachtiepcan.vn)
+
+Sao Mai operates Vietnam's largest accessible book library (~10,000 titles) in DAISY, EPUB, Braille, and audio formats. Books cover education, literature, science, and children's content — ideal for the lab. Access requires registration and organizational eligibility under the Marrakesh Treaty.
+
+**Action items (complete before April):**
+
+1. **Email Sao Mai Center** — request an organizational account on [sachtiepcan.vn](https://sachtiepcan.vn/) for the orphanage
+2. **Request offline content** — ask to pre-download age-appropriate DAISY/EPUB books for children (primary/secondary level)
+3. **Ask for recommendations** — Vietnamese textbooks and children's literature suitable for blind students
+4. **Pre-load books** onto each PC's Thorium Reader library before deployment
+
+**Contact:** [saomaicenter.org/en](https://saomaicenter.org/en) (Ho Chi Minh City) — they produce the VNVoice TTS already in our stack, so there is an existing relationship.
 
 ---
 
