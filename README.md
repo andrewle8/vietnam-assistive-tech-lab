@@ -30,6 +30,7 @@ This repo contains everything needed to deploy a fully offline assistive technol
 | **UniKey 4.6** | GPL | Vietnamese Telex keyboard input |
 | **Kiwix 2.5.1** | GPL-3.0 | Offline encyclopedia reader |
 | **Vietnamese Wikipedia** | CC BY-SA | Offline Vietnamese encyclopedia (~550 MB) |
+| **Thorium Reader 3.3.0** | BSD-3 | EPUB/DAISY ebook reader for accessible reading |
 | **LEAP Games** | Apache-2.0 | Educational audio games for blind children |
 
 > **NVDA Add-ons:** [NVDA Add-on Store](https://addonstore.nvaccess.org/)

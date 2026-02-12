@@ -36,6 +36,7 @@ https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/tag/installers-
 | `Audacity/` | `audacity-win-3.7.3-64bit.exe` | ~30 MB |
 | `Quorum/` | `QuorumStudio-win64.exe` | ~335 MB |
 | `Kiwix/` | Kiwix portable + Vietnamese Wikipedia ZIM | ~700 MB |
+| `Thorium/` | `Thorium.Setup.3.3.0.exe` | ~117 MB |
 | `Educational/` | LEAP Games (Tic-Tac-Toe, Tennis, Curve) | ~50 MB |
 
 ## Pre-Deployment Checklist
@@ -71,6 +72,8 @@ Installers/
 │   ├── VLC-3.0.23.exe
 │   └── UniKey/
 │       └── UniKeyNT.exe
+├── Thorium/
+│   └── Thorium.Setup.3.3.0.exe
 ├── Kiwix/
 │   ├── kiwix-desktop.exe (+ dependencies)
 │   └── wikipedia_vi_all_mini_2025-11.zim
@@ -95,6 +98,7 @@ Installers/
 - **UniKey:** 4.6 RC2 or newer (Vietnamese keyboard)
 - **Audacity:** 3.7.3 or newer
 - **Quorum Studio:** Latest release from quorumlanguage.com
+- **Thorium Reader:** 3.3.0 or newer (EPUB/DAISY reader from EDRLab)
 - **Kiwix:** 2.5.1 or newer (downloaded directly from kiwix.org)
 - **Vietnamese Wikipedia ZIM:** November 2025 edition (all articles, mini summaries)
 

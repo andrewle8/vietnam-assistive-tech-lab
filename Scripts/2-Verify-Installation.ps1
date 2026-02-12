@@ -71,6 +71,15 @@ $checks = @(
         Critical = $false
     },
     @{
+        Name = "Thorium Reader"
+        Paths = @(
+            "$env:LOCALAPPDATA\Programs\Thorium\Thorium.exe",
+            "C:\Program Files\Thorium\Thorium.exe",
+            "C:\Program Files (x86)\Thorium\Thorium.exe"
+        )
+        Critical = $false
+    },
+    @{
         Name = "LEAP Games"
         Paths = @(
             "C:\Games\LEAP\TicTacToe\*.exe",

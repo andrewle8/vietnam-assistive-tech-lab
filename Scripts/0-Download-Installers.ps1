@@ -25,6 +25,7 @@ $paths = @{
     Firefox    = Join-Path $DestinationRoot "Firefox"
     Audacity   = Join-Path $DestinationRoot "Audacity"
     Quorum     = Join-Path $DestinationRoot "Quorum"
+    Thorium    = Join-Path $DestinationRoot "Thorium"
     Utilities  = Join-Path $DestinationRoot "Utilities"
     UniKey     = Join-Path $DestinationRoot "Utilities\UniKey"
     Rclone     = Join-Path $DestinationRoot "Utilities\rclone"
@@ -124,6 +125,11 @@ $downloads = @(
         Name        = "Vietnamese Wikipedia (offline)"
         Filename    = "wikipedia_vi_all_mini_2025-11.zim"
         Destination = Join-Path $paths.Kiwix "wikipedia_vi_all_mini_2025-11.zim"
+    },
+    @{
+        Name        = "Thorium Reader 3.3.0"
+        Filename    = "Thorium.Setup.3.3.0.exe"
+        Destination = Join-Path $paths.Thorium "Thorium.Setup.3.3.0.exe"
     }
 )
 

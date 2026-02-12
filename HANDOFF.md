@@ -15,6 +15,7 @@
 | **LibreOffice** | Word processing, spreadsheets (like Microsoft Office) |
 | **Firefox** | Web browser |
 | **VLC** | Music and video player |
+| **Thorium Reader** | EPUB/DAISY ebook and audiobook reader |
 | **LEAP Games** | Audio games (Tic-Tac-Toe, Tennis, Curve) |
 
 All software is **free** and works **offline** (no internet needed).

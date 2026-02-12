@@ -86,6 +86,12 @@ $installations = @(
         Path = ".\Installers\Quorum\QuorumStudio-win64.exe"
         Args = @("/S")
         WaitTime = 60
+    },
+    @{
+        Name = "Thorium Reader 3.3.0"
+        Path = ".\Installers\Thorium\Thorium.Setup.3.3.0.exe"
+        Args = @("/S")
+        WaitTime = 30
     }
 )
 
