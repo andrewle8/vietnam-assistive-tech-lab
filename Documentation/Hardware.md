@@ -2,8 +2,8 @@
 **Requirements:** x86-64 CPU: NVDA-compatible
 
 ## - **Dell Latitude 5420 Laptop:**
-**$319/unit** from Dell Refurbished (**Grade A**).
-(Product ID: dell-latitude-5420-000402)
+**$307.53/unit** from Dell Refurbished (**Grade A**) — 19 units purchased 2026-02-13.
+(Product ID: dell-latitude-5420-000402, Order #U1301960)
 
 | Spec | Detail |
 |------|--------|
@@ -32,13 +32,19 @@ Meets all Win11 Upgrade requirements:
 - TPM 2.0 built-in
 - UEFI + Secure Boot capable
 
-### 10x Laptop Cost
+### 19x Laptop Purchase
 
-| | Cost |
+| | |
 |---|---|
-| Per unit | $319 |
-| **10 units** | **$3,190** |
-| With 1-year warranty ($49/unit) (Likely not needed)| **$3,680** |
+| List price | $459.00/unit |
+| Promo (LOVE33, 33% off) | -$151.47/unit |
+| **Effective per unit** | **$307.53** |
+| Subtotal (19 units) | $5,843.07 |
+| Tax | $728.40 |
+| **Grand Total** | **$6,571.47** |
+
+#### Serial Numbers
+7FP31J3, 7YB71J3, 82DJ0J3, 88X63F3, 9GGW2F3, 9PH41J3, B4JR2F3, C5MJ0J3, CQ6H1J3, CTDJ2F3, DC861J3, DDYJ6J3, DFS91J3, DT1M6J3, FNDP0J3, FSRH0J3, G2X61J3, HQKJ0J3, 6C541J3
 
 ### x86-x64 vs ARM
 
