@@ -2,8 +2,8 @@
 
 **Project:** Blind Children's Computer Lab - Vietnam Orphanages
 **Timeline:** April 2026 deployment (1-3 days on-site)
-**Equipment:** 10x Dell Latitude 5420
-**Users:** 10+ children, complete beginners to basic computer familiarity
+**Equipment:** 19x Dell Latitude 5420
+**Users:** 19+ children, complete beginners to basic computer familiarity
 
 ---
 
@@ -12,8 +12,8 @@
 Deploy a fully **offline, open-source** assistive technology lab enabling blind children to learn computing through **speech output** from day one.
 
 **Pre-trip**
-- Pre-configure all 10 laptops using install scripts and verify end-to-end
-- Label each computer (PC-1 through PC-10)
+- Pre-configure all 19 laptops using install scripts and verify end-to-end
+- Label each computer (PC-1 through PC-19)
 - Prep personal USB sticks with asset IDs and 3D-printed Braille identifiers
 - Contact Sao Mai Center to obtain accessible Vietnamese books (see Pre-Trip: Content Sourcing)
 - Prepare 3 identical deployment USB drives
@@ -90,16 +90,16 @@ Run the entire deployment process on one laptop to verify:
 
 Fix any issues, then repeat on a second laptop to confirm consistency.
 
-### Pre-Configure All 10 Laptops
+### Pre-Configure All 19 Laptops
 
-Run scripts 1-3 on all 10 laptops before packing. This saves significant time on-site.
+Run scripts 1-3 on all 19 laptops before packing. This saves significant time on-site.
 
 1. Install software on all PCs (`1-Install-All.ps1`)
 2. Verify all PCs (`2-Verify-Installation.ps1`)
 3. Configure NVDA on all PCs (`3-Configure-NVDA.ps1`)
 4. Apply Windows lockdown on all PCs (see Windows Hardening section)
 5. Run health check on all PCs (`6-Health-Check.ps1`)
-6. Label each PC (PC-1 through PC-10) with physical label
+6. Label each PC (PC-1 through PC-19) with physical label
 7. Charge all laptops to 100%
 
 ### Prepare USB Drives
@@ -113,19 +113,20 @@ Run scripts 1-3 on all 10 laptops before packing. This saves significant time on
 ### Packing List
 
 **Computers & Accessories**
-- [ ] 10x Dell Latitude 5420 (pre-configured, charged)
-- [ ] 10x Dell power adapters (Vietnam uses Type A/C, same as US — no converter needed)
+- [ ] 19x Dell Latitude 5420 (pre-configured, charged)
+- [ ] 19x Dell power adapters (Vietnam uses Type A/C, same as US — no converter needed)
 - [ ] 2x spare power adapters
-- [ ] 10x Audio-Technica ATH-M40x headphones
-- [ ] 3x spare headphone cables
+- [ ] 21x Audio-Technica ATH-M40x headphones (19 stations + 2 spares)
+- [ ] 5x spare headphone cables
+- [ ] 4x replacement earpads
 
 **USB Drives**
 - [ ] 3x deployment USB drives (PRIMARY, BACKUP-1, BACKUP-2)
-- [ ] 10+ student USB drives (labeled with print + Braille)
+- [ ] 19+ student USB drives (labeled with print + Braille)
 - [ ] 1x USB hub (for faster multi-PC setup if needed)
 
 **Physical Labels & Accessories**
-- [ ] PC labels (PC-1 through PC-10)
+- [ ] PC labels (PC-1 through PC-19)
 - [ ] Bump dots / tactile stickers for keyboard landmarks (F, J, and other keys)
 - [ ] Ethernet cable (in case Wi-Fi config is needed on-site)
 - [ ] Small Phillips screwdriver (for any hardware maintenance)
@@ -141,8 +142,8 @@ Run scripts 1-3 on all 10 laptops before packing. This saves significant time on
 ### Day 1: Physical Setup & Software Installation
 
 1. **Unpack and arrange equipment**
-   - Set up all 10 PCs on desks
-   - Label each PC (PC-1 through PC-10) with physical labels if not already done
+   - Set up all 19 PCs on desks
+   - Label each PC (PC-1 through PC-19) with physical labels if not already done
    - Connect power adapters
    - Distribute headphones to each station
    - Apply bump dots to F and J keys (and other landmarks) on any keyboards that lack tactile markers
@@ -164,7 +165,7 @@ Run scripts 1-3 on all 10 laptops before packing. This saves significant time on
    - Verify Vietnamese keyboard input (UniKey) is working
 
 4. **End-of-day verification**
-   - Run `6-Health-Check.ps1` on all 10 PCs
+   - Run `6-Health-Check.ps1` on all 19 PCs
    - Document any failures with PC number
    - Plan fixes for Day 2
 
@@ -201,7 +202,7 @@ Run scripts 1-3 on all 10 laptops before packing. This saves significant time on
 ### Day 3: Final Testing & Handoff
 
 1. **Full lab walkthrough**
-   - Run `6-Health-Check.ps1` on all 10 PCs — all green
+   - Run `6-Health-Check.ps1` on all 19 PCs — all green
    - Test every headphone jack
    - Verify student USB drives mount and are recognized
    - Spot-check 2-3 apps per PC (NVDA reads them correctly)
@@ -281,7 +282,7 @@ Total reimage time: ~30-45 minutes.
 
 | Problem | Solution |
 |---------|----------|
-| **Laptop DOA on-site** | Redistribute students across 9 PCs. If a spare is available, reimage from USB. |
+| **Laptop DOA on-site** | Redistribute students across remaining PCs. Reimage a spare from USB. |
 | **Installer fails with no internet** | All installers are on the deployment USB — no internet required. Try BACKUP-1 or BACKUP-2 USB. |
 | **NVDA stops speaking** | Ctrl+Alt+N restarts NVDA. If that fails, reboot. If persistent, re-run `3-Configure-NVDA.ps1`. |
 | **Headphone jack broken** | Use USB audio adapter (consider packing 2 as spares) or Bluetooth with the ATH-M40x cable. |
@@ -321,7 +322,7 @@ Establish a primary contact method **before leaving**:
 
 ## Success Metrics (3-Month Evaluation)
 
-1. **Technical Reliability:** 90%+ uptime across all 10 stations
+1. **Technical Reliability:** 90%+ uptime across all 19 stations
 2. **User Adoption:** All students can independently log in and launch NVDA
 3. **Skill Progression:** 80%+ students complete typing tutor Lesson 3
 4. **Equipment Durability:** No major hardware failures
