@@ -39,6 +39,7 @@ Meets all Win11 Upgrade requirements:
 | List price | $459.00/unit |
 | Promo (LOVE33, 33% off) | -$151.47/unit |
 | **Effective per unit** | **$307.53** |
+| **Per unit with tax** | **$345.87** |
 | Subtotal (19 units) | $5,843.07 |
 | Tax | $728.40 |
 | **Grand Total** | **$6,571.47** |
