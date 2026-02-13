@@ -55,8 +55,7 @@ ARM/Snapdragon laptops run NVDA, Sao Mai VNVoice, LibreOffice MSI, and LEAP Game
 
 ## - Headphones: Audio-Technica ATH-M40x
 
-Audio-Technica ATH-M40x @ $75-85/unit  
-10 units + 2-3 spare cables ($15-18 each)  
+Audio-Technica ATH-M40x — 21 units pending via Sweetwater sales engineer (nonprofit pricing TBD).
 
 ### For Blind Users, Headphones = SINGLE Computer Output
 Screen reader audio is 100% of the interface.
@@ -91,16 +90,14 @@ Detachable cable, better clarity, build quality and comfort are worth the $30 di
 - Weight: 240g
 - Warranty: 1 year
 
-### Total Cost
+### 21x Headphone Purchase (Sweetwater — pending)
 
 | Item | Qty | Cost | Total |
 |------|-----|------|-------|
-| ATH-M40x | 10 | $80 | $800 |
-| Spare cables | 3 | $18 | $54 |
-| **Total** | | | **$854** |
-
-**Audio-Technica Educational Program**  
-Email: edu@audio-technica.com
+| ATH-M40x | 21 | TBD | TBD |
+| Spare cables | 5 | TBD | TBD |
+| Replacement earpads | 4 | TBD | TBD |
+| **Total** | | | **TBD** |
 
 ---
 ## - Personal Student USB Drives
