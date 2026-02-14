@@ -15,7 +15,7 @@
 - Tag size: ~25x15x2.5mm
 - Braille number on front, raised print number on back
 - Rounded corners
-- Numbering: 01-50
+- Numbering: 001-100
 
 ## Before Printing
 
@@ -27,4 +27,4 @@ Measure once drives arrive:
 ## Print
 
 - Parametric model (OpenSCAD or Fusion 360) to generate numbered tags
-- ~25 per build plate, 2 prints for full set
+- ~25 per build plate, 4 prints for full set
