@@ -102,15 +102,15 @@ Detachable cable, better clarity, build quality and comfort are worth the $30 di
 ---
 ## - Personal Student USB Drives
 
-**EASTBULL 50-Pack 16GB USB 2.0** with lanyards and labels — purchased 2026-02-13.
+**EASTBULL 100-Pack 16GB USB 2.0** with lanyards and labels — purchased 2026-02-13.
 
 | | |
 |---|---|
-| Subtotal | $126.99 |
-| Tax | $9.84 |
-| **Grand Total** | **$136.83** |
-| **Per unit** | **$2.54** |
-| **Per unit with tax** | **$2.74** |
+| Subtotal | $231.88 |
+| Tax | $17.97 |
+| **Grand Total** | **$249.85** |
+| **Per unit** | **$2.32** |
+| **Per unit with tax** | **$2.50** |
 
 | Spec | Detail |
 |------|--------|
@@ -118,7 +118,7 @@ Detachable cable, better clarity, build quality and comfort are worth the $30 di
 | **Interface** | USB 2.0 (~20-30 MB/s read) |
 | **Design** | Swivel, capless (no cap to lose) |
 | **Included** | 50 lanyards, 50 labels |
-| **Qty** | 50 (40 for students, 10 spares) |
+| **Qty** | 100 |
 
 - Each USB drive is assigned an Asset Number (STU-001, etc.) via `4-Prepare-Student-USB.ps1`
   - Asset number labeled in both print and 3D-printed Braille tag (see `Documentation/USB-Braille-Tags.md`)
@@ -135,7 +135,7 @@ Detachable cable, better clarity, build quality and comfort are worth the $30 di
 |------|----------------------|---------------------|
 | Dell Latitude 5420 | $345.87 | $6,571.47 |
 | ATH-M40x headphone | TBD (~$92-107) | TBD |
-| USB drive | $2.74 | $136.83 |
+| USB drive | $2.50 | $249.85 |
 | **Estimated Total** | **~$440-460** | **~$8,600-8,900** |
 
 ---
