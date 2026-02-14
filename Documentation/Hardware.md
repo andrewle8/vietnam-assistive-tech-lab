@@ -102,7 +102,15 @@ Detachable cable, better clarity, build quality and comfort are worth the $30 di
 ---
 ## - Personal Student USB Drives
 
-**EASTBULL 100-Pack 16GB USB 2.0** with lanyards and labels — $231.88 (~$2.32/unit), pending purchase.
+**EASTBULL 100-Pack 16GB USB 2.0** with lanyards and labels — purchased 2026-02-13.
+
+| | |
+|---|---|
+| Subtotal | $231.88 |
+| Tax | $17.97 |
+| Gift card | -$1.31 |
+| **Grand Total** | **$248.54** |
+| **Per unit with tax** | **$2.49** |
 
 | Spec | Detail |
 |------|--------|
@@ -129,7 +137,7 @@ Detachable cable, better clarity, build quality and comfort are worth the $30 di
 | ATH-M40x headphone | TBD (~$92-107) | TBD |
 | **Estimated Per Station** | **~$438-453** | **~$8,300-8,600** |
 
-USB drives purchased separately: 100x EASTBULL 16GB — $249.85
+USB drives purchased separately: 100x EASTBULL 16GB — $248.54
 
 ---
 
