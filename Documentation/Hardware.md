@@ -138,8 +138,6 @@ Detachable cable, better clarity, build quality and comfort are worth the $30 di
 | USB drive | $2.74 | $136.83 |
 | **Estimated Total** | **~$440-460** | **~$8,600-8,900** |
 
-Software stack is 100% free/open-source — hardware is the only cost.
-
 ---
 
 # Conclusion
