@@ -135,8 +135,9 @@ Detachable cable, better clarity, build quality and comfort are worth the $30 di
 |------|----------------------|---------------------|
 | Dell Latitude 5420 | $345.87 | $6,571.47 |
 | ATH-M40x headphone | TBD (~$92-107) | TBD |
-| USB drive | $2.50 | $249.85 |
-| **Estimated Total** | **~$440-460** | **~$8,600-8,900** |
+| **Estimated Per Station** | **~$438-453** | **~$8,300-8,600** |
+
+USB drives purchased separately: 100x EASTBULL 16GB — $249.85
 
 ---
 
