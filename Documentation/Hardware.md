@@ -102,15 +102,7 @@ Detachable cable, better clarity, build quality and comfort are worth the $30 di
 ---
 ## - Personal Student USB Drives
 
-**EASTBULL 100-Pack 16GB USB 2.0** with lanyards and labels — purchased 2026-02-13.
-
-| | |
-|---|---|
-| Subtotal | $231.88 |
-| Tax | $17.97 |
-| **Grand Total** | **$249.85** |
-| **Per unit** | **$2.32** |
-| **Per unit with tax** | **$2.50** |
+**EASTBULL 100-Pack 16GB USB 2.0** with lanyards and labels — $231.88 (~$2.32/unit), pending purchase.
 
 | Spec | Detail |
 |------|--------|
