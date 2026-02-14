@@ -101,11 +101,23 @@ Detachable cable, better clarity, build quality and comfort are worth the $30 di
 
 ---
 ## - Personal Student USB Drives
-- Each USB drive is assigned an Asset Number (STU-001, etc.)
-  - Asset number is labeled on every USB drive in both print and Braille using a label maker and a 3D printer.
+
+**EASTBULL 50-Pack 16GB USB 2.0** with lanyards and labels — $126.99 ($2.54/unit), pending purchase.
+
+| Spec | Detail |
+|------|--------|
+| **Capacity** | 16GB |
+| **Interface** | USB 2.0 (~20-30 MB/s read) |
+| **Design** | Swivel, capless (no cap to lose) |
+| **Included** | 50 lanyards, 50 labels |
+| **Qty** | 50 (40 for students, 10 spares) |
+
+- Each USB drive is assigned an Asset Number (STU-001, etc.) via `4-Prepare-Student-USB.ps1`
+  - Asset number labeled in both print and 3D-printed Braille tag (see `Documentation/USB-Braille-Tags.md`)
+  - Braille tag clips onto drive keyring loop, lanyard attaches to tag
 - Pre-created folders (Documents, Audio, Schoolwork)
-- Optional Google Drive backup via rclone syncs every 15 minutes if internet is available.
-- Asset numbers are also stored as hidden file on USB drive
+- Optional Google Drive backup via rclone syncs every 15 minutes if internet is available
+- Asset numbers also stored as hidden `.student-id` file on USB drive
 
 ---
 
