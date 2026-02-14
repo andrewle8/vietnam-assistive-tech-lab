@@ -102,7 +102,15 @@ Detachable cable, better clarity, build quality and comfort are worth the $30 di
 ---
 ## - Personal Student USB Drives
 
-**EASTBULL 50-Pack 16GB USB 2.0** with lanyards and labels — $126.99 ($2.54/unit), pending purchase.
+**EASTBULL 50-Pack 16GB USB 2.0** with lanyards and labels — purchased 2026-02-13.
+
+| | |
+|---|---|
+| Subtotal | $126.99 |
+| Tax | $9.84 |
+| **Grand Total** | **$136.83** |
+| **Per unit** | **$2.54** |
+| **Per unit with tax** | **$2.74** |
 
 | Spec | Detail |
 |------|--------|
