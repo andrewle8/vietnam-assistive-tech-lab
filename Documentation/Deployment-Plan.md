@@ -22,7 +22,7 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 
 ---
 
-## Software Stack (100% Free/Open Source)
+## Software Stack
 
 | Component | Version | License | Notes |
 |-----------|---------|---------|-------|
