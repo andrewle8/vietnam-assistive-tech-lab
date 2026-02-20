@@ -13,7 +13,8 @@ param(
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "Vietnam Lab - Installer Verification" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "Pre-flight check: all files present + correct checksums`n" -ForegroundColor DarkGray
+Write-Host "Pre-flight check: all files present + correct checksums" -ForegroundColor DarkGray
+Write-Host ""
 
 if (-not (Test-Path $SourcesFile)) {
     Write-Host "[ERROR] installer-sources.json not found" -ForegroundColor Red
