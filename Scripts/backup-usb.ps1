@@ -1,7 +1,7 @@
 # Vietnam Lab - USB Backup Script
 # Version: 1.0
 # Runs on schedule to sync student USB drives to Google Drive via rclone
-# Deployed to C:\LabTools\rclone\ by 5-Configure-Loaner-Laptop.ps1
+# Deployed to C:\LabTools\rclone\ by Configure-Laptop.ps1
 # Last Updated: February 2026
 
 $ErrorActionPreference = "Continue"

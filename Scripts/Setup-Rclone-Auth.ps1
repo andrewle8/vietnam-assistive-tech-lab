@@ -67,7 +67,7 @@ if (Test-Path $configFile) {
         Write-Host "Config saved to: $configFile" -ForegroundColor White
         Write-Host ""
         Write-Host "Next steps:" -ForegroundColor Yellow
-        Write-Host "  1. Run 5-Configure-Loaner-Laptop.ps1 on each lab laptop" -ForegroundColor White
+        Write-Host "  1. Run Configure-Laptop.ps1 on each lab laptop" -ForegroundColor White
         Write-Host "     (this deploys rclone and the config to each PC)" -ForegroundColor White
         Write-Host ""
         Write-Host "IMPORTANT: Do NOT commit rclone.conf to git." -ForegroundColor Red
