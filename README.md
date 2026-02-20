@@ -105,6 +105,7 @@ Software updates are automatic — edit `update-manifest.json`, push to GitHub, 
 |--------|---------|
 | `0-Download-Installers.ps1` | Smart download from vendor URLs, GitHub, Kiwix |
 | `0.5-Upgrade-Windows11.ps1` | Upgrade Windows 10 to 11 |
+| `0.6-Download-LanguagePack.ps1` | Download Vietnamese language pack for offline install |
 | `1-Install-All.ps1` | Install all software silently |
 | `2-Verify-Installation.ps1` | Verify all software installed correctly |
 | `3-Configure-NVDA.ps1` | Configure NVDA with Vietnamese voice |

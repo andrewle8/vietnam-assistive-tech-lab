@@ -171,11 +171,23 @@ try {
 
     if (-not $viLang) {
         Write-Log "Installing Vietnamese language pack (may take several minutes)..." "INFO"
+
+        # Try offline cab first (from 0.6-Download-LanguagePack.ps1)
+        $usbRoot = Split-Path -Parent $PSScriptRoot
+        $cabPath = Join-Path $usbRoot "Installers\LanguagePacks\Microsoft-Windows-Client-Language-Pack_x64_vi-vn.cab"
+
+        if (Test-Path $cabPath) {
+            Write-Log "Found offline language pack: $cabPath" "INFO"
+            DISM /Online /Add-Package /PackagePath:"$cabPath" /NoRestart /Quiet
+            Write-Log "Vietnamese language pack installed from local cab" "SUCCESS"
+        } else {
+            Write-Log "No offline cab found, downloading language pack (requires internet)..." "WARNING"
+            Install-Language -Language "vi-VN" -ErrorAction SilentlyContinue
+        }
+
         $langList = Get-WinUserLanguageList
         $langList.Add("vi-VN")
         Set-WinUserLanguageList $langList -Force
-        # Trigger language pack download if online
-        Install-Language -Language "vi-VN" -ErrorAction SilentlyContinue
     }
 
     # Set Vietnamese as the preferred display language (first in list)
