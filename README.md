@@ -114,6 +114,8 @@ Software updates are automatic — edit `update-manifest.json`, push to GitHub, 
 | `Report-FleetHealth.ps1` | Fleet health reporter (runs as scheduled task on each PC) |
 | `Verify-Installers.ps1` | Validate installer files and SHA256 checksums |
 | `Pre-Deployment-Check.ps1` | Pre-trip validation of entire deployment kit |
+| `Setup-Rclone-Auth.ps1` | Configure rclone with Google Drive OAuth |
+| `backup-usb.ps1` | Sync student USB drives to Google Drive via rclone |
 
 ---
 
