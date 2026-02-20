@@ -5,7 +5,9 @@
 
 param(
     [switch]$Silent = $true,
-    [string]$LogPath = "$PSScriptRoot\installation.log"
+    [string]$LogPath = "$PSScriptRoot\installation.log",
+    [ValidateSet("LibreOffice","MSOffice")]
+    [string]$OfficeSuite = "LibreOffice"
 )
 
 # Function to log messages
@@ -54,14 +56,21 @@ $installations = @(
         Path = ".\Installers\SaoMai\SMTTSetup.exe"
         Args = @("/S")
         WaitTime = 30
-    },
-    @{
+    }
+)
+
+# Add office suite based on parameter
+if ($OfficeSuite -eq "LibreOffice") {
+    $installations += @{
         Name = "LibreOffice 26.2.0"
         Path = ".\Installers\LibreOffice\LibreOffice_26.2.0_Win_x86-64.msi"
         Args = @("/i", "`"$($usbRoot)\Installers\LibreOffice\LibreOffice_26.2.0_Win_x86-64.msi`"", "/quiet", "/norestart")
         UseMsiExec = $true
         WaitTime = 120
-    },
+    }
+}
+
+$installations += @(
     @{
         Name = "Firefox 147"
         Path = ".\Installers\Firefox\Firefox Setup 147.0.4.msi"
@@ -136,6 +145,39 @@ foreach ($app in $installations) {
         Write-Log "ERROR installing $($app.Name): $($_.Exception.Message)" "ERROR"
         $failCount++
     }
+}
+
+# Install MS Office if selected
+if ($OfficeSuite -eq "MSOffice") {
+    Write-Log "Office suite: Microsoft Office (selected via -OfficeSuite)" "INFO"
+    $msOfficeInstaller = Join-Path $usbRoot "Installers\MSOffice\setup.exe"
+    $msOfficeInstalled = (Test-Path "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE") -or
+                         (Test-Path "C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE")
+
+    if ($msOfficeInstalled) {
+        Write-Log "Microsoft Office is already installed — skipping" "SUCCESS"
+        $successCount++
+    } elseif (Test-Path $msOfficeInstaller) {
+        Write-Log "Installing Microsoft Office..." "INFO"
+        try {
+            $process = Start-Process -FilePath $msOfficeInstaller -ArgumentList "/configure", "configuration.xml" -Wait -PassThru -NoNewWindow -WorkingDirectory (Split-Path $msOfficeInstaller)
+            if ($process.ExitCode -eq 0) {
+                Write-Log "Microsoft Office installed successfully" "SUCCESS"
+                $successCount++
+            } else {
+                Write-Log "Microsoft Office installation completed with exit code: $($process.ExitCode)" "WARNING"
+                $successCount++
+            }
+        } catch {
+            Write-Log "ERROR installing Microsoft Office: $($_.Exception.Message)" "ERROR"
+            $failCount++
+        }
+    } else {
+        Write-Log "WARNING: MS Office installer not found at $msOfficeInstaller — skipping office suite install" "WARNING"
+        Write-Log "  Place Office Deployment Tool files in Installers\MSOffice\ or pre-install MS Office" "INFO"
+    }
+} else {
+    Write-Log "Office suite: LibreOffice (default)" "INFO"
 }
 
 # Install LEAP Games (portable - copy to local folder and create shortcuts)

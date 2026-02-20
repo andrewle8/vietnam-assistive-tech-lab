@@ -36,9 +36,8 @@
     "destination": "Thorium/Thorium.Setup.{version}.exe"
   },
   "sumatrapdf": {
-    "source": "github",
-    "repo": "sumatrapdfreader/sumatrapdf",
-    "asset_pattern": "SumatraPDF-{version}-64-install.exe",
+    "source": "vendor",
+    "url_template": "https://www.sumatrapdfreader.org/dl/rel/{version}/SumatraPDF-{version}-64-install.exe",
     "destination": "Utilities/SumatraPDF/SumatraPDF-{version}-64-install.exe"
   },
   "rclone": {
@@ -51,18 +50,16 @@
     "final_path": "Utilities/rclone/rclone.exe"
   },
   "kiwix": {
-    "source": "github",
-    "repo": "kiwix/kiwix-desktop",
-    "asset_pattern": "kiwix-desktop_windows_x64_{version}.zip",
+    "source": "vendor",
+    "url_template": "https://download.kiwix.org/release/kiwix-desktop/kiwix-desktop_windows_x64_{version}.zip",
     "destination": "Kiwix/kiwix-desktop_windows_x64_{version}.zip",
     "extract": true,
     "extract_file": "kiwix-desktop.exe",
     "final_path": "Kiwix/kiwix-desktop.exe"
   },
   "tailscale": {
-    "source": "github",
-    "repo": "tailscale/tailscale",
-    "asset_pattern": "tailscale-setup-{version}-amd64.msi",
+    "source": "vendor",
+    "url_template": "https://pkgs.tailscale.com/stable/tailscale-setup-{version}-amd64.msi",
     "destination": "Utilities/Tailscale/tailscale-setup-{version}-amd64.msi"
   },
 
@@ -73,7 +70,7 @@
   },
   "wiktionary_vi": {
     "source": "kiwix",
-    "url_template": "https://download.kiwix.org/zim/wiktionary/wiktionary_vi_all_maxi_{date}.zim",
+    "url_template": "https://download.kiwix.org/zim/wiktionary/wiktionary_vi_all_nopic_{date}.zim",
     "destination": "Kiwix/{filename}"
   },
   "wikisource_vi": {

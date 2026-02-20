@@ -122,6 +122,14 @@ PCNumber: _
 
 Enter a number 1–19 for each laptop. The script handles everything: hostname, Wi-Fi, software install, NVDA config, Windows hardening, Tailscale, and scheduled tasks.
 
+**To use Microsoft Office instead of LibreOffice:**
+
+```powershell
+.\Scripts\Bootstrap-Laptop.ps1 -OfficeSuite MSOffice
+```
+
+MS Office must be pre-installed or have its installer placed in `Installers\MSOffice\` (Office Deployment Tool `setup.exe`). If the installer is not found, the script skips the office install and continues. NVDA has built-in MS Office support via UIA — no add-on needed.
+
 After it finishes, verify the machine matches `manifest.json`:
 
 ```powershell
@@ -157,12 +165,12 @@ Software updates are automatic — edit `update-manifest.json`, push to GitHub, 
 | `0-Download-Installers.ps1` | Smart download from vendor URLs, GitHub, Kiwix |
 | `0.5-Upgrade-Windows11.ps1` | Upgrade Windows 10 to 11 |
 | `0.6-Download-LanguagePack.ps1` | Download Vietnamese language pack for offline install |
-| `1-Install-All.ps1` | Install all software silently |
+| `1-Install-All.ps1` | Install all software silently (`-OfficeSuite MSOffice` for MS Office) |
 | `2-Verify-Installation.ps1` | Verify all software installed correctly |
 | `3-Configure-NVDA.ps1` | Configure NVDA with Vietnamese voice |
 | `4-Prepare-Student-USB.ps1` | Prepare student USB drives |
 | `7-Audit.ps1` | Full audit against manifest.json (with JSON output) |
-| `Bootstrap-Laptop.ps1` | Full PC setup: hostname, Wi-Fi, WinRM, install software, configure NVDA, Windows hardening, Tailscale, scheduled tasks |
+| `Bootstrap-Laptop.ps1` | Full PC setup (`-OfficeSuite MSOffice` for MS Office instead of LibreOffice) |
 | `Configure-Laptop.ps1` | Windows hardening, rclone, power settings, desktop shortcuts, scheduled tasks (called by Bootstrap) |
 | `Install-Tailscale.ps1` | Install Tailscale VPN and join tailnet |
 | `Deploy-All.ps1` | Run scripts across fleet (local LAN or Tailscale) |

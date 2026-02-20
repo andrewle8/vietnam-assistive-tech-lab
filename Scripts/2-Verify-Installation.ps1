@@ -4,7 +4,9 @@
 # Last Updated: February 2026
 
 param(
-    [string]$LogPath = "$PSScriptRoot\verification.log"
+    [string]$LogPath = "$PSScriptRoot\verification.log",
+    [ValidateSet("LibreOffice","MSOffice")]
+    [string]$OfficeSuite = "LibreOffice"
 )
 
 function Write-Log {
@@ -46,14 +48,25 @@ $checks = @(
         )
         Critical = $false
     },
-    @{
-        Name = "LibreOffice"
-        Paths = @(
-            "C:\Program Files\LibreOffice\program\soffice.exe",
-            "C:\Program Files (x86)\LibreOffice\program\soffice.exe"
-        )
-        Critical = $true
-    },
+    $(if ($OfficeSuite -eq "MSOffice") {
+        @{
+            Name = "Microsoft Office"
+            Paths = @(
+                "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE",
+                "C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE"
+            )
+            Critical = $true
+        }
+    } else {
+        @{
+            Name = "LibreOffice"
+            Paths = @(
+                "C:\Program Files\LibreOffice\program\soffice.exe",
+                "C:\Program Files (x86)\LibreOffice\program\soffice.exe"
+            )
+            Critical = $true
+        }
+    }),
     @{
         Name = "Firefox ESR"
         Paths = @(

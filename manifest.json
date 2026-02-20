@@ -47,6 +47,15 @@
         "C:\\Program Files\\LibreOffice\\program\\soffice.exe"
       ]
     },
+    "msoffice": {
+      "version": "Office 16 (2024/365)",
+      "installer": "setup.exe",
+      "critical": true,
+      "paths": [
+        "C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE",
+        "C:\\Program Files (x86)\\Microsoft Office\\root\\Office16\\WINWORD.EXE"
+      ]
+    },
     "firefox": {
       "version": "147.0.4",
       "installer": "Firefox.Setup.147.0.4.msi",
@@ -159,8 +168,8 @@
 
   "kiwix_content": {
     "wikipedia_vi": "wikipedia_vi_all_mini_2025-11.zim",
-    "wiktionary_vi": "wiktionary_vi_all_maxi_2025-11.zim",
-    "wikisource_vi": "wikisource_vi_all_maxi_2025-11.zim"
+    "wiktionary_vi": "wiktionary_vi_all_nopic_2025-12.zim",
+    "wikisource_vi": "wikisource_vi_all_maxi_2026-01.zim"
   },
 
   "configuration": {
