@@ -1,0 +1,140 @@
+{
+  "_comment": "Source table for all installers. Used by 0-Download-Installers.ps1",
+  "_sources": "vendor = direct URL, github = GitHub Releases API, kiwix = kiwix.org, manual = must be pre-placed",
+
+  "nvda": {
+    "source": "vendor",
+    "url_template": "https://www.nvaccess.org/files/nvda/releases/{version}/nvda_{version}.exe",
+    "destination": "NVDA/nvda_{version}.exe"
+  },
+  "firefox": {
+    "source": "vendor",
+    "url_template": "https://releases.mozilla.org/pub/firefox/releases/{version}/win64/en-US/Firefox%20Setup%20{version}.msi",
+    "destination": "Firefox/Firefox Setup {version}.msi"
+  },
+  "libreoffice": {
+    "source": "vendor",
+    "url_template": "https://download.documentfoundation.org/libreoffice/stable/{version}/win/x86_64/LibreOffice_{version}_Win_x86-64.msi",
+    "destination": "LibreOffice/LibreOffice_{version}_Win_x86-64.msi"
+  },
+  "vlc": {
+    "source": "vendor",
+    "url_template": "https://get.videolan.org/vlc/{version}/win64/vlc-{version}-win64.exe",
+    "destination": "Utilities/vlc-{version}-win64.exe"
+  },
+
+  "audacity": {
+    "source": "github",
+    "repo": "audacity/audacity",
+    "asset_pattern": "audacity-win-{version}-64bit.exe",
+    "destination": "Audacity/audacity-win-{version}-64bit.exe"
+  },
+  "thorium_reader": {
+    "source": "github",
+    "repo": "edrlab/thorium-reader",
+    "asset_pattern": "Thorium.Setup.{version}.exe",
+    "destination": "Thorium/Thorium.Setup.{version}.exe"
+  },
+  "sumatrapdf": {
+    "source": "github",
+    "repo": "sumatrapdfreader/sumatrapdf",
+    "asset_pattern": "SumatraPDF-{version}-64-install.exe",
+    "destination": "Utilities/SumatraPDF/SumatraPDF-{version}-64-install.exe"
+  },
+  "rclone": {
+    "source": "github",
+    "repo": "rclone/rclone",
+    "asset_pattern": "rclone-v{version}-windows-amd64.zip",
+    "destination": "Utilities/rclone/rclone-v{version}-windows-amd64.zip",
+    "extract": true,
+    "extract_file": "rclone.exe",
+    "final_path": "Utilities/rclone/rclone.exe"
+  },
+  "kiwix": {
+    "source": "github",
+    "repo": "kiwix/kiwix-desktop",
+    "asset_pattern": "kiwix-desktop_windows_x64_{version}.zip",
+    "destination": "Kiwix/kiwix-desktop_windows_x64_{version}.zip",
+    "extract": true,
+    "extract_file": "kiwix-desktop.exe",
+    "final_path": "Kiwix/kiwix-desktop.exe"
+  },
+  "tailscale": {
+    "source": "github",
+    "repo": "tailscale/tailscale",
+    "asset_pattern": "tailscale-setup-{version}-amd64.msi",
+    "destination": "Utilities/Tailscale/tailscale-setup-{version}-amd64.msi"
+  },
+
+  "wikipedia_vi": {
+    "source": "kiwix",
+    "url_template": "https://download.kiwix.org/zim/wikipedia/wikipedia_vi_all_mini_{date}.zim",
+    "destination": "Kiwix/{filename}"
+  },
+  "wiktionary_vi": {
+    "source": "kiwix",
+    "url_template": "https://download.kiwix.org/zim/wiktionary/wiktionary_vi_all_maxi_{date}.zim",
+    "destination": "Kiwix/{filename}"
+  },
+  "wikisource_vi": {
+    "source": "kiwix",
+    "url_template": "https://download.kiwix.org/zim/wikisource/wikisource_vi_all_maxi_{date}.zim",
+    "destination": "Kiwix/{filename}"
+  },
+
+  "quorum_studio": {
+    "source": "manual",
+    "expected_path": "Quorum/QuorumStudio-win64.exe",
+    "instructions": "Download from quorumlanguage.com or GitHub Release installers-v1"
+  },
+  "saomai_vnvoice": {
+    "source": "manual",
+    "expected_path": "SaoMai/SaoMai_voice1.0.exe",
+    "instructions": "Download from Sao Mai Center (saomaicenter.org) or GitHub Release installers-v1"
+  },
+  "saomai_typing_tutor": {
+    "source": "manual",
+    "expected_path": "SaoMai/SMTTSetup.exe",
+    "instructions": "Download from Sao Mai Center or GitHub Release installers-v1"
+  },
+  "unikey": {
+    "source": "manual",
+    "expected_path": "Utilities/UniKey/UniKeyNT.exe",
+    "instructions": "Download unikey46RC2-230919-win64.zip from unikey.org or GitHub Release installers-v1, extract UniKeyNT.exe"
+  },
+  "goldendict": {
+    "source": "manual",
+    "expected_path": "Utilities/GoldenDict/GoldenDict.exe",
+    "instructions": "Discontinued. Use GoldenDict-1.5.0-portable.zip from GitHub Release installers-v1"
+  },
+
+  "nvda_addons": {
+    "source": "manual",
+    "expected_path": "NVDA/addons/",
+    "instructions": "Download all .nvda-addon files from GitHub Release installers-v1",
+    "files": [
+      "VLC-2025.1.0.nvda-addon",
+      "speechHistory-2024.3.1.nvda-addon",
+      "nvdaRemote-2.6.4.nvda-addon",
+      "focusHighlight-2.4.nvda-addon",
+      "audacityAccessEnhancement-3.3.2.nvda-addon",
+      "clock-20250714.nvda-addon",
+      "MathCAT.nvda-addon"
+    ]
+  },
+  "leap_tictactoe": {
+    "source": "manual",
+    "expected_path": "Educational/TicTacToe/",
+    "instructions": "Download tictactoe-win64_build-1.1b.zip from GitHub Release installers-v1 and extract"
+  },
+  "leap_tennis": {
+    "source": "manual",
+    "expected_path": "Educational/Tennis/",
+    "instructions": "Download tennis_win64_built-0.9b.zip from GitHub Release installers-v1 and extract"
+  },
+  "leap_curve": {
+    "source": "manual",
+    "expected_path": "Educational/Curve/",
+    "instructions": "Download curve_eng_win64.zip from GitHub Release installers-v1 and extract"
+  }
+}

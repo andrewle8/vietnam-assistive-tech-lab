@@ -11,7 +11,9 @@ param(
     [int]$BatchSize = 5,
     [int]$TotalPCs = 19,
     [string]$ScriptsPath = "\\AndrewServer\Data\Vietnam-Lab-Kit\Scripts",
-    [string]$LogDir = "$PSScriptRoot\logs"
+    [string]$LogDir = "$PSScriptRoot\logs",
+    [switch]$UseTailscale,
+    [string]$TailscaleIPFile = (Join-Path $PSScriptRoot "tailscale-ips.json")
 )
 
 # ---- Setup ----
@@ -41,12 +43,37 @@ if ($PCList) {
     $pcs = 1..$TotalPCs | ForEach-Object { "PC-{0:D2}" -f $_ }
 }
 
+# Load Tailscale IP map if using VPN
+$tailscaleIPs = @{}
+if ($UseTailscale) {
+    if (Test-Path $TailscaleIPFile) {
+        $ipData = Get-Content $TailscaleIPFile -Raw | ConvertFrom-Json
+        foreach ($prop in $ipData.PSObject.Properties) {
+            $tailscaleIPs[$prop.Name] = $prop.Value
+        }
+        Write-Log "Loaded Tailscale IP map ($($tailscaleIPs.Count) devices)"
+    } else {
+        Write-Log "Tailscale IP file not found at $TailscaleIPFile" "WARN"
+        Write-Log "Run Get-FleetTailscaleIPs.ps1 -OutputJson first" "WARN"
+    }
+}
+
+# Resolve PC name to target (hostname or Tailscale IP)
+function Resolve-Target {
+    param([string]$PCName)
+    if ($UseTailscale -and $tailscaleIPs.ContainsKey($PCName)) {
+        return $tailscaleIPs[$PCName]
+    }
+    return $PCName
+}
+
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "Vietnam Lab - Deployment Orchestrator" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "Phase:      $Phase" -ForegroundColor White
 Write-Host "Targets:    $($pcs -join ', ')" -ForegroundColor White
 Write-Host "Batch size: $BatchSize" -ForegroundColor White
+Write-Host "Network:    $(if($UseTailscale){"Tailscale VPN ($($tailscaleIPs.Count) IPs loaded)"}else{"Local LAN"})" -ForegroundColor White
 Write-Host "Log file:   $logFile" -ForegroundColor White
 Write-Host "========================================`n" -ForegroundColor Cyan
 
@@ -78,25 +105,29 @@ function Invoke-Discovery {
     $results = @()
 
     foreach ($pc in $PCNames) {
-        $ping = Test-Connection -ComputerName $pc -Count 1 -Quiet -ErrorAction SilentlyContinue
+        $target = Resolve-Target $pc
+        $ping = Test-Connection -ComputerName $target -Count 1 -Quiet -ErrorAction SilentlyContinue
         $winrm = $false
-        $ip = "-"
+        $ip = if ($target -ne $pc) { $target } else { "-" }
 
         if ($ping) {
-            try {
-                $dns = [System.Net.Dns]::GetHostAddresses($pc) | Where-Object { $_.AddressFamily -eq "InterNetwork" }
-                $ip = $dns[0].ToString()
-            } catch { $ip = "?" }
+            if ($ip -eq "-") {
+                try {
+                    $dns = [System.Net.Dns]::GetHostAddresses($target) | Where-Object { $_.AddressFamily -eq "InterNetwork" }
+                    $ip = $dns[0].ToString()
+                } catch { $ip = "?" }
+            }
 
             try {
-                $s = New-PSSession -ComputerName $pc -ErrorAction Stop
+                $s = New-PSSession -ComputerName $target -ErrorAction Stop
                 $winrm = $true
                 Remove-PSSession $s
             } catch {}
         }
 
         $status = if ($winrm) { "Ready" } elseif ($ping) { "Online (no WinRM)" } else { "Offline" }
-        Write-Log "$pc - $status (IP: $ip)"
+        $via = if ($UseTailscale -and $target -ne $pc) { " via Tailscale" } else { "" }
+        Write-Log "$pc - $status (IP: $ip)$via"
 
         $results += [PSCustomObject]@{
             PC     = $pc
@@ -139,6 +170,7 @@ function Invoke-RemotePhase {
 
         $jobs = @()
         foreach ($pc in $batch) {
+            $target = Resolve-Target $pc
             $jobs += Start-Job -Name $pc -ScriptBlock {
                 param($ComputerName, $ScriptPath, $ShareRoot)
                 $timer = [System.Diagnostics.Stopwatch]::StartNew()
@@ -166,7 +198,7 @@ function Invoke-RemotePhase {
                         Output   = ""
                     }
                 }
-            } -ArgumentList $pc, $scriptFullPath, $ScriptsPath
+            } -ArgumentList $target, $scriptFullPath, $ScriptsPath
         }
 
         # Wait for batch to complete

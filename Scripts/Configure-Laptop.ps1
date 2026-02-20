@@ -660,6 +660,132 @@ try {
     $failCount++
 }
 
+# Step 16: Deploy Update Agent
+Write-Log "Step 16: Deploying auto-update agent..." "INFO"
+
+try {
+    $updateAgentDir = "C:\LabTools\update-agent"
+    foreach ($subDir in @($updateAgentDir, "$updateAgentDir\staging", "$updateAgentDir\rollback", "$updateAgentDir\results", "$updateAgentDir\logs")) {
+        if (-not (Test-Path $subDir)) {
+            New-Item -Path $subDir -ItemType Directory -Force | Out-Null
+        }
+    }
+
+    # Copy update agent script
+    $agentSource = Join-Path $PSScriptRoot "Update-Agent.ps1"
+    if (Test-Path $agentSource) {
+        Copy-Item -Path $agentSource -Destination "$updateAgentDir\Update-Agent.ps1" -Force
+        Write-Log "Copied Update-Agent.ps1 to $updateAgentDir" "SUCCESS"
+    }
+
+    # Copy audit script for post-install verification
+    $auditSource = Join-Path $PSScriptRoot "7-Audit.ps1"
+    if (Test-Path $auditSource) {
+        Copy-Item -Path $auditSource -Destination "$updateAgentDir\7-Audit.ps1" -Force
+    }
+
+    # Copy local manifest for version tracking
+    $manifestSource = Join-Path (Split-Path -Parent $PSScriptRoot) "manifest.json"
+    if (Test-Path $manifestSource) {
+        Copy-Item -Path $manifestSource -Destination "C:\LabTools\manifest.json" -Force
+        Write-Log "Deployed manifest.json to C:\LabTools\" "SUCCESS"
+    }
+
+    # Register LabUpdateAgent scheduled task
+    $existingTask = Get-ScheduledTask -TaskName "LabUpdateAgent" -ErrorAction SilentlyContinue
+    if ($existingTask) {
+        Unregister-ScheduledTask -TaskName "LabUpdateAgent" -Confirm:$false
+    }
+
+    # Random offset per PC (0-120 min) based on PC number to spread load
+    $pcNum = 0
+    if ($env:COMPUTERNAME -match "PC-(\d+)") { $pcNum = [int]$Matches[1] }
+    $randomDelay = New-TimeSpan -Minutes ($pcNum * 6)  # PC-01=6min, PC-19=114min
+
+    $taskAction = New-ScheduledTaskAction `
+        -Execute "powershell.exe" `
+        -Argument "-NoProfile -NonInteractive -ExecutionPolicy Bypass -File `"$updateAgentDir\Update-Agent.ps1`""
+
+    $taskTrigger = New-ScheduledTaskTrigger -Daily -At "02:00" -RandomDelay $randomDelay
+
+    $taskSettings = New-ScheduledTaskSettingsSet `
+        -AllowStartIfOnBatteries `
+        -DontStopIfGoingOnBatteries `
+        -StartWhenAvailable `
+        -MultipleInstances IgnoreNew `
+        -ExecutionTimeLimit (New-TimeSpan -Hours 2)
+
+    $taskPrincipal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount -RunLevel Highest
+
+    Register-ScheduledTask `
+        -TaskName "LabUpdateAgent" `
+        -Action $taskAction `
+        -Trigger $taskTrigger `
+        -Settings $taskSettings `
+        -Principal $taskPrincipal `
+        -Description "Checks for and applies software updates from GitHub (daily 2-4 AM)" | Out-Null
+
+    Write-Log "Scheduled task 'LabUpdateAgent' created (daily at 2 AM + ${pcNum}x6 min offset)" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not deploy update agent: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 17: Deploy Fleet Health Reporter
+Write-Log "Step 17: Deploying fleet health reporter..." "INFO"
+
+try {
+    # Copy fleet health script
+    $healthSource = Join-Path $PSScriptRoot "Report-FleetHealth.ps1"
+    if (Test-Path $healthSource) {
+        Copy-Item -Path $healthSource -Destination "C:\LabTools\Report-FleetHealth.ps1" -Force
+        Write-Log "Copied Report-FleetHealth.ps1 to C:\LabTools\" "SUCCESS"
+    }
+
+    # Register LabFleetReport scheduled task
+    $existingTask = Get-ScheduledTask -TaskName "LabFleetReport" -ErrorAction SilentlyContinue
+    if ($existingTask) {
+        Unregister-ScheduledTask -TaskName "LabFleetReport" -Confirm:$false
+    }
+
+    # Stagger by PC number: PC-01 at 03:00, PC-02 at 03:05, etc.
+    $reportTime = "03:00"
+    if ($env:COMPUTERNAME -match "PC-(\d+)") {
+        $offset = ([int]$Matches[1] - 1) * 5
+        $reportTime = (Get-Date "03:00").AddMinutes($offset).ToString("HH:mm")
+    }
+
+    $taskAction = New-ScheduledTaskAction `
+        -Execute "powershell.exe" `
+        -Argument "-NoProfile -NonInteractive -ExecutionPolicy Bypass -File `"C:\LabTools\Report-FleetHealth.ps1`""
+
+    $taskTrigger = New-ScheduledTaskTrigger -Daily -At $reportTime
+
+    $taskSettings = New-ScheduledTaskSettingsSet `
+        -AllowStartIfOnBatteries `
+        -DontStopIfGoingOnBatteries `
+        -StartWhenAvailable `
+        -MultipleInstances IgnoreNew `
+        -ExecutionTimeLimit (New-TimeSpan -Minutes 30)
+
+    $taskPrincipal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount -RunLevel Highest
+
+    Register-ScheduledTask `
+        -TaskName "LabFleetReport" `
+        -Action $taskAction `
+        -Trigger $taskTrigger `
+        -Settings $taskSettings `
+        -Principal $taskPrincipal `
+        -Description "Uploads health report to Google Drive (daily at $reportTime)" | Out-Null
+
+    Write-Log "Scheduled task 'LabFleetReport' created (daily at $reportTime)" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not deploy fleet reporter: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
 # Summary
 Write-Host "`n========================================" -ForegroundColor Green
 Write-Host "Loaner Laptop Configuration Complete!" -ForegroundColor Green
@@ -688,6 +814,10 @@ Write-Host "  Narrator      Shortcut disabled (NVDA only)" -ForegroundColor Whit
 Write-Host "  Power         No sleep on AC, no hibernate" -ForegroundColor White
 Write-Host "  NVDA backup   Restore shortcut on desktop" -ForegroundColor White
 Write-Host "  Vi folders    Tai Lieu, Am Nhac, Truyen, Hoc Tap, Tro Choi" -ForegroundColor White
+Write-Host ""
+Write-Host "Remote Management:" -ForegroundColor White
+Write-Host "  Update agent  Daily 2-4 AM (LabUpdateAgent task)" -ForegroundColor White
+Write-Host "  Fleet report  Daily health upload to Google Drive (LabFleetReport task)" -ForegroundColor White
 Write-Host ""
 
 if ($failCount -gt 0) {

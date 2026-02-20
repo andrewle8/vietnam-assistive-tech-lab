@@ -11,7 +11,7 @@ This repo contains everything needed to deploy a fully offline assistive technol
 
 | Component | License | Purpose |
 |-----------|---------|---------|
-| **NVDA 2025.3.2** | GPL-2.0 | Screen reader with Vietnamese interface |
+| **NVDA 2025.3.3** | GPL-2.0 | Screen reader with Vietnamese interface |
 | **Sao Mai VNVoice** | Free (non-commercial) | Vietnamese text-to-speech (SAPI5) |
 | **Sao Mai Typing Tutor** | Free (non-commercial) | Vietnamese typing lessons with audio |
 | **LibreOffice 26.2.0** | MPL-2.0 | Office suite |

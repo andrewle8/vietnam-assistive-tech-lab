@@ -34,12 +34,12 @@ if (-not $isAdmin) {
 }
 
 # 1. Set hostname
-Write-Host "[1/7] Setting hostname to $hostname..." -ForegroundColor Yellow
+Write-Host "[1/8] Setting hostname to $hostname..." -ForegroundColor Yellow
 Rename-Computer -NewName $hostname -Force -ErrorAction Stop
 Write-Host "      Hostname set to $hostname" -ForegroundColor Green
 
 # 2. Connect to Wi-Fi
-Write-Host "[2/7] Connecting to Wi-Fi ($WifiSSID)..." -ForegroundColor Yellow
+Write-Host "[2/8] Connecting to Wi-Fi ($WifiSSID)..." -ForegroundColor Yellow
 $profileXml = @"
 <?xml version="1.0"?>
 <WLANProfile xmlns="http://www.microsoft.com/networking/WLAN/profile/v1">
@@ -97,13 +97,13 @@ if ($ip) {
 }
 
 # 3. Enable WinRM
-Write-Host "[3/7] Enabling WinRM..." -ForegroundColor Yellow
+Write-Host "[3/8] Enabling WinRM..." -ForegroundColor Yellow
 Enable-PSRemoting -Force -SkipNetworkProfileCheck -ErrorAction Stop | Out-Null
 Set-Item WSMan:\localhost\Client\TrustedHosts -Value "*" -Force
 Write-Host "      WinRM enabled" -ForegroundColor Green
 
 # 4. Configure firewall for WinRM
-Write-Host "[4/7] Configuring firewall..." -ForegroundColor Yellow
+Write-Host "[4/8] Configuring firewall..." -ForegroundColor Yellow
 # WinRM rules
 netsh advfirewall firewall set rule name="Windows Remote Management (HTTP-In)" new enable=yes profile=any | Out-Null
 # File and printer sharing
@@ -111,12 +111,12 @@ netsh advfirewall firewall set rule group="File and Printer Sharing" new enable=
 Write-Host "      Firewall rules configured" -ForegroundColor Green
 
 # 5. Set execution policy
-Write-Host "[5/7] Setting execution policy to RemoteSigned..." -ForegroundColor Yellow
+Write-Host "[5/8] Setting execution policy to RemoteSigned..." -ForegroundColor Yellow
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force -Scope LocalMachine
 Write-Host "      Execution policy set" -ForegroundColor Green
 
 # 6. Map NAS drive
-Write-Host "[6/7] Mapping $NASShare as ${DriveLetter}:..." -ForegroundColor Yellow
+Write-Host "[6/8] Mapping $NASShare as ${DriveLetter}:..." -ForegroundColor Yellow
 # Remove existing mapping if present
 if (Test-Path "${DriveLetter}:\") {
     net use "${DriveLetter}:" /delete /yes 2>$null | Out-Null
@@ -128,18 +128,30 @@ if (Test-Path "${DriveLetter}:\") {
     Write-Host "      WARNING: Could not map ${DriveLetter}: drive. NAS may not be reachable yet." -ForegroundColor Red
 }
 
-# 7. Summary
+# 7. Install Tailscale VPN
+Write-Host "[7/8] Installing Tailscale VPN..." -ForegroundColor Yellow
+$tailscaleScript = Join-Path $PSScriptRoot "Install-Tailscale.ps1"
+if (Test-Path $tailscaleScript) {
+    & $tailscaleScript -PCNumber $PCNumber
+} else {
+    Write-Host "      WARNING: Install-Tailscale.ps1 not found. Skipping VPN setup." -ForegroundColor Red
+    Write-Host "      You can install Tailscale manually later." -ForegroundColor Red
+}
+
+# 8. Summary
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "Bootstrap Summary" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 
 $winrmStatus = try { (Get-Service WinRM).Status } catch { "Unknown" }
 $currentIP = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.InterfaceAlias -match "Wi-Fi|Wireless|WLAN" -and $_.PrefixOrigin -ne "WellKnown" }).IPAddress
+$tailscaleIP = if (Test-Path "C:\LabTools\tailscale-ip.txt") { Get-Content "C:\LabTools\tailscale-ip.txt" -ErrorAction SilentlyContinue } else { "Not configured" }
 
-Write-Host "  Hostname:    $hostname (effective after reboot)" -ForegroundColor White
-Write-Host "  IP Address:  $currentIP" -ForegroundColor White
-Write-Host "  WinRM:       $winrmStatus" -ForegroundColor White
-Write-Host "  Drive Map:   ${DriveLetter}: -> $NASShare" -ForegroundColor White
+Write-Host "  Hostname:      $hostname (effective after reboot)" -ForegroundColor White
+Write-Host "  IP Address:    $currentIP" -ForegroundColor White
+Write-Host "  Tailscale IP:  $tailscaleIP" -ForegroundColor White
+Write-Host "  WinRM:         $winrmStatus" -ForegroundColor White
+Write-Host "  Drive Map:     ${DriveLetter}: -> $NASShare" -ForegroundColor White
 Write-Host "========================================`n" -ForegroundColor Cyan
 
 Write-Host "Reboot required to apply hostname change." -ForegroundColor Yellow

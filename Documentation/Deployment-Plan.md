@@ -27,13 +27,13 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 | Component | Version | License | Notes |
 |-----------|---------|---------|-------|
 | **Windows 11** | Upgraded from Win 10 Pro | OEM License | Dell Latitude 5420 ships with Win 10 Pro, free upgrade to 11 |
-| **NVDA** | 2025.3.2 | GPL-2.0 | Screen reader with Vietnamese interface |
+| **NVDA** | 2025.3.3 | GPL-2.0 | Screen reader with Vietnamese interface |
 | **Sao Mai VNVoice** | v1.0 | Free (non-commercial) | Vietnamese TTS (Minh Du/Mai Dung voices), SAPI5 |
 | **Sao Mai Typing Tutor** | Latest | Free | Vietnamese typing lessons with speech |
 | **LibreOffice** | 26.2.0 | MPL-2.0 | Office suite |
 | **Firefox** | 147 | MPL-2.0 | Accessible web browser |
 | **VLC Media Player** | 3.0.23 | GPL-2.0 | Media playback |
-| **Audacity** | 3.7.3 | GPL-3.0 | Audio recording/editing |
+| **Audacity** | 3.7.7 | GPL-3.0 | Audio recording/editing |
 | **Quorum Studio** | 7.3.0 | BSD | Accessible IDE purpose-built for blind students |
 | **UniKey** | 4.6 | GPL | Vietnamese Telex keyboard input |
 | **Kiwix** | 2.5.1 | GPL-3.0 | Offline encyclopedia reader |
@@ -81,13 +81,15 @@ Sao Mai operates Vietnam's largest accessible book library (~10,000 titles) in D
 Run the entire deployment process on one laptop to verify:
 
 1. Run `0-Download-Installers.ps1` — all downloads succeed
-2. Run `1-Install-All.ps1` — all software installs silently
-3. Run `2-Verify-Installation.ps1` — all checks pass
-4. Run `3-Configure-NVDA.ps1` — speech works, Vietnamese voice active
-5. Run `6-Health-Check.ps1` — all green
-6. Manually test: open each app, verify NVDA reads it correctly
-7. Test Thorium Reader with a sample EPUB/DAISY file
-8. Test student USB workflow with `4-Prepare-Student-USB.ps1`
+2. Run `0.5-Upgrade-Windows11.ps1` — upgrade from Win 10 to Win 11 if needed
+3. Run `1-Install-All.ps1` — all software installs silently
+4. Run `2-Verify-Installation.ps1` — all checks pass
+5. Run `3-Configure-NVDA.ps1` — speech works, Vietnamese voice active
+6. Run `6-Health-Check.ps1` — all green
+7. Run `7-Audit.ps1` — compare machine state against manifest.json
+8. Manually test: open each app, verify NVDA reads it correctly
+9. Test Thorium Reader with a sample EPUB/DAISY file
+10. Test student USB workflow with `4-Prepare-Student-USB.ps1`
 
 Fix any issues, then repeat on a second laptop to confirm consistency.
 

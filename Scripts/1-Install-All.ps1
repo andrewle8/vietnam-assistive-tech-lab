@@ -38,8 +38,8 @@ Write-Log "USB Root: $usbRoot" "INFO"
 # Installation sequence
 $installations = @(
     @{
-        Name = "NVDA 2025.3.2"
-        Path = ".\Installers\NVDA\nvda_2025.3.2.exe"
+        Name = "NVDA 2025.3.3"
+        Path = ".\Installers\NVDA\nvda_2025.3.3.exe"
         Args = @("--install-silent", "--minimal", "--log-level=20")
         WaitTime = 60
     },
@@ -64,8 +64,8 @@ $installations = @(
     },
     @{
         Name = "Firefox 147"
-        Path = ".\Installers\Firefox\Firefox Setup 147.0.3.msi"
-        Args = @("/i", "`"$($usbRoot)\Installers\Firefox\Firefox Setup 147.0.3.msi`"", "/quiet", "/norestart")
+        Path = ".\Installers\Firefox\Firefox Setup 147.0.4.msi"
+        Args = @("/i", "`"$($usbRoot)\Installers\Firefox\Firefox Setup 147.0.4.msi`"", "/quiet", "/norestart")
         UseMsiExec = $true
         WaitTime = 60
     },
@@ -76,8 +76,8 @@ $installations = @(
         WaitTime = 30
     },
     @{
-        Name = "Audacity 3.7.3"
-        Path = ".\Installers\Audacity\audacity-win-3.7.3-64bit.exe"
+        Name = "Audacity 3.7.7"
+        Path = ".\Installers\Audacity\audacity-win-3.7.7-64bit.exe"
         Args = @("/S")
         WaitTime = 30
     },
