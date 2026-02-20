@@ -222,13 +222,39 @@ try {
 
     $welcomeScript = @'
 # Lab Welcome Audio - plays on Student login
-# Waits for NVDA to start, then speaks a brief orientation message via NVDA
-Start-Sleep -Seconds 5
-Add-Type -AssemblyName System.Speech
-$synth = New-Object System.Speech.Synthesis.SpeechSynthesizer
-$synth.Rate = -1
-$synth.Speak("NVDA is running. Press Insert plus T to hear the window title. Press Insert plus F7 to see a list of links.")
-$synth.Dispose()
+# Speaks through NVDA using the configured Vietnamese voice (Sao Mai VNVoice)
+Start-Sleep -Seconds 8
+
+# Use NVDA's controller client DLL to speak through NVDA's configured voice
+$nvdaDll = "C:\Program Files\NVDA\lib\nvdaControllerClient64.dll"
+if (-not (Test-Path $nvdaDll)) {
+    $nvdaDll = "C:\Program Files (x86)\NVDA\lib\nvdaControllerClient64.dll"
+}
+
+if (Test-Path $nvdaDll) {
+    Add-Type -TypeDefinition @"
+using System;
+using System.Runtime.InteropServices;
+public class NvdaController {
+    [DllImport("$($nvdaDll.Replace('\','\\'))", CharSet = CharSet.Unicode)]
+    public static extern int nvdaController_speakText(string text);
+    [DllImport("$($nvdaDll.Replace('\','\\'))", CharSet = CharSet.Unicode)]
+    public static extern int nvdaController_testIfRunning();
+}
+"@
+    # Wait up to 30 seconds for NVDA to be ready
+    $waited = 0
+    while ($waited -lt 30) {
+        if ([NvdaController]::nvdaController_testIfRunning() -eq 0) { break }
+        Start-Sleep -Seconds 2
+        $waited += 2
+    }
+    if ([NvdaController]::nvdaController_testIfRunning() -eq 0) {
+        # Vietnamese welcome message:
+        # "NVDA dang chay. Nhan Insert cong T de nghe tieu de cua so. Nhan Insert cong F7 de xem danh sach lien ket."
+        [NvdaController]::nvdaController_speakText("NVDA đang chạy. Nhấn Insert cộng T để nghe tiêu đề cửa sổ. Nhấn Insert cộng F7 để xem danh sách liên kết.")
+    }
+}
 '@
 
     $welcomeScriptPath = Join-Path $welcomeScriptDir "welcome-audio.ps1"
