@@ -1,56 +1,63 @@
 # Installers Folder
 
-This folder should contain all software installers needed for deployment.
+This folder contains all software installers needed for deployment. Files are **NOT included in git** because they are too large.
 
 ## How to Download
 
-The installer files are **NOT included in this git repository** because they are too large. All installers are hosted on **GitHub Releases** and downloaded automatically:
-
 ```powershell
-cd F:\Vietnam-Lab-Kit\Scripts
-.\0-Download-Installers.ps1
+.\Scripts\0-Download-Installers.ps1    # Smart download from multiple sources
+.\Scripts\Verify-Installers.ps1        # Validate all files + SHA256 checksums
 ```
 
-**No manual downloads required.** The script pulls everything from:
-https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/tag/installers-v1
+The download script automatically fetches installers from the best source for each package:
+
+| Source | What | Example |
+|--------|------|---------|
+| **Vendor URL** | Direct from software publisher | NVDA, Firefox, LibreOffice, VLC |
+| **GitHub Releases** | From the project's GitHub repo | Audacity, Thorium, SumatraPDF, Tailscale, rclone |
+| **Kiwix** | ZIM files from download.kiwix.org | Vietnamese Wikipedia, Wiktionary, Wikisource |
+| **Manual** | Must be pre-placed or on GitHub Release `installers-v1` | Sao Mai VNVoice, Typing Tutor, LEAP Games, NVDA Addons |
+
+Source definitions are in `Scripts/installer-sources.json`. Versions come from `manifest.json`.
 
 ## What Gets Downloaded
 
-| Folder | File | Size |
-|--------|------|------|
-| `NVDA/` | `nvda_2025.3.3.exe` | ~50 MB |
-| `NVDA/addons/` | `VLC-2025.1.0.nvda-addon` | ~1 MB |
-| `NVDA/addons/` | `speechHistory-2024.3.1.nvda-addon` | ~1 MB |
-| `NVDA/addons/` | `nvdaRemote-2.6.4.nvda-addon` | ~1 MB |
-| `NVDA/addons/` | `focusHighlight-2.4.nvda-addon` | ~1 MB |
-| `NVDA/addons/` | `audacityAccessEnhancement-3.3.2.nvda-addon` | ~1 MB |
-| `NVDA/addons/` | `clock-20250714.nvda-addon` | ~7 MB |
-| `NVDA/addons/` | `MathCAT.nvda-addon` | ~1 MB |
-| `SaoMai/` | `SaoMai_VNVoice_1.0.exe` | — |
-| `SaoMai/` | `SaoMai_TypingTutor.exe` | — |
-| `LibreOffice/` | `LibreOffice_26.2.0_Win_x86-64.msi` | ~300 MB |
-| `Firefox/` | `Firefox Setup 147.0.4.msi` | ~60 MB |
-| `Utilities/` | `VLC-3.0.23.exe` | ~40 MB |
-| `Utilities/UniKey/` | `UniKeyNT.exe` (extracted from zip) | ~1 MB |
-| `Audacity/` | `audacity-win-3.7.7-64bit.exe` | ~30 MB |
-| `Quorum/` | `QuorumStudio-win64.exe` | ~335 MB |
-| `Kiwix/` | Kiwix portable + Vietnamese Wikipedia ZIM | ~700 MB |
-| `Kiwix/` | Vietnamese Wiktionary ZIM | ~50 MB |
-| `Kiwix/` | Vietnamese Wikisource ZIM | ~20 MB |
-| `Thorium/` | `Thorium.Setup.3.3.0.exe` | ~117 MB |
-| `Utilities/SumatraPDF/` | `SumatraPDF-3.5.2-64-install.exe` | ~15 MB |
-| `Utilities/GoldenDict/` | GoldenDict portable (extracted) | ~30 MB |
-| `Educational/` | LEAP Games (Tic-Tac-Toe, Tennis, Curve) | ~50 MB |
+| Folder | File | Source | Size |
+|--------|------|--------|------|
+| `NVDA/` | `nvda_2025.3.3.exe` | Vendor (nvaccess.org) | ~50 MB |
+| `NVDA/addons/` | 7 NVDA add-ons (.nvda-addon) | Manual (GitHub Release) | ~13 MB |
+| `SaoMai/` | `SaoMai_VNVoice_1.0.exe` | Manual | -- |
+| `SaoMai/` | `SaoMai_TypingTutor.exe` | Manual | -- |
+| `LibreOffice/` | `LibreOffice_26.2.0_Win_x86-64.msi` | Vendor (documentfoundation.org) | ~300 MB |
+| `Firefox/` | `Firefox Setup 147.0.4.msi` | Vendor (mozilla.org) | ~60 MB |
+| `Utilities/` | `VLC-3.0.23.exe` | Vendor (videolan.org) | ~40 MB |
+| `Utilities/UniKey/` | `UniKeyNT.exe` | Manual (GitHub Release) | ~1 MB |
+| `Audacity/` | `audacity-win-3.7.7-64bit.exe` | GitHub (audacity/audacity) | ~30 MB |
+| `Quorum/` | `QuorumStudio-win64.exe` | Manual (GitHub Release) | ~335 MB |
+| `Kiwix/` | Kiwix desktop + 3 Vietnamese ZIM files | GitHub + Kiwix | ~770 MB |
+| `Thorium/` | `Thorium.Setup.3.3.0.exe` | GitHub (edrlab/thorium-reader) | ~117 MB |
+| `Utilities/SumatraPDF/` | `SumatraPDF-3.5.2-64-install.exe` | GitHub (sumatrapdfreader/sumatrapdf) | ~15 MB |
+| `Utilities/GoldenDict/` | GoldenDict portable | Manual (GitHub Release) | ~30 MB |
+| `Utilities/Tailscale/` | `tailscale-setup-1.82.0-amd64.msi` | GitHub (tailscale/tailscale) | ~30 MB |
+| `Utilities/rclone/` | rclone portable | GitHub (rclone/rclone) | ~15 MB |
+| `Educational/` | LEAP Games (Tic-Tac-Toe, Tennis, Curve) | Manual (GitHub Release) | ~50 MB |
 
 ## Pre-Deployment Checklist
 
-After running `0-Download-Installers.ps1`, verify all files are present:
+After running `0-Download-Installers.ps1`, validate with:
+
+```powershell
+.\Scripts\Verify-Installers.ps1
+```
+
+This checks every file exists and matches the SHA256 checksum recorded during download (stored in `Scripts/installer-checksums.json`).
+
+### Expected directory structure
 
 ```
 Installers/
 ├── NVDA/
 │   ├── nvda_2025.3.3.exe
-│   ├── nvda-portable.zip           (backup)
 │   └── addons/
 │       ├── VLC-2025.1.0.nvda-addon
 │       ├── speechHistory-2024.3.1.nvda-addon
@@ -72,8 +79,16 @@ Installers/
 │   └── QuorumStudio-win64.exe
 ├── Utilities/
 │   ├── VLC-3.0.23.exe
-│   └── UniKey/
-│       └── UniKeyNT.exe
+│   ├── UniKey/
+│   │   └── UniKeyNT.exe
+│   ├── SumatraPDF/
+│   │   └── SumatraPDF-3.5.2-64-install.exe
+│   ├── GoldenDict/
+│   │   └── GoldenDict.exe (+ dependencies)
+│   ├── Tailscale/
+│   │   └── tailscale-setup-1.82.0-amd64.msi
+│   └── rclone/
+│       └── rclone.exe
 ├── Thorium/
 │   └── Thorium.Setup.3.3.0.exe
 ├── Kiwix/
@@ -81,21 +96,10 @@ Installers/
 │   ├── wikipedia_vi_all_mini_2025-11.zim
 │   ├── wiktionary_vi_all_maxi_2025-11.zim
 │   └── wikisource_vi_all_maxi_2025-11.zim
-├── Utilities/
-│   ├── SumatraPDF/
-│   │   └── SumatraPDF-3.5.2-64-install.exe
-│   └── GoldenDict/
-│       └── GoldenDict.exe (+ dependencies)
 └── Educational/
     ├── TicTacToe/
-    │   ├── tictactoe_eng_win64.exe
-    │   └── tictactoe_eng_win64_Data/
     ├── Tennis/
-    │   ├── tennis_eng_win64.exe
-    │   └── tennis_eng_win64_Data/
     └── Curve/
-        ├── curve_eng_win64.exe
-        └── curve_eng_win64_Data/
 ```
 
 ## Version Notes
@@ -108,25 +112,16 @@ Installers/
 - **Audacity:** 3.7.7 or newer
 - **Quorum Studio:** Latest release from quorumlanguage.com
 - **Thorium Reader:** 3.3.0 or newer (EPUB/DAISY reader from EDRLab)
-- **Kiwix:** 2.5.1 or newer (downloaded directly from kiwix.org)
-- **Vietnamese Wikipedia ZIM:** November 2025 edition (all articles, mini summaries)
-- **Vietnamese Wiktionary ZIM:** November 2025 edition (dictionary definitions)
-- **Vietnamese Wikisource ZIM:** November 2025 edition (public domain literature)
-- **SumatraPDF:** 3.5.2 or newer (lightweight PDF reader)
-- **GoldenDict:** 1.5.0 portable (offline dictionary with Vietnamese dictionary files)
+- **Kiwix:** 2.5.1 or newer
+- **SumatraPDF:** 3.5.2 or newer
+- **GoldenDict:** 1.5.0 portable
+- **Tailscale:** 1.82.0 or newer (mesh VPN for remote management)
+- **rclone:** Latest (Google Drive sync for fleet health reports)
 
 ## Storage Requirements
 
-Total installer package size: ~600-800 MB
+Total installer package size: ~1.5-2 GB (including ZIM files and Tailscale/rclone)
 Recommended USB drive: 8 GB or larger (to include training materials)
-
-## Testing
-
-**Before deployment**, test the installation process on one PC to verify:
-1. All installers run silently without errors
-2. Scripts complete successfully
-3. No missing dependencies
-4. Offline operation confirmed
 
 ## Backup Strategy
 
