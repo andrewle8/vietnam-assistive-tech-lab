@@ -36,8 +36,8 @@ This repo contains everything needed to deploy a fully offline assistive technol
 > **NVDA Add-ons:** [NVDA Add-on Store](https://addonstore.nvaccess.org/)
 
 ### Hardware
-- 10x Dell Latitude 5420 (enterprise grade) upgraded to Windows 11
-- 10x Audio Technica ATH-M40x Headphones (trusted by blind professionals and schools)
+- 19x Dell Latitude 5420 (enterprise grade) upgraded to Windows 11
+- 21x Audio Technica ATH-M40x Headphones (trusted by blind professionals and schools)
 - Student Personal USB Drives with unique identifiers labeled in braiile
   
 > [Hardware Details](https://github.com/andrewle8/vietnam-assistive-tech-lab/blob/main/Documentation/Hardware.md)

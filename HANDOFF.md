@@ -24,7 +24,7 @@ All software is **free** and works **offline** (no internet needed).
 
 ## PC and USB Labels
 
-- PCs are labeled **PC-1** through **PC-10**
+- PCs are labeled **PC-1** through **PC-19**
 - Student USB drives are labeled **STU-001**, **STU-002**, etc.
 - Each USB has folders: Documents, Audio, Schoolwork
 
