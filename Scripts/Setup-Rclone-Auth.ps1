@@ -6,7 +6,8 @@
 
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "Vietnam Lab - Google Drive Authorization" -ForegroundColor Cyan
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host ""
 
 $usbRoot = Split-Path -Parent $PSScriptRoot
 $rcloneExe = Join-Path $usbRoot "Installers\Utilities\rclone\rclone.exe"
@@ -82,6 +83,7 @@ if (Test-Path $configFile) {
     Write-Host "The authorization may not have completed. Try again." -ForegroundColor Yellow
 }
 
-Write-Host "`n========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host ""
 
 pause

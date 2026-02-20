@@ -22,7 +22,8 @@ function Write-Log {
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "Vietnam Lab - Machine Audit" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "PC: $env:COMPUTERNAME  |  Date: $(Get-Date -Format 'yyyy-MM-dd HH:mm')`n" -ForegroundColor DarkGray
+Write-Host "PC: $env:COMPUTERNAME  |  Date: $(Get-Date -Format 'yyyy-MM-dd HH:mm')" -ForegroundColor DarkGray
+Write-Host ""
 
 # Find manifest.json
 if (-not $ManifestPath) {
@@ -38,7 +39,8 @@ if (-not (Test-Path $ManifestPath)) {
 }
 
 $manifest = Get-Content $ManifestPath -Raw | ConvertFrom-Json
-Write-Host "Manifest version: $($manifest.manifest_version)`n" -ForegroundColor DarkGray
+Write-Host "Manifest version: $($manifest.manifest_version)" -ForegroundColor DarkGray
+Write-Host ""
 Write-Log "=== Audit Started on $env:COMPUTERNAME (manifest $($manifest.manifest_version)) ==="
 
 $results = @()
@@ -75,7 +77,8 @@ function Add-Result {
 # -----------------------------------------------
 # Section 1: Windows Version
 # -----------------------------------------------
-Write-Host "`n--- Windows ---`n" -ForegroundColor White
+Write-Host "`n--- Windows ---" -ForegroundColor White
+Write-Host ""
 
 $winBuild = [System.Environment]::OSVersion.Version.Build
 $minBuild = [int]$manifest.os.min_build
@@ -119,7 +122,8 @@ if ($expectedWU -eq "disabled" -and $wuStatus -eq "Disabled") {
 # -----------------------------------------------
 # Section 2: Software Installed
 # -----------------------------------------------
-Write-Host "`n--- Software ---`n" -ForegroundColor White
+Write-Host "`n--- Software ---" -ForegroundColor White
+Write-Host ""
 
 foreach ($sw in $manifest.software.PSObject.Properties) {
     $name = $sw.Name
@@ -148,7 +152,8 @@ foreach ($sw in $manifest.software.PSObject.Properties) {
 # -----------------------------------------------
 # Section 3: NVDA Configuration
 # -----------------------------------------------
-Write-Host "`n--- NVDA Config ---`n" -ForegroundColor White
+Write-Host "`n--- NVDA Config ---" -ForegroundColor White
+Write-Host ""
 
 $nvdaConfigPath = Join-Path $env:APPDATA "nvda\nvda.ini"
 if (Test-Path $nvdaConfigPath) {
@@ -201,7 +206,8 @@ if ($nvdaProc) {
 # -----------------------------------------------
 # Section 4: System Configuration
 # -----------------------------------------------
-Write-Host "`n--- System Config ---`n" -ForegroundColor White
+Write-Host "`n--- System Config ---" -ForegroundColor White
+Write-Host ""
 
 # Check power settings - hibernate
 $hibFile = "C:\hiberfil.sys"
@@ -242,7 +248,8 @@ if (Test-Path "C:\LabTools\nvda-backup\nvda.ini") {
 # -----------------------------------------------
 # Section 5: Remote Management
 # -----------------------------------------------
-Write-Host "`n--- Remote Management ---`n" -ForegroundColor White
+Write-Host "`n--- Remote Management ---" -ForegroundColor White
+Write-Host ""
 
 # Check Tailscale
 $tailscaleExe = "C:\Program Files\Tailscale\tailscale.exe"
@@ -359,7 +366,8 @@ if ($OutputJson) {
 }
 
 Write-Host "`nLog file: $LogPath" -ForegroundColor Cyan
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host ""
 
 Write-Log "=== Audit Complete ==="
 

@@ -17,7 +17,8 @@ $ErrorActionPreference = "Stop"
 
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "Vietnam Lab - Smart Installer Downloader" -ForegroundColor Cyan
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host ""
 
 # ---- Load configuration ----
 
@@ -343,6 +344,7 @@ if ($failCount -gt 0) {
 
 Write-Host "`nChecksums saved to: $ChecksumFile" -ForegroundColor DarkGray
 Write-Host "Next: Run .\Verify-Installers.ps1 to validate all files" -ForegroundColor Cyan
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host ""
 
 pause

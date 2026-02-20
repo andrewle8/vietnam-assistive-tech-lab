@@ -18,7 +18,8 @@ function Write-Log {
 
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "Vietnam Lab - Loaner Laptop Configuration" -ForegroundColor Cyan
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host ""
 
 # Check if running as Administrator
 $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
@@ -844,6 +845,7 @@ if ($failCount -gt 0) {
 
 Write-Host ""
 Write-Host "Log file: $LogPath" -ForegroundColor Cyan
-Write-Host "========================================`n" -ForegroundColor Green
+Write-Host "`n========================================" -ForegroundColor Green
+Write-Host ""
 
 pause

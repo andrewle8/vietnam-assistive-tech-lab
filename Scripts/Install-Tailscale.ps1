@@ -17,7 +17,8 @@ param(
 $hostname = "PC-{0:D2}" -f $PCNumber
 
 Write-Host "`n--- Tailscale VPN Setup ---" -ForegroundColor Cyan
-Write-Host "Hostname: $hostname`n" -ForegroundColor White
+Write-Host "Hostname: $hostname" -ForegroundColor White
+Write-Host ""
 
 # Check admin
 $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
@@ -112,4 +113,5 @@ try {
     Write-Host "       tailscale up --authkey=YOUR_KEY --hostname=$hostname" -ForegroundColor Yellow
 }
 
-Write-Host "--- Tailscale Setup Complete ---`n" -ForegroundColor Cyan
+Write-Host "--- Tailscale Setup Complete ---" -ForegroundColor Cyan
+Write-Host ""

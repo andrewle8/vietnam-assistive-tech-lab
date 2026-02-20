@@ -17,7 +17,8 @@ function Write-Log {
 
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "Vietnam Lab - Student USB Preparation" -ForegroundColor Cyan
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host ""
 
 # List removable drives
 $removableDrives = Get-CimInstance -ClassName Win32_LogicalDisk | Where-Object { $_.DriveType -eq 2 }
@@ -117,6 +118,7 @@ Write-Host "ID File:       .student-id (hidden)" -ForegroundColor White
 Write-Host ""
 Write-Host "This USB is ready for student $studentId." -ForegroundColor Green
 Write-Host "Log file: $LogPath" -ForegroundColor Cyan
-Write-Host "========================================`n" -ForegroundColor Green
+Write-Host "`n========================================" -ForegroundColor Green
+Write-Host ""
 
 pause

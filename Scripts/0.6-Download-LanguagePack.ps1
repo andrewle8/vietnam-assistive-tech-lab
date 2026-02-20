@@ -13,7 +13,8 @@ $ErrorActionPreference = "Stop"
 
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "Vietnam Lab - Vietnamese Language Pack" -ForegroundColor Cyan
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host ""
 
 $cabFile = Join-Path $DestinationDir "Microsoft-Windows-Client-Language-Pack_x64_vi-vn.cab"
 

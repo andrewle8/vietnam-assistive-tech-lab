@@ -27,7 +27,8 @@ if ($UseTailscale) {
 } else {
     Write-Host "Mode: Local LAN" -ForegroundColor Cyan
 }
-Write-Host "Checking $TotalPCs laptops...`n" -ForegroundColor DarkGray
+Write-Host "Checking $TotalPCs laptops..." -ForegroundColor DarkGray
+Write-Host ""
 
 $results = @()
 
@@ -91,4 +92,4 @@ Write-Host "Online: $online/$TotalPCs    WinRM Ready: $withRM/$TotalPCs" -Foregr
 if ($UseTailscale) {
     Write-Host "Via: Tailscale VPN" -ForegroundColor Cyan
 }
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan

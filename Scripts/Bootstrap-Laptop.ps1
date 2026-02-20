@@ -38,7 +38,8 @@ Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "Vietnam Lab - Full Laptop Setup" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "Target: $hostname  |  Office: $OfficeSuite  |  Date: $(Get-Date -Format 'yyyy-MM-dd HH:mm')" -ForegroundColor White
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host ""
 
 # Check admin
 $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
@@ -56,7 +57,8 @@ $usbRoot = Split-Path -Parent $scriptsDir
 # Phase 1: Network & System Setup
 # =============================================
 
-Write-Host "`n--- Phase 1: Network & System Setup ---`n" -ForegroundColor White
+Write-Host "`n--- Phase 1: Network & System Setup ---" -ForegroundColor White
+Write-Host ""
 
 Step "Setting hostname to $hostname"
 Rename-Computer -NewName $hostname -Force -ErrorAction Stop
@@ -145,7 +147,8 @@ if (Test-Path "${DriveLetter}:\") {
 # Phase 2: Software Installation
 # =============================================
 
-Write-Host "`n--- Phase 2: Software Installation ---`n" -ForegroundColor White
+Write-Host "`n--- Phase 2: Software Installation ---" -ForegroundColor White
+Write-Host ""
 
 if ($SkipInstall) {
     Write-Host "      Skipping installation (-SkipInstall flag set)" -ForegroundColor DarkGray
@@ -183,7 +186,8 @@ if ($SkipInstall) {
 # Phase 3: Hardening & Remote Management
 # =============================================
 
-Write-Host "`n--- Phase 3: Hardening & Remote Management ---`n" -ForegroundColor White
+Write-Host "`n--- Phase 3: Hardening & Remote Management ---" -ForegroundColor White
+Write-Host ""
 
 Step "Applying Windows hardening and laptop config (Configure-Laptop.ps1)"
 $configLaptopScript = Join-Path $scriptsDir "Configure-Laptop.ps1"
@@ -227,7 +231,8 @@ Write-Host "  NVDA:          $(if(-not $SkipInstall){'Configured (Vietnamese)'}e
 Write-Host "  Hardening:     Applied (Configure-Laptop.ps1)" -ForegroundColor White
 Write-Host "  Update Agent:  Scheduled (daily 2-4 AM)" -ForegroundColor White
 Write-Host "  Fleet Report:  Scheduled (daily 3 AM)" -ForegroundColor White
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host ""
 
 if (-not $SkipReboot) {
     Write-Host "Reboot required to apply hostname change." -ForegroundColor Yellow

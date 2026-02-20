@@ -17,7 +17,8 @@ function Write-Log {
 
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "NVDA Configuration for Vietnamese Lab" -ForegroundColor Cyan
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host ""
 
 Write-Log "=== NVDA Configuration Started on $env:COMPUTERNAME ===" "INFO"
 
@@ -208,7 +209,8 @@ if (-not $nvdaProcess) {
 } else {
     Write-Log "NVDA is already running" "INFO"
     Write-Host "`nNVDA is already running. Restart NVDA to apply new settings:" -ForegroundColor Yellow
-    Write-Host "   Press NVDA+Q (Insert+Q), then start NVDA again`n" -ForegroundColor White
+    Write-Host "   Press NVDA+Q (Insert+Q), then start NVDA again" -ForegroundColor White
+    Write-Host ""
 }
 
 Write-Host "`n========================================" -ForegroundColor Green
@@ -220,15 +222,18 @@ Write-Host "  - NVDA profile configured for Vietnamese" -ForegroundColor White
 Write-Host "  - NVDA add-ons installed (if present in Installers\NVDA\addons\)" -ForegroundColor White
 Write-Host "  - Auto-start on Windows login enabled" -ForegroundColor White
 Write-Host "  - UniKey Vietnamese keyboard installed and auto-starting" -ForegroundColor White
-Write-Host "  - Speech synthesizer set to VNVoice (Minh Du voice)`n" -ForegroundColor White
+Write-Host "  - Speech synthesizer set to VNVoice (Minh Du voice)" -ForegroundColor White
+Write-Host ""
 
 Write-Host "Next Steps:" -ForegroundColor Yellow
 Write-Host "  1. Test speech output (NVDA should speak in Vietnamese)" -ForegroundColor White
 Write-Host "  2. Copy training materials to Desktop" -ForegroundColor White
-Write-Host "  3. Repeat for remaining PCs`n" -ForegroundColor White
+Write-Host "  3. Repeat for remaining PCs" -ForegroundColor White
+Write-Host ""
 
 Write-Host "Log file: $LogPath" -ForegroundColor Cyan
-Write-Host "========================================`n" -ForegroundColor Green
+Write-Host "`n========================================" -ForegroundColor Green
+Write-Host ""
 
 Write-Log "=== NVDA Configuration Complete ===" "INFO"
 

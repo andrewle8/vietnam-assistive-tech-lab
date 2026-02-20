@@ -18,7 +18,8 @@ function Write-Log {
 
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "Vietnam Lab - Installation Verification" -ForegroundColor Cyan
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host ""
 
 Write-Log "=== Verification Started on $env:COMPUTERNAME ===" "INFO"
 
@@ -169,7 +170,8 @@ if ($results.Critical -gt 0) {
 }
 
 Write-Host "`nLog file: $LogPath" -ForegroundColor Cyan
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host ""
 
 Write-Log "=== Verification Complete ===" "INFO"
 

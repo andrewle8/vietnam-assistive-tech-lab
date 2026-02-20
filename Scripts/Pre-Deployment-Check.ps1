@@ -12,7 +12,8 @@ param(
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "Vietnam Lab - Pre-Deployment Checklist" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "Date: $(Get-Date -Format 'yyyy-MM-dd HH:mm')`n" -ForegroundColor DarkGray
+Write-Host "Date: $(Get-Date -Format 'yyyy-MM-dd HH:mm')" -ForegroundColor DarkGray
+Write-Host ""
 
 $pass = 0
 $fail = 0
@@ -35,7 +36,8 @@ function Check {
 
 # ---- 1. Core files exist ----
 
-Write-Host "`n--- Core Files ---`n" -ForegroundColor White
+Write-Host "`n--- Core Files ---" -ForegroundColor White
+Write-Host ""
 
 $coreFiles = @(
     "manifest.json",
@@ -61,7 +63,8 @@ foreach ($file in $coreFiles) {
 
 # ---- 2. Manifest validation ----
 
-Write-Host "`n--- Manifest Validation ---`n" -ForegroundColor White
+Write-Host "`n--- Manifest Validation ---" -ForegroundColor White
+Write-Host ""
 
 $manifestPath = Join-Path $RepoRoot "manifest.json"
 if (Test-Path $manifestPath) {
@@ -82,7 +85,8 @@ if (Test-Path $manifestPath) {
 
 # ---- 3. Installer verification ----
 
-Write-Host "`n--- Installer Files ---`n" -ForegroundColor White
+Write-Host "`n--- Installer Files ---" -ForegroundColor White
+Write-Host ""
 
 $verifyScript = Join-Path $RepoRoot "Scripts/Verify-Installers.ps1"
 if (Test-Path $verifyScript) {
@@ -106,7 +110,8 @@ if (Test-Path $verifyScript) {
 
 # ---- 4. Tailscale readiness ----
 
-Write-Host "`n--- Tailscale VPN ---`n" -ForegroundColor White
+Write-Host "`n--- Tailscale VPN ---" -ForegroundColor White
+Write-Host ""
 
 $tailscaleInstaller = Get-ChildItem (Join-Path $RepoRoot "Installers/Utilities/Tailscale") -Filter "tailscale-setup-*.msi" -ErrorAction SilentlyContinue | Select-Object -First 1
 Check "Tailscale MSI in Installers/Utilities/Tailscale/" ($null -ne $tailscaleInstaller) "Download Tailscale MSI first"
@@ -124,7 +129,8 @@ Check "Tailscale installed on this machine" ($null -ne $operatorTailscale) "Inst
 
 # ---- 5. Remote update manifest ----
 
-Write-Host "`n--- Remote Update Infrastructure ---`n" -ForegroundColor White
+Write-Host "`n--- Remote Update Infrastructure ---" -ForegroundColor White
+Write-Host ""
 
 try {
     $ProgressPreference = 'SilentlyContinue'
@@ -151,7 +157,8 @@ try {
 
 # ---- 6. Google Drive (rclone) ----
 
-Write-Host "`n--- Google Drive (rclone) ---`n" -ForegroundColor White
+Write-Host "`n--- Google Drive (rclone) ---" -ForegroundColor White
+Write-Host ""
 
 $rcloneCmd = Get-Command rclone -ErrorAction SilentlyContinue
 if ($rcloneCmd) {
@@ -194,6 +201,7 @@ if ($fail -eq 0 -and $warn -eq 0) {
     Write-Host "  4. Test full pipeline on 1-2 laptops" -ForegroundColor White
 }
 
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host ""
 
 pause

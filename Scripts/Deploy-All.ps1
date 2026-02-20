@@ -75,7 +75,8 @@ Write-Host "Targets:    $($pcs -join ', ')" -ForegroundColor White
 Write-Host "Batch size: $BatchSize" -ForegroundColor White
 Write-Host "Network:    $(if($UseTailscale){"Tailscale VPN ($($tailscaleIPs.Count) IPs loaded)"}else{"Local LAN"})" -ForegroundColor White
 Write-Host "Log file:   $logFile" -ForegroundColor White
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host ""
 
 Write-Log "Deployment started - Phase: $Phase, Targets: $($pcs -join ', ')"
 
@@ -276,6 +277,7 @@ if ($failed -gt 0) {
 }
 
 Write-Host "`nFull log: $logFile" -ForegroundColor DarkGray
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host ""
 
 Write-Log "Deployment complete. Passed: $passed, Failed: $failed"

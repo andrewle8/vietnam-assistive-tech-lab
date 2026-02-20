@@ -13,7 +13,8 @@ param(
 
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "Vietnam Lab - Fleet Status Dashboard" -ForegroundColor Cyan
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host ""
 
 # Download heartbeats from Google Drive
 if (-not $NoDownload) {
@@ -112,4 +113,4 @@ if ($missingPCs.Count -gt 0) {
     Write-Host "  $($missingPCs -join ', ')" -ForegroundColor Red
 }
 
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan

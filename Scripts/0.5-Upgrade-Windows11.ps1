@@ -19,7 +19,8 @@ function Write-Log {
 
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "Vietnam Lab - Windows 11 Upgrade" -ForegroundColor Cyan
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host ""
 
 # Check if running as Administrator
 $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
@@ -41,7 +42,8 @@ Write-Log "Current Windows version: $currentVersion (Build $currentBuild)"
 if ($currentBuild -ge 22000) {
     Write-Log "This machine is already running Windows 11 (Build $currentBuild)" "SUCCESS"
     Write-Host "`nNo upgrade needed. Proceeding to next step." -ForegroundColor Green
-    Write-Host "Run .\1-Install-All.ps1 next.`n" -ForegroundColor Yellow
+    Write-Host "Run .\1-Install-All.ps1 next." -ForegroundColor Yellow
+    Write-Host ""
     pause
     exit 0
 }
@@ -186,6 +188,7 @@ Write-Host "After the upgrade completes:" -ForegroundColor Green
 Write-Host "  1. Wait for Windows 11 to fully boot" -ForegroundColor White
 Write-Host "  2. Log in as Administrator" -ForegroundColor White
 Write-Host "  3. Run: .\1-Install-All.ps1" -ForegroundColor White
-Write-Host "========================================`n" -ForegroundColor Green
+Write-Host "`n========================================" -ForegroundColor Green
+Write-Host ""
 
 pause

@@ -13,7 +13,8 @@ param(
 
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "Vietnam Lab - Fleet Tailscale IPs" -ForegroundColor Cyan
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host ""
 
 # Get API key from param or environment
 if (-not $ApiKey) {
@@ -92,4 +93,4 @@ if ($OutputJson) {
     Write-Host "Devices: $($results.Count)  Online: $online  Offline: $($results.Count - $online)" -ForegroundColor White
 }
 
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan
