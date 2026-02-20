@@ -102,7 +102,6 @@ Software updates are automatic — edit `update-manifest.json`, push to GitHub, 
 | `2-Verify-Installation.ps1` | Verify all software installed correctly |
 | `3-Configure-NVDA.ps1` | Configure NVDA with Vietnamese voice |
 | `4-Prepare-Student-USB.ps1` | Prepare student USB drives |
-| `6-Health-Check.ps1` | Quick health check |
 | `7-Audit.ps1` | Full audit against manifest.json (with JSON output) |
 | `Bootstrap-Laptop.ps1` | End-to-end PC setup (calls 1-Install, 2-Verify, 3-Configure, Tailscale, scheduled tasks) |
 | `Configure-Laptop.ps1` | Windows hardening, power settings, scheduled tasks |

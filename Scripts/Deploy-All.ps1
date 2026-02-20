@@ -93,7 +93,7 @@ $phaseMap = @{
     "Install"     = @{ Script = "1-Install-All.ps1";         Desc = "Software Installation" }
     "Verify"      = @{ Script = "2-Verify-Installation.ps1"; Desc = "Installation Verification" }
     "Configure"   = @{ Script = "3-Configure-NVDA.ps1";      Desc = "NVDA Configuration" }
-    "HealthCheck" = @{ Script = "6-Health-Check.ps1";         Desc = "Health Check" }
+    "HealthCheck" = @{ Script = "7-Audit.ps1";                 Desc = "Machine Audit" }
 }
 
 # ---- Discovery ----

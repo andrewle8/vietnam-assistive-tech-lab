@@ -239,7 +239,7 @@ This validates:
    - Show staff how to power on/off PCs
    - Demonstrate NVDA restart (Ctrl+Alt+N)
    - Walk through each installed application
-   - Show staff how to run `6-Health-Check.ps1`
+   - Show staff how to run `7-Audit.ps1`
    - Explain the HANDOFF.md reference card
 
 5. **Pilot test with 1-2 students**

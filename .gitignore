@@ -60,4 +60,3 @@ Config/rclone/rclone.conf
 
 # Keep README files everywhere
 !**/README.md
-!**/README.txt

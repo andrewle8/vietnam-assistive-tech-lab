@@ -83,9 +83,9 @@ To check if everything is working on a PC, run this script:
 1. Right-click Start button → **Terminal (Admin)** or **PowerShell (Admin)**
 2. Type: `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`
 3. Navigate to the scripts folder on the USB drive
-4. Run: `.\6-Health-Check.ps1`
+4. Run: `.\7-Audit.ps1`
 
-The script checks all software and shows green (OK) or red (problem).
+The script checks all software, Windows settings, NVDA config, and remote management. Shows green (OK), yellow (warning), or red (problem).
 
 ---
 
