@@ -189,6 +189,6 @@ if ($fail -eq 0 -and $warn -eq 0) {
     Write-Host "`nNo critical failures. Review warnings above." -ForegroundColor Yellow
 }
 
-Write-Host "========================================`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan
 
 pause
