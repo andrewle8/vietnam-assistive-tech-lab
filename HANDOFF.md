@@ -80,10 +80,11 @@ This is useful for staff or volunteers who need English temporarily. The keyboar
 
 To check if everything is working on a PC, run this script:
 
-1. Right-click Start button → **Terminal (Admin)** or **PowerShell (Admin)**
-2. Type: `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`
-3. Navigate to the scripts folder on the USB drive
-4. Run: `.\7-Audit.ps1`
+1. Open PowerShell as Administrator
+   (Start > type "PowerShell" > right-click > **Run as Administrator**)
+2. Run once (first time only): `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass`
+3. Navigate to the project folder: `cd C:\path\to\vietnam-assistive-tech-lab`
+4. Run: `.\Scripts\7-Audit.ps1`
 
 The script checks all software, Windows settings, NVDA config, and remote management. Shows green (OK), yellow (warning), or red (problem).
 

@@ -43,19 +43,42 @@ This repo contains everything needed to deploy and remotely manage an assistive 
 
 ## Quick Start
 
-> **First time running scripts?** Open PowerShell as Admin and run this once:
-> ```powershell
-> Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass
-> ```
-> After that, you can right-click any `.ps1` file → **Run with PowerShell** and it will work.
+> **All scripts must be run from an Administrator PowerShell window.** Windows 11 does not have a "Run as Administrator" option in the right-click menu for `.ps1` files, so you must use the command line.
+
+**One-time setup:**
+
+1. Open PowerShell as Administrator
+   (Start > type "PowerShell" > right-click > **Run as Administrator**)
+2. Allow scripts to run:
+   ```powershell
+   Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass
+   ```
+3. Navigate to the project folder:
+   ```powershell
+   cd C:\path\to\vietnam-assistive-tech-lab
+   ```
+
+From here, run all scripts in this PowerShell window.
 
 ### 1. Download Installers
 
-Right-click `Scripts\0-Download-Installers.ps1` → **Run with PowerShell**. Downloads all installers (~800 MB) from vendor URLs, GitHub Releases, and Kiwix automatically.
+```powershell
+.\Scripts\0-Download-Installers.ps1
+```
 
-Then right-click `Scripts\Verify-Installers.ps1` → **Run with PowerShell** to validate files and SHA256 checksums.
+Downloads all installers (~800 MB) from vendor URLs, GitHub Releases, and Kiwix automatically.
 
-Optionally, right-click `Scripts\0.6-Download-LanguagePack.ps1` → **Run with PowerShell** to pre-download the Vietnamese language pack for offline install. (Without this, `Bootstrap-Laptop.ps1` will download it from the internet.)
+Then validate files and SHA256 checksums:
+
+```powershell
+.\Scripts\Verify-Installers.ps1
+```
+
+Optionally, pre-download the Vietnamese language pack for offline install (without this, `Bootstrap-Laptop.ps1` will download it from the internet):
+
+```powershell
+.\Scripts\0.6-Download-LanguagePack.ps1
+```
 
 ### 2. Download Windows 11 ISO (if upgrading from Windows 10)
 
@@ -63,7 +86,10 @@ The Dell Latitude 5420s may ship with Windows 10. To upgrade:
 
 1. Download the **Windows 11 (multi-edition ISO for x64 devices)** from [microsoft.com/software-download/windows11](https://www.microsoft.com/en-us/software-download/windows11)
 2. Place the ISO in `Installers\Windows\` (create the folder if needed) — expected filename: `Win11_25H2_English_x64.iso`
-3. Right-click `Scripts\0.5-Upgrade-Windows11.ps1` → **Run with PowerShell** on each PC that needs it
+3. Run the upgrade script on each PC that needs it:
+   ```powershell
+   .\Scripts\0.5-Upgrade-Windows11.ps1
+   ```
 
 > **Note:** The Arm64 ISO is not needed — Dell Latitude 5420 is x64.
 
@@ -83,7 +109,11 @@ Before configuring PCs, set up your Tailscale account for remote management:
 
 Test on one PC first, then batch the remaining 18.
 
-Right-click `Scripts\Bootstrap-Laptop.ps1` → **Run with PowerShell**. It will prompt:
+```powershell
+.\Scripts\Bootstrap-Laptop.ps1
+```
+
+It will prompt:
 
 ```
 Supply values for the following parameters:
@@ -92,7 +122,11 @@ PCNumber: _
 
 Enter a number 1–19 for each laptop. The script handles everything: hostname, Wi-Fi, software install, NVDA config, Windows hardening, Tailscale, and scheduled tasks.
 
-After it finishes, right-click `Scripts\7-Audit.ps1` → **Run with PowerShell** to verify the machine matches `manifest.json`.
+After it finishes, verify the machine matches `manifest.json`:
+
+```powershell
+.\Scripts\7-Audit.ps1
+```
 
 ### 5. Pre-Flight Validation
 

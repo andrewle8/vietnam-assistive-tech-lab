@@ -129,30 +129,30 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass
 
 ### Full End-to-End Test (2-3 weeks before travel)
 
-Run the entire deployment process on **one laptop** to verify everything works before configuring the rest. After setting the execution policy (see above), you can right-click each `.ps1` file → **Run with PowerShell**:
+Run the entire deployment process on **one laptop** to verify everything works before configuring the rest. Open PowerShell as Administrator (Start > type "PowerShell" > right-click > **Run as Administrator**), set the execution policy (see above), then `cd` to the project folder and run each script:
 
-1. Right-click `0-Download-Installers.ps1` → Run with PowerShell — all downloads succeed
-2. Right-click `Verify-Installers.ps1` → Run with PowerShell — all files present with correct SHA256 checksums
-3. Right-click `0.5-Upgrade-Windows11.ps1` → Run with PowerShell — upgrade from Win 10 to Win 11 if needed
-4. Right-click `0.6-Download-LanguagePack.ps1` → Run with PowerShell — pre-download Vietnamese language pack
-5. Right-click `Bootstrap-Laptop.ps1` → Run with PowerShell — it will prompt for `PCNumber`, enter `1`. Full setup including Tailscale
+1. `.\Scripts\0-Download-Installers.ps1` — all downloads succeed
+2. `.\Scripts\Verify-Installers.ps1` — all files present with correct SHA256 checksums
+3. `.\Scripts\0.5-Upgrade-Windows11.ps1` — upgrade from Win 10 to Win 11 if needed
+4. `.\Scripts\0.6-Download-LanguagePack.ps1` — pre-download Vietnamese language pack
+5. `.\Scripts\Bootstrap-Laptop.ps1` — it will prompt for `PCNumber`, enter `1`. Full setup including Tailscale
 6. Verify Tailscale: PC appears in your tailnet as `PC-01` with a `100.x.x.x` IP
-7. Right-click `7-Audit.ps1` → Run with PowerShell — all checks pass
+7. `.\Scripts\7-Audit.ps1` — all checks pass
 8. Manually test: open each app, verify NVDA reads it correctly
 9. Test Thorium Reader with a sample EPUB/DAISY file
-10. Test student USB workflow with `4-Prepare-Student-USB.ps1`
-11. From your machine: `Check-Fleet.ps1 -UseTailscale` — PC-01 shows as reachable
+10. Test student USB workflow with `.\Scripts\4-Prepare-Student-USB.ps1`
+11. From your machine: `.\Scripts\Check-Fleet.ps1 -UseTailscale` — PC-01 shows as reachable
 
 Fix any issues, then proceed to configure the remaining 18 laptops.
 
 ### Pre-Configure All 19 Laptops
 
-After the test PC passes, configure the remaining 18 PCs. `Bootstrap-Laptop.ps1` handles the full pipeline:
+After the test PC passes, configure the remaining 18 PCs. On each PC, open PowerShell as Administrator, `cd` to the project folder, then:
 
-1. Right-click `Bootstrap-Laptop.ps1` → **Run with PowerShell** on each PC — it will prompt for `PCNumber`, enter 1–19
+1. `.\Scripts\Bootstrap-Laptop.ps1` — it will prompt for `PCNumber`, enter 1–19
    - This runs: install software, verify, configure NVDA, set up Windows hardening, install Tailscale, register scheduled tasks (update agent + fleet reporter)
 2. Verify each PC appears in your Tailscale admin console
-3. Run `7-Audit.ps1` on each — all green
+3. `.\Scripts\7-Audit.ps1` on each — all green
 4. Label each PC (PC-1 through PC-19) with physical label
 5. Charge all laptops to 100%
 
@@ -222,7 +222,8 @@ This validates:
 
 2. **Run Bootstrap on any PCs not pre-configured**
    - Insert deployment USB drive
-   - Right-click `Bootstrap-Laptop.ps1` → **Run with PowerShell** — it will prompt for `PCNumber`, enter the PC number (1–19)
+   - Open PowerShell as Administrator, `cd` to the project folder on the USB drive
+   - Run `.\Scripts\Bootstrap-Laptop.ps1` — it will prompt for `PCNumber`, enter the PC number (1–19)
    - This handles everything: software install, NVDA config, hardening, Tailscale, scheduled tasks
    - If PCs were pre-configured before travel, skip to step 3
 

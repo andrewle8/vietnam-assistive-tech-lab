@@ -1,31 +1,37 @@
 Vietnam Assistive Technology Lab - Setup Guide
 ================================================
 
-BEFORE YOU START
-----------------
+HOW TO RUN SCRIPTS
+------------------
+All scripts must be run from an Administrator PowerShell window.
+Windows 11 does not have a "Run as Administrator" option in the
+right-click menu for .ps1 files, so you must use the command line.
+
 1. Open PowerShell as Administrator
    (Start menu > type "PowerShell" > right-click > Run as Administrator)
 
 2. Run this once to allow scripts to execute:
    Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass
 
-3. After that, you can right-click any .ps1 file and choose
-   "Run with PowerShell" and it will work.
+3. Navigate to the project folder:
+   cd C:\path\to\vietnam-assistive-tech-lab
+
+4. Run all scripts from this PowerShell window (see steps below).
 
 
 SETUP STEPS
 -----------
 
 Step 1: Download Installers
-  Right-click 0-Download-Installers.ps1 > Run with PowerShell
+  .\Scripts\0-Download-Installers.ps1
   Downloads all installers (~800 MB) automatically.
 
-  Then right-click Verify-Installers.ps1 > Run with PowerShell
-  Validates files and checksums.
+  Then validate files and checksums:
+  .\Scripts\Verify-Installers.ps1
 
-  Optional: Right-click 0.6-Download-LanguagePack.ps1 > Run with PowerShell
-  Pre-downloads the Vietnamese language pack for offline install.
-  (Without this, Bootstrap-Laptop.ps1 will download it from the internet.)
+  Optional - pre-download the Vietnamese language pack for offline install
+  (without this, Bootstrap-Laptop.ps1 will download it from the internet):
+  .\Scripts\0.6-Download-LanguagePack.ps1
 
 Step 2: Download Windows 11 ISO (if upgrading from Windows 10)
   The Dell Latitude 5420s may ship with Windows 10. To upgrade:
@@ -33,8 +39,8 @@ Step 2: Download Windows 11 ISO (if upgrading from Windows 10)
      https://www.microsoft.com/en-us/software-download/windows11
   2. Create the folder Installers\Windows\ if it doesn't exist
   3. Place the ISO there (expected name: Win11_25H2_English_x64.iso)
-  4. Right-click 0.5-Upgrade-Windows11.ps1 > Run with PowerShell
-     on each PC that needs upgrading
+  4. Run the upgrade script on each PC that needs it:
+     .\Scripts\0.5-Upgrade-Windows11.ps1
   Note: The Arm64 ISO is NOT needed. Dell Latitude 5420 is x64.
 
 Step 3: Set Up Tailscale (for remote management)
@@ -49,7 +55,7 @@ Step 3: Set Up Tailscale (for remote management)
   tskey-auth-CHANGE_ME with your key.
 
 Step 4: Set Up Each Laptop
-  Right-click Bootstrap-Laptop.ps1 > Run with PowerShell
+  .\Scripts\Bootstrap-Laptop.ps1
   It will prompt you:
 
     Supply values for the following parameters:
@@ -60,19 +66,19 @@ Step 4: Set Up Each Laptop
   Tailscale, and scheduled tasks.
 
 Step 5: Verify
-  Right-click 7-Audit.ps1 > Run with PowerShell
+  .\Scripts\7-Audit.ps1
   Checks all software, Windows settings, and remote management.
   Green = OK, Yellow = warning, Red = problem.
 
-OR run individual scripts in order from a PowerShell window:
-  .\0-Download-Installers.ps1        Downloads all installers (~800 MB)
-  .\0.5-Upgrade-Windows11.ps1        Upgrades Windows 10 to 11 (if needed)
-  .\0.6-Download-LanguagePack.ps1    Downloads Vietnamese language pack (optional)
-  .\1-Install-All.ps1                Installs all software
-  .\2-Verify-Installation.ps1        Verifies everything installed
-  .\3-Configure-NVDA.ps1             Configures NVDA + Vietnamese voice
-  .\Configure-Laptop.ps1             Windows hardening + accessibility
-  .\7-Audit.ps1                      Final audit to confirm everything works
+Individual scripts (if running separately instead of Bootstrap):
+  .\Scripts\0-Download-Installers.ps1        Downloads all installers (~800 MB)
+  .\Scripts\0.5-Upgrade-Windows11.ps1        Upgrades Windows 10 to 11 (if needed)
+  .\Scripts\0.6-Download-LanguagePack.ps1    Downloads Vietnamese language pack (optional)
+  .\Scripts\1-Install-All.ps1                Installs all software
+  .\Scripts\2-Verify-Installation.ps1        Verifies everything installed
+  .\Scripts\3-Configure-NVDA.ps1             Configures NVDA + Vietnamese voice
+  .\Scripts\Configure-Laptop.ps1             Windows hardening + accessibility
+  .\Scripts\7-Audit.ps1                      Final audit to confirm everything works
 
 
 TROUBLESHOOTING
