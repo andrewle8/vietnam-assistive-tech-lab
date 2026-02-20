@@ -161,8 +161,103 @@ try {
     $failCount++
 }
 
-# Step 4: Configure Windows Magnifier for low-vision users
-Write-Log "Step 4: Configuring Windows Magnifier for low-vision users..." "INFO"
+# Step 4: Configure Windows for Vietnamese language, locale, and timezone
+Write-Log "Step 4: Setting Windows to Vietnamese language and locale..." "INFO"
+
+try {
+    # Install Vietnamese language pack (requires internet on first run, or pre-cached)
+    # Check if Vietnamese language pack is already installed
+    $viLang = Get-WinUserLanguageList | Where-Object { $_.LanguageTag -eq "vi" -or $_.LanguageTag -eq "vi-VN" }
+
+    if (-not $viLang) {
+        Write-Log "Installing Vietnamese language pack (may take several minutes)..." "INFO"
+        $langList = Get-WinUserLanguageList
+        $langList.Add("vi-VN")
+        Set-WinUserLanguageList $langList -Force
+        # Trigger language pack download if online
+        Install-Language -Language "vi-VN" -ErrorAction SilentlyContinue
+    }
+
+    # Set Vietnamese as the preferred display language (first in list)
+    $langList = New-WinUserLanguageList "vi-VN"
+    $langList.Add("en-US")
+    Set-WinUserLanguageList $langList -Force
+    Write-Log "Windows display language set to Vietnamese (vi-VN), English (en-US) as secondary" "SUCCESS"
+
+    # Set region and locale to Vietnam
+    Set-WinHomeLocation -GeoId 0xF1  # Vietnam
+    Set-Culture "vi-VN"
+    Write-Log "Region set to Vietnam, culture set to vi-VN" "SUCCESS"
+
+    # Set timezone to Southeast Asia (UTC+7 Ho Chi Minh)
+    Set-TimeZone -Id "SE Asia Standard Time"
+    Write-Log "Timezone set to SE Asia Standard Time (UTC+7)" "SUCCESS"
+
+    # Set system locale to Vietnamese (affects non-Unicode programs)
+    # This requires a registry change and reboot to take effect
+    $regPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Nls\Language"
+    Set-ItemProperty -Path $regPath -Name "Default" -Value "042A" -Force -ErrorAction SilentlyContinue
+    Set-ItemProperty -Path $regPath -Name "InstallLanguage" -Value "042A" -Force -ErrorAction SilentlyContinue
+
+    $successCount++
+} catch {
+    Write-Log "Could not fully configure Vietnamese locale: $($_.Exception.Message)" "ERROR"
+    Write-Log "You may need to set language manually: Settings > Time & Language > Language" "ERROR"
+    $failCount++
+}
+
+# Create a language toggle script and desktop shortcut
+Write-Log "Creating language toggle shortcut..." "INFO"
+
+try {
+    $labToolsDir2 = "C:\LabTools"
+    if (-not (Test-Path $labToolsDir2)) {
+        New-Item -Path $labToolsDir2 -ItemType Directory -Force | Out-Null
+    }
+
+    $toggleScript = @'
+# Toggle Windows display language between Vietnamese and English
+# Requires sign-out to take effect
+$current = (Get-WinUserLanguageList)[0].LanguageTag
+
+if ($current -like "vi*") {
+    $langList = New-WinUserLanguageList "en-US"
+    $langList.Add("vi-VN")
+    Set-WinUserLanguageList $langList -Force
+    $msg = "Ngôn ngữ đã chuyển sang Tiếng Anh. Đăng xuất để áp dụng.`nLanguage switched to English. Sign out to apply."
+} else {
+    $langList = New-WinUserLanguageList "vi-VN"
+    $langList.Add("en-US")
+    Set-WinUserLanguageList $langList -Force
+    $msg = "Language switched to Vietnamese. Sign out to apply.`nNgôn ngữ đã chuyển sang Tiếng Việt. Đăng xuất để áp dụng."
+}
+
+Add-Type -AssemblyName PresentationFramework
+[System.Windows.MessageBox]::Show($msg, "Language / Ngôn ngữ", "OK", "Information")
+'@
+
+    $toggleScriptPath = Join-Path $labToolsDir2 "toggle-language.ps1"
+    Set-Content -Path $toggleScriptPath -Value $toggleScript -Force
+
+    # Create desktop shortcut
+    $publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
+    $WshShell = New-Object -ComObject WScript.Shell
+    $toggleShortcutPath = Join-Path $publicDesktop "Doi Ngon Ngu - Switch Language.lnk"
+    $toggleShortcut = $WshShell.CreateShortcut($toggleShortcutPath)
+    $toggleShortcut.TargetPath = "powershell.exe"
+    $toggleShortcut.Arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$toggleScriptPath`""
+    $toggleShortcut.Description = "Toggle between Vietnamese and English / Chuyển đổi giữa Tiếng Việt và Tiếng Anh"
+    $toggleShortcut.Save()
+
+    Write-Log "Language toggle shortcut created on desktop" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not create language toggle: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 5: Configure Windows Magnifier for low-vision users
+Write-Log "Step 5: Configuring Windows Magnifier for low-vision users..." "INFO"
 
 try {
     # Enable Magnifier keyboard shortcut (Win+Plus) and set sensible defaults
@@ -191,8 +286,8 @@ try {
     $failCount++
 }
 
-# Step 5: Create Calculator desktop shortcut
-Write-Log "Step 5: Creating Calculator desktop shortcut..." "INFO"
+# Step 6: Create Calculator desktop shortcut
+Write-Log "Step 6: Creating Calculator desktop shortcut..." "INFO"
 
 try {
     $publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
@@ -210,8 +305,8 @@ try {
     $failCount++
 }
 
-# Step 6: Create welcome audio startup script for Student login
-Write-Log "Step 6: Setting up welcome audio orientation message..." "INFO"
+# Step 7: Create welcome audio startup script for Student login
+Write-Log "Step 7: Setting up welcome audio orientation message..." "INFO"
 
 try {
     # Create a small PowerShell script that uses SAPI to speak a welcome message
@@ -280,8 +375,8 @@ public class NvdaController {
     $failCount++
 }
 
-# Step 7: Create "My USB" desktop shortcut
-Write-Log "Step 7: Creating 'My USB' desktop shortcut..." "INFO"
+# Step 8: Create "My USB" desktop shortcut
+Write-Log "Step 8: Creating 'My USB' desktop shortcut..." "INFO"
 
 try {
     $publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")

@@ -61,6 +61,18 @@ Magnifier and NVDA can run at the same time for students with some remaining vis
 
 ---
 
+## Switching Language / Chuyển đổi ngôn ngữ
+
+Windows is set to **Vietnamese** by default. To switch between Vietnamese and English:
+
+1. Open the **"Đổi Ngôn Ngữ - Switch Language"** shortcut on the desktop
+2. A message will confirm the switch
+3. **Sign out and sign back in** for the change to take effect
+
+This is useful for staff or volunteers who need English temporarily. The keyboard input method (UniKey/Telex) is separate and works in both languages.
+
+---
+
 ## Quick Health Check
 
 To check if everything is working on a PC, run this script:
