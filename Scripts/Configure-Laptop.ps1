@@ -812,7 +812,7 @@ Write-Host "Deployed to:   $labToolsDir" -ForegroundColor White
 Write-Host "  rclone.exe   $(if(Test-Path "$labToolsDir\rclone.exe"){"OK"}else{"MISSING"})" -ForegroundColor $(if(Test-Path "$labToolsDir\rclone.exe"){"Green"}else{"Red"})
 Write-Host "  rclone.conf  $(if(Test-Path "$labToolsDir\rclone.conf"){"OK"}else{"MISSING"})" -ForegroundColor $(if(Test-Path "$labToolsDir\rclone.conf"){"Green"}else{"Red"})
 Write-Host "  backup-usb   $(if(Test-Path "$labToolsDir\backup-usb.ps1"){"OK"}else{"MISSING"})" -ForegroundColor $(if(Test-Path "$labToolsDir\backup-usb.ps1"){"Green"}else{"Red"})
-Write-Host "  welcome-audio $(if(Test-Path "$labToolsDir\welcome-audio.ps1"){"OK"}else{"MISSING"})" -ForegroundColor $(if(Test-Path "$labToolsDir\welcome-audio.ps1"){"Green"}else{"Red"})
+Write-Host "  welcome-audio $(if(Test-Path "C:\LabTools\welcome-audio.ps1"){"OK"}else{"MISSING"})" -ForegroundColor $(if(Test-Path "C:\LabTools\welcome-audio.ps1"){"Green"}else{"Red"})
 Write-Host ""
 Write-Host "Accessibility:" -ForegroundColor White
 Write-Host "  Magnifier    Win+Plus (full-screen, 200%)" -ForegroundColor White
@@ -848,4 +848,4 @@ Write-Host "Log file: $LogPath" -ForegroundColor Cyan
 Write-Host "`n========================================" -ForegroundColor Green
 Write-Host ""
 
-pause
+if (-not $env:LAB_BOOTSTRAP) { pause }

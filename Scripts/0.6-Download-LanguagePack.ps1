@@ -69,84 +69,91 @@ if (-not $viLang) {
     Write-Host "[OK] Vietnamese language already installed on this PC." -ForegroundColor Green
 }
 
-# Extract the cab using DISM
-Write-Host "`nExtracting language pack .cab file..." -ForegroundColor Yellow
+# Extract the cab from the system
+Write-Host "`nSearching for language pack .cab file..." -ForegroundColor Yellow
 
-# Find the installed vi-VN language pack
+$found = $false
+
+# Method 1: Search DISM packages (match both "LanguagePack" and "Language-Pack")
+Write-Host "  Checking DISM packages..." -ForegroundColor DarkGray
 $packageName = $null
 $dismOutput = & DISM /Online /Get-Packages 2>&1
 foreach ($line in $dismOutput) {
-    if ($line -match "(Microsoft-Windows-Client-LanguagePack-Package.*vi-VN.*)") {
+    if ($line -match "(Microsoft-Windows-Client-Language.*Pack.*Package.*vi-VN.*)") {
         $packageName = $matches[1].Trim()
         break
     }
 }
 
-if (-not $packageName) {
-    # Alternative: search for the cab in SoftwareDistribution cache
-    Write-Host "Searching Windows Update cache for language pack cab..." -ForegroundColor DarkGray
-    $cachedCabs = Get-ChildItem -Path "C:\Windows\SoftwareDistribution\Download" -Recurse -Filter "*vi-vn*" -ErrorAction SilentlyContinue |
+if ($packageName) {
+    Write-Host "  Found DISM package: $packageName" -ForegroundColor DarkGray
+}
+
+# Method 2: Search common cache locations for vi-VN cab files
+$searchPaths = @(
+    @{ Path = "C:\Windows\SoftwareDistribution\Download"; Filter = "*vi*vn*"; Recurse = $true },
+    @{ Path = "C:\Windows\servicing\Packages"; Filter = "*Language*vi-VN*"; Recurse = $false },
+    @{ Path = "C:\Windows\Temp"; Filter = "*vi*vn*"; Recurse = $true }
+)
+
+foreach ($search in $searchPaths) {
+    if ($found) { break }
+    if (-not (Test-Path $search.Path)) { continue }
+
+    Write-Host "  Searching $($search.Path)..." -ForegroundColor DarkGray
+    $cabs = Get-ChildItem -Path $search.Path -Filter $search.Filter -Recurse:$search.Recurse -ErrorAction SilentlyContinue |
         Where-Object { $_.Extension -eq ".cab" -and $_.Length -gt 10MB }
 
-    if ($cachedCabs) {
-        $sourceCab = ($cachedCabs | Sort-Object Length -Descending | Select-Object -First 1).FullName
-        Write-Host "Found cached cab: $sourceCab" -ForegroundColor DarkGray
+    if ($cabs) {
+        $sourceCab = ($cabs | Sort-Object Length -Descending | Select-Object -First 1).FullName
+        Write-Host "  Found: $sourceCab" -ForegroundColor DarkGray
         Copy-Item -Path $sourceCab -Destination $cabFile -Force
         $sizeMB = [math]::Round((Get-Item $cabFile).Length / 1MB, 1)
         Write-Host "`n[OK] Language pack saved ($sizeMB MB):" -ForegroundColor Green
         Write-Host "     $cabFile" -ForegroundColor Cyan
-        pause
-        exit 0
-    }
-
-    Write-Host "[WARNING] Could not find the .cab file automatically." -ForegroundColor Yellow
-    Write-Host "`nThe language pack IS installed on this PC, but the .cab could not be extracted." -ForegroundColor White
-    Write-Host "This is OK -- Configure-Laptop.ps1 will use Install-Language on each laptop" -ForegroundColor White
-    Write-Host "if internet is available, or you can copy the cab manually." -ForegroundColor White
-    Write-Host "`nTo find it manually, run:" -ForegroundColor DarkGray
-    Write-Host '  DISM /Online /Get-Packages | findstr "vi-VN"' -ForegroundColor Green
-    pause
-    exit 1
-}
-
-# Export using DISM
-$tempDir = Join-Path $env:TEMP "langpack-export"
-if (-not (Test-Path $tempDir)) {
-    New-Item -Path $tempDir -ItemType Directory -Force | Out-Null
-}
-
-Write-Host "Exporting package: $packageName" -ForegroundColor DarkGray
-try {
-    & DISM /Online /Get-PackageInfo /PackageName:$packageName | Out-Null
-
-    # Try to find the cab in the component store
-    $cachedCabs = Get-ChildItem -Path "C:\Windows\servicing\Packages" -Filter "*LanguagePack*vi-VN*" -ErrorAction SilentlyContinue
-    if (-not $cachedCabs) {
-        $cachedCabs = Get-ChildItem -Path "C:\Windows\SoftwareDistribution\Download" -Recurse -Filter "*.cab" -ErrorAction SilentlyContinue |
-            Where-Object { $_.Length -gt 10MB }
-    }
-
-    if ($cachedCabs) {
-        # Find the most likely vi-VN cab
-        $sourceCab = $cachedCabs | Sort-Object Length -Descending | Select-Object -First 1
-        Copy-Item -Path $sourceCab.FullName -Destination $cabFile -Force
-        $sizeMB = [math]::Round((Get-Item $cabFile).Length / 1MB, 1)
-        Write-Host "`n[OK] Language pack saved ($sizeMB MB):" -ForegroundColor Green
-        Write-Host "     $cabFile" -ForegroundColor Cyan
-    } else {
-        Write-Host "[WARNING] Could not locate the .cab file in the system cache." -ForegroundColor Yellow
-        Write-Host "The language is installed but the cab wasn't found for export." -ForegroundColor White
-        Write-Host "Configure-Laptop.ps1 will download it on each laptop if internet is available." -ForegroundColor White
+        $found = $true
     }
 }
-catch {
-    Write-Host "[WARNING] DISM export failed: $_" -ForegroundColor Yellow
-    Write-Host "Configure-Laptop.ps1 will download it on each laptop if internet is available." -ForegroundColor White
+
+# Method 3: Broad search — any large cab in SoftwareDistribution (some builds don't include vi-vn in filename)
+if (-not $found -and (Test-Path "C:\Windows\SoftwareDistribution\Download")) {
+    Write-Host "  Broad search in SoftwareDistribution..." -ForegroundColor DarkGray
+    $allCabs = Get-ChildItem -Path "C:\Windows\SoftwareDistribution\Download" -Recurse -Filter "*.cab" -ErrorAction SilentlyContinue |
+        Where-Object { $_.Length -gt 30MB -and $_.Length -lt 500MB } |
+        Sort-Object LastWriteTime -Descending |
+        Select-Object -First 5
+
+    foreach ($cab in $allCabs) {
+        # Check if the cab contains vi-VN content using DISM
+        $checkOutput = & DISM /Online /Get-PackageInfo /PackagePath:"$($cab.FullName)" 2>&1 | Out-String
+        if ($checkOutput -match "vi-VN") {
+            Write-Host "  Found vi-VN cab: $($cab.FullName)" -ForegroundColor DarkGray
+            Copy-Item -Path $cab.FullName -Destination $cabFile -Force
+            $sizeMB = [math]::Round((Get-Item $cabFile).Length / 1MB, 1)
+            Write-Host "`n[OK] Language pack saved ($sizeMB MB):" -ForegroundColor Green
+            Write-Host "     $cabFile" -ForegroundColor Cyan
+            $found = $true
+            break
+        }
+    }
 }
 
-# Cleanup
-if (Test-Path $tempDir) {
-    Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue
+if (-not $found) {
+    # Clean up empty directory
+    if ((Test-Path $DestinationDir) -and (Get-ChildItem $DestinationDir | Measure-Object).Count -eq 0) {
+        Remove-Item -Path $DestinationDir -Force -ErrorAction SilentlyContinue
+    }
+
+    Write-Host "`n[INFO] Could not extract the .cab file from this system." -ForegroundColor Yellow
+    Write-Host "" -ForegroundColor White
+    Write-Host "This is normal on Windows 11 24H2 — language packs are installed as" -ForegroundColor White
+    Write-Host "Features on Demand and don't leave extractable .cab files." -ForegroundColor White
+    Write-Host "" -ForegroundColor White
+    Write-Host "This is OK! Configure-Laptop.ps1 will install the language pack" -ForegroundColor Green
+    Write-Host "on each laptop using Install-Language (requires internet)." -ForegroundColor Green
+    Write-Host "" -ForegroundColor White
+    Write-Host "Since Bootstrap-Laptop.ps1 sets up Wi-Fi before running" -ForegroundColor White
+    Write-Host "Configure-Laptop.ps1, each laptop will have internet access." -ForegroundColor White
 }
 
 pause

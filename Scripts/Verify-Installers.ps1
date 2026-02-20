@@ -105,7 +105,7 @@ foreach ($entry in ($sources.PSObject.Properties | Where-Object { $_.Name -notli
 
         if ($file.IsDir) {
             if (Test-Path $filePath) {
-                $contents = Get-ChildItem -Path $filePath -ErrorAction SilentlyContinue
+                $contents = @(Get-ChildItem -Path $filePath -ErrorAction SilentlyContinue)
                 if ($contents.Count -gt 0) {
                     $detail = "$($contents.Count) files"
                     $status = "PASS"
@@ -130,7 +130,11 @@ foreach ($entry in ($sources.PSObject.Properties | Where-Object { $_.Name -notli
                 $detail = "${sizeMB} MB"
 
                 # Check SHA256 if we have a recorded checksum
-                $checksumId = $fileId -replace '/.*$', ''
+                # Try exact fileId first (e.g. "nvda_addons/VLC-2025.1.0.nvda-addon"), then base id
+                $checksumId = $fileId
+                if (-not $checksums.ContainsKey($checksumId)) {
+                    $checksumId = $fileId -replace '/.*$', ''
+                }
                 if ($checksums.ContainsKey($checksumId) -and -not $file.IsDir) {
                     $actualHash = (Get-FileHash -Path $filePath -Algorithm SHA256).Hash.ToLower()
                     if ($actualHash -ne $checksums[$checksumId]) {

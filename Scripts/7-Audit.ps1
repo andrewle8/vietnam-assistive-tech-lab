@@ -368,4 +368,4 @@ Write-Host ""
 
 Write-Log "=== Audit Complete ==="
 
-pause
+if (-not $env:LAB_BOOTSTRAP) { pause }

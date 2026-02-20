@@ -139,32 +139,52 @@ foreach ($entry in $entries) {
 
     $source = $info.source
 
-    # ---- Manual sources: check existence only ----
+    # ---- Manual sources: check existence, auto-download from GitHub Release ----
     if ($source -eq "manual") {
         $expectedPath = Join-Path $DestinationRoot $info.expected_path
 
-        # Handle directory-based checks (addons, games)
+        # Handle entries with a files list (e.g. nvda_addons)
         if ($info.files) {
             $allPresent = $true
+            $downloadedAny = $false
             foreach ($f in $info.files) {
                 $fp = Join-Path $expectedPath $f
                 if (-not (Test-Path $fp)) {
-                    $allPresent = $false
-                    Write-Host "  [MISSING] $f" -ForegroundColor Red
+                    # Try auto-download from GitHub Release
+                    $url = "$releaseBase/$f"
+                    Write-Host "  Downloading $f from GitHub Release..." -ForegroundColor Cyan
+                    try {
+                        $fpDir = Split-Path -Parent $fp
+                        if (-not (Test-Path $fpDir)) {
+                            New-Item -Path $fpDir -ItemType Directory -Force | Out-Null
+                        }
+                        Invoke-Download -Url $url -OutFile $fp
+                        $checksums["$id/$f"] = Get-SHA256 $fp
+                        Write-Host "  [OK] $f" -ForegroundColor Green
+                        $downloadedAny = $true
+                    } catch {
+                        $allPresent = $false
+                        Write-Host "  [FAIL] $f — $($_.Exception.Message)" -ForegroundColor Red
+                    }
+                } else {
+                    if (-not $checksums.ContainsKey("$id/$f")) {
+                        $checksums["$id/$f"] = Get-SHA256 $fp
+                    }
                 }
             }
             if ($allPresent) {
-                Write-Host "  [OK] All files present" -ForegroundColor Green
-                $skippedCount++
+                if ($downloadedAny) { $successCount++ } else { $skippedCount++ }
+                Save-Checksums
             } else {
                 Write-Host "  [MANUAL] $($info.instructions)" -ForegroundColor Magenta
-                $manualCount++
+                $failCount++
             }
         } elseif ($expectedPath.EndsWith("/") -or $expectedPath.EndsWith("\")) {
+            # Directory-based entries (e.g. LEAP games) — check for contents
             if (Test-Path $expectedPath) {
-                $hasFiles = Get-ChildItem -Path $expectedPath -ErrorAction SilentlyContinue
-                if ($hasFiles) {
-                    Write-Host "  [OK] Directory exists with files" -ForegroundColor Green
+                $hasFiles = @(Get-ChildItem -Path $expectedPath -ErrorAction SilentlyContinue)
+                if ($hasFiles.Count -gt 0) {
+                    Write-Host "  [OK] Directory exists with $($hasFiles.Count) files" -ForegroundColor Green
                     $skippedCount++
                 } else {
                     Write-Host "  [MANUAL] $($info.instructions)" -ForegroundColor Magenta
@@ -175,16 +195,34 @@ foreach ($entry in $entries) {
                 $manualCount++
             }
         } else {
+            # Single file entries (e.g. quorum_studio, saomai_vnvoice)
             if (Test-Path $expectedPath) {
-                Write-Host "  [OK] File exists: $expectedPath" -ForegroundColor Green
-                # Record checksum if not yet recorded
+                Write-Host "  [OK] File exists" -ForegroundColor Green
                 if (-not $checksums.ContainsKey($id)) {
                     $checksums[$id] = Get-SHA256 $expectedPath
                 }
                 $skippedCount++
             } else {
-                Write-Host "  [MANUAL] $($info.instructions)" -ForegroundColor Magenta
-                $manualCount++
+                # Try auto-download from GitHub Release
+                $filename = Split-Path -Leaf $expectedPath
+                $url = "$releaseBase/$filename"
+                Write-Host "  Downloading $filename from GitHub Release..." -ForegroundColor Cyan
+                try {
+                    $fpDir = Split-Path -Parent $expectedPath
+                    if (-not (Test-Path $fpDir)) {
+                        New-Item -Path $fpDir -ItemType Directory -Force | Out-Null
+                    }
+                    Invoke-Download -Url $url -OutFile $expectedPath
+                    $checksums[$id] = Get-SHA256 $expectedPath
+                    Save-Checksums
+                    $fileSize = (Get-Item $expectedPath).Length / 1MB
+                    Write-Host "  [OK] Downloaded ($([math]::Round($fileSize, 1)) MB)" -ForegroundColor Green
+                    $successCount++
+                } catch {
+                    Write-Host "  [FAIL] Could not download from release — $($_.Exception.Message)" -ForegroundColor Red
+                    Write-Host "  [MANUAL] $($info.instructions)" -ForegroundColor Magenta
+                    $manualCount++
+                }
             }
         }
         continue

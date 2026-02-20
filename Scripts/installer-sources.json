@@ -96,8 +96,8 @@
   },
   "goldendict": {
     "source": "manual",
-    "expected_path": "Utilities/GoldenDict/GoldenDict-1.5.0-Install.exe",
-    "instructions": "Download GoldenDict-1.5.0-Install.exe from GitHub Release installers-v1"
+    "expected_path": "Utilities/GoldenDict/GoldenDict.exe",
+    "instructions": "Download GoldenDict-1.5.0-portable.zip from GitHub Release installers-v1 and extract to Installers/Utilities/GoldenDict/"
   },
 
   "nvda_addons": {

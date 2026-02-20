@@ -322,4 +322,4 @@ Write-Host "`nLog file: $LogPath" -ForegroundColor Cyan
 Write-Host "`nNext step: Run .\2-Verify-Installation.ps1" -ForegroundColor Yellow
 Write-Host "========================================" -ForegroundColor Green
 
-pause
+if (-not $env:LAB_BOOTSTRAP) { pause }

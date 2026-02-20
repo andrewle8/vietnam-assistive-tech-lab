@@ -22,7 +22,7 @@ $DriveLetter  = "Z"
 # -------------------------------------
 
 $hostname = "PC-{0:D2}" -f $PCNumber
-$totalSteps = 11
+$totalSteps = 10
 $currentStep = 0
 
 function Step {
@@ -146,6 +146,9 @@ if (Test-Path "${DriveLetter}:\") {
 
 Write-Host "`n--- Phase 2: Software Installation ---" -ForegroundColor White
 Write-Host ""
+
+# Signal sub-scripts not to pause (they pause when run standalone)
+$env:LAB_BOOTSTRAP = "1"
 
 if ($SkipInstall) {
     Write-Host "      Skipping installation (-SkipInstall flag set)" -ForegroundColor DarkGray

@@ -81,6 +81,49 @@ $checks = @(
         Critical = $false
     },
     @{
+        Name = "Audacity"
+        Paths = @(
+            "C:\Program Files\Audacity\Audacity.exe",
+            "C:\Program Files (x86)\Audacity\Audacity.exe"
+        )
+        Critical = $false
+    },
+    @{
+        Name = "Quorum Studio"
+        Paths = @(
+            "C:\Program Files\QuorumStudio\*"
+        )
+        Critical = $false
+    },
+    @{
+        Name = "SumatraPDF"
+        Paths = @(
+            "C:\Program Files\SumatraPDF\SumatraPDF.exe"
+        )
+        Critical = $false
+    },
+    @{
+        Name = "GoldenDict"
+        Paths = @(
+            "C:\Program Files\GoldenDict\GoldenDict.exe"
+        )
+        Critical = $false
+    },
+    @{
+        Name = "Kiwix"
+        Paths = @(
+            "C:\Program Files\Kiwix\kiwix-desktop.exe"
+        )
+        Critical = $false
+    },
+    @{
+        Name = "UniKey"
+        Paths = @(
+            "C:\Program Files\UniKey\UniKeyNT.exe"
+        )
+        Critical = $true
+    },
+    @{
         Name = "LEAP Games"
         Paths = @(
             "C:\Games\LEAP\TicTacToe\*.exe",
@@ -162,4 +205,4 @@ Write-Host ""
 
 Write-Log "=== Verification Complete ===" "INFO"
 
-pause
+if (-not $env:LAB_BOOTSTRAP) { pause }
