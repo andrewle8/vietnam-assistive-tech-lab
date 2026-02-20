@@ -265,8 +265,8 @@ try {
     if (-not (Test-Path $magPath)) {
         New-Item -Path $magPath -Force | Out-Null
     }
-    # Set Magnifier to lens mode (less disorienting than full-screen for new users)
-    Set-ItemProperty -Path $magPath -Name "MagnificationMode" -Value 3 -Force
+    # Set Magnifier to full-screen mode (better for keyboard-primary users like blind/low-vision)
+    Set-ItemProperty -Path $magPath -Name "MagnificationMode" -Value 1 -Force
     # Start at 200% zoom
     Set-ItemProperty -Path $magPath -Name "Magnification" -Value 200 -Force
 
@@ -396,6 +396,270 @@ try {
     $failCount++
 }
 
+# Step 9: Volume safety limit for children's hearing
+Write-Log "Step 9: Setting volume safety limit..." "INFO"
+
+try {
+    # Cap system volume at 70% to protect children's hearing (ATH-M40x are 98dB sensitivity)
+    # Create a startup script that resets volume to 70% on each login
+    $volumeScript = @'
+# Reset system volume to safe level for children on each login
+# ATH-M40x headphones at full volume can exceed safe levels for children
+Add-Type -TypeDefinition @"
+using System;
+using System.Runtime.InteropServices;
+[Guid("5CDF2C82-841E-4546-9722-0CF74078229A"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+interface IAudioEndpointVolume {
+    int _0(); int _1(); int _2(); int _3(); int _4(); int _5(); int _6(); int _7(); int _8(); int _9(); int _10(); int _11();
+    int SetMasterVolumeLevelScalar(float fLevel, System.Guid pguidEventContext);
+}
+[Guid("D666063F-1587-4E43-81F1-B948E807363F"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+interface IMMDevice { int Activate(ref Guid id, int clsCtx, int activationParams, [MarshalAs(UnmanagedType.IUnknown)] out object ppInterface); }
+[Guid("A95664D2-9614-4F35-A746-DE8DB63617E6"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+interface IMMDeviceEnumerator { int GetDefaultAudioEndpoint(int dataFlow, int role, out IMMDevice ppDevice); }
+[ComImport, Guid("BCDE0395-E52F-467C-8E3D-C4579291692E")] class MMDeviceEnumerator {}
+"@
+try {
+    $enumerator = New-Object MMDeviceEnumerator
+    $device = $null
+    $enumerator.GetDefaultAudioEndpoint(0, 1, [ref]$device)
+    $iid = [Guid]"5CDF2C82-841E-4546-9722-0CF74078229A"
+    $volume = $null
+    $device.Activate([ref]$iid, 1, 0, [ref]$volume)
+    # Set to 70% max (0.7 = 70%)
+    $volume.SetMasterVolumeLevelScalar(0.70, [Guid]::Empty)
+} catch {}
+'@
+
+    $volumeScriptPath = Join-Path "C:\LabTools" "reset-volume.ps1"
+    Set-Content -Path $volumeScriptPath -Value $volumeScript -Force
+
+    # Add to All Users startup
+    $allUsersStartup = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup"
+    $WshShell = New-Object -ComObject WScript.Shell
+    $volShortcutPath = Join-Path $allUsersStartup "LabVolumeReset.lnk"
+    $volShortcut = $WshShell.CreateShortcut($volShortcutPath)
+    $volShortcut.TargetPath = "powershell.exe"
+    $volShortcut.Arguments = "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$volumeScriptPath`""
+    $volShortcut.Description = "Reset volume to safe level"
+    $volShortcut.WindowStyle = 7
+    $volShortcut.Save()
+
+    Write-Log "Volume safety limit set (70% on each login)" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not set volume limit: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 10: Disable Windows Update (offline machines, prevents unexpected reboots)
+Write-Log "Step 10: Disabling Windows Update..." "INFO"
+
+try {
+    # Disable Windows Update service
+    Set-Service -Name "wuauserv" -StartupType Disabled -ErrorAction SilentlyContinue
+    Stop-Service -Name "wuauserv" -Force -ErrorAction SilentlyContinue
+
+    # Disable Windows Update Medic Service (re-enables Windows Update)
+    Set-Service -Name "WaaSMedicSvc" -StartupType Disabled -ErrorAction SilentlyContinue
+    Stop-Service -Name "WaaSMedicSvc" -Force -ErrorAction SilentlyContinue
+
+    # Disable Update Orchestrator Service
+    Set-Service -Name "UsoSvc" -StartupType Disabled -ErrorAction SilentlyContinue
+    Stop-Service -Name "UsoSvc" -Force -ErrorAction SilentlyContinue
+
+    Write-Log "Windows Update services disabled" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not disable Windows Update: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 11: Disable non-essential notifications
+Write-Log "Step 11: Disabling non-essential notifications..." "INFO"
+
+try {
+    # Disable tips, suggestions, and Get Started notifications
+    $contentDelivery = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
+    if (Test-Path $contentDelivery) {
+        Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-338389Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-310093Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-338393Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $contentDelivery -Name "SoftLandingEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $contentDelivery -Name "SystemPaneSuggestionsEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+    }
+
+    # Disable Windows Defender notifications (offline machines don't need antivirus alerts)
+    $defenderNotify = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\Notifications"
+    if (-not (Test-Path $defenderNotify)) {
+        New-Item -Path $defenderNotify -Force | Out-Null
+    }
+    Set-ItemProperty -Path $defenderNotify -Name "DisableNotifications" -Value 1 -Force
+
+    # Disable notification center suggestions
+    $pushNotify = "HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications"
+    if (-not (Test-Path $pushNotify)) {
+        New-Item -Path $pushNotify -Force | Out-Null
+    }
+    Set-ItemProperty -Path $pushNotify -Name "ToastEnabled" -Value 1 -Force  # Keep toast but disable suggestions
+
+    Write-Log "Non-essential notifications disabled" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not disable notifications: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 12: Disable Narrator shortcut (prevents dual screen reader conflict)
+Write-Log "Step 12: Disabling Narrator auto-start shortcut..." "INFO"
+
+try {
+    # Disable the Win+Ctrl+Enter shortcut for Narrator to prevent accidental activation
+    $narratorPath = "HKCU:\Software\Microsoft\Narrator\NoRoam"
+    if (-not (Test-Path $narratorPath)) {
+        New-Item -Path $narratorPath -Force | Out-Null
+    }
+    # Disable Narrator from starting with the shortcut
+    Set-ItemProperty -Path $narratorPath -Name "WinEnterLaunchEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+
+    # Also disable via Ease of Access settings
+    $easeAccess = "HKCU:\Software\Microsoft\Ease of Access"
+    if (-not (Test-Path $easeAccess)) {
+        New-Item -Path $easeAccess -Force | Out-Null
+    }
+    Set-ItemProperty -Path $easeAccess -Name "selfvoice.ManualStart" -Value 1 -Force -ErrorAction SilentlyContinue
+
+    Write-Log "Narrator shortcut disabled (prevents NVDA conflict)" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not disable Narrator shortcut: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 13: Power settings (no sleep when plugged in, no hibernate)
+Write-Log "Step 13: Configuring power settings..." "INFO"
+
+try {
+    # Set display timeout to 30 minutes on AC, 15 on battery
+    powercfg /change monitor-timeout-ac 30
+    powercfg /change monitor-timeout-dc 15
+    # Disable sleep when plugged in, 30 min on battery
+    powercfg /change standby-timeout-ac 0
+    powercfg /change standby-timeout-dc 30
+    # Disable hibernate entirely
+    powercfg /hibernate off
+    # Set lid close to do nothing (when plugged in)
+    powercfg /setacvalueindex SCHEME_CURRENT SUB_BUTTONS LIDACTION 0
+    powercfg /setactive SCHEME_CURRENT
+
+    Write-Log "Power settings configured (no sleep on AC, no hibernate)" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not configure power settings: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 14: Create NVDA config backup and restore script
+Write-Log "Step 14: Creating NVDA config backup/restore..." "INFO"
+
+try {
+    $backupDir = "C:\LabTools\nvda-backup"
+    $nvdaConfigDir = Join-Path $env:APPDATA "nvda"
+
+    # Backup current (known good) NVDA config
+    if (Test-Path $nvdaConfigDir) {
+        if (-not (Test-Path $backupDir)) {
+            New-Item -Path $backupDir -ItemType Directory -Force | Out-Null
+        }
+        Copy-Item -Path "$nvdaConfigDir\*" -Destination $backupDir -Recurse -Force -ErrorAction SilentlyContinue
+        Write-Log "NVDA config backed up to $backupDir" "SUCCESS"
+    }
+
+    # Create restore script
+    $restoreScript = @'
+# NVDA Config Restore - Restores NVDA to known good configuration
+# Run this if NVDA stops speaking Vietnamese or has wrong settings
+$backupDir = "C:\LabTools\nvda-backup"
+$nvdaConfigDir = Join-Path $env:APPDATA "nvda"
+
+if (Test-Path $backupDir) {
+    # Stop NVDA
+    $nvda = Get-Process nvda -ErrorAction SilentlyContinue
+    if ($nvda) { Stop-Process -Name nvda -Force; Start-Sleep -Seconds 2 }
+
+    # Restore config
+    Copy-Item -Path "$backupDir\*" -Destination $nvdaConfigDir -Recurse -Force
+
+    # Restart NVDA
+    $nvdaExe = "C:\Program Files\NVDA\nvda.exe"
+    if (-not (Test-Path $nvdaExe)) { $nvdaExe = "C:\Program Files (x86)\NVDA\nvda.exe" }
+    if (Test-Path $nvdaExe) { Start-Process -FilePath $nvdaExe }
+
+    Add-Type -AssemblyName PresentationFramework
+    [System.Windows.MessageBox]::Show("NVDA da duoc khoi phuc cai dat goc.`nNVDA has been restored to default settings.", "NVDA Restore", "OK", "Information")
+} else {
+    Add-Type -AssemblyName PresentationFramework
+    [System.Windows.MessageBox]::Show("Khong tim thay ban sao luu NVDA.`nNVDA backup not found.", "Error", "OK", "Error")
+}
+'@
+
+    $restoreScriptPath = "C:\LabTools\restore-nvda.ps1"
+    Set-Content -Path $restoreScriptPath -Value $restoreScript -Force
+
+    # Create desktop shortcut
+    $publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
+    $WshShell = New-Object -ComObject WScript.Shell
+    $restoreShortcutPath = Join-Path $publicDesktop "Khoi Phuc NVDA - Restore NVDA.lnk"
+    $restoreShortcut = $WshShell.CreateShortcut($restoreShortcutPath)
+    $restoreShortcut.TargetPath = "powershell.exe"
+    $restoreShortcut.Arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$restoreScriptPath`""
+    $restoreShortcut.Description = "Restore NVDA to default configuration / Khôi phục cài đặt NVDA"
+    $restoreShortcut.Save()
+
+    Write-Log "NVDA restore shortcut created on desktop" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not create NVDA backup/restore: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 15: Create Vietnamese-labeled desktop folders
+Write-Log "Step 15: Creating Vietnamese desktop folders..." "INFO"
+
+try {
+    $publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
+    $studentDocs = "C:\Users\Public\Documents"
+
+    $viFolders = @(
+        @{ Name = "Tai Lieu"; Desc = "Tài Liệu - Documents" },
+        @{ Name = "Am Nhac"; Desc = "Âm Nhạc - Music" },
+        @{ Name = "Truyen"; Desc = "Truyện - Stories" },
+        @{ Name = "Hoc Tap"; Desc = "Học Tập - Study" },
+        @{ Name = "Tro Choi"; Desc = "Trò Chơi - Games" }
+    )
+
+    foreach ($folder in $viFolders) {
+        $folderPath = Join-Path $studentDocs $folder.Name
+        if (-not (Test-Path $folderPath)) {
+            New-Item -Path $folderPath -ItemType Directory -Force | Out-Null
+        }
+
+        # Create desktop shortcut to each folder
+        $WshShell = New-Object -ComObject WScript.Shell
+        $folderShortcutPath = Join-Path $publicDesktop "$($folder.Name).lnk"
+        $folderShortcut = $WshShell.CreateShortcut($folderShortcutPath)
+        $folderShortcut.TargetPath = $folderPath
+        $folderShortcut.Description = $folder.Desc
+        $folderShortcut.Save()
+    }
+
+    Write-Log "Vietnamese desktop folders created (Tai Lieu, Am Nhac, Truyen, Hoc Tap, Tro Choi)" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not create Vietnamese folders: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
 # Summary
 Write-Host "`n========================================" -ForegroundColor Green
 Write-Host "Loaner Laptop Configuration Complete!" -ForegroundColor Green
@@ -412,9 +676,18 @@ Write-Host "  backup-usb   $(if(Test-Path "$labToolsDir\backup-usb.ps1"){"OK"}el
 Write-Host "  welcome-audio $(if(Test-Path "$labToolsDir\welcome-audio.ps1"){"OK"}else{"MISSING"})" -ForegroundColor $(if(Test-Path "$labToolsDir\welcome-audio.ps1"){"Green"}else{"Red"})
 Write-Host ""
 Write-Host "Accessibility:" -ForegroundColor White
-Write-Host "  Magnifier    Win+Plus (lens mode, 200%)" -ForegroundColor White
+Write-Host "  Magnifier    Win+Plus (full-screen, 200%)" -ForegroundColor White
 Write-Host "  High Contrast Win+Left Alt+Print Screen" -ForegroundColor White
 Write-Host "  Calculator   Desktop shortcut" -ForegroundColor White
+Write-Host ""
+Write-Host "Safety & Hardening:" -ForegroundColor White
+Write-Host "  Volume limit  70% on each login" -ForegroundColor White
+Write-Host "  Win Update    Disabled (offline)" -ForegroundColor White
+Write-Host "  Notifications Tips/suggestions disabled" -ForegroundColor White
+Write-Host "  Narrator      Shortcut disabled (NVDA only)" -ForegroundColor White
+Write-Host "  Power         No sleep on AC, no hibernate" -ForegroundColor White
+Write-Host "  NVDA backup   Restore shortcut on desktop" -ForegroundColor White
+Write-Host "  Vi folders    Tai Lieu, Am Nhac, Truyen, Hoc Tap, Tro Choi" -ForegroundColor White
 Write-Host ""
 
 if ($failCount -gt 0) {

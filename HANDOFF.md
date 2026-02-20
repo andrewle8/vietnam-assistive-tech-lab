@@ -16,6 +16,9 @@
 | **Firefox** | Web browser |
 | **VLC** | Music and video player |
 | **Thorium Reader** | EPUB/DAISY ebook and audiobook reader |
+| **SumatraPDF** | PDF reader for textbooks and documents |
+| **GoldenDict** | Offline Vietnamese-English dictionary (Từ điển) |
+| **Kiwix** | Offline Wikipedia, Wiktionary, and Wikisource in Vietnamese |
 | **LEAP Games** | Audio games (Tic-Tac-Toe, Tennis, Curve) |
 
 All software is **free** and works **offline** (no internet needed).
@@ -36,13 +39,13 @@ Press **Ctrl + Alt + N** to restart NVDA.
 
 NVDA starts automatically when the PC turns on. If it doesn't, look for the NVDA icon on the desktop or in the Start menu.
 
+### Restore NVDA Settings
+
+If NVDA stops speaking Vietnamese or has wrong settings, use the **"Khôi Phục NVDA - Restore NVDA"** shortcut on the desktop. This restores NVDA to the original lab configuration.
+
 ### Backup: Windows Narrator
 
-If NVDA crashes and Ctrl+Alt+N doesn't restart it, Windows has a built-in backup screen reader:
-
-- **Win + Ctrl + Enter** — Toggle Windows Narrator on/off
-
-Narrator is less capable than NVDA but provides basic speech output until NVDA can be restarted. To restart NVDA after using Narrator, press Win+Ctrl+Enter again to turn off Narrator, then open the NVDA shortcut from the desktop or Start menu.
+The Narrator keyboard shortcut (Win+Ctrl+Enter) is **disabled** to prevent accidental activation alongside NVDA. If NVDA completely fails and cannot be restarted, Narrator can be re-enabled through Settings > Accessibility > Narrator.
 
 ---
 
@@ -52,7 +55,7 @@ Some students may have partial vision. These tools are pre-configured on every l
 
 | Shortcut | What It Does |
 |----------|-------------|
-| **Win + Plus (+)** | Launch Windows Magnifier (starts at 200% zoom, lens mode) |
+| **Win + Plus (+)** | Launch Windows Magnifier (starts at 200% zoom, full-screen) |
 | **Win + Minus (-)** | Zoom out while Magnifier is running |
 | **Win + Esc** | Close Magnifier |
 | **Win + Left Alt + Print Screen** | Toggle High Contrast mode |

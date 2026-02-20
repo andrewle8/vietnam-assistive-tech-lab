@@ -29,6 +29,8 @@ $paths = @{
     Utilities  = Join-Path $DestinationRoot "Utilities"
     UniKey     = Join-Path $DestinationRoot "Utilities\UniKey"
     Rclone     = Join-Path $DestinationRoot "Utilities\rclone"
+    SumatraPDF = Join-Path $DestinationRoot "Utilities\SumatraPDF"
+    GoldenDict = Join-Path $DestinationRoot "Utilities\GoldenDict"
     Kiwix      = Join-Path $DestinationRoot "Kiwix"
     Educational = Join-Path $DestinationRoot "Educational"
 }
@@ -50,11 +52,6 @@ $downloads = @(
         Name        = "VLC NVDA Add-on"
         Filename    = "VLC-2025.1.0.nvda-addon"
         Destination = Join-Path $paths.NVDAAddons "VLC-2025.1.0.nvda-addon"
-    },
-    @{
-        Name        = "Access8Math NVDA Add-on"
-        Filename    = "access8math-4.3.nvda-addon"
-        Destination = Join-Path $paths.NVDAAddons "access8math-4.3.nvda-addon"
     },
     @{
         Name        = "Speech History NVDA Add-on"
@@ -130,6 +127,21 @@ $downloads = @(
         Name        = "Thorium Reader 3.3.0"
         Filename    = "Thorium.Setup.3.3.0.exe"
         Destination = Join-Path $paths.Thorium "Thorium.Setup.3.3.0.exe"
+    },
+    @{
+        Name        = "SumatraPDF 3.5.2"
+        Filename    = "SumatraPDF-3.5.2-64-install.exe"
+        Destination = Join-Path $paths.SumatraPDF "SumatraPDF-3.5.2-64-install.exe"
+    },
+    @{
+        Name        = "Vietnamese Wiktionary (offline)"
+        Filename    = "wiktionary_vi_all_maxi_2025-11.zim"
+        Destination = Join-Path $paths.Kiwix "wiktionary_vi_all_maxi_2025-11.zim"
+    },
+    @{
+        Name        = "Vietnamese Wikisource (offline)"
+        Filename    = "wikisource_vi_all_maxi_2025-11.zim"
+        Destination = Join-Path $paths.Kiwix "wikisource_vi_all_maxi_2025-11.zim"
     }
 )
 
@@ -155,7 +167,7 @@ $leapDownloads = @(
 $successCount = 0
 $failCount = 0
 $skippedCount = 0
-$totalItems = $downloads.Count + $leapDownloads.Count + 3  # +1 UniKey, +1 Kiwix, +1 rclone
+$totalItems = $downloads.Count + $leapDownloads.Count + 4  # +1 UniKey, +1 Kiwix, +1 rclone, +1 GoldenDict
 
 # Download direct installer files
 foreach ($item in $downloads) {
@@ -325,6 +337,37 @@ if (Test-Path $kiwixExeDest) {
     } catch {
         Write-Host "[FAIL] $($_.Exception.Message)" -ForegroundColor Red
         if (Test-Path $kiwixZipPath) { Remove-Item -Path $kiwixZipPath -Force -ErrorAction SilentlyContinue }
+        $failCount++
+    }
+}
+
+# Download GoldenDict (portable zip from GitHub Release)
+$goldenDictIndex = $downloads.Count + $leapDownloads.Count + 4
+Write-Host "`n[$goldenDictIndex/$totalItems] GoldenDict (offline dictionary)" -ForegroundColor Yellow
+
+$goldenDictExeDest = Join-Path $paths.GoldenDict "GoldenDict.exe"
+if (Test-Path $goldenDictExeDest) {
+    Write-Host "[SKIP] Already exists: $goldenDictExeDest" -ForegroundColor DarkYellow
+    $skippedCount++
+} else {
+    $goldenDictZipName = "GoldenDict-1.5.0-portable.zip"
+    $goldenDictUrl = "$releaseBase/$goldenDictZipName"
+    $goldenDictZipPath = Join-Path $paths.GoldenDict $goldenDictZipName
+
+    try {
+        Write-Host "Downloading: $goldenDictZipName" -ForegroundColor Cyan
+        $ProgressPreference = 'SilentlyContinue'
+        Invoke-WebRequest -Uri $goldenDictUrl -OutFile $goldenDictZipPath -UseBasicParsing
+        $ProgressPreference = 'Continue'
+
+        Write-Host "Extracting GoldenDict..." -ForegroundColor Cyan
+        Expand-Archive -Path $goldenDictZipPath -DestinationPath $paths.GoldenDict -Force
+        Remove-Item -Path $goldenDictZipPath -Force -ErrorAction SilentlyContinue
+        Write-Host "[OK] Extracted GoldenDict" -ForegroundColor Green
+        $successCount++
+    } catch {
+        Write-Host "[FAIL] $($_.Exception.Message)" -ForegroundColor Red
+        if (Test-Path $goldenDictZipPath) { Remove-Item -Path $goldenDictZipPath -Force -ErrorAction SilentlyContinue }
         $failCount++
     }
 }

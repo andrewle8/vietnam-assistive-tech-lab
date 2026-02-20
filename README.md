@@ -18,7 +18,6 @@ This repo contains everything needed to deploy a fully offline assistive technol
 | **Firefox 147** | MPL-2.0 | Accessible web browser |
 | **VLC Media Player 3.0.23** | GPL-2.0 | Media playback |
 | **VLC NVDA Add-on** | GPL-2.0 | VLC accessibility enhancement for NVDA |
-| **Access8Math NVDA Add-on** | GPL-3.0 | Math content reading/writing via speech |
 | **Speech History NVDA Add-on** | GPL | Review/copy last 100 NVDA utterances (F12) |
 | **NVDA Remote Support** | GPL | Remote control between NVDA computers for post-deployment support |
 | **Focus Highlight NVDA Add-on** | GPL | Visual focus indicator — helps sighted teachers follow student activity |
@@ -30,7 +29,11 @@ This repo contains everything needed to deploy a fully offline assistive technol
 | **UniKey 4.6** | GPL | Vietnamese Telex keyboard input |
 | **Kiwix 2.5.1** | GPL-3.0 | Offline encyclopedia reader |
 | **Vietnamese Wikipedia** | CC BY-SA | Offline Vietnamese encyclopedia (~550 MB) |
+| **Vietnamese Wiktionary** | CC BY-SA | Offline Vietnamese dictionary via Kiwix |
+| **Vietnamese Wikisource** | CC BY-SA | Offline Vietnamese literature via Kiwix |
 | **Thorium Reader 3.3.0** | BSD-3 | EPUB/DAISY ebook reader for accessible reading |
+| **SumatraPDF 3.5.2** | GPL-3.0 | Lightweight PDF reader for textbooks |
+| **GoldenDict** | GPL-3.0 | Offline dictionary (Vietnamese-English, Vietnamese-Vietnamese) |
 | **LEAP Games** | Apache-2.0 | Educational audio games for blind children |
 
 > **NVDA Add-ons:** [NVDA Add-on Store](https://addonstore.nvaccess.org/)

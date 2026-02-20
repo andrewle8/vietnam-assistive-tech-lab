@@ -39,6 +39,8 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 | **Kiwix** | 2.5.1 | GPL-3.0 | Offline encyclopedia reader |
 | **Vietnamese Wikipedia** | Nov 2025 | CC BY-SA | Offline Vietnamese encyclopedia (~550 MB) |
 | **Thorium Reader** | 3.3.0 | BSD-3 | EPUB/DAISY ebook reader for accessible reading |
+| **SumatraPDF** | 3.5.2 | GPL-3.0 | Lightweight PDF reader for Vietnamese textbooks |
+| **GoldenDict** | 1.5.0 | GPL-3.0 | Offline dictionary (Vietnamese-English/Vietnamese-Vietnamese) |
 | **LEAP Games** | Latest | Apache-2.0 | Educational audio games (Tic-Tac-Toe, Tennis, Curve) |
 
 **NVDA Add-ons:**
@@ -46,7 +48,6 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 | Add-on | Purpose |
 |--------|---------|
 | VLC | VLC accessibility enhancement |
-| Access8Math | Math content reading/writing via speech |
 | Speech History | Review/copy last 100 NVDA utterances (F12) |
 | NVDA Remote | Remote control between NVDA computers for post-deployment support |
 | Focus Highlight | Visual focus indicator — helps sighted teachers follow student activity |

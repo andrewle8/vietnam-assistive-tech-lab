@@ -20,7 +20,6 @@ https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/tag/installers-
 |--------|------|------|
 | `NVDA/` | `nvda_2025.3.2.exe` | ~50 MB |
 | `NVDA/addons/` | `VLC-2025.1.0.nvda-addon` | ~1 MB |
-| `NVDA/addons/` | `access8math-4.3.nvda-addon` | ~1 MB |
 | `NVDA/addons/` | `speechHistory-2024.3.1.nvda-addon` | ~1 MB |
 | `NVDA/addons/` | `nvdaRemote-2.6.4.nvda-addon` | ~1 MB |
 | `NVDA/addons/` | `focusHighlight-2.4.nvda-addon` | ~1 MB |
@@ -36,7 +35,11 @@ https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/tag/installers-
 | `Audacity/` | `audacity-win-3.7.3-64bit.exe` | ~30 MB |
 | `Quorum/` | `QuorumStudio-win64.exe` | ~335 MB |
 | `Kiwix/` | Kiwix portable + Vietnamese Wikipedia ZIM | ~700 MB |
+| `Kiwix/` | Vietnamese Wiktionary ZIM | ~50 MB |
+| `Kiwix/` | Vietnamese Wikisource ZIM | ~20 MB |
 | `Thorium/` | `Thorium.Setup.3.3.0.exe` | ~117 MB |
+| `Utilities/SumatraPDF/` | `SumatraPDF-3.5.2-64-install.exe` | ~15 MB |
+| `Utilities/GoldenDict/` | GoldenDict portable (extracted) | ~30 MB |
 | `Educational/` | LEAP Games (Tic-Tac-Toe, Tennis, Curve) | ~50 MB |
 
 ## Pre-Deployment Checklist
@@ -50,7 +53,6 @@ Installers/
 │   ├── nvda-portable.zip           (backup)
 │   └── addons/
 │       ├── VLC-2025.1.0.nvda-addon
-│       ├── access8math-4.3.nvda-addon
 │       ├── speechHistory-2024.3.1.nvda-addon
 │       ├── nvdaRemote-2.6.4.nvda-addon
 │       ├── focusHighlight-2.4.nvda-addon
@@ -76,7 +78,14 @@ Installers/
 │   └── Thorium.Setup.3.3.0.exe
 ├── Kiwix/
 │   ├── kiwix-desktop.exe (+ dependencies)
-│   └── wikipedia_vi_all_mini_2025-11.zim
+│   ├── wikipedia_vi_all_mini_2025-11.zim
+│   ├── wiktionary_vi_all_maxi_2025-11.zim
+│   └── wikisource_vi_all_maxi_2025-11.zim
+├── Utilities/
+│   ├── SumatraPDF/
+│   │   └── SumatraPDF-3.5.2-64-install.exe
+│   └── GoldenDict/
+│       └── GoldenDict.exe (+ dependencies)
 └── Educational/
     ├── TicTacToe/
     │   ├── tictactoe_eng_win64.exe
@@ -101,10 +110,14 @@ Installers/
 - **Thorium Reader:** 3.3.0 or newer (EPUB/DAISY reader from EDRLab)
 - **Kiwix:** 2.5.1 or newer (downloaded directly from kiwix.org)
 - **Vietnamese Wikipedia ZIM:** November 2025 edition (all articles, mini summaries)
+- **Vietnamese Wiktionary ZIM:** November 2025 edition (dictionary definitions)
+- **Vietnamese Wikisource ZIM:** November 2025 edition (public domain literature)
+- **SumatraPDF:** 3.5.2 or newer (lightweight PDF reader)
+- **GoldenDict:** 1.5.0 portable (offline dictionary with Vietnamese dictionary files)
 
 ## Storage Requirements
 
-Total installer package size: ~500-600 MB
+Total installer package size: ~600-800 MB
 Recommended USB drive: 8 GB or larger (to include training materials)
 
 ## Testing

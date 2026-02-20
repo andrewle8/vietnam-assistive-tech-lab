@@ -160,7 +160,40 @@ if (Test-Path $unikeySourceDir) {
     Write-Log "Vietnamese input: use Windows Settings > Language > Add Vietnamese" "INFO"
 }
 
-# Step 6: Start NVDA now (if not already running)
+# Step 6: Enable NVDA on Windows login screen (secure desktop)
+Write-Log "Enabling NVDA speech on Windows login screen..." "INFO"
+
+try {
+    # Copy NVDA config to system profile so NVDA speaks at the login screen
+    # This is the equivalent of NVDA > General Settings > "Use NVDA during sign-in"
+    $systemNvdaConfig = "C:\Windows\ServiceProfiles\LocalService\AppData\Roaming\nvda"
+    if (-not (Test-Path $systemNvdaConfig)) {
+        New-Item -Path $systemNvdaConfig -ItemType Directory -Force | Out-Null
+    }
+    if (Test-Path $nvdaConfigPath) {
+        Copy-Item -Path $nvdaConfigPath -Destination (Join-Path $systemNvdaConfig "nvda.ini") -Force
+        Write-Log "NVDA login screen speech enabled (config copied to system profile)" "SUCCESS"
+    }
+
+    # Set NVDA to run on secure desktops (login screen, UAC prompts)
+    $nvdaRegPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI"
+    # Enable the NVDA Ease of Access integration
+    $easeOfAccessPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Accessibility\ATs\nvda"
+    if (-not (Test-Path $easeOfAccessPath)) {
+        New-Item -Path $easeOfAccessPath -Force | Out-Null
+    }
+    $nvdaExeResolved = if (Test-Path "C:\Program Files\NVDA\nvda.exe") { "C:\Program Files\NVDA\nvda.exe" } else { "C:\Program Files (x86)\NVDA\nvda.exe" }
+    Set-ItemProperty -Path $easeOfAccessPath -Name "ATExe" -Value $nvdaExeResolved -Force
+    Set-ItemProperty -Path $easeOfAccessPath -Name "StartExe" -Value $nvdaExeResolved -Force
+    Set-ItemProperty -Path $easeOfAccessPath -Name "Description" -Value "NVDA Screen Reader" -Force
+
+    Write-Log "NVDA registered as Ease of Access screen reader" "SUCCESS"
+} catch {
+    Write-Log "Could not configure NVDA login screen: $($_.Exception.Message)" "ERROR"
+    Write-Log "Manually enable via NVDA > General Settings > Use NVDA during sign-in" "ERROR"
+}
+
+# Step 7: Start NVDA now (if not already running)
 $nvdaProcess = Get-Process -Name "nvda" -ErrorAction SilentlyContinue
 
 if (-not $nvdaProcess) {

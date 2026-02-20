@@ -93,6 +93,21 @@ $softwareChecks = @(
             "C:\Games\LEAP\Curve\*.exe"
         )
         Critical = $false
+    },
+    @{
+        Name = "SumatraPDF"
+        Paths = @(
+            "C:\Program Files\SumatraPDF\SumatraPDF.exe",
+            "${env:LOCALAPPDATA}\SumatraPDF\SumatraPDF.exe"
+        )
+        Critical = $false
+    },
+    @{
+        Name = "GoldenDict"
+        Paths = @(
+            "C:\Program Files\GoldenDict\GoldenDict.exe"
+        )
+        Critical = $false
     }
 )
 

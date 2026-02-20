@@ -92,6 +92,12 @@ $installations = @(
         Path = ".\Installers\Thorium\Thorium.Setup.3.3.0.exe"
         Args = @("/S")
         WaitTime = 30
+    },
+    @{
+        Name = "SumatraPDF 3.5.2"
+        Path = ".\Installers\Utilities\SumatraPDF\SumatraPDF-3.5.2-64-install.exe"
+        Args = @("-s", "-install")
+        WaitTime = 15
     }
 )
 
@@ -226,6 +232,47 @@ if (Test-Path $kiwixSourceDir) {
     }
 } else {
     Write-Log "Kiwix directory not found at $kiwixSourceDir (optional)" "INFO"
+}
+
+# Install GoldenDict (portable - copy to local folder and create shortcut)
+Write-Log "Installing GoldenDict offline dictionary..." "INFO"
+
+$goldenDictSourceDir = Join-Path $usbRoot "Installers\Utilities\GoldenDict"
+$goldenDictDestDir = "C:\Program Files\GoldenDict"
+
+if (Test-Path $goldenDictSourceDir) {
+    $goldenDictExe = Get-ChildItem -Path $goldenDictSourceDir -Filter "GoldenDict.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($goldenDictExe) {
+        try {
+            if (-not (Test-Path $goldenDictDestDir)) {
+                New-Item -Path $goldenDictDestDir -ItemType Directory -Force | Out-Null
+            }
+            Copy-Item -Path "$goldenDictSourceDir\*" -Destination $goldenDictDestDir -Recurse -Force
+            Write-Log "Copied GoldenDict to $goldenDictDestDir" "SUCCESS"
+
+            # Create desktop shortcut
+            $destExe = Join-Path $goldenDictDestDir "GoldenDict.exe"
+            if (Test-Path $destExe) {
+                $WshShell = New-Object -ComObject WScript.Shell
+                $shortcutPath = Join-Path $publicDesktop "Tu Dien - Dictionary.lnk"
+                $shortcut = $WshShell.CreateShortcut($shortcutPath)
+                $shortcut.TargetPath = $destExe
+                $shortcut.WorkingDirectory = $goldenDictDestDir
+                $shortcut.Description = "GoldenDict - Từ điển ngoại tuyến (Offline Dictionary)"
+                $shortcut.Save()
+                Write-Log "Created desktop shortcut: Tu Dien - Dictionary" "SUCCESS"
+            }
+
+            $successCount++
+        } catch {
+            Write-Log "ERROR installing GoldenDict: $($_.Exception.Message)" "ERROR"
+            $failCount++
+        }
+    } else {
+        Write-Log "GoldenDict executable not found in $goldenDictSourceDir (optional)" "INFO"
+    }
+} else {
+    Write-Log "GoldenDict directory not found at $goldenDictSourceDir (optional)" "INFO"
 }
 
 Write-Log "`n=== Installation Summary ===" "INFO"
