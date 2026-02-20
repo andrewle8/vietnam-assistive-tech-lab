@@ -195,14 +195,13 @@ This validates:
    - Distribute headphones to each station
    - Apply bump dots to F and J keys (and other landmarks) on any keyboards that lack tactile markers
 
-2. **Run install scripts on any PCs not pre-configured**
+2. **Run Bootstrap on any PCs not pre-configured**
    - Insert deployment USB drive
    - Run as Administrator:
      ```
-     .\1-Install-All.ps1
-     .\2-Verify-Installation.ps1
-     .\3-Configure-NVDA.ps1
+     .\Scripts\Bootstrap-Laptop.ps1 -PCNumber N
      ```
+   - This handles everything: software install, NVDA config, hardening, Tailscale, scheduled tasks
    - If PCs were pre-configured before travel, skip to step 3
 
 3. **Configure NVDA and test speech on every PC**

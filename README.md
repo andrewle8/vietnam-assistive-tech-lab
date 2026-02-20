@@ -103,8 +103,8 @@ Software updates are automatic — edit `update-manifest.json`, push to GitHub, 
 | `3-Configure-NVDA.ps1` | Configure NVDA with Vietnamese voice |
 | `4-Prepare-Student-USB.ps1` | Prepare student USB drives |
 | `7-Audit.ps1` | Full audit against manifest.json (with JSON output) |
-| `Bootstrap-Laptop.ps1` | End-to-end PC setup (calls 1-Install, 2-Verify, 3-Configure, Tailscale, scheduled tasks) |
-| `Configure-Laptop.ps1` | Windows hardening, power settings, scheduled tasks |
+| `Bootstrap-Laptop.ps1` | Full PC setup: hostname, Wi-Fi, WinRM, install software, configure NVDA, Windows hardening, Tailscale, scheduled tasks |
+| `Configure-Laptop.ps1` | Windows hardening, rclone, power settings, desktop shortcuts, scheduled tasks (called by Bootstrap) |
 | `Install-Tailscale.ps1` | Install Tailscale VPN and join tailnet |
 | `Deploy-All.ps1` | Run scripts across fleet (local LAN or Tailscale) |
 | `Check-Fleet.ps1` | Ping all PCs (local LAN or Tailscale) |
