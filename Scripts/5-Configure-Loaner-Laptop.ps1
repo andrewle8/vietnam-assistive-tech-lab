@@ -161,8 +161,101 @@ try {
     $failCount++
 }
 
-# Step 4: Create "My USB" desktop shortcut
-Write-Log "Step 4: Creating 'My USB' desktop shortcut..." "INFO"
+# Step 4: Configure Windows Magnifier for low-vision users
+Write-Log "Step 4: Configuring Windows Magnifier for low-vision users..." "INFO"
+
+try {
+    # Enable Magnifier keyboard shortcut (Win+Plus) and set sensible defaults
+    $magPath = "HKCU:\Software\Microsoft\ScreenMagnifier"
+    if (-not (Test-Path $magPath)) {
+        New-Item -Path $magPath -Force | Out-Null
+    }
+    # Set Magnifier to lens mode (less disorienting than full-screen for new users)
+    Set-ItemProperty -Path $magPath -Name "MagnificationMode" -Value 3 -Force
+    # Start at 200% zoom
+    Set-ItemProperty -Path $magPath -Name "Magnification" -Value 200 -Force
+
+    # Enable High Contrast as an available option (Win+Left Alt+Print Screen to toggle)
+    $hcPath = "HKCU:\Control Panel\Accessibility\HighContrast"
+    if (-not (Test-Path $hcPath)) {
+        New-Item -Path $hcPath -Force | Out-Null
+    }
+    # Enable the keyboard shortcut for high contrast toggle
+    Set-ItemProperty -Path $hcPath -Name "Flags" -Value "126" -Force
+
+    Write-Log "Windows Magnifier defaults set (Win+Plus to launch, lens mode, 200%)" "SUCCESS"
+    Write-Log "High contrast toggle enabled (Win+Left Alt+Print Screen)" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not configure Magnifier settings: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 5: Create Calculator desktop shortcut
+Write-Log "Step 5: Creating Calculator desktop shortcut..." "INFO"
+
+try {
+    $publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
+    $WshShell = New-Object -ComObject WScript.Shell
+    $calcShortcutPath = Join-Path $publicDesktop "Calculator.lnk"
+    $calcShortcut = $WshShell.CreateShortcut($calcShortcutPath)
+    $calcShortcut.TargetPath = "calc.exe"
+    $calcShortcut.Description = "Windows Calculator (accessible with NVDA)"
+    $calcShortcut.Save()
+
+    Write-Log "Created Calculator shortcut on public desktop" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not create Calculator shortcut: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 6: Create welcome audio startup script for Student login
+Write-Log "Step 6: Setting up welcome audio orientation message..." "INFO"
+
+try {
+    # Create a small PowerShell script that uses SAPI to speak a welcome message
+    $welcomeScriptDir = "C:\LabTools"
+    if (-not (Test-Path $welcomeScriptDir)) {
+        New-Item -Path $welcomeScriptDir -ItemType Directory -Force | Out-Null
+    }
+
+    $welcomeScript = @'
+# Lab Welcome Audio - plays on Student login
+# Waits for NVDA to start, then speaks a brief orientation message via NVDA
+Start-Sleep -Seconds 5
+Add-Type -AssemblyName System.Speech
+$synth = New-Object System.Speech.Synthesis.SpeechSynthesizer
+$synth.Rate = -1
+$synth.Speak("NVDA is running. Press Insert plus T to hear the window title. Press Insert plus F7 to see a list of links.")
+$synth.Dispose()
+'@
+
+    $welcomeScriptPath = Join-Path $welcomeScriptDir "welcome-audio.ps1"
+    Set-Content -Path $welcomeScriptPath -Value $welcomeScript -Force
+
+    # Create a startup shortcut for the Student user profile
+    # This goes in All Users startup so it runs for any user
+    $allUsersStartup = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup"
+    $WshShell = New-Object -ComObject WScript.Shell
+    $welcomeShortcutPath = Join-Path $allUsersStartup "LabWelcome.lnk"
+    $welcomeShortcut = $WshShell.CreateShortcut($welcomeShortcutPath)
+    $welcomeShortcut.TargetPath = "powershell.exe"
+    $welcomeShortcut.Arguments = "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$welcomeScriptPath`""
+    $welcomeShortcut.Description = "Lab welcome audio orientation"
+    $welcomeShortcut.WindowStyle = 7  # Minimized
+    $welcomeShortcut.Save()
+
+    Write-Log "Welcome audio script created at $welcomeScriptPath" "SUCCESS"
+    Write-Log "Startup shortcut created for all users" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not set up welcome audio: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 7: Create "My USB" desktop shortcut
+Write-Log "Step 7: Creating 'My USB' desktop shortcut..." "INFO"
 
 try {
     $publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
@@ -195,6 +288,12 @@ Write-Host "Deployed to:   $labToolsDir" -ForegroundColor White
 Write-Host "  rclone.exe   $(if(Test-Path "$labToolsDir\rclone.exe"){"OK"}else{"MISSING"})" -ForegroundColor $(if(Test-Path "$labToolsDir\rclone.exe"){"Green"}else{"Red"})
 Write-Host "  rclone.conf  $(if(Test-Path "$labToolsDir\rclone.conf"){"OK"}else{"MISSING"})" -ForegroundColor $(if(Test-Path "$labToolsDir\rclone.conf"){"Green"}else{"Red"})
 Write-Host "  backup-usb   $(if(Test-Path "$labToolsDir\backup-usb.ps1"){"OK"}else{"MISSING"})" -ForegroundColor $(if(Test-Path "$labToolsDir\backup-usb.ps1"){"Green"}else{"Red"})
+Write-Host "  welcome-audio $(if(Test-Path "$labToolsDir\welcome-audio.ps1"){"OK"}else{"MISSING"})" -ForegroundColor $(if(Test-Path "$labToolsDir\welcome-audio.ps1"){"Green"}else{"Red"})
+Write-Host ""
+Write-Host "Accessibility:" -ForegroundColor White
+Write-Host "  Magnifier    Win+Plus (lens mode, 200%)" -ForegroundColor White
+Write-Host "  High Contrast Win+Left Alt+Print Screen" -ForegroundColor White
+Write-Host "  Calculator   Desktop shortcut" -ForegroundColor White
 Write-Host ""
 
 if ($failCount -gt 0) {

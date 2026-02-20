@@ -36,6 +36,29 @@ Press **Ctrl + Alt + N** to restart NVDA.
 
 NVDA starts automatically when the PC turns on. If it doesn't, look for the NVDA icon on the desktop or in the Start menu.
 
+### Backup: Windows Narrator
+
+If NVDA crashes and Ctrl+Alt+N doesn't restart it, Windows has a built-in backup screen reader:
+
+- **Win + Ctrl + Enter** — Toggle Windows Narrator on/off
+
+Narrator is less capable than NVDA but provides basic speech output until NVDA can be restarted. To restart NVDA after using Narrator, press Win+Ctrl+Enter again to turn off Narrator, then open the NVDA shortcut from the desktop or Start menu.
+
+---
+
+## Low-Vision Mode
+
+Some students may have partial vision. These tools are pre-configured on every laptop:
+
+| Shortcut | What It Does |
+|----------|-------------|
+| **Win + Plus (+)** | Launch Windows Magnifier (starts at 200% zoom, lens mode) |
+| **Win + Minus (-)** | Zoom out while Magnifier is running |
+| **Win + Esc** | Close Magnifier |
+| **Win + Left Alt + Print Screen** | Toggle High Contrast mode |
+
+Magnifier and NVDA can run at the same time for students with some remaining vision who also benefit from speech output.
+
 ---
 
 ## Quick Health Check

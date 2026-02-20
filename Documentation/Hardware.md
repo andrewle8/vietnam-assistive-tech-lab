@@ -3,6 +3,7 @@
 
 ## - **Dell Latitude 5420 Laptop:**
 **$307.53/unit** from Dell Refurbished (**Grade A**) — 19 units purchased 2026-02-13.
+**Status:** 5 of 19 received (2026-02-19). Remaining 14 in transit.
 (Product ID: dell-latitude-5420-000402, Order #U1301960)
 
 | Spec | Detail |
@@ -102,7 +103,7 @@ Detachable cable, better clarity, build quality and comfort are worth the $30 di
 ---
 ## - Personal Student USB Drives
 
-**EASTBULL 100-Pack 16GB USB 2.0** with lanyards and labels — purchased 2026-02-13.
+**EASTBULL 100-Pack 16GB USB 2.0** with lanyards and labels — purchased 2026-02-13. **Received.**
 
 | | |
 |---|---|
