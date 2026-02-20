@@ -81,11 +81,12 @@ if ($freeGB -lt 15) {
 
 # Find the Windows 11 ISO
 $usbRoot = Split-Path -Parent $PSScriptRoot
-$isoPath = Join-Path $usbRoot "Installers\Windows\Win11_24H2_English_x64.iso"
+$isoPath = Join-Path $usbRoot "Installers\Windows\Win11_25H2_English_x64.iso"
 
 # Also check for alternative names/locations
+# Note: Vietnamese ISO not available from Microsoft as of Feb 2026
 $altPaths = @(
-    (Join-Path $usbRoot "Installers\Windows\Win11_24H2_Vietnamese_x64.iso"),
+    (Join-Path $usbRoot "Installers\Windows\Win11_24H2_English_x64.iso"),
     (Join-Path $usbRoot "Installers\Windows\Win11.iso"),
     (Join-Path $usbRoot "Win11.iso")
 )
