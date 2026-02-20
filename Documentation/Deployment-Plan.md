@@ -103,6 +103,27 @@ Sao Mai operates Vietnam's largest accessible book library (~10,000 titles) in D
 
 ## Pre-Trip: Test & Pack
 
+### Windows 10 First Boot (OOBE)
+
+Each Dell Latitude 5420 ships with Windows 10 Pro. On first power-on, walk through the setup:
+
+1. **Region** — United States (scripts change this later)
+2. **Keyboard** — US
+3. **Second keyboard** — Skip
+4. **Network** — Connect to Wi-Fi (needed for Win 11 upgrade + downloads)
+5. **How would you like to set up?** — **Set up for an organization**
+6. **Sign in** — Click **Domain join instead** (bottom left — skips Microsoft account)
+7. **Who's going to use this PC?** — `Admin` (Bootstrap-Laptop renames it later)
+8. **Password** — Set something simple or leave blank
+9. **Privacy settings** — Toggle everything off, click Accept
+10. **Cortana** — Skip / Not now
+
+You're now on the desktop. Open PowerShell as Admin and set execution policy:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass
+```
+
 ### Full End-to-End Test (2-3 weeks before travel)
 
 Run the entire deployment process on **one laptop** to verify everything works before configuring the rest:
