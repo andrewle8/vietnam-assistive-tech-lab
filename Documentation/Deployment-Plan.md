@@ -12,7 +12,7 @@
 Deploy a fully **offline, open-source** assistive technology lab enabling blind children to learn computing through **speech output** from day one. All 19 PCs include **Tailscale VPN** for remote management from the US, **automated updates** via a pull-based update agent, and **fleet health monitoring** via Google Drive.
 
 **Pre-trip**
-- Set up Tailscale account and generate non-expiring auth key (see Pre-Trip: Tailscale Setup)
+- Set up Tailscale account and generate reusable auth key with `tag:vietnam-lab` (see Pre-Trip: Tailscale Setup)
 - Pre-configure all 19 laptops using install scripts and verify end-to-end
 - Label each computer (PC-1 through PC-19)
 - Prep personal USB sticks with asset IDs and 3D-printed Braille identifiers
@@ -68,13 +68,16 @@ Tailscale creates a mesh VPN — no port forwarding needed, survives NAT changes
 **Action items (complete 2-3 weeks before travel):**
 
 1. **Create a Tailscale account** at [tailscale.com](https://tailscale.com)
-2. **Generate a pre-auth key** in the Tailscale admin console:
+2. **Add tag to Access Controls** — in the Tailscale admin console, add `"tag:vietnam-lab"` to `tagOwners` under your admin group
+3. **Generate a pre-auth key** in the Tailscale admin console:
    - Go to Settings > Keys > Generate auth key
-   - Set to **reusable** and **non-expiring**
-   - Add tag: `tag:vietnam-lab`
-3. **Update `Install-Tailscale.ps1`** — replace the placeholder `tskey-auth-CHANGE_ME` with your real auth key
-4. **Install Tailscale on your own machine** (macOS/Windows) — this is how you'll connect to PCs remotely
-5. **Download the Tailscale MSI** — `0-Download-Installers.ps1` fetches it automatically from GitHub
+   - **Reusable:** checked
+   - **Ephemeral:** unchecked
+   - **Tags:** `tag:vietnam-lab` (this disables node key expiry — devices stay connected permanently)
+   - **Expiration:** 90 days (max allowed; only needed during initial setup, not after)
+4. **Update `Install-Tailscale.ps1`** — replace the placeholder `tskey-auth-CHANGE_ME` with your real auth key
+5. **Install Tailscale on your own machine** (macOS/Windows) — this is how you'll connect to PCs remotely
+6. **Download the Tailscale MSI** — `0-Download-Installers.ps1` fetches it automatically from GitHub
 
 **How it works during deployment:**
 - `Bootstrap-Laptop.ps1` installs Tailscale on each PC as part of the setup flow
@@ -126,18 +129,19 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass
 
 ### Full End-to-End Test (2-3 weeks before travel)
 
-Run the entire deployment process on **one laptop** to verify everything works before configuring the rest:
+Run the entire deployment process on **one laptop** to verify everything works before configuring the rest. After setting the execution policy (see above), you can right-click each `.ps1` file → **Run with PowerShell**:
 
-1. Run `0-Download-Installers.ps1` — all downloads succeed (vendor URLs, GitHub, Kiwix)
-2. Run `Verify-Installers.ps1` — all files present with correct SHA256 checksums
-3. Run `0.5-Upgrade-Windows11.ps1` — upgrade from Win 10 to Win 11 if needed
-4. Run `Bootstrap-Laptop.ps1 -PCNumber 1` — full setup including Tailscale
-5. Verify Tailscale: PC appears in your tailnet as `PC-01` with a `100.x.x.x` IP
-6. Run `7-Audit.ps1` — compare machine state against manifest.json, all checks pass
-7. Manually test: open each app, verify NVDA reads it correctly
-8. Test Thorium Reader with a sample EPUB/DAISY file
-9. Test student USB workflow with `4-Prepare-Student-USB.ps1`
-10. From your machine: `Check-Fleet.ps1 -UseTailscale` — PC-01 shows as reachable
+1. Right-click `0-Download-Installers.ps1` → Run with PowerShell — all downloads succeed
+2. Right-click `Verify-Installers.ps1` → Run with PowerShell — all files present with correct SHA256 checksums
+3. Right-click `0.5-Upgrade-Windows11.ps1` → Run with PowerShell — upgrade from Win 10 to Win 11 if needed
+4. Right-click `0.6-Download-LanguagePack.ps1` → Run with PowerShell — pre-download Vietnamese language pack
+5. Right-click `Bootstrap-Laptop.ps1` → Run with PowerShell — it will prompt for `PCNumber`, enter `1`. Full setup including Tailscale
+6. Verify Tailscale: PC appears in your tailnet as `PC-01` with a `100.x.x.x` IP
+7. Right-click `7-Audit.ps1` → Run with PowerShell — all checks pass
+8. Manually test: open each app, verify NVDA reads it correctly
+9. Test Thorium Reader with a sample EPUB/DAISY file
+10. Test student USB workflow with `4-Prepare-Student-USB.ps1`
+11. From your machine: `Check-Fleet.ps1 -UseTailscale` — PC-01 shows as reachable
 
 Fix any issues, then proceed to configure the remaining 18 laptops.
 
@@ -145,7 +149,7 @@ Fix any issues, then proceed to configure the remaining 18 laptops.
 
 After the test PC passes, configure the remaining 18 PCs. `Bootstrap-Laptop.ps1` handles the full pipeline:
 
-1. Run `Bootstrap-Laptop.ps1 -PCNumber N` on each PC (N = 1 through 19)
+1. Right-click `Bootstrap-Laptop.ps1` → **Run with PowerShell** on each PC — it will prompt for `PCNumber`, enter 1–19
    - This runs: install software, verify, configure NVDA, set up Windows hardening, install Tailscale, register scheduled tasks (update agent + fleet reporter)
 2. Verify each PC appears in your Tailscale admin console
 3. Run `7-Audit.ps1` on each — all green
@@ -218,10 +222,7 @@ This validates:
 
 2. **Run Bootstrap on any PCs not pre-configured**
    - Insert deployment USB drive
-   - Run as Administrator:
-     ```
-     .\Scripts\Bootstrap-Laptop.ps1 -PCNumber N
-     ```
+   - Right-click `Bootstrap-Laptop.ps1` → **Run with PowerShell** — it will prompt for `PCNumber`, enter the PC number (1–19)
    - This handles everything: software install, NVDA config, hardening, Tailscale, scheduled tasks
    - If PCs were pre-configured before travel, skip to step 3
 

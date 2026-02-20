@@ -43,41 +43,58 @@ This repo contains everything needed to deploy and remotely manage an assistive 
 
 ## Quick Start
 
-> **First time running scripts?** Open PowerShell as Admin, then run:
+> **First time running scripts?** Open PowerShell as Admin and run this once:
 > ```powershell
 > Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass
 > ```
-> This only needs to be done once per machine. Do **not** right-click → "Run with PowerShell" — open a PowerShell window first so you can see any output.
+> After that, you can right-click any `.ps1` file → **Run with PowerShell** and it will work.
 
 ### 1. Download Installers
 
-Smart downloads from vendor URLs, GitHub Releases, and Kiwix — no manual file hunting:
+Right-click `Scripts\0-Download-Installers.ps1` → **Run with PowerShell**. Downloads all installers (~800 MB) from vendor URLs, GitHub Releases, and Kiwix automatically.
 
-```powershell
-cd path\to\vietnam-assistive-tech-lab
-.\Scripts\0-Download-Installers.ps1    # Downloads all installers
-.\Scripts\Verify-Installers.ps1        # Validates files + SHA256 checksums
-```
+Then right-click `Scripts\Verify-Installers.ps1` → **Run with PowerShell** to validate files and SHA256 checksums.
 
-### 2. Set Up Tailscale
+Optionally, right-click `Scripts\0.6-Download-LanguagePack.ps1` → **Run with PowerShell** to pre-download the Vietnamese language pack for offline install. (Without this, `Bootstrap-Laptop.ps1` will download it from the internet.)
+
+### 2. Download Windows 11 ISO (if upgrading from Windows 10)
+
+The Dell Latitude 5420s may ship with Windows 10. To upgrade:
+
+1. Download the **Windows 11 (multi-edition ISO for x64 devices)** from [microsoft.com/software-download/windows11](https://www.microsoft.com/en-us/software-download/windows11)
+2. Place the ISO in `Installers\Windows\` (create the folder if needed) — expected filename: `Win11_25H2_English_x64.iso`
+3. Right-click `Scripts\0.5-Upgrade-Windows11.ps1` → **Run with PowerShell** on each PC that needs it
+
+> **Note:** The Arm64 ISO is not needed — Dell Latitude 5420 is x64.
+
+### 3. Set Up Tailscale
 
 Before configuring PCs, set up your Tailscale account for remote management:
 
 1. Create account at [tailscale.com](https://tailscale.com)
-2. Generate a **non-expiring, reusable** pre-auth key (tag: `tag:vietnam-lab`)
-3. Replace `tskey-auth-CHANGE_ME` in `Scripts/Install-Tailscale.ps1` with your key
+2. In Access Controls, add `"tag:vietnam-lab"` to `tagOwners` under your admin group
+3. Generate a **reusable** pre-auth key (90-day expiry is fine — only needed during setup):
+   - **Reusable:** checked
+   - **Ephemeral:** unchecked
+   - **Tags:** `tag:vietnam-lab` (this disables node key expiry, so devices stay connected permanently)
+4. Replace `tskey-auth-CHANGE_ME` in `Scripts/Install-Tailscale.ps1` with your key
 
-### 3. Configure Laptops
+### 4. Configure Laptops
 
-Test on one PC first, then batch the remaining 18:
+Test on one PC first, then batch the remaining 18.
 
-```powershell
-# Run as Administrator on each PC
-.\Scripts\Bootstrap-Laptop.ps1 -PCNumber 1   # Full setup: install, configure, Tailscale, scheduled tasks
-.\Scripts\7-Audit.ps1                         # Verify machine matches manifest.json
+Right-click `Scripts\Bootstrap-Laptop.ps1` → **Run with PowerShell**. It will prompt:
+
+```
+Supply values for the following parameters:
+PCNumber: _
 ```
 
-### 4. Pre-Flight Validation
+Enter a number 1–19 for each laptop. The script handles everything: hostname, Wi-Fi, software install, NVDA config, Windows hardening, Tailscale, and scheduled tasks.
+
+After it finishes, right-click `Scripts\7-Audit.ps1` → **Run with PowerShell** to verify the machine matches `manifest.json`.
+
+### 5. Pre-Flight Validation
 
 Run from your machine before traveling:
 
@@ -85,7 +102,7 @@ Run from your machine before traveling:
 .\Scripts\Pre-Deployment-Check.ps1    # Validates everything is ready for deployment
 ```
 
-### 5. Remote Management (Post-Deployment)
+### 6. Remote Management (Post-Deployment)
 
 From the US, monitor and manage all 19 PCs:
 

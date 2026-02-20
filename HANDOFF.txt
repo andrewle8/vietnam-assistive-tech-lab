@@ -76,10 +76,11 @@ QUICK HEALTH CHECK
 ------------------
 To check if everything is working on a PC:
 
-  1. Right-click Start button > Terminal (Admin) or PowerShell (Admin)
-  2. Type: Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-  3. Navigate to the scripts folder on the USB drive
-  4. Run: .\7-Audit.ps1
+  1. Open PowerShell as Administrator
+     (Start menu > type "PowerShell" > right-click > Run as Administrator)
+  2. Run once (first time only):
+     Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass
+  3. After that, right-click 7-Audit.ps1 > Run with PowerShell
 
 The script checks all software, Windows settings, NVDA config, and
 remote management. Shows green (OK), yellow (warning), or red (problem).

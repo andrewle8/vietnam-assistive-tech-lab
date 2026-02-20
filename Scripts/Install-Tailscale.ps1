@@ -82,7 +82,7 @@ if (-not (Test-Path $tailscaleExe)) {
 }
 
 # Join the tailnet
-# Auth key should be: non-expiring, reusable, tagged tag:vietnam-lab
+# Auth key should be: reusable, tagged tag:vietnam-lab (tag disables node key expiry)
 # Generate at: https://login.tailscale.com/admin/settings/keys
 Write-Host "Joining tailnet as $hostname..." -ForegroundColor Cyan
 try {
