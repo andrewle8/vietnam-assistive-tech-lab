@@ -14,7 +14,7 @@ This repo contains everything needed to deploy and remotely manage an assistive 
 | **NVDA 2025.3.3** | GPL-2.0 | Screen reader with Vietnamese interface |
 | **Sao Mai VNVoice** | Free (non-commercial) | Vietnamese text-to-speech (SAPI5) |
 | **Sao Mai Typing Tutor** | Free (non-commercial) | Vietnamese typing lessons with audio |
-| **LibreOffice 26.2.0** | MPL-2.0 | Office suite |
+| **Microsoft Office 365** | Non-profit license | Office suite (Word, Excel, PowerPoint, Outlook) |
 | **Firefox 147** | MPL-2.0 | Accessible web browser |
 | **VLC Media Player 3.0.23** | GPL-2.0 | Media playback |
 | **Audacity 3.7** | GPL-3.0 | Audio recording/editing |
@@ -122,13 +122,15 @@ PCNumber: _
 
 Enter a number 1–19 for each laptop. The script handles everything: hostname, Wi-Fi, software install, NVDA config, Windows hardening, Tailscale, and scheduled tasks.
 
-**To use Microsoft Office instead of LibreOffice:**
+**Microsoft Office setup:**
 
-```powershell
-.\Scripts\Bootstrap-Laptop.ps1 -OfficeSuite MSOffice
-```
+Before running Bootstrap, download the Office Deployment Tool and Office files:
 
-MS Office must be pre-installed or have its installer placed in `Installers\MSOffice\` (Office Deployment Tool `setup.exe`). If the installer is not found, the script skips the office install and continues. NVDA has built-in MS Office support via UIA — no add-on needed.
+1. Download the [Office Deployment Tool](https://www.microsoft.com/en-us/download/details.aspx?id=49117) and extract `setup.exe` to `Installers\MSOffice\`
+2. From that folder, run: `.\setup.exe /download configuration.xml`
+3. This downloads ~2 GB of Office installer files into `Installers\MSOffice\`
+
+The Bootstrap script will install Office automatically using the included `configuration.xml` (Office 365 ProPlus, en-us + vi-vn). After deployment, activate with your non-profit license.
 
 After it finishes, verify the machine matches `manifest.json`:
 
@@ -165,12 +167,12 @@ Software updates are automatic — edit `update-manifest.json`, push to GitHub, 
 | `0-Download-Installers.ps1` | Smart download from vendor URLs, GitHub, Kiwix |
 | `0.5-Upgrade-Windows11.ps1` | Upgrade Windows 10 to 11 |
 | `0.6-Download-LanguagePack.ps1` | Download Vietnamese language pack for offline install |
-| `1-Install-All.ps1` | Install all software silently (`-OfficeSuite MSOffice` for MS Office) |
+| `1-Install-All.ps1` | Install all software silently (including Microsoft Office) |
 | `2-Verify-Installation.ps1` | Verify all software installed correctly |
 | `3-Configure-NVDA.ps1` | Configure NVDA with Vietnamese voice |
 | `4-Prepare-Student-USB.ps1` | Prepare student USB drives |
 | `7-Audit.ps1` | Full audit against manifest.json (with JSON output) |
-| `Bootstrap-Laptop.ps1` | Full PC setup (`-OfficeSuite MSOffice` for MS Office instead of LibreOffice) |
+| `Bootstrap-Laptop.ps1` | Full PC setup (hostname, Wi-Fi, software, NVDA, hardening, Tailscale) |
 | `Configure-Laptop.ps1` | Windows hardening, rclone, power settings, desktop shortcuts, scheduled tasks (called by Bootstrap) |
 | `Install-Tailscale.ps1` | Install Tailscale VPN and join tailnet |
 | `Deploy-All.ps1` | Run scripts across fleet (local LAN or Tailscale) |
@@ -188,7 +190,7 @@ Software updates are automatic — edit `update-manifest.json`, push to GitHub, 
 
 ## License
 
-This deployment kit uses 100% free and open-source software:
+This deployment kit uses free and open-source software where possible, plus Microsoft Office 365 under non-profit licensing.
 - See respective licenses (GPL, MPL, LGPL)
 ---
 
@@ -196,7 +198,7 @@ This deployment kit uses 100% free and open-source software:
 
 - **NV Access** - NVDA screen reader
 - **Sao Mai Center** - NVDA Vietnamese modules and VNVoice TTS
-- **LibreOffice Community** - Free office suite
+- **Microsoft** - Office 365 (non-profit licensing)
 - **Mozilla Foundation** - Firefox browser
 - **SciFY** - LEAP educational games for blind children
 - **Tailscale** - Mesh VPN for remote management

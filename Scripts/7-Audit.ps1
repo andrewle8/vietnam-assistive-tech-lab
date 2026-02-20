@@ -7,9 +7,7 @@
 param(
     [string]$ManifestPath,
     [string]$LogPath = "$PSScriptRoot\audit.log",
-    [switch]$OutputJson,
-    [ValidateSet("LibreOffice","MSOffice")]
-    [string]$OfficeSuite = "LibreOffice"
+    [switch]$OutputJson
 )
 
 function Write-Log {
@@ -129,9 +127,8 @@ foreach ($sw in $manifest.software.PSObject.Properties) {
     $name = $sw.Name
     $info = $sw.Value
 
-    # Skip the non-selected office suite
-    if ($name -eq "libreoffice" -and $OfficeSuite -eq "MSOffice") { continue }
-    if ($name -eq "msoffice" -and $OfficeSuite -eq "LibreOffice") { continue }
+    # Skip LibreOffice (replaced by Microsoft Office)
+    if ($name -eq "libreoffice") { continue }
 
     $found = $false
 

@@ -12,11 +12,6 @@
     "url_template": "https://releases.mozilla.org/pub/firefox/releases/{version}/win64/en-US/Firefox%20Setup%20{version}.msi",
     "destination": "Firefox/Firefox Setup {version}.msi"
   },
-  "libreoffice": {
-    "source": "vendor",
-    "url_template": "https://download.documentfoundation.org/libreoffice/stable/{version}/win/x86_64/LibreOffice_{version}_Win_x86-64.msi",
-    "destination": "LibreOffice/LibreOffice_{version}_Win_x86-64.msi"
-  },
   "vlc": {
     "source": "vendor",
     "url_template": "https://get.videolan.org/vlc/{version}/win64/vlc-{version}-win64.exe",

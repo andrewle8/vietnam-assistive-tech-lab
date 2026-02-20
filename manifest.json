@@ -39,14 +39,6 @@
         "C:\\Program Files (x86)\\SaoMai\\TypingTutor\\*"
       ]
     },
-    "libreoffice": {
-      "version": "26.2.0",
-      "installer": "LibreOffice_26.2.0_Win_x86-64.msi",
-      "critical": true,
-      "paths": [
-        "C:\\Program Files\\LibreOffice\\program\\soffice.exe"
-      ]
-    },
     "msoffice": {
       "version": "Office 16 (2024/365)",
       "installer": "setup.exe",

@@ -32,7 +32,7 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 | **NVDA** | 2025.3.3 | GPL-2.0 | Screen reader with Vietnamese interface |
 | **Sao Mai VNVoice** | v1.0 | Free (non-commercial) | Vietnamese TTS (Minh Du/Mai Dung voices), SAPI5 |
 | **Sao Mai Typing Tutor** | Latest | Free | Vietnamese typing lessons with speech |
-| **LibreOffice** | 26.2.0 | MPL-2.0 | Office suite (default; use `-OfficeSuite MSOffice` for MS Office) |
+| **Microsoft Office 365** | Latest | Non-profit license | Office suite (Word, Excel, PowerPoint, Outlook) |
 | **Firefox** | 147 | MPL-2.0 | Accessible web browser |
 | **VLC Media Player** | 3.0.23 | GPL-2.0 | Media playback |
 | **Audacity** | 3.7.7 | GPL-3.0 | Audio recording/editing |
@@ -150,8 +150,7 @@ Fix any issues, then proceed to configure the remaining 18 laptops.
 After the test PC passes, configure the remaining 18 PCs. On each PC, open PowerShell as Administrator, `cd` to the project folder, then:
 
 1. `.\Scripts\Bootstrap-Laptop.ps1` — it will prompt for `PCNumber`, enter 1–19
-   - Add `-OfficeSuite MSOffice` if using Microsoft Office instead of LibreOffice
-   - This runs: install software, verify, configure NVDA, set up Windows hardening, install Tailscale, register scheduled tasks (update agent + fleet reporter)
+   - This runs: install software (including Microsoft Office), verify, configure NVDA, set up Windows hardening, install Tailscale, register scheduled tasks (update agent + fleet reporter)
 2. Verify each PC appears in your Tailscale admin console
 3. `.\Scripts\7-Audit.ps1` on each — all green
 4. Label each PC (PC-1 through PC-19) with physical label
@@ -255,7 +254,7 @@ This validates:
 3. **Configure user experience**
    - Set up student user accounts (restricted, see Windows Hardening)
    - Set desktop shortcuts to consistent layout across all PCs
-   - Configure default apps (LibreOffice for documents, Firefox for web)
+   - Configure default apps (Microsoft Office for documents, Firefox for web)
    - Set NVDA speech rate to a comfortable starting speed
 
 4. **Conduct walkthrough with staff**
@@ -304,16 +303,10 @@ This validates:
 
 ### Office Suite Accessibility
 
-**LibreOffice** (default):
-1. Enable "Support assistive technology tools"
-2. Set default format to `.odt` (best NVDA support)
-3. Configure Vietnamese language and keyboard
-4. Disable animations and auto-correct
-
-**Microsoft Office** (optional — use `-OfficeSuite MSOffice`):
+**Microsoft Office 365** (non-profit license):
 - NVDA has built-in MS Office support via UIA — no add-on needed
-- Better accessibility than LibreOffice for screen reader users
-- Requires a license; place Office Deployment Tool in `Installers\MSOffice\`
+- Installed via Office Deployment Tool with `configuration.xml` (en-us + vi-vn)
+- Activate with non-profit license post-deployment
 - If MS Office is already installed, the script skips installation and just verifies
 
 ### Windows Hardening (Student Machines)

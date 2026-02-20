@@ -50,7 +50,7 @@ Meets all Win11 Upgrade requirements:
 
 ### x86-x64 vs ARM
 
-ARM/Snapdragon laptops run NVDA, Sao Mai VNVoice, LibreOffice MSI, and LEAP Games through **emulation**, adding latency to speech output. Not suitable for screen reader users.
+ARM/Snapdragon laptops run NVDA, Sao Mai VNVoice, Microsoft Office, and LEAP Games through **emulation**, adding latency to speech output. Not suitable for screen reader users.
 
 ---
 

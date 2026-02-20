@@ -10,9 +10,6 @@ param(
     [ValidateRange(1,19)]
     [int]$PCNumber,
 
-    [ValidateSet("LibreOffice","MSOffice")]
-    [string]$OfficeSuite = "LibreOffice",
-
     [switch]$SkipInstall,
     [switch]$SkipReboot
 )
@@ -37,7 +34,7 @@ function Step {
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "Vietnam Lab - Full Laptop Setup" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "Target: $hostname  |  Office: $OfficeSuite  |  Date: $(Get-Date -Format 'yyyy-MM-dd HH:mm')" -ForegroundColor White
+Write-Host "Target: $hostname  |  Date: $(Get-Date -Format 'yyyy-MM-dd HH:mm')" -ForegroundColor White
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -154,19 +151,19 @@ if ($SkipInstall) {
     Write-Host "      Skipping installation (-SkipInstall flag set)" -ForegroundColor DarkGray
     $currentStep += 3
 } else {
-    Step "Installing all software (1-Install-All.ps1 -OfficeSuite $OfficeSuite)"
+    Step "Installing all software (1-Install-All.ps1)"
     $installScript = Join-Path $scriptsDir "1-Install-All.ps1"
     if (Test-Path $installScript) {
-        & $installScript -OfficeSuite $OfficeSuite
+        & $installScript
         Write-Host "      Software installation complete" -ForegroundColor Green
     } else {
         Write-Host "      ERROR: 1-Install-All.ps1 not found at $installScript" -ForegroundColor Red
     }
 
-    Step "Verifying installation (2-Verify-Installation.ps1 -OfficeSuite $OfficeSuite)"
+    Step "Verifying installation (2-Verify-Installation.ps1)"
     $verifyScript = Join-Path $scriptsDir "2-Verify-Installation.ps1"
     if (Test-Path $verifyScript) {
-        & $verifyScript -OfficeSuite $OfficeSuite
+        & $verifyScript
         Write-Host "      Verification complete" -ForegroundColor Green
     } else {
         Write-Host "      ERROR: 2-Verify-Installation.ps1 not found at $verifyScript" -ForegroundColor Red
@@ -225,7 +222,7 @@ Write-Host "  Tailscale IP:  $tailscaleIP" -ForegroundColor White
 Write-Host "  WinRM:         $winrmStatus" -ForegroundColor White
 Write-Host "  Drive Map:     ${DriveLetter}: -> $NASShare" -ForegroundColor White
 Write-Host ""
-Write-Host "  Office Suite:  $OfficeSuite" -ForegroundColor White
+Write-Host "  Office Suite:  Microsoft Office" -ForegroundColor White
 Write-Host "  Software:      $(if(-not $SkipInstall){'Installed + Verified'}else{'Skipped'})" -ForegroundColor White
 Write-Host "  NVDA:          $(if(-not $SkipInstall){'Configured (Vietnamese)'}else{'Skipped'})" -ForegroundColor White
 Write-Host "  Hardening:     Applied (Configure-Laptop.ps1)" -ForegroundColor White

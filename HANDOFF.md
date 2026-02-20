@@ -12,7 +12,7 @@
 | **NVDA** | Screen reader — speaks everything on screen in Vietnamese |
 | **Sao Mai VNVoice** | Vietnamese voice for NVDA (Minh Du / Mai Dung) |
 | **Sao Mai Typing Tutor** | Typing lessons with audio feedback |
-| **LibreOffice** | Word processing, spreadsheets (like Microsoft Office) |
+| **Microsoft Office** | Word, Excel, PowerPoint, Outlook (non-profit license) |
 | **Firefox** | Web browser |
 | **VLC** | Music and video player |
 | **Thorium Reader** | EPUB/DAISY ebook and audiobook reader |

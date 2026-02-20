@@ -65,11 +65,13 @@ Step 4: Set Up Each Laptop
   hostname, Wi-Fi, software install, NVDA config, Windows hardening,
   Tailscale, and scheduled tasks.
 
-  To use Microsoft Office instead of LibreOffice:
-  .\Scripts\Bootstrap-Laptop.ps1 -OfficeSuite MSOffice
-  MS Office must be pre-installed or have its installer (Office Deployment
-  Tool setup.exe) placed in Installers\MSOffice\. If not found, the script
-  skips the office install and continues.
+  Microsoft Office setup (before running Bootstrap):
+  1. Download the Office Deployment Tool from Microsoft
+  2. Extract setup.exe to Installers\MSOffice\
+  3. Run: .\setup.exe /download configuration.xml
+  4. This downloads ~2 GB of Office installer files
+  The Bootstrap script installs Office automatically. Activate with your
+  non-profit license after deployment.
 
 Step 5: Verify
   .\Scripts\7-Audit.ps1

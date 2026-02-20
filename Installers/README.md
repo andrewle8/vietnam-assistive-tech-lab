@@ -13,7 +13,7 @@ The download script automatically fetches installers from the best source for ea
 
 | Source | What | Example |
 |--------|------|---------|
-| **Vendor URL** | Direct from software publisher | NVDA, Firefox, LibreOffice, VLC |
+| **Vendor URL** | Direct from software publisher | NVDA, Firefox, VLC |
 | **GitHub Releases** | From the project's GitHub repo | Audacity, Thorium, SumatraPDF, Tailscale, rclone |
 | **Kiwix** | ZIM files from download.kiwix.org | Vietnamese Wikipedia, Wiktionary, Wikisource |
 | **Manual** | Must be pre-placed or on GitHub Release `installers-v1` | Sao Mai VNVoice, Typing Tutor, LEAP Games, NVDA Addons |
@@ -28,7 +28,7 @@ Source definitions are in `Scripts/installer-sources.json`. Versions come from `
 | `NVDA/addons/` | 7 NVDA add-ons (.nvda-addon) | Manual (GitHub Release) | ~13 MB |
 | `SaoMai/` | `SaoMai_VNVoice_1.0.exe` | Manual | -- |
 | `SaoMai/` | `SaoMai_TypingTutor.exe` | Manual | -- |
-| `LibreOffice/` | `LibreOffice_26.2.0_Win_x86-64.msi` | Vendor (documentfoundation.org) | ~300 MB |
+| `MSOffice/` | Office Deployment Tool + Office files | Manual (microsoft.com) | ~2 GB |
 | `Firefox/` | `Firefox Setup 147.0.4.msi` | Vendor (mozilla.org) | ~60 MB |
 | `Utilities/` | `VLC-3.0.23.exe` | Vendor (videolan.org) | ~40 MB |
 | `Utilities/UniKey/` | `UniKeyNT.exe` | Manual (GitHub Release) | ~1 MB |
@@ -69,8 +69,10 @@ Installers/
 ├── SaoMai/
 │   ├── SaoMai_VNVoice_1.0.exe
 │   └── SaoMai_TypingTutor.exe
-├── LibreOffice/
-│   └── LibreOffice_26.2.0_Win_x86-64.msi
+├── MSOffice/
+│   ├── setup.exe (Office Deployment Tool)
+│   ├── configuration.xml
+│   └── Office/ (downloaded via setup.exe /download)
 ├── Firefox/
 │   └── Firefox Setup 147.0.4.msi
 ├── Audacity/
@@ -106,7 +108,7 @@ Installers/
 
 - **NVDA:** Use latest stable (2025.3.3 or newer)
 - **Firefox:** 147 or newer
-- **LibreOffice:** 26.2.0 or newer
+- **Microsoft Office:** 365 ProPlus (non-profit license, installed via ODT)
 - **VLC:** Use stable release (3.0.23 or newer)
 - **UniKey:** 4.6 RC2 or newer (Vietnamese keyboard)
 - **Audacity:** 3.7.7 or newer
@@ -120,8 +122,8 @@ Installers/
 
 ## Storage Requirements
 
-Total installer package size: ~1.5-2 GB (including ZIM files and Tailscale/rclone)
-Recommended USB drive: 8 GB or larger (to include training materials)
+Total installer package size: ~3-4 GB (including Office files, ZIM files, and Tailscale/rclone)
+Recommended USB drive: 16 GB or larger (to include training materials)
 
 ## Backup Strategy
 
