@@ -43,11 +43,18 @@ This repo contains everything needed to deploy and remotely manage an assistive 
 
 ## Quick Start
 
+> **First time running scripts?** Open PowerShell as Admin, then run:
+> ```powershell
+> Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass
+> ```
+> This only needs to be done once per machine. Do **not** right-click → "Run with PowerShell" — open a PowerShell window first so you can see any output.
+
 ### 1. Download Installers
 
 Smart downloads from vendor URLs, GitHub Releases, and Kiwix — no manual file hunting:
 
 ```powershell
+cd path\to\vietnam-assistive-tech-lab
 .\Scripts\0-Download-Installers.ps1    # Downloads all installers
 .\Scripts\Verify-Installers.ps1        # Validates files + SHA256 checksums
 ```
