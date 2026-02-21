@@ -311,6 +311,19 @@ foreach ($entry in $entries) {
                 Write-Host "  Downloading from vendor..." -ForegroundColor Cyan
                 Write-Host "  URL: $url" -ForegroundColor DarkGray
                 Invoke-Download -Url $url -OutFile $destPath
+
+                # Download additional files if specified (e.g. StarDict dictionaries)
+                if ($info.extra_files) {
+                    foreach ($ef in $info.extra_files) {
+                        $efDest = Join-Path $DestinationRoot $ef.dest
+                        $efDir = Split-Path -Parent $efDest
+                        if (-not (Test-Path $efDir)) {
+                            New-Item -Path $efDir -ItemType Directory -Force | Out-Null
+                        }
+                        Write-Host "  URL: $($ef.url)" -ForegroundColor DarkGray
+                        Invoke-Download -Url $ef.url -OutFile $efDest
+                    }
+                }
             }
             "github" {
                 Write-Host "  Fetching from GitHub: $($info.repo)..." -ForegroundColor Cyan

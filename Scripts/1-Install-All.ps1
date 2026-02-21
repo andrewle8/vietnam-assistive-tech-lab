@@ -284,6 +284,28 @@ if ($goldenDictExe) {
     } catch {
         Write-Log "Could not create GoldenDict shortcut: $($_.Exception.Message)" "WARNING"
     }
+
+    # Install Vietnamese StarDict dictionaries into GoldenDict's content folder
+    Write-Log "Installing Vietnamese dictionaries for GoldenDict..." "INFO"
+    $dictSourceDir = Join-Path $usbRoot "Installers\Dictionaries"
+    $goldenDictDir = Split-Path $goldenDictExe
+    $dictDestDir = Join-Path $goldenDictDir "content"
+
+    if (Test-Path $dictSourceDir) {
+        try {
+            if (-not (Test-Path $dictDestDir)) {
+                New-Item -Path $dictDestDir -ItemType Directory -Force | Out-Null
+            }
+            Copy-Item -Path "$dictSourceDir\*" -Destination $dictDestDir -Recurse -Force
+            $dictCount = (Get-ChildItem $dictDestDir -Filter "*.ifo" -Recurse -ErrorAction SilentlyContinue).Count
+            Write-Log "Installed $dictCount Vietnamese dictionaries to $dictDestDir" "SUCCESS"
+            $successCount++
+        } catch {
+            Write-Log "Could not install dictionaries: $($_.Exception.Message)" "WARNING"
+        }
+    } else {
+        Write-Log "No dictionaries found at $dictSourceDir (run 0-Download-Installers.ps1)" "INFO"
+    }
 }
 
 Write-Log "`n=== Installation Summary ===" "INFO"

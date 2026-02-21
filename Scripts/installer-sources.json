@@ -102,6 +102,24 @@
     "url_template": "https://github.com/goldendict/goldendict/releases/download/{version}/GoldenDict-{version}-Install.exe",
     "destination": "Utilities/GoldenDict/GoldenDict-{version}-Install.exe"
   },
+  "stardict_en_vi": {
+    "source": "vendor",
+    "url_template": "https://raw.githubusercontent.com/dynamotn/stardict-vi/master/en-vi/star_anhviet.ifo",
+    "destination": "Dictionaries/en-vi/star_anhviet.ifo",
+    "extra_files": [
+      { "url": "https://raw.githubusercontent.com/dynamotn/stardict-vi/master/en-vi/star_anhviet.idx", "dest": "Dictionaries/en-vi/star_anhviet.idx" },
+      { "url": "https://raw.githubusercontent.com/dynamotn/stardict-vi/master/en-vi/star_anhviet.dict.dz", "dest": "Dictionaries/en-vi/star_anhviet.dict.dz" }
+    ]
+  },
+  "stardict_vi_en": {
+    "source": "vendor",
+    "url_template": "https://raw.githubusercontent.com/dynamotn/stardict-vi/master/vi-en/star_vietanh.ifo",
+    "destination": "Dictionaries/vi-en/star_vietanh.ifo",
+    "extra_files": [
+      { "url": "https://raw.githubusercontent.com/dynamotn/stardict-vi/master/vi-en/star_vietanh.idx", "dest": "Dictionaries/vi-en/star_vietanh.idx" },
+      { "url": "https://raw.githubusercontent.com/dynamotn/stardict-vi/master/vi-en/star_vietanh.dict.dz", "dest": "Dictionaries/vi-en/star_vietanh.dict.dz" }
+    ]
+  },
 
   "nvda_addon_vlc": {
     "source": "vendor",
