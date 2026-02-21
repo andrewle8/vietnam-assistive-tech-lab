@@ -102,6 +102,16 @@ Sao Mai operates Vietnam's largest accessible book library (~10,000 titles) in D
 
 **Contact:** [saomaicenter.org/en](https://saomaicenter.org/en) (Ho Chi Minh City) — they produce the VNVoice TTS already in our stack, so there is an existing relationship.
 
+### GoldenDict Vietnamese Dictionaries
+
+GoldenDict is installed on all 19 PCs but needs dictionary files to be useful. The Open Vietnamese Dictionary Project provides free StarDict-format dictionaries that GoldenDict can load directly.
+
+**Action items (complete before April):**
+
+1. **Download StarDict Vietnamese dictionaries** from [github.com/dynamotn/stardict-vi](https://github.com/dynamotn/stardict-vi) — get Vietnamese-Vietnamese and Vietnamese-English dictionary files
+2. **Pre-load dictionaries** into GoldenDict's dictionary folder on each PC (typically `C:\Program Files\GoldenDict\content\` or configure via GoldenDict settings)
+3. **Test dictionary lookup** — verify GoldenDict can look up Vietnamese words with NVDA reading the definitions
+
 ---
 
 ## Pre-Trip: Test & Pack

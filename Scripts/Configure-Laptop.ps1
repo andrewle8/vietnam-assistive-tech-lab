@@ -523,6 +523,18 @@ try {
     $failCount++
 }
 
+# Step 11b: Disable Windows system sounds (reduces audio clutter that interferes with NVDA speech)
+Write-Log "Step 11b: Disabling Windows system sounds..." "INFO"
+
+try {
+    Set-ItemProperty -Path "HKCU:\AppEvents\Schemes" -Name "(Default)" -Value ".None" -Force
+    Write-Log "Windows system sounds disabled (reduces interference with NVDA)" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not disable system sounds: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
 # Step 12: Disable Narrator shortcut (prevents dual screen reader conflict)
 Write-Log "Step 12: Disabling Narrator auto-start shortcut..." "INFO"
 
@@ -549,8 +561,64 @@ try {
     $failCount++
 }
 
-# Step 13: Power settings (no sleep when plugged in, no hibernate)
-Write-Log "Step 13: Configuring power settings..." "INFO"
+# Step 13: Deploy Firefox policies (homepage, disable updates, Vietnamese locale)
+Write-Log "Step 13: Deploying Firefox enterprise policies..." "INFO"
+
+try {
+    $firefoxDistDir = "C:\Program Files\Mozilla Firefox\distribution"
+    if (-not (Test-Path $firefoxDistDir)) {
+        New-Item -Path $firefoxDistDir -ItemType Directory -Force | Out-Null
+        Write-Log "Created directory: $firefoxDistDir" "INFO"
+    }
+
+    $policiesSource = Join-Path (Split-Path -Parent $PSScriptRoot) "Config\firefox-profile\policies.json"
+    if (Test-Path $policiesSource) {
+        Copy-Item -Path $policiesSource -Destination "$firefoxDistDir\policies.json" -Force
+        Write-Log "Firefox policies.json deployed to $firefoxDistDir" "SUCCESS"
+        $successCount++
+    } else {
+        Write-Log "policies.json not found at $policiesSource" "ERROR"
+        $failCount++
+    }
+} catch {
+    Write-Log "Could not deploy Firefox policies: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 14: Disable Sticky Keys / Filter Keys popups (confusing for blind users)
+Write-Log "Step 14: Disabling Sticky Keys and Filter Keys popups..." "INFO"
+
+try {
+    # Disable Sticky Keys popup (triggered by pressing Shift 5 times)
+    $stickyKeysPath = "HKCU:\Control Panel\Accessibility\StickyKeys"
+    if (-not (Test-Path $stickyKeysPath)) {
+        New-Item -Path $stickyKeysPath -Force | Out-Null
+    }
+    Set-ItemProperty -Path $stickyKeysPath -Name "Flags" -Value "506" -Force
+
+    # Disable Filter Keys popup (triggered by holding a key)
+    $filterKeysPath = "HKCU:\Control Panel\Accessibility\Keyboard Response"
+    if (-not (Test-Path $filterKeysPath)) {
+        New-Item -Path $filterKeysPath -Force | Out-Null
+    }
+    Set-ItemProperty -Path $filterKeysPath -Name "Flags" -Value "122" -Force
+
+    # Enable Toggle Keys beep (useful audio feedback for blind users - Caps/Num/Scroll Lock)
+    $toggleKeysPath = "HKCU:\Control Panel\Accessibility\ToggleKeys"
+    if (-not (Test-Path $toggleKeysPath)) {
+        New-Item -Path $toggleKeysPath -Force | Out-Null
+    }
+    Set-ItemProperty -Path $toggleKeysPath -Name "Flags" -Value "63" -Force
+
+    Write-Log "Sticky Keys popup disabled, Filter Keys popup disabled, Toggle Keys beep enabled" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not configure accessibility key settings: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 15: Power settings (no sleep when plugged in, no hibernate)
+Write-Log "Step 15: Configuring power settings..." "INFO"
 
 try {
     # Set display timeout to 30 minutes on AC, 15 on battery
@@ -572,8 +640,8 @@ try {
     $failCount++
 }
 
-# Step 14: Create NVDA config backup and restore script
-Write-Log "Step 14: Creating NVDA config backup/restore..." "INFO"
+# Step 16: Create NVDA config backup and restore script
+Write-Log "Step 16: Creating NVDA config backup/restore..." "INFO"
 
 try {
     $backupDir = "C:\LabTools\nvda-backup"
@@ -636,8 +704,8 @@ if (Test-Path $backupDir) {
     $failCount++
 }
 
-# Step 15: Create Vietnamese-labeled desktop folders
-Write-Log "Step 15: Creating Vietnamese desktop folders..." "INFO"
+# Step 17: Create Vietnamese-labeled desktop folders
+Write-Log "Step 17: Creating Vietnamese desktop folders..." "INFO"
 
 try {
     $publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
@@ -673,8 +741,8 @@ try {
     $failCount++
 }
 
-# Step 16: Deploy Update Agent
-Write-Log "Step 16: Deploying auto-update agent..." "INFO"
+# Step 18: Deploy Update Agent
+Write-Log "Step 18: Deploying auto-update agent..." "INFO"
 
 try {
     $updateAgentDir = "C:\LabTools\update-agent"
@@ -745,8 +813,8 @@ try {
     $failCount++
 }
 
-# Step 17: Deploy Fleet Health Reporter
-Write-Log "Step 17: Deploying fleet health reporter..." "INFO"
+# Step 19: Deploy Fleet Health Reporter
+Write-Log "Step 19: Deploying fleet health reporter..." "INFO"
 
 try {
     # Copy fleet health script
@@ -820,6 +888,10 @@ Write-Host "  High Contrast Win+Left Alt+Print Screen" -ForegroundColor White
 Write-Host "  Calculator   Desktop shortcut" -ForegroundColor White
 Write-Host ""
 Write-Host "Safety & Hardening:" -ForegroundColor White
+Write-Host "  Firefox       Policies deployed (no updates, Vietnamese, no PiP)" -ForegroundColor White
+Write-Host "  Sticky Keys   Popup disabled (Shift x5)" -ForegroundColor White
+Write-Host "  Filter Keys   Popup disabled (hold key)" -ForegroundColor White
+Write-Host "  Toggle Keys   Beep enabled (Caps/Num/Scroll Lock)" -ForegroundColor White
 Write-Host "  Volume limit  70% on each login" -ForegroundColor White
 Write-Host "  Win Update    Disabled (offline)" -ForegroundColor White
 Write-Host "  Notifications Tips/suggestions disabled" -ForegroundColor White
@@ -847,5 +919,35 @@ Write-Host ""
 Write-Host "Log file: $LogPath" -ForegroundColor Cyan
 Write-Host "`n========================================" -ForegroundColor Green
 Write-Host ""
+
+# Step 20: Create Student account with auto-login
+Write-Log "Step 20: Creating Student account with auto-login..." "INFO"
+
+try {
+    # Create local Student account (no password, standard user)
+    $studentExists = Get-LocalUser -Name "Student" -ErrorAction SilentlyContinue
+    if (-not $studentExists) {
+        New-LocalUser -Name "Student" -NoPassword -FullName "Student" -Description "Lab student account" -ErrorAction Stop
+        Add-LocalGroupMember -Group "Users" -Member "Student" -ErrorAction SilentlyContinue
+        Write-Log "Created local Student account (no password, standard user)" "SUCCESS"
+    } else {
+        Write-Log "Student account already exists" "INFO"
+    }
+
+    # Set password to never expire
+    Set-LocalUser -Name "Student" -PasswordNeverExpires $true -ErrorAction SilentlyContinue
+
+    # Configure auto-login for Student account
+    $winlogonPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+    Set-ItemProperty -Path $winlogonPath -Name "AutoAdminLogon" -Value "1" -Force
+    Set-ItemProperty -Path $winlogonPath -Name "DefaultUserName" -Value "Student" -Force
+    Set-ItemProperty -Path $winlogonPath -Name "DefaultPassword" -Value "" -Force
+
+    Write-Log "Auto-login configured for Student account" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not create Student account: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
 
 if (-not $env:LAB_BOOTSTRAP) { pause }

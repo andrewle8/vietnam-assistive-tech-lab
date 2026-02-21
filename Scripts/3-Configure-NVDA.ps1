@@ -54,7 +54,7 @@ if (Test-Path $sourceConfig) {
 # Step 3: Set NVDA to auto-start on login
 Write-Log "Configuring NVDA to auto-start on Windows login..." "INFO"
 
-$startupPath = Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs\Startup"
+$startupPath = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup"
 $nvdaExePath = "C:\Program Files\NVDA\nvda.exe"
 
 if (-not (Test-Path $nvdaExePath)) {
@@ -137,8 +137,8 @@ if (Test-Path $unikeySourceDir) {
         Copy-Item -Path "$unikeySourceDir\*" -Destination $unikeyDestDir -Recurse -Force
         Write-Log "Copied UniKey to $unikeyDestDir" "SUCCESS"
 
-        # Create startup shortcut so UniKey runs on login
-        $startupPath = Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs\Startup"
+        # Create startup shortcut so UniKey runs on login (All Users)
+        $startupPath = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup"
         $unikeyExe = Join-Path $unikeyDestDir "UniKeyNT.exe"
         if (Test-Path $unikeyExe) {
             $WshShell = New-Object -ComObject WScript.Shell

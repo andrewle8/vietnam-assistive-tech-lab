@@ -24,6 +24,7 @@ $DriveLetter  = "Z"
 $hostname = "PC-{0:D2}" -f $PCNumber
 $totalSteps = 10
 $currentStep = 0
+$stepResults = @{}
 
 function Step {
     param([string]$Name)
@@ -157,28 +158,52 @@ if ($SkipInstall) {
     Step "Installing all software (1-Install-All.ps1)"
     $installScript = Join-Path $scriptsDir "1-Install-All.ps1"
     if (Test-Path $installScript) {
-        & $installScript
-        Write-Host "      Software installation complete" -ForegroundColor Green
+        try {
+            & $installScript
+            if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) { throw "Exit code: $LASTEXITCODE" }
+            Write-Host "      Software installation complete" -ForegroundColor Green
+            $stepResults["1-Install-All"] = $true
+        } catch {
+            Write-Host "      ERROR: 1-Install-All.ps1 failed: $($_.Exception.Message)" -ForegroundColor Red
+            $stepResults["1-Install-All"] = $false
+        }
     } else {
         Write-Host "      ERROR: 1-Install-All.ps1 not found at $installScript" -ForegroundColor Red
+        $stepResults["1-Install-All"] = $false
     }
 
     Step "Verifying installation (2-Verify-Installation.ps1)"
     $verifyScript = Join-Path $scriptsDir "2-Verify-Installation.ps1"
     if (Test-Path $verifyScript) {
-        & $verifyScript
-        Write-Host "      Verification complete" -ForegroundColor Green
+        try {
+            & $verifyScript
+            if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) { throw "Exit code: $LASTEXITCODE" }
+            Write-Host "      Verification complete" -ForegroundColor Green
+            $stepResults["2-Verify-Installation"] = $true
+        } catch {
+            Write-Host "      ERROR: 2-Verify-Installation.ps1 failed: $($_.Exception.Message)" -ForegroundColor Red
+            $stepResults["2-Verify-Installation"] = $false
+        }
     } else {
         Write-Host "      ERROR: 2-Verify-Installation.ps1 not found at $verifyScript" -ForegroundColor Red
+        $stepResults["2-Verify-Installation"] = $false
     }
 
     Step "Configuring NVDA (3-Configure-NVDA.ps1)"
     $configScript = Join-Path $scriptsDir "3-Configure-NVDA.ps1"
     if (Test-Path $configScript) {
-        & $configScript
-        Write-Host "      NVDA configured" -ForegroundColor Green
+        try {
+            & $configScript
+            if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) { throw "Exit code: $LASTEXITCODE" }
+            Write-Host "      NVDA configured" -ForegroundColor Green
+            $stepResults["3-Configure-NVDA"] = $true
+        } catch {
+            Write-Host "      ERROR: 3-Configure-NVDA.ps1 failed: $($_.Exception.Message)" -ForegroundColor Red
+            $stepResults["3-Configure-NVDA"] = $false
+        }
     } else {
         Write-Host "      ERROR: 3-Configure-NVDA.ps1 not found at $configScript" -ForegroundColor Red
+        $stepResults["3-Configure-NVDA"] = $false
     }
 }
 
@@ -192,26 +217,68 @@ Write-Host ""
 Step "Applying Windows hardening and laptop config (Configure-Laptop.ps1)"
 $configLaptopScript = Join-Path $scriptsDir "Configure-Laptop.ps1"
 if (Test-Path $configLaptopScript) {
-    & $configLaptopScript
-    Write-Host "      Laptop configured (hardening, rclone, scheduled tasks)" -ForegroundColor Green
+    try {
+        & $configLaptopScript
+        if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) { throw "Exit code: $LASTEXITCODE" }
+        Write-Host "      Laptop configured (hardening, rclone, scheduled tasks)" -ForegroundColor Green
+        $stepResults["Configure-Laptop"] = $true
+    } catch {
+        Write-Host "      ERROR: Configure-Laptop.ps1 failed: $($_.Exception.Message)" -ForegroundColor Red
+        $stepResults["Configure-Laptop"] = $false
+    }
 } else {
     Write-Host "      ERROR: Configure-Laptop.ps1 not found at $configLaptopScript" -ForegroundColor Red
+    $stepResults["Configure-Laptop"] = $false
 }
 
 Step "Installing Tailscale VPN"
 $tailscaleScript = Join-Path $scriptsDir "Install-Tailscale.ps1"
 if (Test-Path $tailscaleScript) {
-    & $tailscaleScript -PCNumber $PCNumber
+    try {
+        & $tailscaleScript -PCNumber $PCNumber
+        if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) { throw "Exit code: $LASTEXITCODE" }
+        $stepResults["Install-Tailscale"] = $true
+    } catch {
+        Write-Host "      ERROR: Install-Tailscale.ps1 failed: $($_.Exception.Message)" -ForegroundColor Red
+        $stepResults["Install-Tailscale"] = $false
+    }
 } else {
     Write-Host "      WARNING: Install-Tailscale.ps1 not found. Skipping VPN setup." -ForegroundColor Red
+    $stepResults["Install-Tailscale"] = $false
 }
 
 # =============================================
 # Summary
 # =============================================
 
+# =============================================
+# Step Results Summary
+# =============================================
+
+$failedSteps = $stepResults.GetEnumerator() | Where-Object { $_.Value -eq $false }
+$passedSteps = $stepResults.GetEnumerator() | Where-Object { $_.Value -eq $true }
+
+if ($failedSteps) {
+    Write-Host "`n========================================" -ForegroundColor Red
+    Write-Host "Setup Complete WITH ERRORS - $hostname" -ForegroundColor Red
+    Write-Host "========================================" -ForegroundColor Red
+    Write-Host ""
+    Write-Host "Failed steps:" -ForegroundColor Red
+    foreach ($step in $failedSteps) {
+        Write-Host "  [FAIL] $($step.Key)" -ForegroundColor Red
+    }
+    Write-Host ""
+    foreach ($step in $passedSteps) {
+        Write-Host "  [OK  ] $($step.Key)" -ForegroundColor Green
+    }
+} else {
+    Write-Host "`n========================================" -ForegroundColor Green
+    Write-Host "Setup Complete - All Steps Passed - $hostname" -ForegroundColor Green
+    Write-Host "========================================" -ForegroundColor Green
+}
+
 Write-Host "`n========================================" -ForegroundColor Cyan
-Write-Host "Setup Complete - $hostname" -ForegroundColor Cyan
+Write-Host "Setup Details - $hostname" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 
 $winrmStatus = try { (Get-Service WinRM).Status } catch { "Unknown" }

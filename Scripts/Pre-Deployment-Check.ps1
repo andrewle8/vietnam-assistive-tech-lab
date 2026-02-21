@@ -119,7 +119,7 @@ Check "Tailscale MSI in Installers/Utilities/Tailscale/" ($null -ne $tailscaleIn
 $installTailscale = Join-Path $RepoRoot "Scripts/Install-Tailscale.ps1"
 if (Test-Path $installTailscale) {
     $tsContent = Get-Content $installTailscale -Raw
-    $hasPlaceholderKey = $tsContent -match "REPLACE_BEFORE_TRIP"
+    $hasPlaceholderKey = $tsContent -match "tskey-auth-CHANGE_ME"
     Check "Tailscale auth key configured" (-not $hasPlaceholderKey) "Auth key is still the placeholder - update before deployment" -WarnOnly "Update auth key in Install-Tailscale.ps1 before trip"
 }
 

@@ -49,6 +49,37 @@ The Narrator keyboard shortcut (Win+Ctrl+Enter) is **disabled** to prevent accid
 
 ---
 
+## NVDA Learning Tools
+
+These features help beginners learn NVDA and are useful for training sessions:
+
+- **Input Help Mode** (NVDA+1): Learning mode -- press any key to hear what it does. Press NVDA+1 again to exit. This is the #1 beginner learning tool.
+- **Screen Curtain** (NVDA+Shift+S): Turns screen black for privacy and battery savings. Press again to turn screen back on.
+- **Adjust Speech Speed** (NVDA+Ctrl+Up/Down arrows): Speed up or slow down NVDA's voice.
+
+---
+
+## Essential NVDA Shortcuts
+
+> **Note:** "NVDA key" = Insert or Caps Lock (both work).
+
+| Shortcut | What It Does |
+|----------|-------------|
+| **NVDA+1** | Input Help (learning mode) |
+| **NVDA+T** | Read window title |
+| **NVDA+B** | Read all (say all) |
+| **Tab / Shift+Tab** | Navigate controls |
+| **NVDA+Space** | Toggle forms/browse mode |
+| **Arrow keys** | Navigate text |
+| **Ctrl** | Stop speech |
+| **NVDA+S** | Cycle speech modes (talk/beep/off) |
+| **NVDA+Ctrl+Up/Down** | Speech rate |
+| **NVDA+F7** | Elements list (links, headings) |
+| **NVDA+Q** | Quit NVDA |
+| **NVDA+Shift+S** | Screen Curtain |
+
+---
+
 ## Low-Vision Mode
 
 Some students may have partial vision. These tools are pre-configured on every laptop:

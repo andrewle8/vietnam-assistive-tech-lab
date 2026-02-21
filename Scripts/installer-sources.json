@@ -9,7 +9,7 @@
   },
   "firefox": {
     "source": "vendor",
-    "url_template": "https://releases.mozilla.org/pub/firefox/releases/{version}/win64/en-US/Firefox%20Setup%20{version}.msi",
+    "url_template": "https://releases.mozilla.org/pub/firefox/releases/{version}/win64/vi/Firefox%20Setup%20{version}.msi",
     "destination": "Firefox/Firefox Setup {version}.msi"
   },
   "vlc": {
@@ -143,6 +143,12 @@
     "version": "0.7.5",
     "url_template": "https://github.com/NSoiffer/MathCATForPython/releases/download/{version}/MathCAT-{version}.nvda-addon",
     "destination": "NVDA/addons/MathCAT-{version}.nvda-addon"
+  },
+  "nvda_addon_training_keyboard_commands": {
+    "source": "vendor",
+    "version": "3.2.6",
+    "url_template": "https://github.com/ibrahim-s/trainingNvdaCommands/releases/download/{version}/trainingKeyboardCommands-{version}.nvda-addon",
+    "destination": "NVDA/addons/trainingKeyboardCommands-{version}.nvda-addon"
   },
 
   "leap_tictactoe": {
