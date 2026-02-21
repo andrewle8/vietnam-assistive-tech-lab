@@ -166,30 +166,69 @@ try {
 Write-Log "Step 4: Setting Windows to Vietnamese language and locale..." "INFO"
 
 try {
-    # Install Vietnamese language pack (requires internet on first run, or pre-cached)
-    # Check if Vietnamese language pack is already installed
+    # Install Vietnamese language pack and Features on Demand
+    # Prefers offline .cab files from 0.6-Download-LanguagePack.ps1 (extracted from Microsoft LOF ISO)
+    # Falls back to online Install-Language if no cabs available
     $viLang = Get-WinUserLanguageList | Where-Object { $_.LanguageTag -eq "vi" -or $_.LanguageTag -eq "vi-VN" }
 
     if (-not $viLang) {
         Write-Log "Installing Vietnamese language pack (may take several minutes)..." "INFO"
 
-        # Try offline cab first (from 0.6-Download-LanguagePack.ps1)
         $usbRoot = Split-Path -Parent $PSScriptRoot
-        $cabPath = Join-Path $usbRoot "Installers\LanguagePacks\Microsoft-Windows-Client-Language-Pack_x64_vi-vn.cab"
+        $langPackDir = Join-Path $usbRoot "Installers\LanguagePacks"
+        $cabPath = Join-Path $langPackDir "Microsoft-Windows-Client-Language-Pack_x64_vi-vn.cab"
 
         if (Test-Path $cabPath) {
-            Write-Log "Found offline language pack: $cabPath" "INFO"
-            DISM /Online /Add-Package /PackagePath:"$cabPath" /NoRestart /Quiet
-            Write-Log "Vietnamese language pack installed from local cab" "SUCCESS"
+            Write-Log "Found offline language pack: $langPackDir" "INFO"
+
+            # Install the main language pack cab
+            Write-Log "Installing base language pack via DISM..." "INFO"
+            $dismResult = & DISM /Online /Add-Package /PackagePath:"$cabPath" /NoRestart /Quiet 2>&1
+            if ($LASTEXITCODE -eq 0) {
+                Write-Log "Base language pack installed" "SUCCESS"
+            } else {
+                Write-Log "DISM Add-Package returned exit code $LASTEXITCODE (may already be installed)" "INFO"
+            }
+
+            # Install language Features on Demand (Basic, TextToSpeech, OCR, etc.)
+            # Language Features on Demand (Handwriting not available for vi-VN)
+            $fodCapabilities = @(
+                "Language.Basic~~~vi-VN~0.0.1.0",
+                "Language.OCR~~~vi-VN~0.0.1.0",
+                "Language.TextToSpeech~~~vi-VN~0.0.1.0"
+            )
+
+            foreach ($capability in $fodCapabilities) {
+                $capName = ($capability -split '~~~')[0]
+                Write-Log "Installing $capName..." "INFO"
+                $dismResult = & DISM /Online /Add-Capability /CapabilityName:$capability /Source:"$langPackDir" /LimitAccess /NoRestart /Quiet 2>&1
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Log "$capName installed" "SUCCESS"
+                } else {
+                    Write-Log "$capName returned exit code $LASTEXITCODE (may already be installed or not available)" "INFO"
+                }
+            }
+
+            Write-Log "Vietnamese language pack installed from offline cabs" "SUCCESS"
         } else {
-            Write-Log "No offline cab found, downloading language pack (requires internet)..." "WARNING"
-            Install-Language -Language "vi-VN" -ErrorAction SilentlyContinue
+            Write-Log "No offline cabs found at $langPackDir. Trying Install-Language (requires internet)..." "ERROR"
+            try {
+                Install-Language -Language "vi-VN" -ErrorAction Stop
+            } catch {
+                Write-Log "Install-Language failed (no internet?): $($_.Exception.Message)" "ERROR"
+                Write-Log "Vietnamese language pack NOT installed. Run 0.6-Download-LanguagePack.ps1 on setup PC first." "ERROR"
+            }
         }
 
         $langList = Get-WinUserLanguageList
         $langList.Add("vi-VN")
         Set-WinUserLanguageList $langList -Force
     }
+
+    # Prevent Windows from auto-removing the language pack
+    Disable-ScheduledTask -TaskPath "\Microsoft\Windows\MUI\" -TaskName "LPRemove" -ErrorAction SilentlyContinue
+    Disable-ScheduledTask -TaskPath "\Microsoft\Windows\LanguageComponentsInstaller" -TaskName "Uninstallation" -ErrorAction SilentlyContinue
+    reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Control Panel\International" /v "BlockCleanupOfUnusedPreinstalledLangPacks" /t REG_DWORD /d 1 /f 2>$null | Out-Null
 
     # Set Vietnamese as the preferred display language (first in list)
     $langList = New-WinUserLanguageList "vi-VN"
@@ -198,7 +237,7 @@ try {
     Write-Log "Windows display language set to Vietnamese (vi-VN), English (en-US) as secondary" "SUCCESS"
 
     # Set region and locale to Vietnam
-    Set-WinHomeLocation -GeoId 0xF1  # Vietnam
+    Set-WinHomeLocation -GeoId 0xFB  # Vietnam (251)
     Set-Culture "vi-VN"
     Write-Log "Region set to Vietnam, culture set to vi-VN" "SUCCESS"
 
