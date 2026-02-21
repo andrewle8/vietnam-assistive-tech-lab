@@ -53,7 +53,8 @@ function Get-VersionForPackage {
 foreach ($entry in ($sources.PSObject.Properties | Where-Object { $_.Name -notlike "_*" })) {
     $id = $entry.Name
     $info = $entry.Value
-    $version = Get-VersionForPackage $id
+    $version = if ($info.version) { $info.version } else { Get-VersionForPackage $id }
+    if (-not $version) { $version = "" }
 
     # Determine what file(s) to check
     $filesToCheck = @()
@@ -73,7 +74,8 @@ foreach ($entry in ($sources.PSObject.Properties | Where-Object { $_.Name -notli
     } else {
         # Vendor, GitHub, or Kiwix - check the final file
         if ($info.extract -and $info.final_path) {
-            $filePath = Join-Path $DestinationRoot $info.final_path
+            $fpRaw = $info.final_path.Replace("{version}", $version)
+            $filePath = Join-Path $DestinationRoot $fpRaw
         } elseif ($info.source -eq "kiwix") {
             $kiwixContent = $manifest.kiwix_content.PSObject.Properties | Where-Object { $_.Name -eq $id }
             if ($kiwixContent) {
@@ -92,7 +94,8 @@ foreach ($entry in ($sources.PSObject.Properties | Where-Object { $_.Name -notli
             $isCritical = $false
             $sw = $manifest.software.PSObject.Properties | Where-Object { $_.Name -eq $id }
             if ($sw -and $sw.Value.critical) { $isCritical = $true }
-            $filesToCheck += @{ Id = $id; Path = $filePath; Critical = $isCritical }
+            $isDir = $info.final_path -and ($info.final_path.EndsWith("/") -or $info.final_path.EndsWith("\"))
+            $filesToCheck += @{ Id = $id; Path = $filePath; IsDir = $isDir; Critical = $isCritical }
         }
     }
 

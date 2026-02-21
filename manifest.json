@@ -150,10 +150,10 @@
 
   "nvda_addons": {
     "VLC": "2025.1.0",
-    "MathCAT": "latest",
-    "speechHistory": "2024.3.1",
+    "MathCAT": "0.7.5",
+    "speechHistory": "2025.1",
     "nvdaRemote": "2.6.4",
-    "focusHighlight": "2.4",
+    "focusHighlight": "6.6",
     "audacityAccessEnhancement": "3.3.2",
     "clock": "20250714"
   },

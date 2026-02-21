@@ -229,12 +229,15 @@ foreach ($entry in $entries) {
     }
 
     # ---- Get version ----
-    $version = Get-VersionForPackage $id
-    if (-not $version -and $source -ne "kiwix") {
-        Write-Host "  [SKIP] No version found in manifest.json for '$id'" -ForegroundColor DarkYellow
+    $version = if ($info.version) { $info.version } else { Get-VersionForPackage $id }
+    $needsVersion = ($info.url_template -and $info.url_template.Contains("{version}")) -or
+                    ($info.destination -and $info.destination.Contains("{version}"))
+    if (-not $version -and $source -ne "kiwix" -and $needsVersion) {
+        Write-Host "  [SKIP] No version found for '$id'" -ForegroundColor DarkYellow
         $skippedCount++
         continue
     }
+    if (-not $version) { $version = "" }
 
     # ---- Determine destination path ----
     $destRelative = $info.destination
@@ -313,23 +316,44 @@ foreach ($entry in $entries) {
             $tempExtract = Join-Path $destDir "temp-extract-$id"
             Expand-Archive -Path $destPath -DestinationPath $tempExtract -Force
 
-            $extractTarget = $info.extract_file
-            $found = Get-ChildItem -Path $tempExtract -Filter $extractTarget -Recurse | Select-Object -First 1
-            if ($found) {
-                $finalDest = Join-Path $DestinationRoot $info.final_path
-                $finalDir = Split-Path -Parent $finalDest
-                if (-not (Test-Path $finalDir)) {
-                    New-Item -Path $finalDir -ItemType Directory -Force | Out-Null
+            if ($info.extract_to) {
+                # Extract entire ZIP to a target directory
+                $extractDest = Join-Path $DestinationRoot $info.extract_to
+                if (-not (Test-Path $extractDest)) {
+                    New-Item -Path $extractDest -ItemType Directory -Force | Out-Null
                 }
-                Copy-Item -Path $found.FullName -Destination $finalDest -Force
-                $checkPath = $finalDest
-            } else {
-                # For Kiwix: the zip extracts to a folder, keep all files
-                $extractedItems = Get-ChildItem -Path $tempExtract -Recurse -File
-                foreach ($item in $extractedItems) {
-                    Copy-Item -Path $item.FullName -Destination $destDir -Force
+                # If ZIP contains a single subdirectory, use its contents (flatten one level)
+                $topItems = @(Get-ChildItem -Path $tempExtract)
+                if ($topItems.Count -eq 1 -and $topItems[0].PSIsContainer) {
+                    Copy-Item -Path "$($topItems[0].FullName)\*" -Destination $extractDest -Recurse -Force
+                } else {
+                    Copy-Item -Path "$tempExtract\*" -Destination $extractDest -Recurse -Force
                 }
-                $checkPath = Join-Path $DestinationRoot $info.final_path
+                if ($info.final_path) {
+                    $fpResolved = $info.final_path.Replace("{version}", $version)
+                    $checkPath = Join-Path $DestinationRoot $fpResolved
+                } else {
+                    $checkPath = $extractDest
+                }
+            } elseif ($info.extract_file) {
+                $extractTarget = $info.extract_file
+                $found = Get-ChildItem -Path $tempExtract -Filter $extractTarget -Recurse | Select-Object -First 1
+                if ($found) {
+                    $finalDest = Join-Path $DestinationRoot $info.final_path
+                    $finalDir = Split-Path -Parent $finalDest
+                    if (-not (Test-Path $finalDir)) {
+                        New-Item -Path $finalDir -ItemType Directory -Force | Out-Null
+                    }
+                    Copy-Item -Path $found.FullName -Destination $finalDest -Force
+                    $checkPath = $finalDest
+                } else {
+                    # Fallback: copy all files flat
+                    $extractedItems = Get-ChildItem -Path $tempExtract -Recurse -File
+                    foreach ($item in $extractedItems) {
+                        Copy-Item -Path $item.FullName -Destination $destDir -Force
+                    }
+                    $checkPath = Join-Path $DestinationRoot $info.final_path
+                }
             }
 
             Remove-Item -Path $destPath -Force -ErrorAction SilentlyContinue
