@@ -69,6 +69,8 @@ function Test-ChecksumMatch {
     param([string]$FilePath, [string]$Id)
     if (-not (Test-Path $FilePath)) { return $false }
     if (-not $checksums.ContainsKey($Id)) { return $false }
+    # Directory-based entries (e.g. LEAP games) - just check existence
+    if (Test-Path $FilePath -PathType Container) { return $true }
     $actual = Get-SHA256 $FilePath
     return $actual -eq $checksums[$Id]
 }
@@ -373,11 +375,18 @@ foreach ($entry in $entries) {
         }
 
         # Record file size and checksum
-        $fileSize = (Get-Item $checkPath).Length / 1MB
-        $checksums[$id] = Get-SHA256 $checkPath
-        Save-Checksums
-
-        Write-Host "  [OK] Downloaded ($([math]::Round($fileSize, 1)) MB)" -ForegroundColor Green
+        if (Test-Path $checkPath -PathType Container) {
+            # Directory-based entry (e.g. LEAP games) - count files instead of hashing
+            $fileCount = @(Get-ChildItem -Path $checkPath -Recurse -File).Count
+            $checksums[$id] = "dir:$fileCount"
+            Save-Checksums
+            Write-Host "  [OK] Extracted ($fileCount files)" -ForegroundColor Green
+        } else {
+            $fileSize = (Get-Item $checkPath).Length / 1MB
+            $checksums[$id] = Get-SHA256 $checkPath
+            Save-Checksums
+            Write-Host "  [OK] Downloaded ($([math]::Round($fileSize, 1)) MB)" -ForegroundColor Green
+        }
         $successCount++
     } catch {
         Write-Host "  [FAIL] $($_.Exception.Message)" -ForegroundColor Red
