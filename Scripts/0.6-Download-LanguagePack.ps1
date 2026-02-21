@@ -15,7 +15,7 @@ Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host "Vietnam Lab - Vietnamese Language Pack" -ForegroundColor Cyan
 Write-Host "========================================`n" -ForegroundColor Cyan
 
-# Windows 11 24H2 Languages and Optional Features ISO (public Microsoft CDN, no login required)
+# Windows 11 24H2/25H2 Languages and Optional Features ISO (public Microsoft CDN, no login required)
 # Source: https://learn.microsoft.com/en-us/azure/virtual-desktop/windows-11-language-packs
 $LOF_ISO_URL = "https://software-static.download.prss.microsoft.com/dbazure/888969d5-f34g-4e03-ac9d-1f9786c66749/26100.1.240331-1435.ge_release_amd64fre_CLIENT_LOF_PACKAGES_OEM.iso"
 

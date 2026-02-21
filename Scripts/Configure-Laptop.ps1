@@ -668,8 +668,9 @@ try {
     powercfg /change standby-timeout-dc 30
     # Disable hibernate entirely
     powercfg /hibernate off
-    # Set lid close to do nothing (when plugged in)
+    # Set lid close to do nothing (AC and battery)
     powercfg /setacvalueindex SCHEME_CURRENT SUB_BUTTONS LIDACTION 0
+    powercfg /setdcvalueindex SCHEME_CURRENT SUB_BUTTONS LIDACTION 0
     powercfg /setactive SCHEME_CURRENT
 
     Write-Log "Power settings configured (no sleep on AC, no hibernate)" "SUCCESS"
@@ -906,6 +907,59 @@ try {
     $failCount++
 }
 
+# Step 20: Create LabAdmin account for remote troubleshooting and local maintenance
+Write-Log "Step 20: Creating LabAdmin account..." "INFO"
+
+try {
+    $adminExists = Get-LocalUser -Name "LabAdmin" -ErrorAction SilentlyContinue
+    if (-not $adminExists) {
+        $adminPassword = ConvertTo-SecureString "monarchmissions" -AsPlainText -Force
+        New-LocalUser -Name "LabAdmin" -Password $adminPassword -FullName "Lab Administrator" -Description "Admin account for remote management and local maintenance" -ErrorAction Stop
+        Add-LocalGroupMember -Group "Administrators" -Member "LabAdmin" -ErrorAction SilentlyContinue
+        Write-Log "Created LabAdmin account (local administrator)" "SUCCESS"
+    } else {
+        Write-Log "LabAdmin account already exists" "INFO"
+    }
+
+    # Set password to never expire
+    Set-LocalUser -Name "LabAdmin" -PasswordNeverExpires $true -ErrorAction SilentlyContinue
+
+    $successCount++
+} catch {
+    Write-Log "Could not create LabAdmin account: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 21: Create Student account with auto-login
+Write-Log "Step 21: Creating Student account with auto-login..." "INFO"
+
+try {
+    # Create local Student account (no password, standard user)
+    $studentExists = Get-LocalUser -Name "Student" -ErrorAction SilentlyContinue
+    if (-not $studentExists) {
+        New-LocalUser -Name "Student" -NoPassword -FullName "Student" -Description "Lab student account" -ErrorAction Stop
+        Add-LocalGroupMember -Group "Users" -Member "Student" -ErrorAction SilentlyContinue
+        Write-Log "Created local Student account (no password, standard user)" "SUCCESS"
+    } else {
+        Write-Log "Student account already exists" "INFO"
+    }
+
+    # Set password to never expire
+    Set-LocalUser -Name "Student" -PasswordNeverExpires $true -ErrorAction SilentlyContinue
+
+    # Configure auto-login for Student account
+    $winlogonPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+    Set-ItemProperty -Path $winlogonPath -Name "AutoAdminLogon" -Value "1" -Force
+    Set-ItemProperty -Path $winlogonPath -Name "DefaultUserName" -Value "Student" -Force
+    Set-ItemProperty -Path $winlogonPath -Name "DefaultPassword" -Value "" -Force
+
+    Write-Log "Auto-login configured for Student account" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not create Student account: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
 # Summary
 Write-Host "`n========================================" -ForegroundColor Green
 Write-Host "Loaner Laptop Configuration Complete!" -ForegroundColor Green
@@ -958,35 +1012,5 @@ Write-Host ""
 Write-Host "Log file: $LogPath" -ForegroundColor Cyan
 Write-Host "`n========================================" -ForegroundColor Green
 Write-Host ""
-
-# Step 20: Create Student account with auto-login
-Write-Log "Step 20: Creating Student account with auto-login..." "INFO"
-
-try {
-    # Create local Student account (no password, standard user)
-    $studentExists = Get-LocalUser -Name "Student" -ErrorAction SilentlyContinue
-    if (-not $studentExists) {
-        New-LocalUser -Name "Student" -NoPassword -FullName "Student" -Description "Lab student account" -ErrorAction Stop
-        Add-LocalGroupMember -Group "Users" -Member "Student" -ErrorAction SilentlyContinue
-        Write-Log "Created local Student account (no password, standard user)" "SUCCESS"
-    } else {
-        Write-Log "Student account already exists" "INFO"
-    }
-
-    # Set password to never expire
-    Set-LocalUser -Name "Student" -PasswordNeverExpires $true -ErrorAction SilentlyContinue
-
-    # Configure auto-login for Student account
-    $winlogonPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
-    Set-ItemProperty -Path $winlogonPath -Name "AutoAdminLogon" -Value "1" -Force
-    Set-ItemProperty -Path $winlogonPath -Name "DefaultUserName" -Value "Student" -Force
-    Set-ItemProperty -Path $winlogonPath -Name "DefaultPassword" -Value "" -Force
-
-    Write-Log "Auto-login configured for Student account" "SUCCESS"
-    $successCount++
-} catch {
-    Write-Log "Could not create Student account: $($_.Exception.Message)" "ERROR"
-    $failCount++
-}
 
 if (-not $env:LAB_BOOTSTRAP) { pause }
