@@ -123,35 +123,100 @@ Each Dell Latitude 5420 ships with Windows 10 Pro. On first power-on, walk throu
 1. **Region** — United States (scripts change this later)
 2. **Keyboard** — US
 3. **Second keyboard** — Skip
-4. **Network** — Connect to Wi-Fi (needed for Win 11 upgrade + downloads)
-5. **How would you like to set up?** — **Set up for an organization**
-6. **Sign in** — Click **Domain join instead** (bottom left — skips Microsoft account)
-7. **Who's going to use this PC?** — `Admin` (Bootstrap-Laptop renames it later)
-8. **Password** — Set something simple or leave blank
+4. **Network** — Skip if possible. If Windows forces you to connect, press **Shift+F10** to open Command Prompt and type `oobe\bypassnro` to restart OOBE with a "I don't have internet" option. Alternatively, connect to Wi-Fi — either way works.
+5. **How would you like to set up?** — Either option works:
+   - **Set up for an organization** → click **Domain join instead** (bottom left), OR
+   - **Set up for personal use** / **I don't have internet** → **Limited setup**
+   - Both create a local account — the scripts don't care which path you took
+6. **Who's going to use this PC?** — `Admin` (Bootstrap-Laptop renames it later)
+7. **Password** — Set something simple or leave blank
+8. **Security questions** — Put anything (e.g. "a", "a", "a") — this account is temporary
 9. **Privacy settings** — Toggle everything off, click Accept
 10. **Cortana** — Skip / Not now
 
-You're now on the desktop. Open PowerShell as Admin and set execution policy:
+### BIOS Setup (Required Before Win11 Upgrade)
+
+Windows 11 requires Secure Boot and TPM 2.0. Enable these **before** running the upgrade:
+
+1. Restart the PC
+2. Press **F2** repeatedly at the Dell logo to enter BIOS
+3. Go to **Security** tab
+4. Enable **Secure Boot**
+5. Verify **TPM 2.0** is enabled (same Security tab)
+6. **Save and Exit** (Apply Changes)
+
+### Upgrade to Windows 11
+
+You're now on the Win10 desktop. Open PowerShell as Admin and set execution policy:
 
 ```powershell
 Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass
 ```
 
-### Full End-to-End Test (2-3 weeks before travel)
+Plug in the deployment USB and navigate to the project folder, then:
 
-Run the entire deployment process on **one laptop** to verify everything works before configuring the rest. Open PowerShell as Administrator (Start > type "PowerShell" > right-click > **Run as Administrator**), set the execution policy (see above), then `cd` to the project folder and run each script:
+```powershell
+.\Scripts\0.5-Upgrade-Windows11.ps1
+```
 
-1. `.\Scripts\0-Download-Installers.ps1` — all downloads succeed
+This upgrades Win10 to Win11 25H2 from the ISO on your USB. The PC will reboot — wait for it to finish (may take 15-30 min). After reboot, run `winver` to confirm you're on Windows 11.
+
+### Run Bootstrap
+
+After confirming Win11, open PowerShell as Admin, navigate to the USB, and run:
+
+```powershell
+.\Scripts\Bootstrap-Laptop.ps1 -PCNumber 1
+```
+
+This does everything: install all software, configure NVDA, set up Vietnamese language, harden Windows, create LabAdmin + Student accounts, install Tailscale, and register scheduled tasks. Takes ~30-45 min.
+
+### Verify
+
+After Bootstrap completes:
+
+```powershell
+.\Scripts\7-Audit.ps1
+```
+
+All checks should pass. Then manually verify:
+- NVDA is speaking Vietnamese
+- Each app opens correctly
+- UniKey Vietnamese keyboard input works
+
+### Pre-Setup Steps (Done Once on Your Setup PC, Not Per-Laptop)
+
+These are done **once** on your setup PC with internet before deploying any laptops:
+
+1. `.\Scripts\0-Download-Installers.ps1` — downloads all software to the USB
 2. `.\Scripts\Verify-Installers.ps1` — all files present with correct SHA256 checksums
-3. `.\Scripts\0.5-Upgrade-Windows11.ps1` — upgrade from Win 10 to Win 11 if needed
-4. `.\Scripts\0.6-Download-LanguagePack.ps1` — pre-download Vietnamese language pack
-5. `.\Scripts\Bootstrap-Laptop.ps1` — it will prompt for `PCNumber`, enter `1`. Full setup including Tailscale
-6. Verify Tailscale: PC appears in your tailnet as `PC-01` with a `100.x.x.x` IP
-7. `.\Scripts\7-Audit.ps1` — all checks pass
-8. Manually test: open each app, verify NVDA reads it correctly
-9. Test Thorium Reader with a sample EPUB/DAISY file
-10. Test student USB workflow with `.\Scripts\4-Prepare-Student-USB.ps1`
-11. From your machine: `.\Scripts\Check-Fleet.ps1 -UseTailscale` — PC-01 shows as reachable
+3. `.\Scripts\0.6-Download-LanguagePack.ps1` — extracts Vietnamese language pack cabs to USB
+4. `.\Scripts\Setup-Rclone-Auth.ps1` — authorizes Google Drive (creates rclone.conf)
+5. Place `setup.exe` in `Installers\MSOffice\` and run `setup.exe /download configuration.xml` (in CMD)
+6. Place Win11 25H2 ISO as `Installers\Windows\Win11_25H2_English_x64.iso`
+7. Update Tailscale auth key in `Install-Tailscale.ps1` (replace `tskey-auth-CHANGE_ME`)
+
+### Per-Laptop Deployment Summary
+
+For each of the 19 laptops, the process is:
+
+1. **OOBE** — create temporary local Admin account
+2. **BIOS** — enable Secure Boot + TPM 2.0 (F2 at Dell logo)
+3. **Upgrade** — `0.5-Upgrade-Windows11.ps1` → reboot → confirm with `winver`
+4. **Bootstrap** — `Bootstrap-Laptop.ps1 -PCNumber N` (where N = 1-19)
+5. **Verify** — `7-Audit.ps1` → all green
+6. **Label** — apply physical PC-N label
+
+### Full End-to-End Test (First Laptop)
+
+Run the full process on **one laptop** first to verify everything works:
+
+1. Complete steps 1-5 above for PC-1
+2. Verify Tailscale: PC appears in your tailnet as `PC-01` with a `100.x.x.x` IP
+3. Manually test: open each app, verify NVDA reads it correctly
+4. Test Thorium Reader with a sample EPUB/DAISY file
+5. Test student USB workflow with `.\Scripts\4-Prepare-Student-USB.ps1`
+6. From your machine: `.\Scripts\Check-Fleet.ps1 -UseTailscale` — PC-01 shows as reachable
 
 Fix any issues, then proceed to configure the remaining 18 laptops.
 
