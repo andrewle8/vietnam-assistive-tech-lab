@@ -84,10 +84,9 @@ function Invoke-Download {
     # Use curl.exe for large/slow downloads - streams to disk properly
     # Windows PowerShell's Invoke-WebRequest can buffer entire files in memory
     if (Get-Command curl.exe -ErrorAction SilentlyContinue) {
-        $curlArgs = @("-L", "-o", $OutFile, "--connect-timeout", "30", "--max-time", $TimeoutSec, "--retry", "2", "--fail", "-#", $Url)
-        $proc = Start-Process -FilePath "curl.exe" -ArgumentList $curlArgs -Wait -PassThru -NoNewWindow
-        if ($proc.ExitCode -ne 0) {
-            throw "curl.exe failed with exit code $($proc.ExitCode) for $Url"
+        & curl.exe -L -o $OutFile --connect-timeout 30 --max-time $TimeoutSec --retry 2 --fail -# $Url
+        if ($LASTEXITCODE -ne 0) {
+            throw "curl.exe failed with exit code $LASTEXITCODE for $Url"
         }
     } else {
         $ProgressPreference = 'SilentlyContinue'
