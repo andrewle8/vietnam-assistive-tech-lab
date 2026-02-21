@@ -67,6 +67,17 @@ Write-Log "Preparing USB at $driveRoot for student: $studentId" "INFO"
 # Confirm
 Write-Host ""
 Write-Host "About to prepare USB drive $driveRoot as $studentId" -ForegroundColor Yellow
+
+# Check current filesystem
+$volume = Get-Volume -DriveLetter $driveLetter -ErrorAction SilentlyContinue
+$currentFS = if ($volume) { $volume.FileSystemType } else { "Unknown" }
+$needsFormat = $currentFS -ne "NTFS"
+
+if ($needsFormat) {
+    Write-Host "  - FORMAT to NTFS (currently $currentFS) - ALL DATA WILL BE ERASED" -ForegroundColor Red
+} else {
+    Write-Host "  - Already NTFS - no format needed" -ForegroundColor Green
+}
 Write-Host "  - Set volume label to $studentId" -ForegroundColor White
 Write-Host "  - Create folders: Documents, Audio, Schoolwork" -ForegroundColor White
 Write-Host "  - Write hidden .student-id file" -ForegroundColor White
@@ -78,13 +89,27 @@ if ($confirm -ne 'Y' -and $confirm -ne 'y') {
     exit 0
 }
 
-# Set volume label
-try {
-    Get-Volume -DriveLetter $driveLetter | Set-Volume -NewFileSystemLabel $studentId
-    Write-Log "Volume label set to '$studentId'" "SUCCESS"
-} catch {
-    Write-Log "Could not set volume label: $($_.Exception.Message)" "ERROR"
-    Write-Log "The .student-id file will be used as fallback identifier." "INFO"
+# Format to NTFS if needed (protects against data loss from improper ejection)
+if ($needsFormat) {
+    Write-Log "Formatting $driveRoot to NTFS..." "INFO"
+    try {
+        Format-Volume -DriveLetter $driveLetter -FileSystem NTFS -NewFileSystemLabel $studentId -Confirm:$false -ErrorAction Stop | Out-Null
+        Write-Log "Formatted $driveRoot as NTFS with label '$studentId'" "SUCCESS"
+    } catch {
+        Write-Log "Format failed: $($_.Exception.Message)" "ERROR"
+        Write-Log "Try formatting manually in File Explorer (right-click > Format > NTFS)" "ERROR"
+        pause
+        exit 1
+    }
+} else {
+    # Already NTFS, just set volume label
+    try {
+        Get-Volume -DriveLetter $driveLetter | Set-Volume -NewFileSystemLabel $studentId
+        Write-Log "Volume label set to '$studentId'" "SUCCESS"
+    } catch {
+        Write-Log "Could not set volume label: $($_.Exception.Message)" "ERROR"
+        Write-Log "The .student-id file will be used as fallback identifier." "INFO"
+    }
 }
 
 # Create folders
