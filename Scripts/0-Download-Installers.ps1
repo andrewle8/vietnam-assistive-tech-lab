@@ -285,8 +285,13 @@ foreach ($entry in $entries) {
             $skippedCount++
             continue
         } elseif (-not $checksums.ContainsKey($id)) {
-            # File exists but no checksum recorded - record it and skip
-            $checksums[$id] = Get-SHA256 $checkPath
+            # File/dir exists but no checksum recorded - record it and skip
+            if (Test-Path $checkPath -PathType Container) {
+                $fileCount = @(Get-ChildItem -Path $checkPath -Recurse -File).Count
+                $checksums[$id] = "dir:$fileCount"
+            } else {
+                $checksums[$id] = Get-SHA256 $checkPath
+            }
             Write-Host "  [SKIP] Already exists (checksum recorded)" -ForegroundColor DarkYellow
             $skippedCount++
             continue
