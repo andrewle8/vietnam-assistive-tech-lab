@@ -164,7 +164,7 @@ foreach ($entry in $entries) {
                         $downloadedAny = $true
                     } catch {
                         $allPresent = $false
-                        Write-Host "  [FAIL] $f — $($_.Exception.Message)" -ForegroundColor Red
+                        Write-Host "  [FAIL] $f - $($_.Exception.Message)" -ForegroundColor Red
                     }
                 } else {
                     if (-not $checksums.ContainsKey("$id/$f")) {
@@ -180,7 +180,7 @@ foreach ($entry in $entries) {
                 $failCount++
             }
         } elseif ($expectedPath.EndsWith("/") -or $expectedPath.EndsWith("\")) {
-            # Directory-based entries (e.g. LEAP games) — check for contents
+            # Directory-based entries (e.g. LEAP games) - check for contents
             if (Test-Path $expectedPath) {
                 $hasFiles = @(Get-ChildItem -Path $expectedPath -ErrorAction SilentlyContinue)
                 if ($hasFiles.Count -gt 0) {
@@ -219,7 +219,7 @@ foreach ($entry in $entries) {
                     Write-Host "  [OK] Downloaded ($([math]::Round($fileSize, 1)) MB)" -ForegroundColor Green
                     $successCount++
                 } catch {
-                    Write-Host "  [FAIL] Could not download from release — $($_.Exception.Message)" -ForegroundColor Red
+                    Write-Host "  [FAIL] Could not download from release - $($_.Exception.Message)" -ForegroundColor Red
                     Write-Host "  [MANUAL] $($info.instructions)" -ForegroundColor Magenta
                     $manualCount++
                 }
@@ -271,7 +271,7 @@ foreach ($entry in $entries) {
             $skippedCount++
             continue
         } elseif (-not $checksums.ContainsKey($id)) {
-            # File exists but no checksum recorded — record it and skip
+            # File exists but no checksum recorded - record it and skip
             $checksums[$id] = Get-SHA256 $checkPath
             Write-Host "  [SKIP] Already exists (checksum recorded)" -ForegroundColor DarkYellow
             $skippedCount++
@@ -385,4 +385,4 @@ Write-Host "Next: Run .\Verify-Installers.ps1 to validate all files" -Foreground
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host ""
 
-pause
+if (-not $env:LAB_BOOTSTRAP) { pause }

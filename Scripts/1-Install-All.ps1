@@ -141,7 +141,7 @@ $msOfficeInstalled = (Test-Path "C:\Program Files\Microsoft Office\root\Office16
                      (Test-Path "C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE")
 
 if ($msOfficeInstalled) {
-    Write-Log "Microsoft Office is already installed — skipping" "SUCCESS"
+    Write-Log "Microsoft Office is already installed - skipping" "SUCCESS"
     $successCount++
 } elseif (Test-Path $msOfficeInstaller) {
     try {
@@ -158,7 +158,7 @@ if ($msOfficeInstalled) {
         $failCount++
     }
 } else {
-    Write-Log "WARNING: MS Office installer not found at $msOfficeInstaller — skipping office suite install" "WARNING"
+    Write-Log "WARNING: MS Office installer not found at $msOfficeInstaller - skipping office suite install" "WARNING"
     Write-Log "  Place Office Deployment Tool files in Installers\MSOffice\ or pre-install MS Office" "INFO"
 }
 

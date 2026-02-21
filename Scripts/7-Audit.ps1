@@ -333,7 +333,7 @@ Write-Host "Failed:    $fail" -ForegroundColor $(if($fail -gt 0){"Red"}else{"Gre
 if ($fail -gt 0) {
     Write-Host "`nFailed checks:" -ForegroundColor Red
     $results | Where-Object { $_.Status -eq "FAIL" } | ForEach-Object {
-        Write-Host "  $($_.Category) :: $($_.Check) — expected $($_.Expected), found $($_.Actual)" -ForegroundColor Red
+        Write-Host "  $($_.Category) :: $($_.Check) - expected $($_.Expected), found $($_.Actual)" -ForegroundColor Red
     }
 }
 

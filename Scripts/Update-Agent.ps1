@@ -261,7 +261,7 @@ try {
                 Write-AgentLog "$($pkg.id) verified successfully"
                 $packageResults += @{ id = $pkg.id; status = "SUCCESS"; version = $pkg.version }
             } else {
-                throw "Post-install verification failed — binary not found at expected path"
+                throw "Post-install verification failed - binary not found at expected path"
             }
 
         } catch {

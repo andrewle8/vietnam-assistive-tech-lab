@@ -71,7 +71,7 @@ foreach ($entry in ($sources.PSObject.Properties | Where-Object { $_.Name -notli
             $filesToCheck += @{ Id = $id; Path = $basePath; Critical = $false }
         }
     } else {
-        # Vendor, GitHub, or Kiwix — check the final file
+        # Vendor, GitHub, or Kiwix - check the final file
         if ($info.extract -and $info.final_path) {
             $filePath = Join-Path $DestinationRoot $info.final_path
         } elseif ($info.source -eq "kiwix") {
@@ -155,7 +155,7 @@ foreach ($entry in ($sources.PSObject.Properties | Where-Object { $_.Name -notli
 
         Write-Host "[$icon] " -ForegroundColor $color -NoNewline
         Write-Host "$fileId" -NoNewline
-        Write-Host " — $detail" -ForegroundColor $color
+        Write-Host " - $detail" -ForegroundColor $color
 
         switch ($status) {
             "PASS" { $pass++ }

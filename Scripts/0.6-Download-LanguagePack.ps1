@@ -115,7 +115,7 @@ foreach ($search in $searchPaths) {
     }
 }
 
-# Method 3: Broad search — any large cab in SoftwareDistribution (some builds don't include vi-vn in filename)
+# Method 3: Broad search - any large cab in SoftwareDistribution (some builds don't include vi-vn in filename)
 if (-not $found -and (Test-Path "C:\Windows\SoftwareDistribution\Download")) {
     Write-Host "  Broad search in SoftwareDistribution..." -ForegroundColor DarkGray
     $allCabs = Get-ChildItem -Path "C:\Windows\SoftwareDistribution\Download" -Recurse -Filter "*.cab" -ErrorAction SilentlyContinue |
@@ -146,7 +146,7 @@ if (-not $found) {
 
     Write-Host "`n[INFO] Could not extract the .cab file from this system." -ForegroundColor Yellow
     Write-Host "" -ForegroundColor White
-    Write-Host "This is normal on Windows 11 24H2 — language packs are installed as" -ForegroundColor White
+    Write-Host "This is normal on Windows 11 24H2 - language packs are installed as" -ForegroundColor White
     Write-Host "Features on Demand and don't leave extractable .cab files." -ForegroundColor White
     Write-Host "" -ForegroundColor White
     Write-Host "This is OK! Configure-Laptop.ps1 will install the language pack" -ForegroundColor Green

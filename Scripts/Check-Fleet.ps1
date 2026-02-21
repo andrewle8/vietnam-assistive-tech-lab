@@ -22,7 +22,7 @@ if ($UseTailscale) {
         }
         Write-Host "Mode: Tailscale VPN ($($tailscaleIPs.Count) IPs loaded)" -ForegroundColor Cyan
     } else {
-        Write-Host "Mode: Tailscale VPN (no IP file found — run Get-FleetTailscaleIPs.ps1 -OutputJson first)" -ForegroundColor Yellow
+        Write-Host "Mode: Tailscale VPN (no IP file found - run Get-FleetTailscaleIPs.ps1 -OutputJson first)" -ForegroundColor Yellow
     }
 } else {
     Write-Host "Mode: Local LAN" -ForegroundColor Cyan

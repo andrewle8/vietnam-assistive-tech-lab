@@ -92,14 +92,14 @@ Write-Host "Reporting: $totalPCs PCs  |  OK: $okCount  |  Issues: $issueCount  |
 if ($staleCount -gt 0) {
     Write-Host "`nStale PCs (not seen in $WarnDays+ days):" -ForegroundColor Red
     $heartbeats | Where-Object { $_.Status -eq "STALE" } | ForEach-Object {
-        Write-Host "  $($_.PC) — last seen $($_.LastSeen) ($($_.DaysAgo) days ago)" -ForegroundColor Red
+        Write-Host "  $($_.PC) - last seen $($_.LastSeen) ($($_.DaysAgo) days ago)" -ForegroundColor Red
     }
 }
 
 if ($issueCount -gt 0) {
     Write-Host "`nPCs with audit failures:" -ForegroundColor Yellow
     $heartbeats | Where-Object { $_.Status -eq "ISSUES" } | ForEach-Object {
-        Write-Host "  $($_.PC) — $($_.Fail) failed checks" -ForegroundColor Yellow
+        Write-Host "  $($_.PC) - $($_.Fail) failed checks" -ForegroundColor Yellow
     }
 }
 

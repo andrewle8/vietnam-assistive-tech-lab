@@ -26,10 +26,10 @@ function Check {
         Write-Host "[OK  ] $Name" -ForegroundColor Green
         $script:pass++
     } elseif ($WarnOnly) {
-        Write-Host "[WARN] $Name — $WarnOnly" -ForegroundColor Yellow
+        Write-Host "[WARN] $Name - $WarnOnly" -ForegroundColor Yellow
         $script:warn++
     } else {
-        Write-Host "[FAIL] $Name — $FailMsg" -ForegroundColor Red
+        Write-Host "[FAIL] $Name - $FailMsg" -ForegroundColor Red
         $script:fail++
     }
 }
@@ -71,7 +71,7 @@ if (Test-Path $manifestPath) {
     $manifest = Get-Content $manifestPath -Raw | ConvertFrom-Json
 
     Check "manifest.json: version set" ($null -ne $manifest.manifest_version -and $manifest.manifest_version -ne "") "manifest_version is null or empty"
-    Check "manifest.json: tested_on set" ($null -ne $manifest.tested_on) "tested_on is null — test on a real PC first" -WarnOnly "tested_on is null — have you tested?"
+    Check "manifest.json: tested_on set" ($null -ne $manifest.tested_on) "tested_on is null - test on a real PC first" -WarnOnly "tested_on is null - have you tested?"
 
     # Check no null critical fields in software
     $nullPaths = @()
@@ -100,9 +100,9 @@ if (Test-Path $verifyScript) {
 
         # Quick check: count files in Installers/
         $installerCount = (Get-ChildItem $installerRoot -Recurse -File -ErrorAction SilentlyContinue | Measure-Object).Count
-        Check "Installer files present ($installerCount files)" ($installerCount -gt 15) "Only $installerCount files found — expected 20+"
+        Check "Installer files present ($installerCount files)" ($installerCount -gt 15) "Only $installerCount files found - expected 20+"
     } else {
-        Check "Installers directory exists" $false "Installers/ directory not found — run 0-Download-Installers.ps1"
+        Check "Installers directory exists" $false "Installers/ directory not found - run 0-Download-Installers.ps1"
     }
 } else {
     Check "Verify-Installers.ps1 exists" $false "Script not found"
@@ -120,7 +120,7 @@ $installTailscale = Join-Path $RepoRoot "Scripts/Install-Tailscale.ps1"
 if (Test-Path $installTailscale) {
     $tsContent = Get-Content $installTailscale -Raw
     $hasPlaceholderKey = $tsContent -match "REPLACE_BEFORE_TRIP"
-    Check "Tailscale auth key configured" (-not $hasPlaceholderKey) "Auth key is still the placeholder — update before deployment" -WarnOnly "Update auth key in Install-Tailscale.ps1 before trip"
+    Check "Tailscale auth key configured" (-not $hasPlaceholderKey) "Auth key is still the placeholder - update before deployment" -WarnOnly "Update auth key in Install-Tailscale.ps1 before trip"
 }
 
 # Check if Tailscale is installed on operator's machine
@@ -150,9 +150,9 @@ try {
         "User-Agent" = "VietnamLabDeployment"
     }
     $assetCount = $release.assets.Count
-    Check "GitHub Release 'installers-v1' exists ($assetCount assets)" ($assetCount -gt 10) "Only $assetCount assets found — expected 15+"
+    Check "GitHub Release 'installers-v1' exists ($assetCount assets)" ($assetCount -gt 10) "Only $assetCount assets found - expected 15+"
 } catch {
-    Check "GitHub Release 'installers-v1' reachable" $false "Could not access: $($_.Exception.Message)" -WarnOnly "GitHub Release not accessible — check internet or repo"
+    Check "GitHub Release 'installers-v1' reachable" $false "Could not access: $($_.Exception.Message)" -WarnOnly "GitHub Release not accessible - check internet or repo"
 }
 
 # ---- 6. Google Drive (rclone) ----
@@ -168,7 +168,7 @@ if ($rcloneCmd) {
     try {
         $testResult = & rclone lsd $GDriveRemote --max-depth 1 2>&1
         $gdConnected = $LASTEXITCODE -eq 0
-        Check "rclone can reach Google Drive ($GDriveRemote)" $gdConnected "rclone connection failed — check 'rclone config'"
+        Check "rclone can reach Google Drive ($GDriveRemote)" $gdConnected "rclone connection failed - check 'rclone config'"
     } catch {
         Check "rclone can reach Google Drive" $false "Error: $($_.Exception.Message)"
     }
@@ -178,7 +178,7 @@ if ($rcloneCmd) {
 
 # Check rclone config in repo
 $rcloneConf = Join-Path $RepoRoot "Config/rclone/rclone.conf"
-Check "rclone.conf in Config/rclone/" (Test-Path $rcloneConf) "rclone.conf not found — run Setup-Rclone-Auth.ps1" -WarnOnly "Ensure rclone.conf is ready for deployment"
+Check "rclone.conf in Config/rclone/" (Test-Path $rcloneConf) "rclone.conf not found - run Setup-Rclone-Auth.ps1" -WarnOnly "Ensure rclone.conf is ready for deployment"
 
 # ---- Summary ----
 
