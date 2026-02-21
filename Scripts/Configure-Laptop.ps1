@@ -176,7 +176,11 @@ try {
 
         $usbRoot = Split-Path -Parent $PSScriptRoot
         $langPackDir = Join-Path $usbRoot "Installers\LanguagePacks"
+        # Accept either full Client language pack or LIP (Language Interface Pack)
         $cabPath = Join-Path $langPackDir "Microsoft-Windows-Client-Language-Pack_x64_vi-vn.cab"
+        if (-not (Test-Path $cabPath)) {
+            $cabPath = Join-Path $langPackDir "Microsoft-Windows-Lip-Language-Pack_x64_vi-vn.cab"
+        }
 
         if (Test-Path $cabPath) {
             Write-Log "Found offline language pack: $langPackDir" "INFO"
@@ -914,7 +918,7 @@ try {
     $adminExists = Get-LocalUser -Name "LabAdmin" -ErrorAction SilentlyContinue
     if (-not $adminExists) {
         $adminPassword = ConvertTo-SecureString "monarch" -AsPlainText -Force
-        New-LocalUser -Name "LabAdmin" -Password $adminPassword -FullName "Lab Administrator" -Description "Admin account for remote management and local maintenance" -ErrorAction Stop
+        New-LocalUser -Name "LabAdmin" -Password $adminPassword -FullName "Lab Administrator" -Description "Admin - remote mgmt and maintenance" -ErrorAction Stop
         Add-LocalGroupMember -Group "Administrators" -Member "LabAdmin" -ErrorAction SilentlyContinue
         Write-Log "Created LabAdmin account (local administrator)" "SUCCESS"
     } else {

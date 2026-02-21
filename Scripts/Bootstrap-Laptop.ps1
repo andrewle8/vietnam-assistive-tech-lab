@@ -172,23 +172,6 @@ if ($SkipInstall) {
         $stepResults["1-Install-All"] = $false
     }
 
-    Step "Verifying installation (2-Verify-Installation.ps1)"
-    $verifyScript = Join-Path $scriptsDir "2-Verify-Installation.ps1"
-    if (Test-Path $verifyScript) {
-        try {
-            & $verifyScript
-            if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) { throw "Exit code: $LASTEXITCODE" }
-            Write-Host "      Verification complete" -ForegroundColor Green
-            $stepResults["2-Verify-Installation"] = $true
-        } catch {
-            Write-Host "      ERROR: 2-Verify-Installation.ps1 failed: $($_.Exception.Message)" -ForegroundColor Red
-            $stepResults["2-Verify-Installation"] = $false
-        }
-    } else {
-        Write-Host "      ERROR: 2-Verify-Installation.ps1 not found at $verifyScript" -ForegroundColor Red
-        $stepResults["2-Verify-Installation"] = $false
-    }
-
     Step "Configuring NVDA (3-Configure-NVDA.ps1)"
     $configScript = Join-Path $scriptsDir "3-Configure-NVDA.ps1"
     if (Test-Path $configScript) {
@@ -204,6 +187,23 @@ if ($SkipInstall) {
     } else {
         Write-Host "      ERROR: 3-Configure-NVDA.ps1 not found at $configScript" -ForegroundColor Red
         $stepResults["3-Configure-NVDA"] = $false
+    }
+
+    Step "Verifying installation (2-Verify-Installation.ps1)"
+    $verifyScript = Join-Path $scriptsDir "2-Verify-Installation.ps1"
+    if (Test-Path $verifyScript) {
+        try {
+            & $verifyScript
+            if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) { throw "Exit code: $LASTEXITCODE" }
+            Write-Host "      Verification complete" -ForegroundColor Green
+            $stepResults["2-Verify-Installation"] = $true
+        } catch {
+            Write-Host "      ERROR: 2-Verify-Installation.ps1 failed: $($_.Exception.Message)" -ForegroundColor Red
+            $stepResults["2-Verify-Installation"] = $false
+        }
+    } else {
+        Write-Host "      ERROR: 2-Verify-Installation.ps1 not found at $verifyScript" -ForegroundColor Red
+        $stepResults["2-Verify-Installation"] = $false
     }
 }
 

@@ -35,15 +35,24 @@ $checks = @(
         Name = "VNVoice (SAPI5)"
         Paths = @(
             "C:\Windows\Speech\Engines\TTS\*vnvoice*",
-            "C:\Program Files\SaoMai\VNVoice\*"
+            "C:\Windows\Speech\Engines\TTS\*VNVoice*",
+            "C:\Windows\Speech\Engines\TTS\*SaoMai*",
+            "C:\Program Files\SaoMai\VNVoice\*",
+            "C:\Program Files (x86)\SaoMai\VNVoice\*",
+            "C:\Program Files\SaoMai\*voice*"
         )
+        RegCheck = "HKLM:\SOFTWARE\Microsoft\Speech\Voices\Tokens\*VN*"
         Critical = $true
     },
     @{
         Name = "Sao Mai Typing Tutor"
         Paths = @(
             "C:\Program Files\SaoMai\TypingTutor\*",
-            "C:\Program Files (x86)\SaoMai\TypingTutor\*"
+            "C:\Program Files (x86)\SaoMai\TypingTutor\*",
+            "C:\Program Files\SaoMai\SMTTypingTutor\*",
+            "C:\Program Files (x86)\SaoMai\SMTTypingTutor\*",
+            "C:\Program Files\Sao Mai\*",
+            "C:\Program Files (x86)\Sao Mai\*"
         )
         Critical = $false
     },
@@ -98,7 +107,9 @@ $checks = @(
     @{
         Name = "SumatraPDF"
         Paths = @(
-            "C:\Program Files\SumatraPDF\SumatraPDF.exe"
+            "C:\Program Files\SumatraPDF\SumatraPDF.exe",
+            "C:\Program Files (x86)\SumatraPDF\SumatraPDF.exe",
+            "$env:LOCALAPPDATA\SumatraPDF\SumatraPDF.exe"
         )
         Critical = $false
     },
@@ -150,6 +161,14 @@ foreach ($check in $checks) {
             $found = $true
             $foundPath = $path
             break
+        }
+    }
+
+    # Also check registry if a RegCheck pattern is defined
+    if (-not $found -and $check.RegCheck) {
+        if (Test-Path $check.RegCheck) {
+            $found = $true
+            $foundPath = "Registry: $($check.RegCheck)"
         }
     }
 

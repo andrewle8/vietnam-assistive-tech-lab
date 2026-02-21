@@ -107,8 +107,12 @@ if (Test-Path $addonsSourceDir) {
                     Remove-Item -Path $targetPath -Recurse -Force
                 }
 
-                # Extract add-on (it's a ZIP file)
-                Expand-Archive -Path $addon.FullName -DestinationPath $targetPath -Force
+                # Extract add-on (it's a ZIP file with .nvda-addon extension)
+                # Expand-Archive only recognizes .zip — copy to temp .zip first
+                $tempZip = Join-Path $env:TEMP "$addonName.zip"
+                Copy-Item -Path $addon.FullName -Destination $tempZip -Force
+                Expand-Archive -Path $tempZip -DestinationPath $targetPath -Force
+                Remove-Item -Path $tempZip -Force -ErrorAction SilentlyContinue
                 Write-Log "Add-on '$($addon.Name)' installed successfully" "SUCCESS"
             } catch {
                 Write-Log "ERROR installing add-on $($addon.Name): $($_.Exception.Message)" "ERROR"
@@ -200,7 +204,7 @@ $nvdaProcess = Get-Process -Name "nvda" -ErrorAction SilentlyContinue
 if (-not $nvdaProcess) {
     Write-Log "Starting NVDA..." "INFO"
     try {
-        Start-Process -FilePath $nvdaExePath -NoNewWindow
+        Start-Process -FilePath $nvdaExePath
         Start-Sleep -Seconds 3
         Write-Log "NVDA started successfully" "SUCCESS"
     } catch {
