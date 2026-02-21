@@ -98,11 +98,12 @@
       ]
     },
     "goldendict": {
-      "version": "1.5.0",
-      "installer": "GoldenDict-1.5.0-portable.zip",
+      "version": "1.5.1",
+      "installer": "GoldenDict-1.5.1-Install.exe",
       "critical": false,
       "paths": [
-        "C:\\Program Files\\GoldenDict\\GoldenDict.exe"
+        "C:\\Program Files\\GoldenDict\\GoldenDict.exe",
+        "C:\\Program Files (x86)\\GoldenDict\\GoldenDict.exe"
       ]
     },
     "kiwix": {

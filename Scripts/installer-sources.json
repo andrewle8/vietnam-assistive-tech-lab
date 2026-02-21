@@ -85,9 +85,9 @@
     "destination": "SaoMai/SaoMai_voice1.0.exe"
   },
   "saomai_typing_tutor": {
-    "source": "manual",
-    "expected_path": "SaoMai/SMTTSetup.exe",
-    "instructions": "Download from saomaicenter.org/en/smsoft/smtt (requires CAPTCHA form)"
+    "source": "vendor",
+    "url_template": "https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/download/installers-v1/SMTTSetup.exe",
+    "destination": "SaoMai/SMTTSetup.exe"
   },
   "unikey": {
     "source": "vendor",
@@ -98,9 +98,9 @@
     "final_path": "Utilities/UniKey/UniKeyNT.exe"
   },
   "goldendict": {
-    "source": "manual",
-    "expected_path": "Utilities/GoldenDict/GoldenDict.exe",
-    "instructions": "Download GoldenDict-1.5.0_.QT_5123.64bit.7z from github.com/goldendict/goldendict/releases/tag/1.5.0 - extract with 7-Zip to Installers/Utilities/GoldenDict/"
+    "source": "vendor",
+    "url_template": "https://github.com/goldendict/goldendict/releases/download/{version}/GoldenDict-{version}-Install.exe",
+    "destination": "Utilities/GoldenDict/GoldenDict-{version}-Install.exe"
   },
 
   "nvda_addon_vlc": {

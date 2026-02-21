@@ -105,7 +105,8 @@ $checks = @(
     @{
         Name = "GoldenDict"
         Paths = @(
-            "C:\Program Files\GoldenDict\GoldenDict.exe"
+            "C:\Program Files\GoldenDict\GoldenDict.exe",
+            "C:\Program Files (x86)\GoldenDict\GoldenDict.exe"
         )
         Critical = $false
     },

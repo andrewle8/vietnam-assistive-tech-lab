@@ -94,6 +94,12 @@ $installations += @(
         Path = ".\Installers\Utilities\SumatraPDF\SumatraPDF-3.5.2-64-install.exe"
         Args = @("-s", "-install")
         WaitTime = 15
+    },
+    @{
+        Name = "GoldenDict 1.5.1"
+        Path = ".\Installers\Utilities\GoldenDict\GoldenDict-1.5.1-Install.exe"
+        Args = @("/S")
+        WaitTime = 30
     }
 )
 
@@ -258,45 +264,26 @@ if (Test-Path $kiwixSourceDir) {
     Write-Log "Kiwix directory not found at $kiwixSourceDir (optional)" "INFO"
 }
 
-# Install GoldenDict (portable - copy to local folder and create shortcut)
-Write-Log "Installing GoldenDict offline dictionary..." "INFO"
+# Create GoldenDict desktop shortcut (installed via $installations array above)
+$goldenDictExe = if (Test-Path "C:\Program Files\GoldenDict\GoldenDict.exe") {
+    "C:\Program Files\GoldenDict\GoldenDict.exe"
+} elseif (Test-Path "C:\Program Files (x86)\GoldenDict\GoldenDict.exe") {
+    "C:\Program Files (x86)\GoldenDict\GoldenDict.exe"
+} else { $null }
 
-$goldenDictSourceDir = Join-Path $usbRoot "Installers\Utilities\GoldenDict"
-$goldenDictDestDir = "C:\Program Files\GoldenDict"
-
-if (Test-Path $goldenDictSourceDir) {
-    $goldenDictExe = Get-ChildItem -Path $goldenDictSourceDir -Filter "GoldenDict.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
-    if ($goldenDictExe) {
-        try {
-            if (-not (Test-Path $goldenDictDestDir)) {
-                New-Item -Path $goldenDictDestDir -ItemType Directory -Force | Out-Null
-            }
-            Copy-Item -Path "$goldenDictSourceDir\*" -Destination $goldenDictDestDir -Recurse -Force
-            Write-Log "Copied GoldenDict to $goldenDictDestDir" "SUCCESS"
-
-            # Create desktop shortcut
-            $destExe = Join-Path $goldenDictDestDir "GoldenDict.exe"
-            if (Test-Path $destExe) {
-                $WshShell = New-Object -ComObject WScript.Shell
-                $shortcutPath = Join-Path $publicDesktop "Tu Dien - Dictionary.lnk"
-                $shortcut = $WshShell.CreateShortcut($shortcutPath)
-                $shortcut.TargetPath = $destExe
-                $shortcut.WorkingDirectory = $goldenDictDestDir
-                $shortcut.Description = "GoldenDict - Từ điển ngoại tuyến (Offline Dictionary)"
-                $shortcut.Save()
-                Write-Log "Created desktop shortcut: Tu Dien - Dictionary" "SUCCESS"
-            }
-
-            $successCount++
-        } catch {
-            Write-Log "ERROR installing GoldenDict: $($_.Exception.Message)" "ERROR"
-            $failCount++
-        }
-    } else {
-        Write-Log "GoldenDict executable not found in $goldenDictSourceDir (optional)" "INFO"
+if ($goldenDictExe) {
+    try {
+        $WshShell = New-Object -ComObject WScript.Shell
+        $shortcutPath = Join-Path $publicDesktop "Tu Dien - Dictionary.lnk"
+        $shortcut = $WshShell.CreateShortcut($shortcutPath)
+        $shortcut.TargetPath = $goldenDictExe
+        $shortcut.WorkingDirectory = Split-Path $goldenDictExe
+        $shortcut.Description = "GoldenDict - Offline Dictionary"
+        $shortcut.Save()
+        Write-Log "Created desktop shortcut: Tu Dien - Dictionary" "SUCCESS"
+    } catch {
+        Write-Log "Could not create GoldenDict shortcut: $($_.Exception.Message)" "WARNING"
     }
-} else {
-    Write-Log "GoldenDict directory not found at $goldenDictSourceDir (optional)" "INFO"
 }
 
 Write-Log "`n=== Installation Summary ===" "INFO"
