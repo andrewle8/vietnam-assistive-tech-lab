@@ -913,7 +913,7 @@ Write-Log "Step 20: Creating LabAdmin account..." "INFO"
 try {
     $adminExists = Get-LocalUser -Name "LabAdmin" -ErrorAction SilentlyContinue
     if (-not $adminExists) {
-        $adminPassword = ConvertTo-SecureString "monarchmissions" -AsPlainText -Force
+        $adminPassword = ConvertTo-SecureString "monarch" -AsPlainText -Force
         New-LocalUser -Name "LabAdmin" -Password $adminPassword -FullName "Lab Administrator" -Description "Admin account for remote management and local maintenance" -ErrorAction Stop
         Add-LocalGroupMember -Group "Administrators" -Member "LabAdmin" -ErrorAction SilentlyContinue
         Write-Log "Created LabAdmin account (local administrator)" "SUCCESS"
