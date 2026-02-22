@@ -1,0 +1,183 @@
+{
+  "manifest_version": "2026.02.19",
+  "created": "2026-02-19",
+  "tested_on": null,
+  "notes": "Release candidate — pending first laptop test",
+
+  "os": {
+    "name": "Windows 11 Pro",
+    "min_build": "22631",
+    "feature_update": "24H2",
+    "auto_update": "disabled"
+  },
+
+  "software": {
+    "nvda": {
+      "version": "2025.3.3",
+      "installer": "nvda_2025.3.3.exe",
+      "critical": true,
+      "paths": [
+        "C:\\Program Files\\NVDA\\nvda.exe",
+        "C:\\Program Files (x86)\\NVDA\\nvda.exe"
+      ]
+    },
+    "saomai_vnvoice": {
+      "version": "1.0",
+      "installer": "SaoMai_voice1.0.exe",
+      "critical": true,
+      "paths": [
+        "C:\\Windows\\Speech\\Engines\\TTS\\*vnvoice*",
+        "C:\\Program Files\\SaoMai\\VNVoice\\*"
+      ]
+    },
+    "saomai_typing_tutor": {
+      "version": "latest",
+      "installer": "SMTTSetup.exe",
+      "critical": false,
+      "paths": [
+        "C:\\Program Files\\SaoMai\\TypingTutor\\*",
+        "C:\\Program Files (x86)\\SaoMai\\TypingTutor\\*"
+      ]
+    },
+    "msoffice": {
+      "version": "Office 16 (2024/365)",
+      "installer": "setup.exe",
+      "critical": true,
+      "paths": [
+        "C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE",
+        "C:\\Program Files (x86)\\Microsoft Office\\root\\Office16\\WINWORD.EXE"
+      ]
+    },
+    "firefox": {
+      "version": "147.0.4",
+      "installer": "Firefox Setup 147.0.4.msi",
+      "critical": true,
+      "paths": [
+        "C:\\Program Files\\Mozilla Firefox\\firefox.exe"
+      ]
+    },
+    "vlc": {
+      "version": "3.0.23",
+      "installer": "vlc-3.0.23-win64.exe",
+      "critical": false,
+      "paths": [
+        "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe"
+      ]
+    },
+    "audacity": {
+      "version": "3.7.7",
+      "installer": "audacity-win-3.7.7-64bit.exe",
+      "critical": false,
+      "paths": [
+        "C:\\Program Files\\Audacity\\Audacity.exe"
+      ]
+    },
+    "quorum_studio": {
+      "version": "7.3.0",
+      "installer": "QuorumStudio-win64.exe",
+      "critical": false,
+      "paths": [
+        "C:\\Program Files\\QuorumStudio\\*"
+      ]
+    },
+    "thorium_reader": {
+      "version": "3.3.0",
+      "installer": "Thorium.Setup.3.3.0.exe",
+      "critical": false,
+      "paths": [
+        "%LOCALAPPDATA%\\Programs\\Thorium\\Thorium.exe",
+        "C:\\Program Files\\Thorium\\Thorium.exe"
+      ]
+    },
+    "sumatrapdf": {
+      "version": "3.5.2",
+      "installer": "SumatraPDF-3.5.2-64-install.exe",
+      "critical": false,
+      "paths": [
+        "C:\\Program Files\\SumatraPDF\\SumatraPDF.exe"
+      ]
+    },
+    "goldendict": {
+      "version": "1.5.1",
+      "installer": "GoldenDict-1.5.1-Install.exe",
+      "critical": false,
+      "paths": [
+        "C:\\Program Files\\GoldenDict\\GoldenDict.exe",
+        "C:\\Program Files (x86)\\GoldenDict\\GoldenDict.exe"
+      ]
+    },
+    "kiwix": {
+      "version": "2.5.1",
+      "installer": "kiwix-desktop_windows_x64_2.5.1.zip",
+      "critical": false,
+      "paths": [
+        "C:\\Program Files\\Kiwix\\kiwix-desktop.exe"
+      ]
+    },
+    "unikey": {
+      "version": "4.6-RC2",
+      "installer": "unikey46RC2-230919-win64.zip",
+      "critical": true,
+      "paths": [
+        "C:\\Program Files\\UniKey\\UniKeyNT.exe"
+      ]
+    },
+    "leap_games": {
+      "version": "latest",
+      "critical": false,
+      "paths": [
+        "C:\\Games\\LEAP\\TicTacToe\\*.exe",
+        "C:\\Games\\LEAP\\Tennis\\*.exe",
+        "C:\\Games\\LEAP\\Curve\\*.exe"
+      ]
+    },
+    "rclone": {
+      "version": "1.73.1",
+      "installer": "rclone-v1.73.1-windows-amd64.zip",
+      "critical": false,
+      "paths": [
+        "C:\\LabTools\\rclone\\rclone.exe"
+      ]
+    },
+    "tailscale": {
+      "version": "1.82.0",
+      "installer": "tailscale-setup-1.82.0-amd64.msi",
+      "critical": false,
+      "paths": [
+        "C:\\Program Files\\Tailscale\\tailscale.exe"
+      ]
+    }
+  },
+
+  "nvda_addons": {
+    "VLC": "2025.1.0",
+    "MathCAT": "0.7.5",
+    "speechHistory": "2025.1",
+    "nvdaRemote": "2.6.4",
+    "focusHighlight": "6.6",
+    "audacityAccessEnhancement": "3.3.2",
+    "clock": "20250714"
+  },
+
+  "kiwix_content": {
+    "wikipedia_vi": "wikipedia_vi_all_mini_2025-11.zim",
+    "wiktionary_vi": "wiktionary_vi_all_nopic_2025-12.zim",
+    "wikisource_vi": "wikisource_vi_all_maxi_2026-01.zim"
+  },
+
+  "configuration": {
+    "windows_language": "vi-VN",
+    "windows_timezone": "SE Asia Standard Time",
+    "nvda_language": "vi",
+    "nvda_voice": "Minh Du",
+    "nvda_speech_rate": 35,
+    "unikey_input_method": "Telex",
+    "unikey_charset": "Unicode",
+    "volume_limit_percent": 70,
+    "magnifier_mode": "full-screen",
+    "magnifier_zoom": 200,
+    "windows_update": "disabled",
+    "narrator_shortcut": "disabled",
+    "hibernate": "disabled"
+  }
+}

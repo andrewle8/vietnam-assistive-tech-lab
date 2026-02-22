@@ -1,0 +1,62 @@
+# Vietnam Lab Deployment Kit - Git Ignore
+
+# Installer files (too large for git - download separately)
+Installers/**/*.exe
+Installers/**/*.msi
+Installers/**/*.nvda-addon
+Installers/**/*.zip
+Installers/**/*.tar.gz
+Installers/**/*.dll
+Installers/**/*.assets
+Installers/**/*.resS
+Installers/**/level*
+Installers/**/mainData
+Installers/**/mono.dll
+
+# LEAP Games (downloaded separately - ~450 MB)
+Installers/Educational/TicTacToe/
+Installers/Educational/Tennis/
+Installers/Educational/Curve/
+
+# Keep the directory structure but ignore large binaries
+!Installers/**/.gitkeep
+
+# Backup copies
+Backup/**/*
+!Backup/.gitkeep
+
+# Training materials (may contain large PDFs/videos)
+Training/**/*.pdf
+Training/**/*.mp4
+Training/**/*.avi
+Training/**/*.mov
+
+# Keep documentation and text files
+!Training/**/*.txt
+!Training/**/*.md
+!Training/**/*.docx
+
+# Windows system files
+Thumbs.db
+desktop.ini
+*.lnk
+nul
+
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Rclone config (contains OAuth tokens)
+Config/rclone/rclone.conf
+
+# IDE and tool configurations
+.claude/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Keep README files everywhere
+!**/README.md

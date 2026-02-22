@@ -1,0 +1,196 @@
+{
+  "_comment": "Source table for all installers. Used by 0-Download-Installers.ps1",
+  "_sources": "vendor = direct URL, github = GitHub Releases API, kiwix = kiwix.org, manual = must be pre-placed",
+
+  "nvda": {
+    "source": "vendor",
+    "url_template": "https://www.nvaccess.org/files/nvda/releases/{version}/nvda_{version}.exe",
+    "destination": "NVDA/nvda_{version}.exe"
+  },
+  "firefox": {
+    "source": "vendor",
+    "url_template": "https://releases.mozilla.org/pub/firefox/releases/{version}/win64/vi/Firefox%20Setup%20{version}.msi",
+    "destination": "Firefox/Firefox Setup {version}.msi"
+  },
+  "vlc": {
+    "source": "vendor",
+    "url_template": "https://get.videolan.org/vlc/{version}/win64/vlc-{version}-win64.exe",
+    "destination": "Utilities/vlc-{version}-win64.exe"
+  },
+
+  "audacity": {
+    "source": "github",
+    "repo": "audacity/audacity",
+    "asset_pattern": "audacity-win-{version}-64bit.exe",
+    "destination": "Audacity/audacity-win-{version}-64bit.exe"
+  },
+  "thorium_reader": {
+    "source": "github",
+    "repo": "edrlab/thorium-reader",
+    "asset_pattern": "Thorium.Setup.{version}.exe",
+    "destination": "Thorium/Thorium.Setup.{version}.exe"
+  },
+  "sumatrapdf": {
+    "source": "vendor",
+    "url_template": "https://www.sumatrapdfreader.org/dl/rel/{version}/SumatraPDF-{version}-64-install.exe",
+    "destination": "Utilities/SumatraPDF/SumatraPDF-{version}-64-install.exe"
+  },
+  "rclone": {
+    "source": "github",
+    "repo": "rclone/rclone",
+    "asset_pattern": "rclone-v{version}-windows-amd64.zip",
+    "destination": "Utilities/rclone/rclone-v{version}-windows-amd64.zip",
+    "extract": true,
+    "extract_file": "rclone.exe",
+    "final_path": "Utilities/rclone/rclone.exe"
+  },
+  "kiwix": {
+    "source": "vendor",
+    "url_template": "https://download.kiwix.org/release/kiwix-desktop/kiwix-desktop_windows_x64_{version}.zip",
+    "destination": "Kiwix/kiwix-desktop_windows_x64_{version}.zip",
+    "extract": true,
+    "extract_file": "kiwix-desktop.exe",
+    "final_path": "Kiwix/kiwix-desktop.exe"
+  },
+  "tailscale": {
+    "source": "vendor",
+    "url_template": "https://pkgs.tailscale.com/stable/tailscale-setup-{version}-amd64.msi",
+    "destination": "Utilities/Tailscale/tailscale-setup-{version}-amd64.msi"
+  },
+
+  "wikipedia_vi": {
+    "source": "kiwix",
+    "url_template": "https://download.kiwix.org/zim/wikipedia/wikipedia_vi_all_mini_{date}.zim",
+    "destination": "Kiwix/{filename}"
+  },
+  "wiktionary_vi": {
+    "source": "kiwix",
+    "url_template": "https://download.kiwix.org/zim/wiktionary/wiktionary_vi_all_nopic_{date}.zim",
+    "destination": "Kiwix/{filename}"
+  },
+  "wikisource_vi": {
+    "source": "kiwix",
+    "url_template": "https://download.kiwix.org/zim/wikisource/wikisource_vi_all_maxi_{date}.zim",
+    "destination": "Kiwix/{filename}"
+  },
+
+  "quorum_studio": {
+    "source": "vendor",
+    "url_template": "https://github.com/qorf/quorum-studio/releases/latest/download/Quorum-Studio-Windows.exe",
+    "destination": "Quorum/QuorumStudio-win64.exe"
+  },
+  "saomai_vnvoice": {
+    "source": "vendor",
+    "url_template": "https://saomaicenter.org/sites/default/files/inline-files/SaoMai_voice1.0.exe",
+    "destination": "SaoMai/SaoMai_voice1.0.exe"
+  },
+  "saomai_typing_tutor": {
+    "source": "vendor",
+    "url_template": "https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/download/installers-v1/SMTTSetup.exe",
+    "destination": "SaoMai/SMTTSetup.exe"
+  },
+  "unikey": {
+    "source": "vendor",
+    "url_template": "https://www.unikey.org/assets/release/unikey46RC2-230919-win64.zip",
+    "destination": "Utilities/UniKey/unikey46RC2-230919-win64.zip",
+    "extract": true,
+    "extract_to": "Utilities/UniKey/",
+    "final_path": "Utilities/UniKey/UniKeyNT.exe"
+  },
+  "goldendict": {
+    "source": "vendor",
+    "url_template": "https://github.com/goldendict/goldendict/releases/download/{version}/GoldenDict-{version}-Install.exe",
+    "destination": "Utilities/GoldenDict/GoldenDict-{version}-Install.exe"
+  },
+  "stardict_en_vi": {
+    "source": "vendor",
+    "url_template": "https://raw.githubusercontent.com/dynamotn/stardict-vi/master/en-vi/star_anhviet.ifo",
+    "destination": "Dictionaries/en-vi/star_anhviet.ifo",
+    "extra_files": [
+      { "url": "https://raw.githubusercontent.com/dynamotn/stardict-vi/master/en-vi/star_anhviet.idx", "dest": "Dictionaries/en-vi/star_anhviet.idx" },
+      { "url": "https://raw.githubusercontent.com/dynamotn/stardict-vi/master/en-vi/star_anhviet.dict.dz", "dest": "Dictionaries/en-vi/star_anhviet.dict.dz" }
+    ]
+  },
+  "stardict_vi_en": {
+    "source": "vendor",
+    "url_template": "https://raw.githubusercontent.com/dynamotn/stardict-vi/master/vi-en/star_vietanh.ifo",
+    "destination": "Dictionaries/vi-en/star_vietanh.ifo",
+    "extra_files": [
+      { "url": "https://raw.githubusercontent.com/dynamotn/stardict-vi/master/vi-en/star_vietanh.idx", "dest": "Dictionaries/vi-en/star_vietanh.idx" },
+      { "url": "https://raw.githubusercontent.com/dynamotn/stardict-vi/master/vi-en/star_vietanh.dict.dz", "dest": "Dictionaries/vi-en/star_vietanh.dict.dz" }
+    ]
+  },
+
+  "nvda_addon_vlc": {
+    "source": "vendor",
+    "version": "2025.1.0",
+    "url_template": "https://github.com/javidominguez/VLC/releases/download/{version}/VLC-{version}.nvda-addon",
+    "destination": "NVDA/addons/VLC-{version}.nvda-addon"
+  },
+  "nvda_addon_speech_history": {
+    "source": "vendor",
+    "version": "2025.1",
+    "url_template": "https://github.com/jscholes/nvda-speech-history/releases/download/v{version}/speechHistory-v{version}.nvda-addon",
+    "destination": "NVDA/addons/speechHistory-v{version}.nvda-addon"
+  },
+  "nvda_addon_remote": {
+    "source": "vendor",
+    "version": "2.6.4",
+    "url_template": "https://github.com/NVDARemote/NVDARemote/releases/download/v{version}/remote-{version}.nvda-addon",
+    "destination": "NVDA/addons/remote-{version}.nvda-addon"
+  },
+  "nvda_addon_focus_highlight": {
+    "source": "vendor",
+    "version": "6.6",
+    "url_template": "https://github.com/nvdajp/focusHighlight/releases/download/{version}/focusHighlight-{version}.nvda-addon",
+    "destination": "NVDA/addons/focusHighlight-{version}.nvda-addon"
+  },
+  "nvda_addon_audacity": {
+    "source": "vendor",
+    "version": "3.3.2",
+    "url_template": "https://github.com/paulber007/AllMyNVDAAddons/raw/master/audacityAccessEnhancement/audacityAccessEnhancement-{version}.nvda-addon",
+    "destination": "NVDA/addons/audacityAccessEnhancement-{version}.nvda-addon"
+  },
+  "nvda_addon_clock": {
+    "source": "vendor",
+    "url_template": "https://github.com/hkatic/clock/releases/download/v25.07.14/clock-20250714.0.0.nvda-addon",
+    "destination": "NVDA/addons/clock-20250714.0.0.nvda-addon"
+  },
+  "nvda_addon_mathcat": {
+    "source": "vendor",
+    "version": "0.7.5",
+    "url_template": "https://github.com/NSoiffer/MathCATForPython/releases/download/{version}/MathCAT-{version}.nvda-addon",
+    "destination": "NVDA/addons/MathCAT-{version}.nvda-addon"
+  },
+  "nvda_addon_training_keyboard_commands": {
+    "source": "vendor",
+    "version": "3.2.6",
+    "url_template": "https://github.com/ibrahim-s/trainingNvdaCommands/releases/download/{version}/trainingKeyboardCommands-{version}.nvda-addon",
+    "destination": "NVDA/addons/trainingKeyboardCommands-{version}.nvda-addon"
+  },
+
+  "leap_tictactoe": {
+    "source": "vendor",
+    "url_template": "https://dl.scify.org/games/tictactoe_eng_win64.zip",
+    "destination": "Educational/tictactoe_eng_win64.zip",
+    "extract": true,
+    "extract_to": "Educational/TicTacToe/",
+    "final_path": "Educational/TicTacToe/"
+  },
+  "leap_tennis": {
+    "source": "vendor",
+    "url_template": "https://dl.scify.org/games/tennis_eng_win64.zip",
+    "destination": "Educational/tennis_eng_win64.zip",
+    "extract": true,
+    "extract_to": "Educational/Tennis/",
+    "final_path": "Educational/Tennis/"
+  },
+  "leap_curve": {
+    "source": "vendor",
+    "url_template": "https://dl.scify.org/games/curve_eng_win64.zip",
+    "destination": "Educational/curve_eng_win64.zip",
+    "extract": true,
+    "extract_to": "Educational/Curve/",
+    "final_path": "Educational/Curve/"
+  }
+}

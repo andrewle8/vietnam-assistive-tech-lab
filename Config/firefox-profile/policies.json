@@ -1,0 +1,53 @@
+{
+  "policies": {
+    "Homepage": {
+      "URL": "about:blank",
+      "Locked": true,
+      "StartPage": "homepage"
+    },
+    "DisableAppUpdate": true,
+    "DontCheckDefaultBrowser": true,
+    "OverrideFirstRunPage": "",
+    "OverridePostUpdatePage": "",
+    "PictureInPicture": {
+      "Enabled": false,
+      "Locked": true
+    },
+    "RequestedLocales": ["vi", "en-US"],
+    "Extensions": {
+      "Uninstall": [
+        "pictureinpicture@mozilla.org"
+      ]
+    },
+    "Preferences": {
+      "intl.locale.requested": {
+        "Value": "vi,en-US",
+        "Status": "locked"
+      },
+      "media.videocontrols.picture-in-picture.enabled": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "media.videocontrols.picture-in-picture.video-toggle.enabled": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "browser.aboutwelcome.enabled": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "browser.shell.checkDefaultBrowser": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "datareporting.policy.dataSubmissionEnabled": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "toolkit.telemetry.enabled": {
+        "Value": false,
+        "Status": "locked"
+      }
+    }
+  }
+}
