@@ -59,8 +59,12 @@ Write-Host "`n--- Phase 1: Network & System Setup ---" -ForegroundColor White
 Write-Host ""
 
 Step "Setting hostname to $hostname"
-Rename-Computer -NewName $hostname -Force -ErrorAction Stop
-Write-Host "      Hostname set to $hostname" -ForegroundColor Green
+if ($env:COMPUTERNAME -eq $hostname) {
+    Write-Host "      Hostname already set to $hostname - skipping rename" -ForegroundColor Green
+} else {
+    Rename-Computer -NewName $hostname -Force -ErrorAction Stop
+    Write-Host "      Hostname set to $hostname" -ForegroundColor Green
+}
 
 Step "Connecting to Wi-Fi ($WifiSSID)"
 $profileXml = @"
