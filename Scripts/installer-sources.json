@@ -89,6 +89,12 @@
     "url_template": "https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/download/installers-v1/SMTTSetup.exe",
     "destination": "SaoMai/SMTTSetup.exe"
   },
+  "saomai_readmate": {
+    "source": "vendor",
+    "version": "1.0.5",
+    "url_template": "https://saomaicenter.org/sites/default/files/SMSoftAutoUpdate/readmate/SMReadmate{version}-setup.exe",
+    "destination": "SaoMai/SMReadmate{version}-setup.exe"
+  },
   "unikey": {
     "source": "vendor",
     "url_template": "https://www.unikey.org/assets/release/unikey46RC2-230919-win64.zip",

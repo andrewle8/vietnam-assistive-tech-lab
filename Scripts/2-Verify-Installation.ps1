@@ -57,6 +57,16 @@ $checks = @(
         Critical = $false
     },
     @{
+        Name = "SM Readmate"
+        Paths = @(
+            "C:\Program Files\SaoMai\Readmate\*",
+            "C:\Program Files (x86)\SaoMai\Readmate\*",
+            "C:\Program Files\SaoMai\SMReadmate\*",
+            "C:\Program Files (x86)\SaoMai\SMReadmate\*"
+        )
+        Critical = $false
+    },
+    @{
         Name = "Microsoft Office"
         Paths = @(
             "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE",

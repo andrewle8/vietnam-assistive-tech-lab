@@ -54,6 +54,12 @@ $installations = @(
         Path = ".\Installers\SaoMai\SMTTSetup.exe"
         Args = @("/S")
         WaitTime = 30
+    },
+    @{
+        Name = "SM Readmate"
+        Path = ".\Installers\SaoMai\SMReadmate1.0.5-setup.exe"
+        Args = @("/S")
+        WaitTime = 30
     }
 )
 
