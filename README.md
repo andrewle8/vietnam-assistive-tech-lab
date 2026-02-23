@@ -14,6 +14,7 @@ This repo contains everything needed to deploy and remotely manage an assistive 
 | **NVDA 2025.3.3** | GPL-2.0 | Screen reader with Vietnamese interface |
 | **Sao Mai VNVoice** | Free (non-commercial) | Vietnamese text-to-speech (SAPI5) |
 | **Sao Mai Typing Tutor** | Free (non-commercial) | Vietnamese typing lessons with audio |
+| **SM Readmate** | Free (non-commercial) | Accessible e-book reader (connects to sachtiepcan.vn library) |
 | **Microsoft Office 365** | Non-profit license | Office suite (Word, Excel, PowerPoint, Outlook) |
 | **Firefox 147** | MPL-2.0 | Accessible web browser |
 | **VLC Media Player 3.0.23** | GPL-2.0 | Media playback |
