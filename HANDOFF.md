@@ -123,7 +123,6 @@ The script checks all software, Windows settings, NVDA config, and remote manage
 
 ## Contact
 
-**Andrew Le** — REDACTED
-GitHub: https://github.com/andrewle8/vietnam-assistive-tech-lab/issues
+**Andrew Le** — [Contact via GitHub Issues](https://github.com/andrewle8/vietnam-assistive-tech-lab/issues)
 
 For detailed troubleshooting, see the **Documentation/** folder on the USB drive.

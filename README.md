@@ -208,7 +208,7 @@ This deployment kit uses free and open-source software where possible, plus Micr
 
 ## Contact
 
-**Project Lead:** Andrew Le - REDACTED
+**Project Lead:** Andrew Le — [Contact via GitHub Issues](https://github.com/andrewle8/vietnam-assistive-tech-lab/issues)
 
 ---
 
