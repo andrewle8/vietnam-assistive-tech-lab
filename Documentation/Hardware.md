@@ -136,12 +136,16 @@ For labeling USB drives, equipment, and student materials in Braille.
 
 ## Total Cost Summary
 
-| Item | Per Station | Total |
-|------|------------|-------|
-| Dell Latitude 5420 (19x) | $307.53 | $5,843.07 |
-| ATH-M40x headphone (20x) | $96.98 | $2,174.30 |
-| **Per Station** | **$404.51** | **$8,017.37** |
+| Item | Qty | Unit | Total |
+|------|-----|------|-------|
+| Dell Latitude 5420 | 19 | $307.53 | $5,843.07 |
+| ATH-M40x headphone | 20 | $90.00 | $1,800.00 |
+| PMM5 spare cables | 5 | $21.99 | $109.95 |
+| HPEP replacement earpads | 4 | $26.99 | $107.96 |
+| Sweetwater tax | | | $156.39 |
+| EASTBULL 16GB USB drives | 100 | $2.32 | $231.88 |
+| Reizen RL-350 braille labeler | 1 | $34.99 | $34.99 |
+| Reizen labeling tape (3 rolls) | 1 | $10.95 | $10.95 |
+| **All-in total** | | | **$8,295.19** |
 
-USB drives purchased separately: 100x EASTBULL 16GB — $231.88
-Braille labeler + tape: $45.94
-**All-in total: $8,295.19**
+**Per station (laptop + headphone): $404.51** (19 stations)
