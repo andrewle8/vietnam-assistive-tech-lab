@@ -1,9 +1,8 @@
 # Hardware
-**Requirements:** x86-64 CPU: NVDA-compatible
 
 ## - **Dell Latitude 5420 Laptop:**
 **$307.53/unit** from Dell Refurbished (**Grade A**) — 19 units purchased 2026-02-13.
-**Status:** 5 of 19 received (2026-02-19). Remaining 14 in transit.
+**Status:** 18 of 19 received. Serial 82DJ0J3 lost in transit — Dell investigating.
 Tax refunded (nonprofit exemption).
 (Product ID: dell-latitude-5420-000402, Order #U1301960)
 
@@ -48,38 +47,17 @@ Meets all Win11 Upgrade requirements:
 #### Serial Numbers
 7FP31J3, 7YB71J3, 82DJ0J3, 88X63F3, 9GGW2F3, 9PH41J3, B4JR2F3, C5MJ0J3, CQ6H1J3, CTDJ2F3, DC861J3, DDYJ6J3, DFS91J3, DT1M6J3, FNDP0J3, FSRH0J3, G2X61J3, HQKJ0J3, 6C541J3
 
-### x86-x64 vs ARM
-
-ARM/Snapdragon laptops run NVDA, Sao Mai VNVoice, Microsoft Office, and LEAP Games through **emulation**, adding latency to speech output. Not suitable for screen reader users.
-
 ---
 
 ## - Headphones: Audio-Technica ATH-M40x
 
 Audio-Technica ATH-M40x — 20 units ordered via Sweetwater (Order W308lsXB, 2026-02-26). Arriving March 4.
 
-### For Blind Users, Headphones = SINGLE Computer Output
-Screen reader audio is 100% of the interface.
-
 Used at:
 - Perkins School for the Blind computer labs
 - National Federation of the Blind recommended
 - JAWS/NVDA training centers
   
-Flat Freq. response (clear at critical speech range 2000-8000 Hz). Critical for NVDA speech at fast rates.
-
-### Detachable Cable
-Cable breaks → Replace $15 cable instead of $79 headphone. Only failure point.
-
-### Replacement Earpads
-Replace after heavy use ~3 years. $15-$30 simple installation.
-
-### Closed-Back
-Required for classrooms. 10 screen readers running simultaneously need sound isolation.
-
-### ATHM40x vs M20x
-Detachable cable, better clarity, build quality and comfort are worth the $30 difference for a long term deployment.
-
 
 ### Specs
 
@@ -114,9 +92,8 @@ Detachable cable, better clarity, build quality and comfort are worth the $30 di
 |---|---|
 | Subtotal | $231.88 |
 | Tax (refunded) | ~~$17.97~~ |
-| Gift card | -$1.31 |
-| **Grand Total** | **$230.57** |
-| **Per unit** | **$2.31** |
+| **Grand Total** | **$231.88** |
+| **Per unit** | **$2.32** |
 
 | Spec | Detail |
 |------|--------|
@@ -153,8 +130,7 @@ For labeling USB drives, equipment, and student materials in Braille.
 |---|---|
 | Subtotal | $10.95 |
 | Tax (refunded) | ~~$0.85~~ |
-| Gift card | -$7.54 |
-| **Grand Total** | **$3.41** |
+| **Grand Total** | **$10.95** |
 
 ---
 
@@ -166,9 +142,9 @@ For labeling USB drives, equipment, and student materials in Braille.
 | ATH-M40x headphone (20x) | $96.98 | $2,174.30 |
 | **Per Station** | **$404.51** | **$8,017.37** |
 
-USB drives purchased separately: 100x EASTBULL 16GB — $230.57
-Braille labeler + tape: $38.40
-**All-in total: $8,286.34**
+USB drives purchased separately: 100x EASTBULL 16GB — $231.88
+Braille labeler + tape: $45.94
+**All-in total: $8,295.19**
 
 ---
 
