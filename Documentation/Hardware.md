@@ -113,10 +113,10 @@ Detachable cable, better clarity, build quality and comfort are worth the $30 di
 | | |
 |---|---|
 | Subtotal | $231.88 |
-| Tax | $17.97 |
+| Tax (refunded) | ~~$17.97~~ |
 | Gift card | -$1.31 |
-| **Grand Total** | **$248.54** |
-| **Per unit with tax** | **$2.49** |
+| **Grand Total** | **$230.57** |
+| **Per unit** | **$2.31** |
 
 | Spec | Detail |
 |------|--------|
@@ -135,6 +135,29 @@ Detachable cable, better clarity, build quality and comfort are worth the $30 di
 
 ---
 
+## - Braille Labeler & Tape
+
+For labeling USB drives, equipment, and student materials in Braille.
+
+### Reizen RL-350 Braille Labeler (Amazon — Order #111-4701163-1709050)
+
+| | |
+|---|---|
+| Subtotal | $34.99 |
+| Tax (refunded) | ~~$2.71~~ |
+| **Grand Total** | **$34.99** |
+
+### Reizen Clear Vinyl Labeling Tape — 3 Rolls (Amazon — Order #111-8574794-9225801)
+
+| | |
+|---|---|
+| Subtotal | $10.95 |
+| Tax (refunded) | ~~$0.85~~ |
+| Gift card | -$7.54 |
+| **Grand Total** | **$3.41** |
+
+---
+
 ## Total Cost Summary
 
 | Item | Per Station | Total |
@@ -143,8 +166,9 @@ Detachable cable, better clarity, build quality and comfort are worth the $30 di
 | ATH-M40x headphone (20x) | $96.98 | $2,174.30 |
 | **Per Station** | **$404.51** | **$8,017.37** |
 
-USB drives purchased separately: 100x EASTBULL 16GB — $248.54
-**All-in total: $8,265.91**
+USB drives purchased separately: 100x EASTBULL 16GB — $230.57
+Braille labeler + tape: $38.40
+**All-in total: $8,286.34**
 
 ---
 
