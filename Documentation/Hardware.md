@@ -1,5 +1,23 @@
 # Hardware
 
+## Total Cost Summary
+
+| Item | Qty | Unit | Total |
+|------|-----|------|-------|
+| Dell Latitude 5420 | 19 | $307.53 | $5,843.07 |
+| ATH-M40x headphone | 20 | $90.00 | $1,800.00 |
+| PMM5 spare cables | 5 | $21.99 | $109.95 |
+| HPEP replacement earpads | 4 | $26.99 | $107.96 |
+| Sweetwater tax | | | $156.39 |
+| EASTBULL 16GB USB drives | 100 | $2.32 | $231.88 |
+| Reizen RL-350 braille labeler | 1 | $34.99 | $34.99 |
+| Reizen labeling tape (3 rolls) | 1 | $10.95 | $10.95 |
+| **All-in total** | | | **$8,295.19** |
+
+**Per station (laptop + headphone): $404.51** (19 stations)
+
+---
+
 ## - **Dell Latitude 5420 Laptop:**
 **$307.53/unit** from Dell Refurbished (**Grade A**) — 19 units purchased 2026-02-13.
 **Status:** 18 of 19 received. Serial 82DJ0J3 lost in transit — Dell investigating.
@@ -132,20 +150,3 @@ For labeling USB drives, equipment, and student materials in Braille.
 | Tax (refunded) | ~~$0.85~~ |
 | **Grand Total** | **$10.95** |
 
----
-
-## Total Cost Summary
-
-| Item | Qty | Unit | Total |
-|------|-----|------|-------|
-| Dell Latitude 5420 | 19 | $307.53 | $5,843.07 |
-| ATH-M40x headphone | 20 | $90.00 | $1,800.00 |
-| PMM5 spare cables | 5 | $21.99 | $109.95 |
-| HPEP replacement earpads | 4 | $26.99 | $107.96 |
-| Sweetwater tax | | | $156.39 |
-| EASTBULL 16GB USB drives | 100 | $2.32 | $231.88 |
-| Reizen RL-350 braille labeler | 1 | $34.99 | $34.99 |
-| Reizen labeling tape (3 rolls) | 1 | $10.95 | $10.95 |
-| **All-in total** | | | **$8,295.19** |
-
-**Per station (laptop + headphone): $404.51** (19 stations)
