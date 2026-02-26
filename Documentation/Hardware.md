@@ -145,8 +145,3 @@ For labeling USB drives, equipment, and student materials in Braille.
 USB drives purchased separately: 100x EASTBULL 16GB — $231.88
 Braille labeler + tape: $45.94
 **All-in total: $8,295.19**
-
----
-
-# Conclusion
-Enterprise laptop durability and professional headphone clarity is best for an accessible deployment.
