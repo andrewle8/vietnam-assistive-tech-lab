@@ -56,7 +56,7 @@ ARM/Snapdragon laptops run NVDA, Sao Mai VNVoice, Microsoft Office, and LEAP Gam
 
 ## - Headphones: Audio-Technica ATH-M40x
 
-Audio-Technica ATH-M40x — 21 units pending via Sweetwater sales engineer (nonprofit pricing TBD).
+Audio-Technica ATH-M40x — 20 units ordered via Sweetwater (Order W308lsXB, 2026-02-26). Arriving March 4.
 
 ### For Blind Users, Headphones = SINGLE Computer Output
 Screen reader audio is 100% of the interface.
@@ -91,14 +91,19 @@ Detachable cable, better clarity, build quality and comfort are worth the $30 di
 - Weight: 240g
 - Warranty: 1 year
 
-### 21x Headphone Purchase (Sweetwater — pending)
+### 20x Headphone Purchase (Sweetwater — Order W308lsXB)
 
-| Item | Qty | Cost | Total |
-|------|-----|------|-------|
-| ATH-M40x | 21 | TBD | TBD |
-| Spare cables | 5 | TBD | TBD |
-| Replacement earpads | 4 | TBD | TBD |
-| **Total** | | | **TBD** |
+| Item | Qty | Unit Price | Total |
+|------|-----|-----------|-------|
+| ATH-M40x | 20 | $90.00 | $1,800.00 |
+| PMM5 spare cables | 5 | $21.99 | $109.95 |
+| HPEP replacement earpads | 4 | $26.99 | $107.96 |
+| | | Subtotal | $2,017.91 |
+| | | Shipping | FREE |
+| | | Tax | $156.39 |
+| | | **Grand Total** | **$2,174.30** |
+
+**Per headphone (with tax): $96.98** ($90.00 + $6.98 tax at 7.75%)
 
 ---
 ## - Personal Student USB Drives
@@ -132,13 +137,14 @@ Detachable cable, better clarity, build quality and comfort are worth the $30 di
 
 ## Total Cost Summary
 
-| Item | Per Station (with tax) | Total (19 stations) |
-|------|----------------------|---------------------|
-| Dell Latitude 5420 | $345.87 | $6,571.47 |
-| ATH-M40x headphone | TBD (~$92-107) | TBD |
-| **Estimated Per Station** | **~$438-453** | **~$8,300-8,600** |
+| Item | Per Station (with tax) | Total |
+|------|----------------------|-------|
+| Dell Latitude 5420 (19x) | $345.87 | $6,571.47 |
+| ATH-M40x headphone (20x) | $96.98 | $2,174.30 |
+| **Per Station** | **$442.85** | **$8,745.77** |
 
 USB drives purchased separately: 100x EASTBULL 16GB — $248.54
+**All-in total: $8,994.31**
 
 ---
 
