@@ -82,7 +82,8 @@ Used at:
 - Drivers: 40mm neodymium
 - Frequency: 15-24,000 Hz (flat)
 - Impedance: 35Ω (laptop compatible)
-- Cable: Detachable 3.5mm — includes 1.2-3.0m coiled + 3.0m straight
+- Cable: Detachable 3.5mm — includes 1.2-3.0m coiled + 3.0m straight + 1/4" adapter
+- Included: Soft carrying pouch (ear cups swivel flat for storage)
 - Weight: 240g
 - Warranty: 1 year
 
