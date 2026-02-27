@@ -6,13 +6,12 @@
 |------|-----|------|-------|
 | Dell Latitude 5420 | 19 | $307.53 | $5,843.07 |
 | ATH-M40x headphone | 20 | $90.00 | $1,800.00 |
-| PMM5 spare cables | 5 | $21.99 | $109.95 |
 | HPEP replacement earpads | 4 | $26.99 | $107.96 |
-| Sweetwater tax | | | $156.39 |
+| Sweetwater tax | | | $147.87 |
 | EASTBULL 16GB USB drives | 100 | $2.32 | $231.88 |
 | Reizen RL-350 braille labeler | 1 | $34.99 | $34.99 |
 | Reizen labeling tape (3 rolls) | 1 | $10.95 | $10.95 |
-| **All-in total** | | | **$8,295.19** |
+| **All-in total** | | | **$8,176.72** |
 
 **Per station (laptop + headphone): $404.51** (19 stations)
 
@@ -83,7 +82,7 @@ Used at:
 - Drivers: 40mm neodymium
 - Frequency: 15-24,000 Hz (flat)
 - Impedance: 35Ω (laptop compatible)
-- Cable: Detachable 3.5mm (2 included)
+- Cable: Detachable 3.5mm — includes 1.2-3.0m coiled + 3.0m straight
 - Weight: 240g
 - Warranty: 1 year
 
@@ -92,12 +91,11 @@ Used at:
 | Item | Qty | Unit Price | Total |
 |------|-----|-----------|-------|
 | ATH-M40x | 20 | $90.00 | $1,800.00 |
-| PMM5 spare cables | 5 | $21.99 | $109.95 |
 | HPEP replacement earpads | 4 | $26.99 | $107.96 |
-| | | Subtotal | $2,017.91 |
+| | | Subtotal | $1,907.96 |
 | | | Shipping | FREE |
-| | | Tax | $156.39 |
-| | | **Grand Total** | **$2,174.30** |
+| | | Tax | $147.87 |
+| | | **Grand Total** | **$2,055.83** |
 
 **Per headphone (with tax): $96.98** ($90.00 + $6.98 tax at 7.75%)
 
