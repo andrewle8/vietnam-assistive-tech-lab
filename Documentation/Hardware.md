@@ -69,11 +69,6 @@ Meets all Win11 Upgrade requirements:
 ## - Headphones: Audio-Technica ATH-M40x
 
 Audio-Technica ATH-M40x — 20 units ordered via Sweetwater (Order W308lsXB, 2026-02-26). Arriving March 4.
-
-Used at:
-- Perkins School for the Blind computer labs
-- National Federation of the Blind recommended
-- JAWS/NVDA training centers
   
 
 ### Specs
