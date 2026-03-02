@@ -113,5 +113,13 @@ try {
     Write-Host "       tailscale up --authkey=YOUR_KEY --hostname=$hostname" -ForegroundColor Yellow
 }
 
+# Hide Tailscale tray icon (service runs without it)
+$tsAutorun = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
+Remove-ItemProperty -Path $tsAutorun -Name "Tailscale" -ErrorAction SilentlyContinue
+# Also remove from per-user autorun
+$tsUserAutorun = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
+Remove-ItemProperty -Path $tsUserAutorun -Name "Tailscale" -ErrorAction SilentlyContinue
+Write-Host "[OK] Tailscale tray icon disabled (service still runs)" -ForegroundColor Green
+
 Write-Host "--- Tailscale Setup Complete ---" -ForegroundColor Cyan
 Write-Host ""

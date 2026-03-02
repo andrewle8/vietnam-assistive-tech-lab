@@ -964,6 +964,41 @@ try {
     $failCount++
 }
 
+# Step 22: Enable OpenSSH Server for remote management
+Write-Log "Step 22: Enabling OpenSSH Server..." "INFO"
+
+try {
+    # Install OpenSSH Server if not already present
+    $sshCapability = Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH.Server*'
+    if ($sshCapability.State -ne 'Installed') {
+        Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0 | Out-Null
+        Write-Log "OpenSSH Server installed" "INFO"
+    } else {
+        Write-Log "OpenSSH Server already installed" "INFO"
+    }
+
+    # Start and enable the service
+    Start-Service sshd
+    Set-Service -Name sshd -StartupType Automatic
+
+    # Ensure firewall rule exists
+    $fwRule = Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyContinue
+    if (-not $fwRule) {
+        New-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -DisplayName "OpenSSH Server (sshd)" `
+            -Direction Inbound -Protocol TCP -LocalPort 22 -Action Allow | Out-Null
+    }
+
+    # Set default shell to PowerShell
+    New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell `
+        -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -PropertyType String -Force | Out-Null
+
+    Write-Log "OpenSSH Server enabled (auto-start, PowerShell default shell)" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not enable OpenSSH Server: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
 # Summary
 Write-Host "`n========================================" -ForegroundColor Green
 Write-Host "Loaner Laptop Configuration Complete!" -ForegroundColor Green
@@ -998,6 +1033,7 @@ Write-Host "  NVDA backup   Restore shortcut on desktop" -ForegroundColor White
 Write-Host "  Vi folders    Tai Lieu, Am Nhac, Truyen, Hoc Tap, Tro Choi" -ForegroundColor White
 Write-Host ""
 Write-Host "Remote Management:" -ForegroundColor White
+Write-Host "  SSH server    Enabled (port 22, PowerShell default shell)" -ForegroundColor White
 Write-Host "  Update agent  Daily 2-4 AM (LabUpdateAgent task)" -ForegroundColor White
 Write-Host "  Fleet report  Daily health upload to Google Drive (LabFleetReport task)" -ForegroundColor White
 Write-Host ""
