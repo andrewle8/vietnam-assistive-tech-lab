@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <preferences>
+    <zoomFactor>1.5</zoomFactor>
+    <helpZoomFactor>1.5</helpZoomFactor>
+    <wordsZoomLevel>2</wordsZoomLevel>
+    <scanPopupUseUIAutomation>1</scanPopupUseUIAutomation>
+    <scanPopupUseIAccessibleEx>1</scanPopupUseIAccessibleEx>
+    <pronounceOnLoadMain>0</pronounceOnLoadMain>
+    <pronounceOnLoadPopup>0</pronounceOnLoadPopup>
+    <interfaceLanguage></interfaceLanguage>
+  </preferences>
+</config>

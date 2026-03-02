@@ -1,0 +1,60 @@
+# VLC Configuration for Vietnam Lab
+# Optimized for blind users with NVDA screen reader
+# Deployed by Configure-Laptop.ps1
+
+[core]
+# Audio-only mode (no video window)
+video=0
+
+# No audio visualizations
+audio-visual=none
+
+# Single instance (enqueue files, don't spawn new windows)
+one-instance=1
+one-instance-when-started-from-file=1
+
+# No network metadata fetching
+metadata-network-access=0
+
+# Save volume between sessions
+volume-save=1
+
+[qt]
+# Skip first-run privacy dialog
+qt-privacy-ask=0
+
+# Show filename in title bar (NVDA reads it)
+qt-name-in-title=1
+
+# No system tray icon (avoids hidden window confusion)
+qt-system-tray=0
+
+# Don't start minimized
+qt-start-minimized=0
+
+# Don't pause when minimized
+qt-pause-minimized=0
+
+# No background cone graphic
+qt-bgcone=0
+
+# No fullscreen controller
+qt-fs-controller=0
+
+# Volume keys control VLC directly
+qt-disable-volume-keys=0
+
+# No recent files (privacy on shared machines)
+qt-recentplay=0
+
+# Track change notifications (NVDA reads them)
+qt-notification=1
+
+# Volume cap at 100%
+qt-max-volume=100
+
+# Don't resize to video dimensions
+qt-video-autoresize=0
+
+# Don't continue from last position
+qt-continue=0

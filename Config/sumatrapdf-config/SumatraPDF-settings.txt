@@ -1,0 +1,23 @@
+# SumatraPDF settings for Vietnam Lab
+# Optimized for blind/low-vision users
+
+DefaultDisplayMode = continuous
+DefaultZoom = fit width
+UseSysColors = true
+ShowToc = true
+ShowLinks = true
+UIFontSize = 14
+
+FixedPageUI [
+	TextColor = #000000
+	BackgroundColor = #ffffff
+	InvertColors = false
+	HideScrollbars = false
+]
+
+EbookUI [
+	FontName = Arial
+	FontSize = 16
+	TextColor = #000000
+	BackgroundColor = #ffffff
+]
