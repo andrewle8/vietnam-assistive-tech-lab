@@ -211,13 +211,27 @@ try {
     if (-not (Test-Path $searchRegPath)) { New-Item -Path $searchRegPath -Force | Out-Null }
     Set-ItemProperty -Path $searchRegPath -Name "SearchboxTaskbarMode" -Value 0 -Force
 
+    # Clear pinned taskbar items (Win11 stores these as shortcut files, not registry)
+    $pinnedPath = "$env:APPDATA\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar"
+    if (Test-Path $pinnedPath) {
+        Get-ChildItem -Path $pinnedPath -Filter "*.lnk" -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -notlike "*File Explorer*" } |
+            Remove-Item -Force -ErrorAction SilentlyContinue
+    }
+
+    # Also clear the Win10-era Taskband registry (in case it's used)
     $taskband = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband"
     if (Test-Path $taskband) {
         Remove-ItemProperty -Path $taskband -Name "Favorites" -Force -ErrorAction SilentlyContinue
         Remove-ItemProperty -Path $taskband -Name "FavoritesResolve" -Force -ErrorAction SilentlyContinue
     }
 
-    Write-Log "Taskbar cleaned (Chat, Task View, Search, Widgets, Copilot hidden)" "SUCCESS"
+    # Restart Explorer to apply changes
+    Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
+    Start-Sleep -Seconds 2
+    Start-Process explorer
+
+    Write-Log "Taskbar cleaned (pins removed, Chat/Task View/Search/Widgets/Copilot hidden)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not clean taskbar: $($_.Exception.Message)" "ERROR"
