@@ -999,7 +999,24 @@ try {
     $failCount++
 }
 
-# Step 23: Remove bloatware apps (reduces clutter for NVDA screen reader users)
+# Step 23: Generate battery health report
+Write-Log "Step 23: Generating battery health report..." "INFO"
+
+try {
+    $batteryReport = "C:\LabTools\battery-report.htm"
+    powercfg /batteryreport /output $batteryReport 2>&1 | Out-Null
+    if (Test-Path $batteryReport) {
+        Write-Log "Battery report saved to $batteryReport" "SUCCESS"
+    } else {
+        Write-Log "Battery report generated (check C:\LabTools\)" "SUCCESS"
+    }
+    $successCount++
+} catch {
+    Write-Log "Could not generate battery report: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 24: Remove bloatware apps (reduces clutter for NVDA screen reader users)
 Write-Log "Step 23: Removing bloatware apps..." "INFO"
 
 try {
@@ -1056,8 +1073,8 @@ try {
     $failCount++
 }
 
-# Step 24: Remove OneDrive (offline machines, nag popups confuse NVDA)
-Write-Log "Step 24: Removing OneDrive..." "INFO"
+# Step 25: Remove OneDrive (offline machines, nag popups confuse NVDA)
+Write-Log "Step 25: Removing OneDrive..." "INFO"
 
 try {
     # Stop OneDrive process
@@ -1104,8 +1121,8 @@ try {
     $failCount++
 }
 
-# Step 25: Disable Widgets, Cortana, and Search Highlights
-Write-Log "Step 25: Disabling Widgets, Cortana, and Search Highlights..." "INFO"
+# Step 26: Disable Widgets, Cortana, and Search Highlights
+Write-Log "Step 26: Disabling Widgets, Cortana, and Search Highlights..." "INFO"
 
 try {
     # Disable Widgets
@@ -1135,8 +1152,8 @@ try {
     $failCount++
 }
 
-# Step 26: Neuter Microsoft Edge (remove shortcuts, disable auto-start)
-Write-Log "Step 26: Neutering Microsoft Edge..." "INFO"
+# Step 27: Neuter Microsoft Edge (remove shortcuts, disable auto-start)
+Write-Log "Step 27: Neutering Microsoft Edge..." "INFO"
 
 try {
     # Remove Edge desktop shortcuts
@@ -1178,8 +1195,8 @@ try {
     $failCount++
 }
 
-# Step 27: Clean taskbar (remove clutter, keep only essentials)
-Write-Log "Step 27: Cleaning taskbar..." "INFO"
+# Step 28: Clean taskbar (remove clutter, keep only essentials)
+Write-Log "Step 28: Cleaning taskbar..." "INFO"
 
 try {
     $taskbarPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
@@ -1212,8 +1229,8 @@ try {
     $failCount++
 }
 
-# Step 28: Reduce telemetry (offline machines, no need to phone home)
-Write-Log "Step 28: Reducing telemetry..." "INFO"
+# Step 29: Reduce telemetry (offline machines, no need to phone home)
+Write-Log "Step 29: Reducing telemetry..." "INFO"
 
 try {
     # Set telemetry to Security level (minimum)
@@ -1248,8 +1265,8 @@ try {
     $failCount++
 }
 
-# Step 29: Additional UX cleanup (Game Bar, Snap Layouts, OOBE nag, etc.)
-Write-Log "Step 29: Additional UX cleanup..." "INFO"
+# Step 30: Additional UX cleanup (Game Bar, Snap Layouts, OOBE nag, etc.)
+Write-Log "Step 30: Additional UX cleanup..." "INFO"
 
 try {
     # Disable Xbox Game Bar (Win+G accidental activation confuses NVDA)
@@ -1330,6 +1347,7 @@ Write-Host "  Win Update    Disabled (offline)" -ForegroundColor White
 Write-Host "  Notifications Tips/suggestions disabled" -ForegroundColor White
 Write-Host "  Narrator      Shortcut disabled (NVDA only)" -ForegroundColor White
 Write-Host "  Power         No sleep on AC, no hibernate" -ForegroundColor White
+Write-Host "  Battery       Report saved to C:\LabTools\battery-report.htm" -ForegroundColor White
 Write-Host "  NVDA backup   Restore shortcut on desktop" -ForegroundColor White
 Write-Host "  Vi folders    Tai Lieu, Am Nhac, Truyen, Hoc Tap, Tro Choi" -ForegroundColor White
 Write-Host ""

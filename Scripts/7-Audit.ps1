@@ -235,6 +235,28 @@ if (Test-Path "C:\LabTools") {
     Add-Result "System" "LabTools Directory" "Present" "Missing" "FAIL"
 }
 
+# Generate and check battery report
+$batteryReport = "C:\LabTools\battery-report.htm"
+powercfg /batteryreport /output $batteryReport 2>&1 | Out-Null
+if (Test-Path $batteryReport) {
+    Add-Result "System" "Battery Report" "Generated" "C:\LabTools\battery-report.htm" "PASS"
+} else {
+    Add-Result "System" "Battery Report" "Generated" "Failed" "WARN"
+}
+
+# Check battery health from WMI
+try {
+    $designCap = (Get-CimInstance -Namespace root\wmi -ClassName BatteryStaticData -ErrorAction Stop).DesignedCapacity
+    $fullChargeCap = (Get-CimInstance -Namespace root\wmi -ClassName BatteryFullChargedCapacity -ErrorAction Stop).FullChargedCapacity
+    if ($designCap -gt 0) {
+        $healthPct = [math]::Round(($fullChargeCap / $designCap) * 100, 0)
+        $status = if ($healthPct -ge 60) { "PASS" } elseif ($healthPct -ge 40) { "WARN" } else { "FAIL" }
+        Add-Result "System" "Battery Health" ">= 60%" "${healthPct}%" $status
+    }
+} catch {
+    Add-Result "System" "Battery Health" "Readable" "Could not read" "WARN"
+}
+
 # Check NVDA backup exists
 if (Test-Path "C:\LabTools\nvda-backup\nvda.ini") {
     Add-Result "System" "NVDA Config Backup" "Present" "Present" "PASS"
@@ -351,6 +373,7 @@ if ($OutputJson) {
         tailscale_ip      = if ($tailscaleIP) { $tailscaleIP } else { "N/A" }
         tailscale_online  = $tailscaleOnline
         uptime_days       = $uptimeDays
+        battery_health    = if ($healthPct) { $healthPct } else { "N/A" }
         update_status     = $updateStatus
         last_update_check = $lastUpdateCheck
         last_backup       = $lastBackup
