@@ -44,8 +44,121 @@
         "Value": false,
         "Status": "locked"
       },
-      "toolkit.telemetry.enabled": {
+
+      "accessibility.force_disabled": {
+        "Value": 0,
+        "Status": "locked",
+        "Type": "number"
+      },
+      "accessibility.browsewithcaret": {
+        "Value": true,
+        "Status": "default"
+      },
+      "accessibility.browsewithcaret_shortcut.enabled": {
+        "Value": true,
+        "Status": "locked"
+      },
+      "accessibility.tabfocus": {
+        "Value": 7,
+        "Status": "locked",
+        "Type": "number"
+      },
+
+      "ui.prefersReducedMotion": {
+        "Value": 1,
+        "Status": "locked",
+        "Type": "number"
+      },
+      "ui.key.menuAccessKeyFocuses": {
         "Value": false,
+        "Status": "locked"
+      },
+
+      "media.autoplay.default": {
+        "Value": 5,
+        "Status": "locked",
+        "Type": "number"
+      },
+
+      "browser.download.useDownloadDir": {
+        "Value": true,
+        "Status": "locked"
+      },
+      "browser.download.folderList": {
+        "Value": 1,
+        "Status": "locked",
+        "Type": "number"
+      },
+      "browser.download.always_ask_before_handling_new_types": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "browser.download.open_pdf_attachments_inline": {
+        "Value": true,
+        "Status": "locked"
+      },
+      "browser.download.manager.addToRecentDocs": {
+        "Value": false,
+        "Status": "locked"
+      },
+
+      "signon.autofillForms": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "signon.rememberSignons": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "browser.formfill.enable": {
+        "Value": false,
+        "Status": "locked"
+      },
+
+      "browser.tabs.warnOnClose": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "browser.link.open_newwindow": {
+        "Value": 3,
+        "Status": "locked",
+        "Type": "number"
+      },
+      "browser.link.open_newwindow.restriction": {
+        "Value": 0,
+        "Status": "locked",
+        "Type": "number"
+      },
+
+      "browser.startup.page": {
+        "Value": 1,
+        "Status": "locked",
+        "Type": "number"
+      },
+      "browser.sessionstore.resume_from_crash": {
+        "Value": false,
+        "Status": "locked"
+      },
+
+      "privacy.trackingprotection.enabled": {
+        "Value": true,
+        "Status": "locked"
+      },
+      "privacy.trackingprotection.socialtracking.enabled": {
+        "Value": true,
+        "Status": "locked"
+      },
+      "dom.popup_maximum": {
+        "Value": 2,
+        "Status": "locked",
+        "Type": "number"
+      },
+      "network.prefetch-next": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "network.dns.disablePrefetch": {
+        "Value": true,
         "Status": "locked"
       }
     }
