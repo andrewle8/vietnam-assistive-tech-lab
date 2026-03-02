@@ -1330,6 +1330,148 @@ try {
     $failCount++
 }
 
+# Step 31: Deploy VLC accessibility config (audio-only mode, NVDA-friendly)
+Write-Log "Step 31: Deploying VLC accessibility config..." "INFO"
+
+try {
+    $studentProfile = "C:\Users\Student"
+    $currentProfile = $env:USERPROFILE
+    $profileBase = if (Test-Path $studentProfile) { $studentProfile } else { $currentProfile }
+
+    $vlcConfigDir = Join-Path $profileBase "AppData\Roaming\vlc"
+    if (-not (Test-Path $vlcConfigDir)) {
+        New-Item -Path $vlcConfigDir -ItemType Directory -Force | Out-Null
+    }
+
+    $vlcSource = Join-Path (Split-Path -Parent $PSScriptRoot) "Config\vlc-config\vlcrc"
+    if (Test-Path $vlcSource) {
+        Copy-Item -Path $vlcSource -Destination "$vlcConfigDir\vlcrc" -Force
+        Write-Log "VLC config deployed to $vlcConfigDir (audio-only, NVDA-friendly)" "SUCCESS"
+        $successCount++
+    } else {
+        Write-Log "VLC config not found at $vlcSource" "ERROR"
+        $failCount++
+    }
+} catch {
+    Write-Log "Could not deploy VLC config: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 32: Deploy Audacity accessibility config (MME audio, no splash, beep on completion)
+Write-Log "Step 32: Deploying Audacity accessibility config..." "INFO"
+
+try {
+    $profileBase = if (Test-Path "C:\Users\Student") { "C:\Users\Student" } else { $env:USERPROFILE }
+
+    $audacityConfigDir = Join-Path $profileBase "AppData\Roaming\audacity"
+    if (-not (Test-Path $audacityConfigDir)) {
+        New-Item -Path $audacityConfigDir -ItemType Directory -Force | Out-Null
+    }
+
+    $audacitySource = Join-Path (Split-Path -Parent $PSScriptRoot) "Config\audacity-config\audacity.cfg"
+    if (Test-Path $audacitySource) {
+        Copy-Item -Path $audacitySource -Destination "$audacityConfigDir\audacity.cfg" -Force
+        Write-Log "Audacity config deployed to $audacityConfigDir (MME host, blind-friendly)" "SUCCESS"
+        $successCount++
+    } else {
+        Write-Log "Audacity config not found at $audacitySource" "ERROR"
+        $failCount++
+    }
+} catch {
+    Write-Log "Could not deploy Audacity config: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 33: Deploy SumatraPDF accessibility config (continuous scroll, system colors)
+Write-Log "Step 33: Deploying SumatraPDF accessibility config..." "INFO"
+
+try {
+    $profileBase = if (Test-Path "C:\Users\Student") { "C:\Users\Student" } else { $env:USERPROFILE }
+
+    $sumatraConfigDir = Join-Path $profileBase "AppData\Local\SumatraPDF"
+    if (-not (Test-Path $sumatraConfigDir)) {
+        New-Item -Path $sumatraConfigDir -ItemType Directory -Force | Out-Null
+    }
+
+    $sumatraSource = Join-Path (Split-Path -Parent $PSScriptRoot) "Config\sumatrapdf-config\SumatraPDF-settings.txt"
+    if (Test-Path $sumatraSource) {
+        Copy-Item -Path $sumatraSource -Destination "$sumatraConfigDir\SumatraPDF-settings.txt" -Force
+        Write-Log "SumatraPDF config deployed to $sumatraConfigDir (continuous, fit-width)" "SUCCESS"
+        $successCount++
+    } else {
+        Write-Log "SumatraPDF config not found at $sumatraSource" "ERROR"
+        $failCount++
+    }
+} catch {
+    Write-Log "Could not deploy SumatraPDF config: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 34: Deploy Kiwix accessibility config (130% zoom, reopen tabs)
+Write-Log "Step 34: Deploying Kiwix accessibility config..." "INFO"
+
+try {
+    $profileBase = if (Test-Path "C:\Users\Student") { "C:\Users\Student" } else { $env:USERPROFILE }
+
+    $kiwixConfigDir = Join-Path $profileBase "AppData\Local\kiwix-desktop"
+    if (-not (Test-Path $kiwixConfigDir)) {
+        New-Item -Path $kiwixConfigDir -ItemType Directory -Force | Out-Null
+    }
+
+    $kiwixSource = Join-Path (Split-Path -Parent $PSScriptRoot) "Config\kiwix-config\Kiwix-desktop.conf"
+    if (Test-Path $kiwixSource) {
+        Copy-Item -Path $kiwixSource -Destination "$kiwixConfigDir\Kiwix-desktop.conf" -Force
+        Write-Log "Kiwix config deployed to $kiwixConfigDir (130% zoom)" "SUCCESS"
+        $successCount++
+    } else {
+        Write-Log "Kiwix config not found at $kiwixSource" "ERROR"
+        $failCount++
+    }
+} catch {
+    Write-Log "Could not deploy Kiwix config: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 35: Deploy GoldenDict accessibility config (150% zoom, large article font)
+Write-Log "Step 35: Deploying GoldenDict accessibility config..." "INFO"
+
+try {
+    $profileBase = if (Test-Path "C:\Users\Student") { "C:\Users\Student" } else { $env:USERPROFILE }
+
+    $gdConfigDir = Join-Path $profileBase "AppData\Roaming\GoldenDict"
+    $gdStylesDir = Join-Path $gdConfigDir "styles"
+    if (-not (Test-Path $gdStylesDir)) {
+        New-Item -Path $gdStylesDir -ItemType Directory -Force | Out-Null
+    }
+
+    $gdConfigSource = Join-Path (Split-Path -Parent $PSScriptRoot) "Config\goldendict-config\config"
+    $gdCssSource = Join-Path (Split-Path -Parent $PSScriptRoot) "Config\goldendict-config\styles\article-style.css"
+
+    $deployed = 0
+    if (Test-Path $gdConfigSource) {
+        Copy-Item -Path $gdConfigSource -Destination "$gdConfigDir\config" -Force
+        $deployed++
+    }
+    if (Test-Path $gdCssSource) {
+        Copy-Item -Path $gdCssSource -Destination "$gdStylesDir\article-style.css" -Force
+        $deployed++
+    }
+
+    if ($deployed -eq 2) {
+        Write-Log "GoldenDict config + CSS deployed to $gdConfigDir (150% zoom, 18px font)" "SUCCESS"
+        $successCount++
+    } elseif ($deployed -gt 0) {
+        Write-Log "GoldenDict partially deployed ($deployed/2 files)" "WARNING"
+        $successCount++
+    } else {
+        Write-Log "GoldenDict config files not found" "ERROR"
+        $failCount++
+    }
+} catch {
+    Write-Log "Could not deploy GoldenDict config: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
 # Summary
 Write-Host "`n========================================" -ForegroundColor Green
 Write-Host "Loaner Laptop Configuration Complete!" -ForegroundColor Green
@@ -1351,7 +1493,12 @@ Write-Host "  High Contrast Win+Left Alt+Print Screen" -ForegroundColor White
 Write-Host "  Calculator   Desktop shortcut" -ForegroundColor White
 Write-Host ""
 Write-Host "Safety & Hardening:" -ForegroundColor White
-Write-Host "  Firefox       Policies deployed (no updates, Vietnamese, no PiP)" -ForegroundColor White
+Write-Host "  Firefox       Policies deployed (no updates, Vietnamese, no PiP, accessibility)" -ForegroundColor White
+Write-Host "  VLC           Audio-only, NVDA-friendly, volume cap 100%" -ForegroundColor White
+Write-Host "  Audacity      MME audio host, no splash, beep on completion" -ForegroundColor White
+Write-Host "  SumatraPDF    Continuous scroll, fit-width, system colors" -ForegroundColor White
+Write-Host "  Kiwix         130% zoom, reopen last tab" -ForegroundColor White
+Write-Host "  GoldenDict    150% zoom, 18px article font, UI Automation" -ForegroundColor White
 Write-Host "  Sticky Keys   Popup disabled (Shift x5)" -ForegroundColor White
 Write-Host "  Filter Keys   Popup disabled (hold key)" -ForegroundColor White
 Write-Host "  Toggle Keys   Beep enabled (Caps/Num/Scroll Lock)" -ForegroundColor White
