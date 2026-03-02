@@ -13,6 +13,9 @@ Installers/**/level*
 Installers/**/mainData
 Installers/**/mono.dll
 
+# Ebooks (copyrighted accessible textbooks from sachtiepcan.vn - requires approved account)
+Installers/Ebooks/**/*.epub
+
 # LEAP Games (downloaded separately - ~450 MB)
 Installers/Educational/TicTacToe/
 Installers/Educational/Tennis/
