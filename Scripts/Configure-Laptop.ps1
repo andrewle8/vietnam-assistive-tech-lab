@@ -999,6 +999,307 @@ try {
     $failCount++
 }
 
+# Step 23: Remove bloatware apps (reduces clutter for NVDA screen reader users)
+Write-Log "Step 23: Removing bloatware apps..." "INFO"
+
+try {
+    $bloatPackages = @(
+        "Microsoft.BingNews"
+        "Microsoft.BingWeather"
+        "Microsoft.GamingApp"
+        "Microsoft.Xbox.TCUI"
+        "Microsoft.XboxGameOverlay"
+        "Microsoft.XboxGamingOverlay"
+        "Microsoft.XboxSpeechToTextOverlay"
+        "Microsoft.XboxIdentityProvider"
+        "Microsoft.GetHelp"
+        "Microsoft.Getstarted"
+        "Microsoft.MicrosoftOfficeHub"
+        "Microsoft.MicrosoftSolitaireCollection"
+        "Microsoft.People"
+        "Microsoft.Todos"
+        "Microsoft.PowerAutomateDesktop"
+        "Microsoft.WindowsFeedbackHub"
+        "Microsoft.WindowsMaps"
+        "Microsoft.YourPhone"
+        "MicrosoftCorporationII.MicrosoftFamily"
+        "Microsoft.ZuneMusic"
+        "Microsoft.ZuneVideo"
+        "Microsoft.549981C3F5F10"
+        "Clipchamp.Clipchamp"
+        "MicrosoftTeams"
+        "Microsoft.MicrosoftStickyNotes"
+        "Microsoft.WindowsAlarms"
+        "microsoft.windowscommunicationsapps"
+        "Microsoft.WindowsSoundRecorder"
+        "Microsoft.3DBuilder"
+        "Microsoft.Microsoft3DViewer"
+        "Microsoft.Paint3D"
+    )
+
+    $removedCount = 0
+    foreach ($pkg in $bloatPackages) {
+        # Remove for all users
+        Get-AppxPackage -Name $pkg -AllUsers -ErrorAction SilentlyContinue |
+            Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue
+        # Remove provisioned (prevents reinstall for new users)
+        Get-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue |
+            Where-Object DisplayName -eq $pkg |
+            Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue
+        $removedCount++
+    }
+
+    Write-Log "Bloatware removal complete ($removedCount packages processed)" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not remove bloatware: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 24: Remove OneDrive (offline machines, nag popups confuse NVDA)
+Write-Log "Step 24: Removing OneDrive..." "INFO"
+
+try {
+    # Stop OneDrive process
+    Stop-Process -Name "OneDrive" -Force -ErrorAction SilentlyContinue
+    Start-Sleep -Seconds 2
+
+    # Uninstall OneDrive (try 64-bit path first, then 32-bit)
+    $oneDriveSetup = "$env:SystemRoot\System32\OneDriveSetup.exe"
+    if (-not (Test-Path $oneDriveSetup)) {
+        $oneDriveSetup = "$env:SystemRoot\SysWOW64\OneDriveSetup.exe"
+    }
+    if (Test-Path $oneDriveSetup) {
+        Start-Process -FilePath $oneDriveSetup -ArgumentList "/uninstall" -Wait -NoNewWindow
+        Write-Log "OneDrive uninstalled" "INFO"
+    }
+
+    # Remove leftover folders
+    $oneDriveFolders = @(
+        "$env:USERPROFILE\OneDrive"
+        "$env:LOCALAPPDATA\Microsoft\OneDrive"
+        "$env:PROGRAMDATA\Microsoft OneDrive"
+        "C:\OneDriveTemp"
+    )
+    foreach ($folder in $oneDriveFolders) {
+        if (Test-Path $folder) {
+            Remove-Item -Path $folder -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    # Remove OneDrive from Explorer sidebar
+    $oneDrivePolicy = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive"
+    if (-not (Test-Path $oneDrivePolicy)) { New-Item -Path $oneDrivePolicy -Force | Out-Null }
+    Set-ItemProperty -Path $oneDrivePolicy -Name "DisableFileSyncNGSC" -Value 1 -Force
+
+    # Remove scheduled tasks
+    Get-ScheduledTask -TaskPath '\' -ErrorAction SilentlyContinue |
+        Where-Object { $_.TaskName -match 'OneDrive' } |
+        Unregister-ScheduledTask -Confirm:$false -ErrorAction SilentlyContinue
+
+    Write-Log "OneDrive removed and disabled" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not remove OneDrive: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 25: Disable Widgets, Cortana, and Search Highlights
+Write-Log "Step 25: Disabling Widgets, Cortana, and Search Highlights..." "INFO"
+
+try {
+    # Disable Widgets
+    $dshPath = "HKLM:\SOFTWARE\Policies\Microsoft\Dsh"
+    if (-not (Test-Path $dshPath)) { New-Item -Path $dshPath -Force | Out-Null }
+    Set-ItemProperty -Path $dshPath -Name "AllowNewsAndInterests" -Value 0 -Force
+
+    # Disable Cortana
+    $searchPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search"
+    if (-not (Test-Path $searchPath)) { New-Item -Path $searchPath -Force | Out-Null }
+    Set-ItemProperty -Path $searchPath -Name "AllowCortana" -Value 0 -Force
+
+    # Disable Search Highlights (visual clutter in Start menu)
+    $searchSettings = "HKCU:\Software\Microsoft\Windows\CurrentVersion\SearchSettings"
+    if (-not (Test-Path $searchSettings)) { New-Item -Path $searchSettings -Force | Out-Null }
+    Set-ItemProperty -Path $searchSettings -Name "IsDynamicSearchBoxEnabled" -Value 0 -Force
+
+    # Disable web search in Start menu
+    $explorerPolicies = "HKCU:\Software\Policies\Microsoft\Windows\Explorer"
+    if (-not (Test-Path $explorerPolicies)) { New-Item -Path $explorerPolicies -Force | Out-Null }
+    Set-ItemProperty -Path $explorerPolicies -Name "DisableSearchBoxSuggestions" -Value 1 -Force
+
+    Write-Log "Widgets, Cortana, and Search Highlights disabled" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not disable Widgets/Cortana/Search: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 26: Neuter Microsoft Edge (remove shortcuts, disable auto-start)
+Write-Log "Step 26: Neutering Microsoft Edge..." "INFO"
+
+try {
+    # Remove Edge desktop shortcuts
+    $desktopPaths = @(
+        [Environment]::GetFolderPath("CommonDesktopDirectory")
+        [Environment]::GetFolderPath("Desktop")
+    )
+    foreach ($desktop in $desktopPaths) {
+        $edgeShortcut = Join-Path $desktop "Microsoft Edge.lnk"
+        if (Test-Path $edgeShortcut) {
+            Remove-Item -Path $edgeShortcut -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    # Disable Edge first-run experience and background behavior
+    $edgePolicies = "HKLM:\SOFTWARE\Policies\Microsoft\Edge"
+    if (-not (Test-Path $edgePolicies)) { New-Item -Path $edgePolicies -Force | Out-Null }
+    Set-ItemProperty -Path $edgePolicies -Name "HideFirstRunExperience" -Value 1 -Force
+    Set-ItemProperty -Path $edgePolicies -Name "StartupBoostEnabled" -Value 0 -Force
+    Set-ItemProperty -Path $edgePolicies -Name "BackgroundModeEnabled" -Value 0 -Force
+    Set-ItemProperty -Path $edgePolicies -Name "ComponentUpdatesEnabled" -Value 0 -Force
+
+    # Prevent Edge from stealing default browser
+    Set-ItemProperty -Path $edgePolicies -Name "DefaultBrowserSettingEnabled" -Value 0 -Force
+    Set-ItemProperty -Path $edgePolicies -Name "DefaultBrowserSettingsCampaignEnabled" -Value 0 -Force
+
+    # Remove Edge from startup (wildcards don't work in Remove-ItemProperty, so enumerate first)
+    Get-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -ErrorAction SilentlyContinue |
+        Select-Object -ExpandProperty Property |
+        Where-Object { $_ -like "MicrosoftEdgeAutoLaunch*" } |
+        ForEach-Object {
+            Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name $_ -Force -ErrorAction SilentlyContinue
+        }
+
+    Write-Log "Microsoft Edge neutered (shortcuts removed, auto-start disabled)" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not neuter Microsoft Edge: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 27: Clean taskbar (remove clutter, keep only essentials)
+Write-Log "Step 27: Cleaning taskbar..." "INFO"
+
+try {
+    $taskbarPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+
+    # Hide Chat icon (Teams consumer)
+    Set-ItemProperty -Path $taskbarPath -Name "TaskbarMn" -Value 0 -Force
+    # Hide Task View button
+    Set-ItemProperty -Path $taskbarPath -Name "ShowTaskViewButton" -Value 0 -Force
+    # Hide Widgets button
+    Set-ItemProperty -Path $taskbarPath -Name "TaskbarDa" -Value 0 -Force
+    # Hide Copilot button (Win11 23H2+)
+    Set-ItemProperty -Path $taskbarPath -Name "ShowCopilotButton" -Value 0 -Force -ErrorAction SilentlyContinue
+
+    # Hide Search box from taskbar
+    $searchRegPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search"
+    if (-not (Test-Path $searchRegPath)) { New-Item -Path $searchRegPath -Force | Out-Null }
+    Set-ItemProperty -Path $searchRegPath -Name "SearchboxTaskbarMode" -Value 0 -Force
+
+    # Clear pinned taskbar items
+    $taskband = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband"
+    if (Test-Path $taskband) {
+        Remove-ItemProperty -Path $taskband -Name "Favorites" -Force -ErrorAction SilentlyContinue
+        Remove-ItemProperty -Path $taskband -Name "FavoritesResolve" -Force -ErrorAction SilentlyContinue
+    }
+
+    Write-Log "Taskbar cleaned (Chat, Task View, Search, Widgets, Copilot hidden)" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not clean taskbar: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 28: Reduce telemetry (offline machines, no need to phone home)
+Write-Log "Step 28: Reducing telemetry..." "INFO"
+
+try {
+    # Set telemetry to Security level (minimum)
+    $dataCollection = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection"
+    if (-not (Test-Path $dataCollection)) { New-Item -Path $dataCollection -Force | Out-Null }
+    Set-ItemProperty -Path $dataCollection -Name "AllowTelemetry" -Value 0 -Force
+
+    # Disable advertising ID
+    $adInfo = "HKCU:\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo"
+    if (-not (Test-Path $adInfo)) { New-Item -Path $adInfo -Force | Out-Null }
+    Set-ItemProperty -Path $adInfo -Name "Enabled" -Value 0 -Force
+
+    # Disable activity history
+    $systemPolicies = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System"
+    if (-not (Test-Path $systemPolicies)) { New-Item -Path $systemPolicies -Force | Out-Null }
+    Set-ItemProperty -Path $systemPolicies -Name "EnableActivityFeed" -Value 0 -Force
+    Set-ItemProperty -Path $systemPolicies -Name "PublishUserActivities" -Value 0 -Force
+    Set-ItemProperty -Path $systemPolicies -Name "UploadUserActivities" -Value 0 -Force
+
+    # Disable Connected User Experiences and Telemetry service
+    Set-Service -Name "DiagTrack" -StartupType Disabled -ErrorAction SilentlyContinue
+    Stop-Service -Name "DiagTrack" -Force -ErrorAction SilentlyContinue
+
+    # Disable WAP Push Message Routing
+    Set-Service -Name "dmwappushservice" -StartupType Disabled -ErrorAction SilentlyContinue
+    Stop-Service -Name "dmwappushservice" -Force -ErrorAction SilentlyContinue
+
+    Write-Log "Telemetry reduced to minimum" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not reduce telemetry: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 29: Additional UX cleanup (Game Bar, Snap Layouts, OOBE nag, etc.)
+Write-Log "Step 29: Additional UX cleanup..." "INFO"
+
+try {
+    # Disable Xbox Game Bar (Win+G accidental activation confuses NVDA)
+    $gameBar = "HKCU:\Software\Microsoft\GameBar"
+    if (-not (Test-Path $gameBar)) { New-Item -Path $gameBar -Force | Out-Null }
+    Set-ItemProperty -Path $gameBar -Name "UseNexusForGameBarEnabled" -Value 0 -Force
+    $gameDVR = "HKCU:\System\GameConfigStore"
+    if (-not (Test-Path $gameDVR)) { New-Item -Path $gameDVR -Force | Out-Null }
+    Set-ItemProperty -Path $gameDVR -Name "GameDVR_Enabled" -Value 0 -Force
+    $gameDVRPolicy = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR"
+    if (-not (Test-Path $gameDVRPolicy)) { New-Item -Path $gameDVRPolicy -Force | Out-Null }
+    Set-ItemProperty -Path $gameDVRPolicy -Name "AllowGameDVR" -Value 0 -Force
+
+    # Disable Snap Layouts hover tooltip (unexpected NVDA reads on maximize button)
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "EnableSnapAssistFlyout" -Value 0 -Force
+
+    # Disable "Let's finish setting up your device" OOBE nag
+    $contentDelivery = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
+    $userProfileEngagement = "HKCU:\Software\Microsoft\Windows\CurrentVersion\UserProfileEngagement"
+    if (-not (Test-Path $userProfileEngagement)) { New-Item -Path $userProfileEngagement -Force | Out-Null }
+    Set-ItemProperty -Path $userProfileEngagement -Name "ScoobeSystemSettingEnabled" -Value 0 -Force
+
+    # Disable Start menu suggestions / promoted apps
+    if (Test-Path $contentDelivery) {
+        Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-338388Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-353694Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-353696Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $contentDelivery -Name "OemPreInstalledAppsEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $contentDelivery -Name "PreInstalledAppsEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $contentDelivery -Name "SilentInstalledAppsEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+    }
+
+    # Disable lock screen tips and trivia
+    if (Test-Path $contentDelivery) {
+        Set-ItemProperty -Path $contentDelivery -Name "RotatingLockScreenOverlayEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $contentDelivery -Name "RotatingLockScreenEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+    }
+
+    # Disable touch keyboard auto-show (physical keyboards only)
+    $touchKB = "HKCU:\Software\Microsoft\TabletTip\1.7"
+    if (-not (Test-Path $touchKB)) { New-Item -Path $touchKB -Force | Out-Null }
+    Set-ItemProperty -Path $touchKB -Name "TipbandDesiredVisibility" -Value 0 -Force
+
+    Write-Log "Additional UX cleanup complete (Game Bar, Snap Layouts, OOBE nag, Start suggestions, lock screen tips, touch keyboard)" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not complete UX cleanup: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
 # Summary
 Write-Host "`n========================================" -ForegroundColor Green
 Write-Host "Loaner Laptop Configuration Complete!" -ForegroundColor Green
@@ -1031,6 +1332,19 @@ Write-Host "  Narrator      Shortcut disabled (NVDA only)" -ForegroundColor Whit
 Write-Host "  Power         No sleep on AC, no hibernate" -ForegroundColor White
 Write-Host "  NVDA backup   Restore shortcut on desktop" -ForegroundColor White
 Write-Host "  Vi folders    Tai Lieu, Am Nhac, Truyen, Hoc Tap, Tro Choi" -ForegroundColor White
+Write-Host ""
+Write-Host "Debloat & Cleanup:" -ForegroundColor White
+Write-Host "  Bloatware     Removed (Xbox, News, Weather, Solitaire, Teams, etc.)" -ForegroundColor White
+Write-Host "  OneDrive      Removed" -ForegroundColor White
+Write-Host "  Widgets       Disabled" -ForegroundColor White
+Write-Host "  Cortana       Disabled" -ForegroundColor White
+Write-Host "  Edge          Neutered (shortcuts removed, no auto-start)" -ForegroundColor White
+Write-Host "  Taskbar       Cleaned (Chat, Task View, Search, Widgets, Copilot hidden)" -ForegroundColor White
+Write-Host "  Telemetry     Reduced to minimum" -ForegroundColor White
+Write-Host "  Game Bar      Disabled (Win+G)" -ForegroundColor White
+Write-Host "  Snap Layouts  Hover tooltip disabled" -ForegroundColor White
+Write-Host "  OOBE nag      'Finish setup' prompt disabled" -ForegroundColor White
+Write-Host "  Start menu    Suggestions/promoted apps disabled" -ForegroundColor White
 Write-Host ""
 Write-Host "Remote Management:" -ForegroundColor White
 Write-Host "  SSH server    Enabled (port 22, PowerShell default shell)" -ForegroundColor White
