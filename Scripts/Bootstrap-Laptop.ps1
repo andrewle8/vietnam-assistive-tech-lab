@@ -17,12 +17,10 @@ param(
 # ---- CONFIGURE THESE BEFORE USE ----
 $WifiSSID     = "YOUR_SSID_HERE"
 $WifiPassword = "YOUR_PASSWORD_HERE"
-$NASShare     = "\\AndrewServer\Data"
-$DriveLetter  = "Z"
 # -------------------------------------
 
 $hostname = "PC-{0:D2}" -f $PCNumber
-$totalSteps = 10
+$totalSteps = 9
 $currentStep = 0
 $stepResults = @{}
 
@@ -133,17 +131,6 @@ netsh advfirewall firewall set rule name="Windows Remote Management (HTTP-In)" n
 netsh advfirewall firewall set rule group="File and Printer Sharing" new enable=yes | Out-Null
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force -Scope LocalMachine
 Write-Host "      Firewall + execution policy configured" -ForegroundColor Green
-
-Step "Mapping NAS drive ($NASShare as ${DriveLetter}:)"
-if (Test-Path "${DriveLetter}:\") {
-    net use "${DriveLetter}:" /delete /yes 2>$null | Out-Null
-}
-net use "${DriveLetter}:" "$NASShare" /persistent:yes 2>$null
-if (Test-Path "${DriveLetter}:\") {
-    Write-Host "      ${DriveLetter}: mapped to $NASShare" -ForegroundColor Green
-} else {
-    Write-Host "      WARNING: Could not map ${DriveLetter}: drive. NAS may not be reachable." -ForegroundColor Red
-}
 
 # =============================================
 # Phase 2: Software Installation
@@ -294,7 +281,6 @@ Write-Host "  Hostname:      $hostname (effective after reboot)" -ForegroundColo
 Write-Host "  IP Address:    $currentIP" -ForegroundColor White
 Write-Host "  Tailscale IP:  $tailscaleIP" -ForegroundColor White
 Write-Host "  WinRM:         $winrmStatus" -ForegroundColor White
-Write-Host "  Drive Map:     ${DriveLetter}: -> $NASShare" -ForegroundColor White
 Write-Host ""
 Write-Host "  Office Suite:  Microsoft Office" -ForegroundColor White
 Write-Host "  Software:      $(if(-not $SkipInstall){'Installed + Verified'}else{'Skipped'})" -ForegroundColor White
