@@ -418,7 +418,7 @@ try {
     }
 
     # LEAP Games shortcuts (dynamic — depends on what games were installed)
-    $leapDir = "C:\LabTools\LEAPGames"
+    $leapDir = "C:\Games\LEAP"
     if (Test-Path $leapDir) {
         Get-ChildItem -Path $leapDir -Directory | ForEach-Object {
             $gameExe = Get-ChildItem -Path $_.FullName -Filter "*.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
@@ -1069,7 +1069,7 @@ try {
 }
 
 # Step 24: Remove bloatware apps (reduces clutter for NVDA screen reader users)
-Write-Log "Step 23: Removing bloatware apps..." "INFO"
+Write-Log "Step 24: Removing bloatware apps..." "INFO"
 
 try {
     $bloatPackages = @(
