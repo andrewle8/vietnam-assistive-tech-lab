@@ -295,17 +295,8 @@ Add-Type -AssemblyName PresentationFramework
     $toggleScriptPath = Join-Path $labToolsDir2 "toggle-language.ps1"
     Set-Content -Path $toggleScriptPath -Value $toggleScript -Force
 
-    # Create desktop shortcut
-    $publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
-    $WshShell = New-Object -ComObject WScript.Shell
-    $toggleShortcutPath = Join-Path $publicDesktop "Doi Ngon Ngu - Switch Language.lnk"
-    $toggleShortcut = $WshShell.CreateShortcut($toggleShortcutPath)
-    $toggleShortcut.TargetPath = "powershell.exe"
-    $toggleShortcut.Arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$toggleScriptPath`""
-    $toggleShortcut.Description = "Toggle between Vietnamese and English / Chuyển đổi giữa Tiếng Việt và Tiếng Anh"
-    $toggleShortcut.Save()
-
-    Write-Log "Language toggle shortcut created on desktop" "SUCCESS"
+    # Desktop shortcut is created in Step 6 (standardized desktop shortcuts)
+    Write-Log "Language toggle script created (shortcut added in Step 6)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not create language toggle: $($_.Exception.Message)" "ERROR"
@@ -342,22 +333,111 @@ try {
     $failCount++
 }
 
-# Step 6: Create Calculator desktop shortcut
-Write-Log "Step 6: Creating Calculator desktop shortcut..." "INFO"
+# Step 6: Clean desktop and create standardized shortcuts for all apps
+Write-Log "Step 6: Wiping desktop shortcuts and creating standardized set..." "INFO"
 
 try {
     $publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
-    $WshShell = New-Object -ComObject WScript.Shell
-    $calcShortcutPath = Join-Path $publicDesktop "Calculator.lnk"
-    $calcShortcut = $WshShell.CreateShortcut($calcShortcutPath)
-    $calcShortcut.TargetPath = "calc.exe"
-    $calcShortcut.Description = "Windows Calculator (accessible with NVDA)"
-    $calcShortcut.Save()
+    $userDesktop = [Environment]::GetFolderPath("Desktop")
 
-    Write-Log "Created Calculator shortcut on public desktop" "SUCCESS"
+    # Wipe ALL existing shortcuts from both desktops (clean slate)
+    foreach ($desktop in @($publicDesktop, $userDesktop)) {
+        Get-ChildItem -Path $desktop -Filter "*.lnk" -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
+    }
+    Write-Log "Cleared all existing desktop shortcuts" "INFO"
+
+    # Create standardized shortcuts for every student-facing app
+    $WshShell = New-Object -ComObject WScript.Shell
+    $shortcuts = @(
+        # --- Core accessibility ---
+        @{ Name = "NVDA"; Target = "C:\Program Files\NVDA\nvda.exe"; AltTarget = "C:\Program Files (x86)\NVDA\nvda.exe"; Desc = "NVDA Screen Reader" },
+        # --- Productivity ---
+        @{ Name = "Word"; Target = "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE"; Desc = "Microsoft Word" },
+        @{ Name = "Excel"; Target = "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE"; Desc = "Microsoft Excel" },
+        @{ Name = "PowerPoint"; Target = "C:\Program Files\Microsoft Office\root\Office16\POWERPNT.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\POWERPNT.EXE"; Desc = "Microsoft PowerPoint" },
+        # --- Web & Reading ---
+        @{ Name = "Firefox"; Target = "C:\Program Files\Mozilla Firefox\firefox.exe"; AltTarget = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"; Desc = "Firefox Web Browser" },
+        @{ Name = "Thorium Reader"; Target = "$env:LOCALAPPDATA\Programs\Thorium\Thorium.exe"; AltTarget = "C:\Program Files\Thorium\Thorium.exe"; Desc = "Thorium EPUB/DAISY Reader" },
+        @{ Name = "SumatraPDF"; Target = "C:\Program Files\SumatraPDF\SumatraPDF.exe"; AltTarget = "$env:LOCALAPPDATA\SumatraPDF\SumatraPDF.exe"; Desc = "SumatraPDF Reader" },
+        @{ Name = "Wikipedia (Offline)"; Target = "C:\Program Files\Kiwix\kiwix-desktop.exe"; Desc = "Kiwix - Offline Vietnamese Wikipedia" },
+        @{ Name = "Tu Dien - Dictionary"; Target = "C:\Program Files\GoldenDict\GoldenDict.exe"; AltTarget = "C:\Program Files (x86)\GoldenDict\GoldenDict.exe"; Desc = "GoldenDict - Offline Dictionary" },
+        # --- Media ---
+        @{ Name = "VLC Media Player"; Target = "C:\Program Files\VideoLAN\VLC\vlc.exe"; AltTarget = "C:\Program Files (x86)\VideoLAN\VLC\vlc.exe"; Desc = "VLC Media Player" },
+        @{ Name = "Audacity"; Target = "C:\Program Files\Audacity\Audacity.exe"; AltTarget = "C:\Program Files (x86)\Audacity\Audacity.exe"; Desc = "Audacity Audio Editor" },
+        # --- Education ---
+        @{ Name = "Sao Mai Typing Tutor"; Target = "C:\Program Files\SaoMai\SMTTypingTutor\SMTTypingTutor.exe"; AltTarget = "C:\Program Files (x86)\SaoMai\SMTTypingTutor\SMTTypingTutor.exe"; Desc = "Sao Mai Vietnamese Typing Tutor" },
+        @{ Name = "SM Readmate"; Target = "C:\Program Files\SaoMai\SMReadmate\SMReadmate.exe"; AltTarget = "C:\Program Files (x86)\SaoMai\SMReadmate\SMReadmate.exe"; Desc = "SM Readmate Accessible Reader" },
+        @{ Name = "Quorum Studio"; Target = "C:\Program Files\QuorumStudio\QuorumStudio.exe"; AltTarget = "C:\Program Files (x86)\QuorumStudio\QuorumStudio.exe"; Desc = "Quorum Studio - Accessible IDE" },
+        # --- Utilities ---
+        @{ Name = "Calculator"; Target = "calc.exe"; Desc = "Windows Calculator" },
+        @{ Name = "My USB"; Target = "explorer.exe"; Args = "shell:MyComputerFolder"; IconLocation = "%SystemRoot%\System32\imageres.dll,109"; Desc = "Open This PC to access your USB drive" },
+        # --- Lab tools ---
+        @{ Name = "Doi Ngon Ngu - Switch Language"; Target = "powershell.exe"; Args = "-NoProfile -ExecutionPolicy Bypass -File `"C:\LabTools\toggle-language.ps1`""; Desc = "Toggle Vietnamese/English" },
+        @{ Name = "Khoi Phuc NVDA - Restore NVDA"; Target = "powershell.exe"; Args = "-NoProfile -ExecutionPolicy Bypass -File `"C:\LabTools\restore-nvda.ps1`""; Desc = "Restore NVDA to default configuration" }
+    )
+
+    $createdCount = 0
+    foreach ($s in $shortcuts) {
+        # Resolve the target path (try primary, then alt)
+        $targetPath = $null
+        if ($s.Target -in @("calc.exe", "explorer.exe", "powershell.exe")) {
+            $targetPath = $s.Target
+        } elseif (Test-Path $s.Target) {
+            $targetPath = $s.Target
+        } elseif ($s.AltTarget -and (Test-Path $s.AltTarget)) {
+            $targetPath = $s.AltTarget
+        }
+
+        if (-not $targetPath) {
+            # Try wildcard search for apps with unknown exact exe names
+            $searchDirs = @($s.Target, $s.AltTarget) | Where-Object { $_ } | ForEach-Object { Split-Path $_ -Parent }
+            foreach ($dir in $searchDirs) {
+                if (Test-Path $dir) {
+                    $foundExe = Get-ChildItem -Path $dir -Filter "*.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
+                    if ($foundExe) { $targetPath = $foundExe.FullName; break }
+                }
+            }
+        }
+
+        if (-not $targetPath) {
+            Write-Log "Skipping shortcut '$($s.Name)' - executable not found" "ERROR"
+            continue
+        }
+
+        $lnkPath = Join-Path $publicDesktop "$($s.Name).lnk"
+        $shortcut = $WshShell.CreateShortcut($lnkPath)
+        $shortcut.TargetPath = $targetPath
+        if ($s.Args) { $shortcut.Arguments = $s.Args }
+        if ($s.IconLocation) { $shortcut.IconLocation = $s.IconLocation }
+        $shortcut.Description = $s.Desc
+        if ($targetPath -notin @("calc.exe", "explorer.exe", "powershell.exe")) {
+            $shortcut.WorkingDirectory = Split-Path $targetPath -Parent
+        }
+        $shortcut.Save()
+        $createdCount++
+    }
+
+    # LEAP Games shortcuts (dynamic — depends on what games were installed)
+    $leapDir = "C:\LabTools\LEAPGames"
+    if (Test-Path $leapDir) {
+        Get-ChildItem -Path $leapDir -Directory | ForEach-Object {
+            $gameExe = Get-ChildItem -Path $_.FullName -Filter "*.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
+            if ($gameExe) {
+                $gameLnk = Join-Path $publicDesktop "LEAP $($_.Name).lnk"
+                $gameShortcut = $WshShell.CreateShortcut($gameLnk)
+                $gameShortcut.TargetPath = $gameExe.FullName
+                $gameShortcut.WorkingDirectory = $_.FullName
+                $gameShortcut.Description = "LEAP Game - $($_.Name)"
+                $gameShortcut.Save()
+                $createdCount++
+            }
+        }
+    }
+
+    Write-Log "Created $createdCount desktop shortcuts (standardized for all PCs)" "SUCCESS"
     $successCount++
 } catch {
-    Write-Log "Could not create Calculator shortcut: $($_.Exception.Message)" "ERROR"
+    Write-Log "Could not set up desktop shortcuts: $($_.Exception.Message)" "ERROR"
     $failCount++
 }
 
@@ -431,26 +511,7 @@ public class NvdaController {
     $failCount++
 }
 
-# Step 8: Create "My USB" desktop shortcut
-Write-Log "Step 8: Creating 'My USB' desktop shortcut..." "INFO"
-
-try {
-    $publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
-    $WshShell = New-Object -ComObject WScript.Shell
-    $shortcutPath = Join-Path $publicDesktop "My USB.lnk"
-    $shortcut = $WshShell.CreateShortcut($shortcutPath)
-    $shortcut.TargetPath = "explorer.exe"
-    $shortcut.Arguments = "shell:MyComputerFolder"
-    $shortcut.Description = "Open This PC to access your USB drive"
-    $shortcut.IconLocation = "%SystemRoot%\System32\imageres.dll,109"
-    $shortcut.Save()
-
-    Write-Log "Created 'My USB' shortcut on public desktop" "SUCCESS"
-    $successCount++
-} catch {
-    Write-Log "Could not create desktop shortcut: $($_.Exception.Message)" "ERROR"
-    $failCount++
-}
+# Step 8: (Moved to Step 6 — desktop shortcuts are now created in one pass)
 
 # Step 9: Volume safety limit for children's hearing
 Write-Log "Step 9: Setting volume safety limit..." "INFO"
@@ -731,17 +792,8 @@ if (Test-Path $backupDir) {
     $restoreScriptPath = "C:\LabTools\restore-nvda.ps1"
     Set-Content -Path $restoreScriptPath -Value $restoreScript -Force
 
-    # Create desktop shortcut
-    $publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
-    $WshShell = New-Object -ComObject WScript.Shell
-    $restoreShortcutPath = Join-Path $publicDesktop "Khoi Phuc NVDA - Restore NVDA.lnk"
-    $restoreShortcut = $WshShell.CreateShortcut($restoreShortcutPath)
-    $restoreShortcut.TargetPath = "powershell.exe"
-    $restoreShortcut.Arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$restoreScriptPath`""
-    $restoreShortcut.Description = "Restore NVDA to default configuration / Khôi phục cài đặt NVDA"
-    $restoreShortcut.Save()
-
-    Write-Log "NVDA restore shortcut created on desktop" "SUCCESS"
+    # Desktop shortcut is created in Step 6 (standardized desktop shortcuts)
+    Write-Log "NVDA backup/restore script created (shortcut added in Step 6)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not create NVDA backup/restore: $($_.Exception.Message)" "ERROR"
@@ -1487,10 +1539,17 @@ Write-Host "  rclone.conf  $(if(Test-Path "$labToolsDir\rclone.conf"){"OK"}else{
 Write-Host "  backup-usb   $(if(Test-Path "$labToolsDir\backup-usb.ps1"){"OK"}else{"MISSING"})" -ForegroundColor $(if(Test-Path "$labToolsDir\backup-usb.ps1"){"Green"}else{"Red"})
 Write-Host "  welcome-audio $(if(Test-Path "C:\LabTools\welcome-audio.ps1"){"OK"}else{"MISSING"})" -ForegroundColor $(if(Test-Path "C:\LabTools\welcome-audio.ps1"){"Green"}else{"Red"})
 Write-Host ""
+Write-Host "Desktop:" -ForegroundColor White
+Write-Host "  Shortcuts     Standardized (wiped + recreated for all apps)" -ForegroundColor White
+Write-Host "  Apps          NVDA, Word, Excel, PowerPoint, Firefox, VLC, Audacity," -ForegroundColor White
+Write-Host "                Thorium, SumatraPDF, Kiwix, GoldenDict, Quorum Studio," -ForegroundColor White
+Write-Host "                Sao Mai Typing Tutor, SM Readmate, LEAP Games," -ForegroundColor White
+Write-Host "                Calculator, My USB, Language Toggle, NVDA Restore" -ForegroundColor White
+Write-Host "  Vi folders    Tai Lieu, Am Nhac, Truyen, Hoc Tap, Tro Choi" -ForegroundColor White
+Write-Host ""
 Write-Host "Accessibility:" -ForegroundColor White
 Write-Host "  Magnifier    Win+Plus (full-screen, 200%)" -ForegroundColor White
 Write-Host "  High Contrast Win+Left Alt+Print Screen" -ForegroundColor White
-Write-Host "  Calculator   Desktop shortcut" -ForegroundColor White
 Write-Host ""
 Write-Host "Safety & Hardening:" -ForegroundColor White
 Write-Host "  Firefox       Policies deployed (no updates, Vietnamese, no PiP, accessibility)" -ForegroundColor White
@@ -1508,8 +1567,7 @@ Write-Host "  Notifications Tips/suggestions disabled" -ForegroundColor White
 Write-Host "  Narrator      Shortcut disabled (NVDA only)" -ForegroundColor White
 Write-Host "  Power         No sleep on AC, no hibernate" -ForegroundColor White
 Write-Host "  Battery       Report saved to C:\LabTools\battery-report.htm" -ForegroundColor White
-Write-Host "  NVDA backup   Restore shortcut on desktop" -ForegroundColor White
-Write-Host "  Vi folders    Tai Lieu, Am Nhac, Truyen, Hoc Tap, Tro Choi" -ForegroundColor White
+Write-Host "  NVDA backup   Restore script at C:\LabTools\restore-nvda.ps1" -ForegroundColor White
 Write-Host ""
 Write-Host "Debloat & Cleanup:" -ForegroundColor White
 Write-Host "  Bloatware     Removed (Xbox, News, Weather, Solitaire, Teams, etc.)" -ForegroundColor White
