@@ -39,6 +39,15 @@
         "C:\\Program Files (x86)\\SaoMai\\TypingTutor\\*"
       ]
     },
+    "saomai_readmate": {
+      "version": "1.0.5",
+      "installer": "SMReadmate1.0.5-setup.exe",
+      "critical": false,
+      "paths": [
+        "C:\\Program Files\\SaoMai\\SMReadmate\\*",
+        "C:\\Program Files (x86)\\SaoMai\\SMReadmate\\*"
+      ]
+    },
     "msoffice": {
       "version": "Office 16 (2024/365)",
       "installer": "setup.exe",
