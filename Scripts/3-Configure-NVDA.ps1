@@ -126,7 +126,52 @@ if (Test-Path $addonsSourceDir) {
     Write-Log "To add VLC accessibility: download VLC.nvda-addon and place in Installers\NVDA\addons\" "INFO"
 }
 
-# Step 5: Install UniKey (Vietnamese keyboard input)
+# Step 5: Mirror VNVoice SAPI5 voices from 32-bit to 64-bit registry
+# VNVoice installs as 32-bit (WOW6432Node) but NVDA is 64-bit
+Write-Log "Mirroring VNVoice voices to 64-bit SAPI5 registry..." "INFO"
+
+$src32 = "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Speech\Voices\Tokens"
+$dst64 = "HKLM:\SOFTWARE\Microsoft\Speech\Voices\Tokens"
+
+if (Test-Path $src32) {
+    $saoMaiVoices = Get-ChildItem $src32 | Where-Object {
+        $attrs = Join-Path $_.PSPath "Attributes"
+        (Test-Path $attrs) -and ((Get-ItemProperty $attrs -EA SilentlyContinue).Vendor -eq "SaoMai")
+    }
+
+    foreach ($voice in $saoMaiVoices) {
+        $voiceName = $voice.PSChildName
+        $dstPath = Join-Path $dst64 $voiceName
+
+        if (-not (Test-Path $dstPath)) { New-Item -Path $dstPath -Force | Out-Null }
+        $srcProps = Get-ItemProperty $voice.PSPath
+        foreach ($prop in $srcProps.PSObject.Properties) {
+            if ($prop.Name -match "^PS") { continue }
+            Set-ItemProperty -Path $dstPath -Name $prop.Name -Value $prop.Value -Force
+        }
+
+        $srcAttr = Join-Path $voice.PSPath "Attributes"
+        $dstAttr = Join-Path $dstPath "Attributes"
+        if (Test-Path $srcAttr) {
+            if (-not (Test-Path $dstAttr)) { New-Item -Path $dstAttr -Force | Out-Null }
+            $attrProps = Get-ItemProperty $srcAttr
+            foreach ($prop in $attrProps.PSObject.Properties) {
+                if ($prop.Name -match "^PS") { continue }
+                Set-ItemProperty -Path $dstAttr -Name $prop.Name -Value $prop.Value -Force
+            }
+        }
+
+        Write-Log "Mirrored voice '$voiceName' to 64-bit registry" "SUCCESS"
+    }
+
+    if ($saoMaiVoices.Count -eq 0) {
+        Write-Log "No SaoMai voices found in 32-bit registry (VNVoice may not be installed)" "WARNING"
+    }
+} else {
+    Write-Log "32-bit SAPI5 registry path not found" "WARNING"
+}
+
+# Step 6: Install UniKey (Vietnamese keyboard input)
 Write-Log "Installing UniKey Vietnamese keyboard..." "INFO"
 
 $unikeySourceDir = Join-Path $usbRoot "Installers\Utilities\UniKey"
@@ -165,7 +210,7 @@ if (Test-Path $unikeySourceDir) {
     Write-Log "Vietnamese input: use Windows Settings > Language > Add Vietnamese" "INFO"
 }
 
-# Step 6: Enable NVDA on Windows login screen (secure desktop)
+# Step 7: Enable NVDA on Windows login screen (secure desktop)
 Write-Log "Enabling NVDA speech on Windows login screen..." "INFO"
 
 try {
@@ -198,7 +243,7 @@ try {
     Write-Log "Manually enable via NVDA > General Settings > Use NVDA during sign-in" "ERROR"
 }
 
-# Step 7: Start NVDA now (if not already running)
+# Step 8: Start NVDA now (if not already running)
 $nvdaProcess = Get-Process -Name "nvda" -ErrorAction SilentlyContinue
 
 if (-not $nvdaProcess) {

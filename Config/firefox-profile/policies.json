@@ -6,7 +6,7 @@
       "StartPage": "homepage"
     },
     "DisableAppUpdate": true,
-    "DontCheckDefaultBrowser": true,
+    "DontCheckDefaultBrowser": false,
     "OverrideFirstRunPage": "",
     "OverridePostUpdatePage": "",
     "PictureInPicture": {
@@ -37,8 +37,8 @@
         "Status": "locked"
       },
       "browser.shell.checkDefaultBrowser": {
-        "Value": false,
-        "Status": "locked"
+        "Value": true,
+        "Status": "default"
       },
       "datareporting.policy.dataSubmissionEnabled": {
         "Value": false,

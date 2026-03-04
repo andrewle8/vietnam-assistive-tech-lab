@@ -20,7 +20,7 @@ $WifiPassword = "YOUR_PASSWORD_HERE"
 # -------------------------------------
 
 $hostname = "PC-{0:D2}" -f $PCNumber
-$totalSteps = 9
+$totalSteps = 10
 $currentStep = 0
 $stepResults = @{}
 
@@ -239,8 +239,36 @@ if (Test-Path $tailscaleScript) {
 }
 
 # =============================================
-# Summary
+# Phase 4: Manual Steps
 # =============================================
+
+Write-Host "`n--- Phase 4: Manual Steps ---" -ForegroundColor White
+Write-Host ""
+
+# Set Firefox as default browser (Windows 11 blocks automation)
+$httpHandler = (Get-ItemProperty "HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice" -ErrorAction SilentlyContinue).ProgId
+if ($httpHandler -notmatch "Firefox") {
+    Write-Host "  Firefox is NOT the default browser." -ForegroundColor Yellow
+    Write-Host "  Opening Settings > Default Apps..." -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "  >>> Click Firefox, then click 'Set default' at the top <<<" -ForegroundColor White
+    Write-Host ""
+    Start-Process "ms-settings:defaultapps"
+    Read-Host "  Press Enter after setting Firefox as default (or to skip)"
+
+    # Re-check
+    $httpHandler = (Get-ItemProperty "HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice" -ErrorAction SilentlyContinue).ProgId
+    if ($httpHandler -match "Firefox") {
+        Write-Host "  Firefox set as default browser" -ForegroundColor Green
+        $stepResults["Firefox-Default"] = $true
+    } else {
+        Write-Host "  WARNING: Firefox still not default. Audit will flag this." -ForegroundColor Red
+        $stepResults["Firefox-Default"] = $false
+    }
+} else {
+    Write-Host "  Firefox is already the default browser" -ForegroundColor Green
+    $stepResults["Firefox-Default"] = $true
+}
 
 # =============================================
 # Step Results Summary

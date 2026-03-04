@@ -183,6 +183,8 @@ All checks should pass. Then manually verify:
 - NVDA is speaking Vietnamese
 - Each app opens correctly
 - UniKey Vietnamese keyboard input works
+- **Set Firefox as default browser:** Settings > Default Apps > Firefox > Set Default
+  (Windows 11 blocks automated default-browser changes; this must be done by hand on each PC)
 
 ### Pre-Setup Steps (Done Once on Your Setup PC, Not Per-Laptop)
 

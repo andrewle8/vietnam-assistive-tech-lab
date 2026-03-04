@@ -257,6 +257,14 @@ try {
     Add-Result "System" "Battery Health" "Readable" "Could not read" "WARN"
 }
 
+# Check Firefox is default browser
+$httpHandler = (Get-ItemProperty "HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice" -ErrorAction SilentlyContinue).ProgId
+if ($httpHandler -match "Firefox") {
+    Add-Result "System" "Default Browser" "Firefox" "Firefox" "PASS"
+} else {
+    Add-Result "System" "Default Browser" "Firefox" $httpHandler "FAIL"
+}
+
 # Check NVDA backup exists
 if (Test-Path "C:\LabTools\nvda-backup\nvda.ini") {
     Add-Result "System" "NVDA Config Backup" "Present" "Present" "PASS"
