@@ -55,6 +55,7 @@ Config/rclone/rclone.conf
 
 # IDE and tool configurations
 .claude/
+CLAUDE.md
 
 # Temporary files
 *.tmp

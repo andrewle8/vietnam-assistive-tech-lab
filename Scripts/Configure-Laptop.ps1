@@ -333,8 +333,8 @@ try {
     $failCount++
 }
 
-# Step 6: Clean desktop and create standardized shortcuts for all apps
-Write-Log "Step 6: Wiping desktop shortcuts and creating standardized set..." "INFO"
+# Step 6: Clean desktop and create numbered shortcuts sorted for blind navigation
+Write-Log "Step 6: Wiping desktop shortcuts and creating numbered set for screen reader navigation..." "INFO"
 
 try {
     $publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
@@ -346,34 +346,49 @@ try {
     }
     Write-Log "Cleared all existing desktop shortcuts" "INFO"
 
-    # Create standardized shortcuts for every student-facing app
+    # Disable Windows Spotlight "Learn about this picture" overlay (distracting for screen readers)
+    $spotlightPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\DesktopSpotlight"
+    if (-not (Test-Path $spotlightPath)) { New-Item -Path $spotlightPath -Force | Out-Null }
+    Set-ItemProperty -Path $spotlightPath -Name "Enabled" -Value 0
+    $cdmPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
+    if (Test-Path $cdmPath) {
+        Set-ItemProperty -Path $cdmPath -Name "SubscribedContent-338387Enabled" -Value 0 -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $cdmPath -Name "RotatingLockScreenOverlayEnabled" -Value 0 -ErrorAction SilentlyContinue
+    }
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Wallpapers" -Name "BackgroundType" -Value 1 -ErrorAction SilentlyContinue
+    Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name Wallpaper -Value "" -ErrorAction SilentlyContinue
+    Write-Log "Disabled Windows Spotlight desktop overlay" "INFO"
+
+    # Number-prefixed shortcuts so alphabetical sort = logical navigation order.
+    # Screen reader users arrow through the desktop; this guarantees a consistent,
+    # grouped sequence: accessibility > productivity > reading > media > education > games > utilities > lab tools.
     $WshShell = New-Object -ComObject WScript.Shell
     $shortcuts = @(
-        # --- Core accessibility ---
-        @{ Name = "NVDA"; Target = "C:\Program Files\NVDA\nvda.exe"; AltTarget = "C:\Program Files (x86)\NVDA\nvda.exe"; Desc = "NVDA Screen Reader" },
-        # --- Productivity ---
-        @{ Name = "Word"; Target = "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE"; Desc = "Microsoft Word" },
-        @{ Name = "Excel"; Target = "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE"; Desc = "Microsoft Excel" },
-        @{ Name = "PowerPoint"; Target = "C:\Program Files\Microsoft Office\root\Office16\POWERPNT.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\POWERPNT.EXE"; Desc = "Microsoft PowerPoint" },
-        # --- Web & Reading ---
-        @{ Name = "Firefox"; Target = "C:\Program Files\Mozilla Firefox\firefox.exe"; AltTarget = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"; Desc = "Firefox Web Browser" },
-        @{ Name = "Thorium Reader"; Target = "$env:LOCALAPPDATA\Programs\Thorium\Thorium.exe"; AltTarget = "C:\Program Files\Thorium\Thorium.exe"; Desc = "Thorium EPUB/DAISY Reader" },
-        @{ Name = "SumatraPDF"; Target = "C:\Program Files\SumatraPDF\SumatraPDF.exe"; AltTarget = "$env:LOCALAPPDATA\SumatraPDF\SumatraPDF.exe"; Desc = "SumatraPDF Reader" },
-        @{ Name = "Wikipedia (Offline)"; Target = "C:\Program Files\Kiwix\kiwix-desktop.exe"; Desc = "Kiwix - Offline Vietnamese Wikipedia" },
-        @{ Name = "Tu Dien - Dictionary"; Target = "C:\Program Files\GoldenDict\GoldenDict.exe"; AltTarget = "C:\Program Files (x86)\GoldenDict\GoldenDict.exe"; Desc = "GoldenDict - Offline Dictionary" },
-        # --- Media ---
-        @{ Name = "VLC Media Player"; Target = "C:\Program Files\VideoLAN\VLC\vlc.exe"; AltTarget = "C:\Program Files (x86)\VideoLAN\VLC\vlc.exe"; Desc = "VLC Media Player" },
-        @{ Name = "Audacity"; Target = "C:\Program Files\Audacity\Audacity.exe"; AltTarget = "C:\Program Files (x86)\Audacity\Audacity.exe"; Desc = "Audacity Audio Editor" },
-        # --- Education ---
-        @{ Name = "Sao Mai Typing Tutor"; Target = "C:\Program Files (x86)\SaoMai\SMTT\SMTT.exe"; AltTarget = "C:\Program Files\SaoMai\SMTT\SMTT.exe"; Desc = "Sao Mai Vietnamese Typing Tutor" },
-        @{ Name = "SM Readmate"; Target = "C:\Program Files\SaoMai\sm_readmate\sm_readmate.exe"; AltTarget = "C:\Program Files (x86)\SaoMai\sm_readmate\sm_readmate.exe"; Desc = "SM Readmate Accessible Reader" },
-        @{ Name = "Quorum Studio"; Target = "C:\Program Files\QuorumStudio\QuorumStudio.exe"; AltTarget = "C:\Program Files (x86)\QuorumStudio\QuorumStudio.exe"; Desc = "Quorum Studio - Accessible IDE" },
-        # --- Utilities ---
-        @{ Name = "Calculator"; Target = "calc.exe"; Desc = "Windows Calculator" },
-        @{ Name = "My USB"; Target = "explorer.exe"; Args = "shell:MyComputerFolder"; IconLocation = "%SystemRoot%\System32\imageres.dll,109"; Desc = "Open This PC to access your USB drive" },
-        # --- Lab tools ---
-        @{ Name = "Doi Ngon Ngu - Switch Language"; Target = "powershell.exe"; Args = "-NoProfile -ExecutionPolicy Bypass -File `"C:\LabTools\toggle-language.ps1`""; Desc = "Toggle Vietnamese/English" },
-        @{ Name = "Khoi Phuc NVDA - Restore NVDA"; Target = "powershell.exe"; Args = "-NoProfile -ExecutionPolicy Bypass -File `"C:\LabTools\restore-nvda.ps1`""; Desc = "Restore NVDA to default configuration" }
+        # --- 01 Core accessibility ---
+        @{ Name = "01 NVDA"; Target = "C:\Program Files\NVDA\nvda.exe"; AltTarget = "C:\Program Files (x86)\NVDA\nvda.exe"; Desc = "NVDA Screen Reader" },
+        # --- 02-04 Productivity ---
+        @{ Name = "02 Word"; Target = "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE"; Desc = "Microsoft Word" },
+        @{ Name = "03 Excel"; Target = "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE"; Desc = "Microsoft Excel" },
+        @{ Name = "04 PowerPoint"; Target = "C:\Program Files\Microsoft Office\root\Office16\POWERPNT.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\POWERPNT.EXE"; Desc = "Microsoft PowerPoint" },
+        # --- 05-09 Web & Reading ---
+        @{ Name = "05 Firefox"; Target = "C:\Program Files\Mozilla Firefox\firefox.exe"; AltTarget = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"; Desc = "Firefox Web Browser" },
+        @{ Name = "06 Wikipedia (Offline)"; Target = "C:\Program Files\Kiwix\kiwix-desktop.exe"; Desc = "Kiwix - Offline Vietnamese Wikipedia" },
+        @{ Name = "07 Tu Dien - Dictionary"; Target = "C:\Program Files\GoldenDict\GoldenDict.exe"; AltTarget = "C:\Program Files (x86)\GoldenDict\GoldenDict.exe"; Desc = "GoldenDict - Offline Dictionary" },
+        @{ Name = "08 Thorium Reader"; Target = "$env:LOCALAPPDATA\Programs\Thorium\Thorium.exe"; AltTarget = "C:\Program Files\Thorium\Thorium.exe"; Desc = "Thorium EPUB/DAISY Reader" },
+        @{ Name = "09 SumatraPDF"; Target = "C:\Program Files\SumatraPDF\SumatraPDF.exe"; AltTarget = "$env:LOCALAPPDATA\SumatraPDF\SumatraPDF.exe"; Desc = "SumatraPDF Reader" },
+        # --- 10-11 Media ---
+        @{ Name = "10 VLC media player"; Target = "C:\Program Files\VideoLAN\VLC\vlc.exe"; AltTarget = "C:\Program Files (x86)\VideoLAN\VLC\vlc.exe"; Desc = "VLC Media Player" },
+        @{ Name = "11 Audacity"; Target = "C:\Program Files\Audacity\Audacity.exe"; AltTarget = "C:\Program Files (x86)\Audacity\Audacity.exe"; Desc = "Audacity Audio Editor" },
+        # --- 12-14 Education ---
+        @{ Name = "12 Sao Mai Typing Tutor"; Target = "C:\Program Files (x86)\SaoMai\SMTT\SMTT.exe"; AltTarget = "C:\Program Files\SaoMai\SMTT\SMTT.exe"; Desc = "Sao Mai Vietnamese Typing Tutor" },
+        @{ Name = "13 SM Readmate"; Target = "C:\Program Files\SaoMai\sm_readmate\sm_readmate.exe"; AltTarget = "C:\Program Files (x86)\SaoMai\sm_readmate\sm_readmate.exe"; Desc = "SM Readmate Accessible Reader" },
+        @{ Name = "14 Quorum Studio"; Target = "C:\Program Files\QuorumStudio\QuorumStudio.exe"; AltTarget = "C:\Program Files (x86)\QuorumStudio\QuorumStudio.exe"; Desc = "Quorum Studio - Accessible IDE" },
+        # --- 18-19 Utilities (numbers leave 15-17 gap for LEAP games below) ---
+        @{ Name = "18 Calculator"; Target = "calc.exe"; Desc = "Windows Calculator" },
+        @{ Name = "19 My USB"; Target = "explorer.exe"; Args = "shell:MyComputerFolder"; IconLocation = "%SystemRoot%\System32\imageres.dll,109"; Desc = "Open This PC to access your USB drive" },
+        # --- 20-21 Lab tools ---
+        @{ Name = "20 Doi Ngon Ngu - Switch Language"; Target = "powershell.exe"; Args = "-NoProfile -ExecutionPolicy Bypass -File `"C:\LabTools\toggle-language.ps1`""; Desc = "Toggle Vietnamese/English" },
+        @{ Name = "21 Khoi Phuc NVDA - Restore NVDA"; Target = "powershell.exe"; Args = "-NoProfile -ExecutionPolicy Bypass -File `"C:\LabTools\restore-nvda.ps1`""; Desc = "Restore NVDA to default configuration" }
     )
 
     $createdCount = 0
@@ -417,24 +432,26 @@ try {
         $createdCount++
     }
 
-    # LEAP Games shortcuts (dynamic — depends on what games were installed)
+    # LEAP Games shortcuts (dynamic — numbered 15-17 to slot between Education and Utilities)
     $leapDir = "C:\Games\LEAP"
+    $leapNum = 15
     if (Test-Path $leapDir) {
         Get-ChildItem -Path $leapDir -Directory | ForEach-Object {
             $gameExe = Get-ChildItem -Path $_.FullName -Filter "*.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
             if ($gameExe) {
-                $gameLnk = Join-Path $publicDesktop "LEAP $($_.Name).lnk"
+                $gameLnk = Join-Path $publicDesktop "$leapNum LEAP $($_.Name).lnk"
                 $gameShortcut = $WshShell.CreateShortcut($gameLnk)
                 $gameShortcut.TargetPath = $gameExe.FullName
                 $gameShortcut.WorkingDirectory = $_.FullName
                 $gameShortcut.Description = "LEAP Game - $($_.Name)"
                 $gameShortcut.Save()
+                $leapNum++
                 $createdCount++
             }
         }
     }
 
-    Write-Log "Created $createdCount desktop shortcuts (standardized for all PCs)" "SUCCESS"
+    Write-Log "Created $createdCount numbered desktop shortcuts (sorted for blind navigation)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not set up desktop shortcuts: $($_.Exception.Message)" "ERROR"
