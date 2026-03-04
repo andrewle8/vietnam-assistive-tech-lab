@@ -1396,6 +1396,31 @@ try {
     $failCount++
 }
 
+# Step 27b: Clean startup apps (suppress annoying popups on login)
+Write-Log "Step 27b: Cleaning startup apps..." "INFO"
+
+try {
+    # Remove Tailscale GUI auto-start (service runs independently via StartType=Automatic)
+    Remove-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "Tailscale" -Force -ErrorAction SilentlyContinue
+    $tsStartup = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\Tailscale.lnk"
+    if (Test-Path $tsStartup) { Remove-Item $tsStartup -Force }
+
+    # Fix UniKey to start minimized (WindowStyle 7) instead of showing settings dialog
+    $uniStartup = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\UniKey.lnk"
+    if (Test-Path $uniStartup) {
+        $shell = New-Object -ComObject WScript.Shell
+        $shortcut = $shell.CreateShortcut($uniStartup)
+        $shortcut.WindowStyle = 7
+        $shortcut.Save()
+    }
+
+    Write-Log "Startup apps cleaned (Tailscale GUI removed, UniKey minimized)" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not clean startup apps: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
 # Step 28: Clean taskbar (remove clutter, keep only essentials)
 Write-Log "Step 28: Cleaning taskbar..." "INFO"
 
