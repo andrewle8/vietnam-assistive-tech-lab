@@ -37,6 +37,41 @@ $labToolsDir = "C:\LabTools\rclone"
 $successCount = 0
 $failCount = 0
 
+# ── Pre-flight: Ensure Student account exists and resolve SID ──────────────
+# Many steps below write per-user registry settings for the Student profile.
+# The account must exist first so we can resolve its SID and target HKU.
+Write-Log "Pre-flight: Ensuring Student account exists..." "INFO"
+
+$studentExists = Get-LocalUser -Name "Student" -ErrorAction SilentlyContinue
+if (-not $studentExists) {
+    New-LocalUser -Name "Student" -NoPassword -FullName "Student" -Description "Lab student account" -ErrorAction Stop
+    Add-LocalGroupMember -Group "Users" -Member "Student" -ErrorAction SilentlyContinue
+    Set-LocalUser -Name "Student" -PasswordNeverExpires $true -ErrorAction SilentlyContinue
+    Write-Log "Created Student account (standard user, no password)" "SUCCESS"
+}
+
+# Resolve Student SID for HKU registry targeting
+$studentSID = $null
+try {
+    $studentSID = (New-Object System.Security.Principal.NTAccount("Student")).Translate(
+        [System.Security.Principal.SecurityIdentifier]).Value
+    Write-Log "Student SID resolved: $studentSID" "INFO"
+} catch {
+    Write-Log "WARNING: Could not resolve Student SID. Per-user settings will only apply to Admin." "ERROR"
+}
+
+# Build array of registry hive paths to target (Admin HKCU + Student HKU + Default profile)
+$hkuPaths = @("HKCU:")
+if ($studentSID) { $hkuPaths += "REGISTRY::HKEY_USERS\$studentSID" }
+$defaultLoaded = $false
+$defaultNtuser = "C:\Users\Default\NTUSER.DAT"
+if ((Test-Path $defaultNtuser) -and -not (Test-Path "REGISTRY::HKEY_USERS\DefaultProfile")) {
+    reg load "HKU\DefaultProfile" $defaultNtuser 2>$null | Out-Null
+    if ($?) { $defaultLoaded = $true; $hkuPaths += "REGISTRY::HKEY_USERS\DefaultProfile" }
+}
+
+Write-Log "Registry targets: $($hkuPaths -join ', ')" "INFO"
+
 # Step 1: Deploy rclone
 Write-Log "Step 1: Deploying rclone..." "INFO"
 
@@ -92,24 +127,21 @@ if (-not (Test-Path $logSubDir)) {
 Write-Log "Step 2: Configuring AutoPlay for removable drives..." "INFO"
 
 try {
-    $autoPlayPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\EventHandlersDefaultSelection\StorageOnArrival"
-    $autoPlayPath2 = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\UserChosenExecuteHandlers\StorageOnArrival"
+    # Apply AutoPlay settings to all user profiles
+    foreach ($hive in $hkuPaths) {
+        $apBase = "$hive\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers"
+        $apDefault = "$apBase\EventHandlersDefaultSelection\StorageOnArrival"
+        $apChosen = "$apBase\UserChosenExecuteHandlers\StorageOnArrival"
 
-    # Ensure registry paths exist
-    foreach ($regPath in @($autoPlayPath, $autoPlayPath2)) {
-        $parentPath = Split-Path $regPath
-        if (-not (Test-Path $parentPath)) {
-            New-Item -Path $parentPath -Force | Out-Null
+        foreach ($regPath in @($apDefault, $apChosen)) {
+            $parentPath = Split-Path $regPath
+            if (-not (Test-Path $parentPath)) { New-Item -Path $parentPath -Force -ErrorAction SilentlyContinue | Out-Null }
         }
+
+        Set-ItemProperty -Path (Split-Path $apDefault) -Name "StorageOnArrival" -Value "MSOpenFolder" -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path (Split-Path $apChosen) -Name "StorageOnArrival" -Value "MSOpenFolder" -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $apBase -Name "DisableAutoplay" -Value 0 -Force -ErrorAction SilentlyContinue
     }
-
-    # Set to open folder
-    Set-ItemProperty -Path (Split-Path $autoPlayPath) -Name "StorageOnArrival" -Value "MSOpenFolder" -Force -ErrorAction SilentlyContinue
-    Set-ItemProperty -Path (Split-Path $autoPlayPath2) -Name "StorageOnArrival" -Value "MSOpenFolder" -Force -ErrorAction SilentlyContinue
-
-    # Also disable the AutoPlay prompt so it just opens
-    $autoPlaySettings = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers"
-    Set-ItemProperty -Path $autoPlaySettings -Name "DisableAutoplay" -Value 0 -Force -ErrorAction SilentlyContinue
 
     Write-Log "AutoPlay set to open folder for removable drives" "SUCCESS"
     $successCount++
@@ -255,6 +287,28 @@ try {
     Set-ItemProperty -Path $regPath -Name "Default" -Value "042A" -Force -ErrorAction SilentlyContinue
     Set-ItemProperty -Path $regPath -Name "InstallLanguage" -Value "042A" -Force -ErrorAction SilentlyContinue
 
+    # Apply Vietnamese locale directly to Student profile via HKU (Set-Culture only hits Admin HKCU)
+    if ($studentSID) {
+        $studentIntl = "REGISTRY::HKEY_USERS\$studentSID\Control Panel\International"
+        if (Test-Path $studentIntl) {
+            Set-ItemProperty -Path $studentIntl -Name "Locale" -Value "0000042A" -Force -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path $studentIntl -Name "LocaleName" -Value "vi-VN" -Force -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path $studentIntl -Name "sShortDate" -Value "dd/MM/yyyy" -Force -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path $studentIntl -Name "sLongDate" -Value "dd MMMM yyyy" -Force -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path $studentIntl -Name "sCurrency" -Value "₫" -Force -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path $studentIntl -Name "sLanguage" -Value "VIT" -Force -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path $studentIntl -Name "iMeasure" -Value "0" -Force -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path $studentIntl -Name "iPaperSize" -Value "9" -Force -ErrorAction SilentlyContinue
+            Write-Log "Vietnamese locale applied to Student profile (vi-VN, dd/MM/yyyy, dong)" "SUCCESS"
+        }
+
+        # Set Vietnamese as preferred Office editing language for Student
+        $studentOffice = "REGISTRY::HKEY_USERS\$studentSID\Software\Microsoft\Office\16.0\Common\LanguageResources"
+        if (-not (Test-Path $studentOffice)) { New-Item -Path $studentOffice -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $studentOffice -Name "PreferredEditingLanguage" -Value "vi-vn" -Force -ErrorAction SilentlyContinue
+        Write-Log "Office preferred editing language set to Vietnamese for Student" "SUCCESS"
+    }
+
     $successCount++
 } catch {
     Write-Log "Could not fully configure Vietnamese locale: $($_.Exception.Message)" "ERROR"
@@ -307,23 +361,18 @@ Add-Type -AssemblyName PresentationFramework
 Write-Log "Step 5: Configuring Windows Magnifier for low-vision users..." "INFO"
 
 try {
-    # Enable Magnifier keyboard shortcut (Win+Plus) and set sensible defaults
-    $magPath = "HKCU:\Software\Microsoft\ScreenMagnifier"
-    if (-not (Test-Path $magPath)) {
-        New-Item -Path $magPath -Force | Out-Null
-    }
-    # Set Magnifier to full-screen mode (better for keyboard-primary users like blind/low-vision)
-    Set-ItemProperty -Path $magPath -Name "MagnificationMode" -Value 1 -Force
-    # Start at 200% zoom
-    Set-ItemProperty -Path $magPath -Name "Magnification" -Value 200 -Force
+    # Enable Magnifier keyboard shortcut (Win+Plus) and set sensible defaults for all users
+    foreach ($hive in $hkuPaths) {
+        $magPath = "$hive\Software\Microsoft\ScreenMagnifier"
+        if (-not (Test-Path $magPath)) { New-Item -Path $magPath -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $magPath -Name "MagnificationMode" -Value 1 -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $magPath -Name "Magnification" -Value 200 -Force -ErrorAction SilentlyContinue
 
-    # Enable High Contrast as an available option (Win+Left Alt+Print Screen to toggle)
-    $hcPath = "HKCU:\Control Panel\Accessibility\HighContrast"
-    if (-not (Test-Path $hcPath)) {
-        New-Item -Path $hcPath -Force | Out-Null
+        # Enable High Contrast keyboard shortcut (Win+Left Alt+Print Screen)
+        $hcPath = "$hive\Control Panel\Accessibility\HighContrast"
+        if (-not (Test-Path $hcPath)) { New-Item -Path $hcPath -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $hcPath -Name "Flags" -Value "126" -Force -ErrorAction SilentlyContinue
     }
-    # Enable the keyboard shortcut for high contrast toggle
-    Set-ItemProperty -Path $hcPath -Name "Flags" -Value "126" -Force
 
     Write-Log "Windows Magnifier defaults set (Win+Plus to launch, lens mode, 200%)" "SUCCESS"
     Write-Log "High contrast toggle enabled (Win+Left Alt+Print Screen)" "SUCCESS"
@@ -369,22 +418,8 @@ try {
     New-ItemProperty -Path $polPath -Name "DisableWindowsSpotlightOnDesktop" -Value 1 -PropertyType DWord -Force | Out-Null
     New-ItemProperty -Path $polPath -Name "DisableWindowsSpotlightWindowsWelcomeExperience" -Value 1 -PropertyType DWord -Force | Out-Null
 
-    # Set wallpaper to solid black BMP for Admin (current user), Student (via SID), and Default profile
-    $studentSID = $null
-    try {
-        $studentSID = (New-Object System.Security.Principal.NTAccount("Student")).Translate(
-            [System.Security.Principal.SecurityIdentifier]).Value
-    } catch {}
-
-    $hkuPaths = @("HKCU:")
-    if ($studentSID) { $hkuPaths += "REGISTRY::HKEY_USERS\$studentSID" }
-    $defaultLoaded = $false
-    $defaultNtuser = "C:\Users\Default\NTUSER.DAT"
-    if ((Test-Path $defaultNtuser) -and -not (Test-Path "REGISTRY::HKEY_USERS\DefaultProfile")) {
-        reg load "HKU\DefaultProfile" $defaultNtuser 2>$null | Out-Null
-        if ($?) { $defaultLoaded = $true; $hkuPaths += "REGISTRY::HKEY_USERS\DefaultProfile" }
-    }
-
+    # Set wallpaper to solid black BMP for Admin, Student, and Default profile
+    # (uses $hkuPaths from pre-flight section)
     foreach ($hive in $hkuPaths) {
         # Set wallpaper to solid black BMP (BackgroundType 0 = Picture, NOT Spotlight)
         $wpPath = "$hive\Software\Microsoft\Windows\CurrentVersion\Explorer\Wallpapers"
@@ -400,8 +435,6 @@ try {
         if (-not (Test-Path $spotlightPath)) { New-Item -Path $spotlightPath -Force -ErrorAction SilentlyContinue | Out-Null }
         Set-ItemProperty -Path $spotlightPath -Name "Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
     }
-
-    if ($defaultLoaded) { reg unload "HKU\DefaultProfile" 2>$null | Out-Null }
 
     # Hide system desktop icons that create dead spots for screen reader arrow-key navigation
     # (Recycle Bin, Spotlight shell object, This PC — students use "My USB" shortcut instead)
@@ -700,29 +733,26 @@ try {
 Write-Log "Step 11: Disabling non-essential notifications..." "INFO"
 
 try {
-    # Disable tips, suggestions, and Get Started notifications
-    $contentDelivery = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
-    if (Test-Path $contentDelivery) {
-        Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-338389Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-310093Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-338393Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $contentDelivery -Name "SoftLandingEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $contentDelivery -Name "SystemPaneSuggestionsEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+    # Disable tips, suggestions, and Get Started notifications for all users
+    foreach ($hive in $hkuPaths) {
+        $contentDelivery = "$hive\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
+        if (Test-Path $contentDelivery) {
+            Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-338389Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-310093Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-338393Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path $contentDelivery -Name "SoftLandingEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path $contentDelivery -Name "SystemPaneSuggestionsEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+        }
+
+        $pushNotify = "$hive\Software\Microsoft\Windows\CurrentVersion\PushNotifications"
+        if (-not (Test-Path $pushNotify)) { New-Item -Path $pushNotify -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $pushNotify -Name "ToastEnabled" -Value 1 -Force -ErrorAction SilentlyContinue
     }
 
-    # Disable Windows Defender notifications (offline machines don't need antivirus alerts)
+    # Disable Windows Defender notifications (machine-wide)
     $defenderNotify = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\Notifications"
-    if (-not (Test-Path $defenderNotify)) {
-        New-Item -Path $defenderNotify -Force | Out-Null
-    }
+    if (-not (Test-Path $defenderNotify)) { New-Item -Path $defenderNotify -Force | Out-Null }
     Set-ItemProperty -Path $defenderNotify -Name "DisableNotifications" -Value 1 -Force
-
-    # Disable notification center suggestions
-    $pushNotify = "HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications"
-    if (-not (Test-Path $pushNotify)) {
-        New-Item -Path $pushNotify -Force | Out-Null
-    }
-    Set-ItemProperty -Path $pushNotify -Name "ToastEnabled" -Value 1 -Force  # Keep toast but disable suggestions
 
     Write-Log "Non-essential notifications disabled" "SUCCESS"
     $successCount++
@@ -735,8 +765,15 @@ try {
 Write-Log "Step 11b: Disabling Windows system sounds..." "INFO"
 
 try {
+    # Disable for Admin (HKCU) and Student (HKU)
     Set-ItemProperty -Path "HKCU:\AppEvents\Schemes" -Name "(Default)" -Value ".None" -Force
-    Write-Log "Windows system sounds disabled (reduces interference with NVDA)" "SUCCESS"
+    if ($studentSID) {
+        $studentSchemes = "REGISTRY::HKEY_USERS\$studentSID\AppEvents\Schemes"
+        if (Test-Path $studentSchemes) {
+            Set-ItemProperty -Path $studentSchemes -Name "(Default)" -Value ".None" -Force
+        }
+    }
+    Write-Log "Windows system sounds disabled for all users (reduces interference with NVDA)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not disable system sounds: $($_.Exception.Message)" "ERROR"
@@ -747,22 +784,18 @@ try {
 Write-Log "Step 12: Disabling Narrator auto-start shortcut..." "INFO"
 
 try {
-    # Disable the Win+Ctrl+Enter shortcut for Narrator to prevent accidental activation
-    $narratorPath = "HKCU:\Software\Microsoft\Narrator\NoRoam"
-    if (-not (Test-Path $narratorPath)) {
-        New-Item -Path $narratorPath -Force | Out-Null
-    }
-    # Disable Narrator from starting with the shortcut
-    Set-ItemProperty -Path $narratorPath -Name "WinEnterLaunchEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+    # Disable the Win+Ctrl+Enter shortcut for Narrator for all users
+    foreach ($hive in $hkuPaths) {
+        $narratorPath = "$hive\Software\Microsoft\Narrator\NoRoam"
+        if (-not (Test-Path $narratorPath)) { New-Item -Path $narratorPath -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $narratorPath -Name "WinEnterLaunchEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
 
-    # Also disable via Ease of Access settings
-    $easeAccess = "HKCU:\Software\Microsoft\Ease of Access"
-    if (-not (Test-Path $easeAccess)) {
-        New-Item -Path $easeAccess -Force | Out-Null
+        $easeAccess = "$hive\Software\Microsoft\Ease of Access"
+        if (-not (Test-Path $easeAccess)) { New-Item -Path $easeAccess -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $easeAccess -Name "selfvoice.ManualStart" -Value 1 -Force -ErrorAction SilentlyContinue
     }
-    Set-ItemProperty -Path $easeAccess -Name "selfvoice.ManualStart" -Value 1 -Force -ErrorAction SilentlyContinue
 
-    Write-Log "Narrator shortcut disabled (prevents NVDA conflict)" "SUCCESS"
+    Write-Log "Narrator shortcut disabled for all users (prevents NVDA conflict)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not disable Narrator shortcut: $($_.Exception.Message)" "ERROR"
@@ -797,26 +830,23 @@ try {
 Write-Log "Step 14: Disabling Sticky Keys and Filter Keys popups..." "INFO"
 
 try {
-    # Disable Sticky Keys popup (triggered by pressing Shift 5 times)
-    $stickyKeysPath = "HKCU:\Control Panel\Accessibility\StickyKeys"
-    if (-not (Test-Path $stickyKeysPath)) {
-        New-Item -Path $stickyKeysPath -Force | Out-Null
-    }
-    Set-ItemProperty -Path $stickyKeysPath -Name "Flags" -Value "506" -Force
+    # Apply to all user profiles (Admin, Student, Default)
+    foreach ($hive in $hkuPaths) {
+        # Disable Sticky Keys popup (triggered by pressing Shift 5 times)
+        $stickyKeysPath = "$hive\Control Panel\Accessibility\StickyKeys"
+        if (-not (Test-Path $stickyKeysPath)) { New-Item -Path $stickyKeysPath -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $stickyKeysPath -Name "Flags" -Value "506" -Force -ErrorAction SilentlyContinue
 
-    # Disable Filter Keys popup (triggered by holding a key)
-    $filterKeysPath = "HKCU:\Control Panel\Accessibility\Keyboard Response"
-    if (-not (Test-Path $filterKeysPath)) {
-        New-Item -Path $filterKeysPath -Force | Out-Null
-    }
-    Set-ItemProperty -Path $filterKeysPath -Name "Flags" -Value "122" -Force
+        # Disable Filter Keys popup (triggered by holding a key)
+        $filterKeysPath = "$hive\Control Panel\Accessibility\Keyboard Response"
+        if (-not (Test-Path $filterKeysPath)) { New-Item -Path $filterKeysPath -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $filterKeysPath -Name "Flags" -Value "122" -Force -ErrorAction SilentlyContinue
 
-    # Enable Toggle Keys beep (useful audio feedback for blind users - Caps/Num/Scroll Lock)
-    $toggleKeysPath = "HKCU:\Control Panel\Accessibility\ToggleKeys"
-    if (-not (Test-Path $toggleKeysPath)) {
-        New-Item -Path $toggleKeysPath -Force | Out-Null
+        # Enable Toggle Keys beep (useful audio feedback for blind users - Caps/Num/Scroll Lock)
+        $toggleKeysPath = "$hive\Control Panel\Accessibility\ToggleKeys"
+        if (-not (Test-Path $toggleKeysPath)) { New-Item -Path $toggleKeysPath -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $toggleKeysPath -Name "Flags" -Value "63" -Force -ErrorAction SilentlyContinue
     }
-    Set-ItemProperty -Path $toggleKeysPath -Name "Flags" -Value "63" -Force
 
     Write-Log "Sticky Keys popup disabled, Filter Keys popup disabled, Toggle Keys beep enabled" "SUCCESS"
     $successCount++
@@ -854,9 +884,17 @@ Write-Log "Step 16: Creating NVDA config backup/restore..." "INFO"
 
 try {
     $backupDir = "C:\LabTools\nvda-backup"
-    $nvdaConfigDir = Join-Path $env:APPDATA "nvda"
+    # Target Student's NVDA config (not Admin's $env:APPDATA which resolves to Admin profile)
+    $nvdaConfigDir = "C:\Users\Student\AppData\Roaming\nvda"
 
-    # Backup current (known good) NVDA config
+    # Deploy the repo template as the known-good config
+    $nvdaTemplate = Join-Path (Split-Path -Parent $PSScriptRoot) "Config\nvda-config\nvda.ini"
+    if ((Test-Path $nvdaTemplate) -and (Test-Path $nvdaConfigDir)) {
+        Copy-Item -Path $nvdaTemplate -Destination "$nvdaConfigDir\nvda.ini" -Force
+        Write-Log "Deployed NVDA config template (laptop layout, Vietnamese, rate 35) to Student profile" "SUCCESS"
+    }
+
+    # Backup the config
     if (Test-Path $nvdaConfigDir) {
         if (-not (Test-Path $backupDir)) {
             New-Item -Path $backupDir -ItemType Directory -Force | Out-Null
@@ -1257,7 +1295,23 @@ try {
         Where-Object { $_.TaskName -match 'OneDrive' } |
         Unregister-ScheduledTask -Confirm:$false -ErrorAction SilentlyContinue
 
-    Write-Log "OneDrive removed and disabled" "SUCCESS"
+    # Clean OneDrive Run entries from all user profiles
+    foreach ($hive in $hkuPaths) {
+        $runPath = "$hive\Software\Microsoft\Windows\CurrentVersion\Run"
+        if (Test-Path $runPath) {
+            Get-Item -Path $runPath -ErrorAction SilentlyContinue |
+                Select-Object -ExpandProperty Property |
+                Where-Object { $_ -like "*OneDrive*" } |
+                ForEach-Object { Remove-ItemProperty -Path $runPath -Name $_ -Force -ErrorAction SilentlyContinue }
+        }
+    }
+    # Also HKLM Run
+    Get-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -ErrorAction SilentlyContinue |
+        Select-Object -ExpandProperty Property |
+        Where-Object { $_ -like "*OneDrive*" } |
+        ForEach-Object { Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name $_ -Force -ErrorAction SilentlyContinue }
+
+    Write-Log "OneDrive removed and disabled (including Run key residuals)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not remove OneDrive: $($_.Exception.Message)" "ERROR"
@@ -1331,7 +1385,11 @@ try {
             Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name $_ -Force -ErrorAction SilentlyContinue
         }
 
-    Write-Log "Microsoft Edge neutered (shortcuts removed, auto-start disabled)" "SUCCESS"
+    # Disable Edge update scheduled tasks
+    Get-ScheduledTask -TaskName "MicrosoftEdge*" -ErrorAction SilentlyContinue |
+        Disable-ScheduledTask -ErrorAction SilentlyContinue | Out-Null
+
+    Write-Log "Microsoft Edge neutered (shortcuts removed, auto-start disabled, update tasks disabled)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not neuter Microsoft Edge: $($_.Exception.Message)" "ERROR"
@@ -1342,21 +1400,19 @@ try {
 Write-Log "Step 28: Cleaning taskbar..." "INFO"
 
 try {
-    $taskbarPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+    # Apply taskbar cleanup to all user profiles
+    foreach ($hive in $hkuPaths) {
+        $taskbarPath = "$hive\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+        if (-not (Test-Path $taskbarPath)) { New-Item -Path $taskbarPath -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $taskbarPath -Name "TaskbarMn" -Value 0 -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $taskbarPath -Name "ShowTaskViewButton" -Value 0 -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $taskbarPath -Name "TaskbarDa" -Value 0 -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $taskbarPath -Name "ShowCopilotButton" -Value 0 -Force -ErrorAction SilentlyContinue
 
-    # Hide Chat icon (Teams consumer)
-    Set-ItemProperty -Path $taskbarPath -Name "TaskbarMn" -Value 0 -Force
-    # Hide Task View button
-    Set-ItemProperty -Path $taskbarPath -Name "ShowTaskViewButton" -Value 0 -Force
-    # Hide Widgets button
-    Set-ItemProperty -Path $taskbarPath -Name "TaskbarDa" -Value 0 -Force
-    # Hide Copilot button (Win11 23H2+)
-    Set-ItemProperty -Path $taskbarPath -Name "ShowCopilotButton" -Value 0 -Force -ErrorAction SilentlyContinue
-
-    # Hide Search box from taskbar
-    $searchRegPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search"
-    if (-not (Test-Path $searchRegPath)) { New-Item -Path $searchRegPath -Force | Out-Null }
-    Set-ItemProperty -Path $searchRegPath -Name "SearchboxTaskbarMode" -Value 0 -Force
+        $searchRegPath = "$hive\Software\Microsoft\Windows\CurrentVersion\Search"
+        if (-not (Test-Path $searchRegPath)) { New-Item -Path $searchRegPath -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $searchRegPath -Name "SearchboxTaskbarMode" -Value 0 -Force -ErrorAction SilentlyContinue
+    }
 
     # Clear pinned taskbar items for ALL user profiles (Win11 stores pins per-user)
     $userProfiles = Get-ChildItem "C:\Users" -Directory | Where-Object { $_.Name -notin @("Public", "Default", "Default User", "All Users") }
@@ -1447,46 +1503,45 @@ try {
 Write-Log "Step 30: Additional UX cleanup..." "INFO"
 
 try {
-    # Disable Xbox Game Bar (Win+G accidental activation confuses NVDA)
-    $gameBar = "HKCU:\Software\Microsoft\GameBar"
-    if (-not (Test-Path $gameBar)) { New-Item -Path $gameBar -Force | Out-Null }
-    Set-ItemProperty -Path $gameBar -Name "UseNexusForGameBarEnabled" -Value 0 -Force
-    $gameDVR = "HKCU:\System\GameConfigStore"
-    if (-not (Test-Path $gameDVR)) { New-Item -Path $gameDVR -Force | Out-Null }
-    Set-ItemProperty -Path $gameDVR -Name "GameDVR_Enabled" -Value 0 -Force
+    # Apply UX cleanup to all user profiles
+    foreach ($hive in $hkuPaths) {
+        # Disable Xbox Game Bar (Win+G accidental activation confuses NVDA)
+        $gameBar = "$hive\Software\Microsoft\GameBar"
+        if (-not (Test-Path $gameBar)) { New-Item -Path $gameBar -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $gameBar -Name "UseNexusForGameBarEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+        $gameDVR = "$hive\System\GameConfigStore"
+        if (-not (Test-Path $gameDVR)) { New-Item -Path $gameDVR -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $gameDVR -Name "GameDVR_Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
+
+        # Disable Snap Layouts hover tooltip
+        $advPath = "$hive\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+        if (Test-Path $advPath) {
+            Set-ItemProperty -Path $advPath -Name "EnableSnapAssistFlyout" -Value 0 -Force -ErrorAction SilentlyContinue
+        }
+
+        # Disable OOBE nag
+        $upe = "$hive\Software\Microsoft\Windows\CurrentVersion\UserProfileEngagement"
+        if (-not (Test-Path $upe)) { New-Item -Path $upe -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $upe -Name "ScoobeSystemSettingEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+
+        # Disable Start menu suggestions / promoted apps / lock screen tips
+        $cd = "$hive\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
+        if (Test-Path $cd) {
+            foreach ($name in @("SubscribedContent-338388Enabled","SubscribedContent-353694Enabled","SubscribedContent-353696Enabled","OemPreInstalledAppsEnabled","PreInstalledAppsEnabled","SilentInstalledAppsEnabled","RotatingLockScreenOverlayEnabled","RotatingLockScreenEnabled")) {
+                Set-ItemProperty -Path $cd -Name $name -Value 0 -Force -ErrorAction SilentlyContinue
+            }
+        }
+
+        # Disable touch keyboard auto-show
+        $touchKB = "$hive\Software\Microsoft\TabletTip\1.7"
+        if (-not (Test-Path $touchKB)) { New-Item -Path $touchKB -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $touchKB -Name "TipbandDesiredVisibility" -Value 0 -Force -ErrorAction SilentlyContinue
+    }
+
+    # Machine-wide Game DVR policy
     $gameDVRPolicy = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR"
     if (-not (Test-Path $gameDVRPolicy)) { New-Item -Path $gameDVRPolicy -Force | Out-Null }
     Set-ItemProperty -Path $gameDVRPolicy -Name "AllowGameDVR" -Value 0 -Force
-
-    # Disable Snap Layouts hover tooltip (unexpected NVDA reads on maximize button)
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "EnableSnapAssistFlyout" -Value 0 -Force
-
-    # Disable "Let's finish setting up your device" OOBE nag
-    $contentDelivery = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
-    $userProfileEngagement = "HKCU:\Software\Microsoft\Windows\CurrentVersion\UserProfileEngagement"
-    if (-not (Test-Path $userProfileEngagement)) { New-Item -Path $userProfileEngagement -Force | Out-Null }
-    Set-ItemProperty -Path $userProfileEngagement -Name "ScoobeSystemSettingEnabled" -Value 0 -Force
-
-    # Disable Start menu suggestions / promoted apps
-    if (Test-Path $contentDelivery) {
-        Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-338388Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-353694Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-353696Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $contentDelivery -Name "OemPreInstalledAppsEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $contentDelivery -Name "PreInstalledAppsEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $contentDelivery -Name "SilentInstalledAppsEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
-    }
-
-    # Disable lock screen tips and trivia
-    if (Test-Path $contentDelivery) {
-        Set-ItemProperty -Path $contentDelivery -Name "RotatingLockScreenOverlayEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $contentDelivery -Name "RotatingLockScreenEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
-    }
-
-    # Disable touch keyboard auto-show (physical keyboards only)
-    $touchKB = "HKCU:\Software\Microsoft\TabletTip\1.7"
-    if (-not (Test-Path $touchKB)) { New-Item -Path $touchKB -Force | Out-Null }
-    Set-ItemProperty -Path $touchKB -Name "TipbandDesiredVisibility" -Value 0 -Force
 
     Write-Log "Additional UX cleanup complete (Game Bar, Snap Layouts, OOBE nag, Start suggestions, lock screen tips, touch keyboard)" "SUCCESS"
     $successCount++
@@ -1637,6 +1692,19 @@ try {
     $failCount++
 }
 
+# Step 36: Create System Restore point as post-configuration baseline
+Write-Log "Step 36: Creating System Restore point..." "INFO"
+
+try {
+    Enable-ComputerRestore -Drive "C:\" -ErrorAction SilentlyContinue
+    Checkpoint-Computer -Description "Vietnam Lab post-deployment baseline" -RestorePointType "APPLICATION_INSTALL" -ErrorAction Stop
+    Write-Log "System Restore point created" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not create restore point: $($_.Exception.Message)" "INFO"
+    $successCount++  # Non-critical
+}
+
 # Summary
 Write-Host "`n========================================" -ForegroundColor Green
 Write-Host "Loaner Laptop Configuration Complete!" -ForegroundColor Green
@@ -1715,5 +1783,11 @@ Write-Host ""
 Write-Host "Log file: $LogPath" -ForegroundColor Cyan
 Write-Host "`n========================================" -ForegroundColor Green
 Write-Host ""
+
+# Unload Default profile hive if we loaded it
+if ($defaultLoaded) {
+    reg unload "HKU\DefaultProfile" 2>$null | Out-Null
+    Write-Log "Unloaded Default profile registry hive" "INFO"
+}
 
 if (-not $env:LAB_BOOTSTRAP) { pause }
