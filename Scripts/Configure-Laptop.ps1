@@ -1405,11 +1405,14 @@ try {
     $tsStartup = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\Tailscale.lnk"
     if (Test-Path $tsStartup) { Remove-Item $tsStartup -Force }
 
-    # Suppress UniKey startup dialog (ShowDlg=0) for all user profiles
+    # Suppress UniKey startup dialog and auto-update checks for all user profiles
+    # Note: UniKey may reset ShowDlg=1 on first launch; setting it here ensures it's correct
+    # if the script runs after UniKey has already created its registry keys
     foreach ($hive in $hkuPaths) {
         $uniKeyPath = "$hive\Software\PkLong\UniKey"
         if (-not (Test-Path $uniKeyPath)) { New-Item -Path $uniKeyPath -Force -ErrorAction SilentlyContinue | Out-Null }
         Set-ItemProperty -Path $uniKeyPath -Name "ShowDlg" -Value 0 -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $uniKeyPath -Name "AutoUpdate" -Value 0 -Force -ErrorAction SilentlyContinue
     }
 
     Write-Log "Startup apps cleaned (Tailscale GUI removed, UniKey dialog suppressed)" "SUCCESS"
