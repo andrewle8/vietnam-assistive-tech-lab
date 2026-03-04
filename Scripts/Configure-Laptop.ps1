@@ -1405,16 +1405,14 @@ try {
     $tsStartup = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\Tailscale.lnk"
     if (Test-Path $tsStartup) { Remove-Item $tsStartup -Force }
 
-    # Fix UniKey to start minimized (WindowStyle 7) instead of showing settings dialog
-    $uniStartup = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\UniKey.lnk"
-    if (Test-Path $uniStartup) {
-        $shell = New-Object -ComObject WScript.Shell
-        $shortcut = $shell.CreateShortcut($uniStartup)
-        $shortcut.WindowStyle = 7
-        $shortcut.Save()
+    # Suppress UniKey startup dialog (ShowDlg=0) for all user profiles
+    foreach ($hive in $hkuPaths) {
+        $uniKeyPath = "$hive\Software\PkLong\UniKey"
+        if (-not (Test-Path $uniKeyPath)) { New-Item -Path $uniKeyPath -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $uniKeyPath -Name "ShowDlg" -Value 0 -Force -ErrorAction SilentlyContinue
     }
 
-    Write-Log "Startup apps cleaned (Tailscale GUI removed, UniKey minimized)" "SUCCESS"
+    Write-Log "Startup apps cleaned (Tailscale GUI removed, UniKey dialog suppressed)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not clean startup apps: $($_.Exception.Message)" "ERROR"
