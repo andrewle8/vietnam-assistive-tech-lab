@@ -347,60 +347,104 @@ try {
     Write-Log "Cleared all existing desktop shortcuts" "INFO"
 
     # Disable Windows Spotlight "Learn about this picture" overlay (distracting for screen readers)
-    # Use HKLM Group Policy keys — these apply machine-wide regardless of which user is logged in
+    # Registry-only approaches do NOT reliably kill Spotlight on Win11. What works: set an actual
+    # solid-color BMP as wallpaper with BackgroundType=0 (Picture), so Windows never enters Spotlight mode.
+
+    # Create a 1x1 solid black BMP (58 bytes)
+    $bmpPath = "C:\Windows\Web\Wallpaper\solid-black.bmp"
+    if (-not (Test-Path $bmpPath)) {
+        $bmpBytes = [byte[]]@(
+            0x42,0x4D,0x3A,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x36,0x00,0x00,0x00,
+            0x28,0x00,0x00,0x00,0x01,0x00,0x00,0x00,0x01,0x00,0x00,0x00,0x01,0x00,
+            0x18,0x00,0x00,0x00,0x00,0x00,0x04,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+            0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+            0x00,0x00)
+        [System.IO.File]::WriteAllBytes($bmpPath, $bmpBytes)
+    }
+
+    # HKLM Group Policy — prevents Spotlight from re-enabling on any user
     $polPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent"
     if (-not (Test-Path $polPath)) { New-Item -Path $polPath -Force | Out-Null }
     New-ItemProperty -Path $polPath -Name "DisableWindowsSpotlightFeatures" -Value 1 -PropertyType DWord -Force | Out-Null
     New-ItemProperty -Path $polPath -Name "DisableWindowsSpotlightOnDesktop" -Value 1 -PropertyType DWord -Force | Out-Null
     New-ItemProperty -Path $polPath -Name "DisableWindowsSpotlightWindowsWelcomeExperience" -Value 1 -PropertyType DWord -Force | Out-Null
-    New-ItemProperty -Path $polPath -Name "DisableTailoredExperiencesWithDiagnosticData" -Value 1 -PropertyType DWord -Force | Out-Null
 
-    # Also set HKCU keys for the Student user via their registry hive (this script runs as Admin,
-    # so HKCU would target Admin — we need to load the Student profile's NTUSER.DAT instead)
+    # Set wallpaper to solid black BMP for Admin (current user), Student (via SID), and Default profile
     $studentSID = $null
     try {
         $studentSID = (New-Object System.Security.Principal.NTAccount("Student")).Translate(
             [System.Security.Principal.SecurityIdentifier]).Value
-    } catch {
-        Write-Log "Student account not found yet — HKCU Spotlight keys will be set via Default profile" "INFO"
-    }
+    } catch {}
 
-    # Target all three hives: current user (Admin), Student (via SID), and Default (new users)
     $hkuPaths = @("HKCU:")
-    if ($studentSID) {
-        $hkuPaths += "REGISTRY::HKEY_USERS\$studentSID"
-    }
-    $defaultNtuser = "C:\Users\Default\NTUSER.DAT"
+    if ($studentSID) { $hkuPaths += "REGISTRY::HKEY_USERS\$studentSID" }
     $defaultLoaded = $false
+    $defaultNtuser = "C:\Users\Default\NTUSER.DAT"
     if ((Test-Path $defaultNtuser) -and -not (Test-Path "REGISTRY::HKEY_USERS\DefaultProfile")) {
         reg load "HKU\DefaultProfile" $defaultNtuser 2>$null | Out-Null
         if ($?) { $defaultLoaded = $true; $hkuPaths += "REGISTRY::HKEY_USERS\DefaultProfile" }
     }
 
     foreach ($hive in $hkuPaths) {
+        # Set wallpaper to solid black BMP (BackgroundType 0 = Picture, NOT Spotlight)
+        $wpPath = "$hive\Software\Microsoft\Windows\CurrentVersion\Explorer\Wallpapers"
+        if (-not (Test-Path $wpPath)) { New-Item -Path $wpPath -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $wpPath -Name "BackgroundType" -Value 0 -Force -ErrorAction SilentlyContinue
+        $deskPath = "$hive\Control Panel\Desktop"
+        if (Test-Path $deskPath) {
+            Set-ItemProperty -Path $deskPath -Name "Wallpaper" -Value $bmpPath -Force -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path $deskPath -Name "WallpaperStyle" -Value "2" -Force -ErrorAction SilentlyContinue
+        }
+        # Disable Spotlight overlay
         $spotlightPath = "$hive\Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\DesktopSpotlight"
         if (-not (Test-Path $spotlightPath)) { New-Item -Path $spotlightPath -Force -ErrorAction SilentlyContinue | Out-Null }
         Set-ItemProperty -Path $spotlightPath -Name "Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
-
-        $cdmPath = "$hive\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
-        if (Test-Path $cdmPath) {
-            Set-ItemProperty -Path $cdmPath -Name "SubscribedContent-338387Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
-            Set-ItemProperty -Path $cdmPath -Name "RotatingLockScreenOverlayEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
-            Set-ItemProperty -Path $cdmPath -Name "RotatingLockScreenEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
-        }
-
-        # Set wallpaper to solid color (BackgroundType 1 = solid)
-        $wpPath = "$hive\Software\Microsoft\Windows\CurrentVersion\Explorer\Wallpapers"
-        if (-not (Test-Path $wpPath)) { New-Item -Path $wpPath -Force -ErrorAction SilentlyContinue | Out-Null }
-        Set-ItemProperty -Path $wpPath -Name "BackgroundType" -Value 1 -Force -ErrorAction SilentlyContinue
-        $deskPath = "$hive\Control Panel\Desktop"
-        if (Test-Path $deskPath) {
-            Set-ItemProperty -Path $deskPath -Name "Wallpaper" -Value "" -Force -ErrorAction SilentlyContinue
-        }
     }
 
     if ($defaultLoaded) { reg unload "HKU\DefaultProfile" 2>$null | Out-Null }
-    Write-Log "Disabled Windows Spotlight (Group Policy + per-user) and set solid wallpaper" "INFO"
+
+    # Hide system desktop icons that create dead spots for screen reader arrow-key navigation
+    # (Recycle Bin, Spotlight shell object, This PC — students use "My USB" shortcut instead)
+    # Must set both NewStartPanel AND ClassicStartMenu — Win11 checks both paths
+    $hideGuids = @(
+        "{645FF040-5081-101B-9F08-00AA002F954E}",  # Recycle Bin
+        "{2CC5CA98-6485-489A-920E-B3E88A6CCCE3}",  # "Learn about this picture" Spotlight
+        "{20D04FE0-3AEA-1069-A2D8-08002B30309D}"   # This PC
+    )
+    foreach ($hive in $hkuPaths) {
+        foreach ($subKey in @("NewStartPanel", "ClassicStartMenu")) {
+            $hidePath = "$hive\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\$subKey"
+            if (-not (Test-Path $hidePath)) { New-Item -Path $hidePath -Force -ErrorAction SilentlyContinue | Out-Null }
+            foreach ($guid in $hideGuids) {
+                New-ItemProperty -Path $hidePath -Name $guid -Value 1 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
+            }
+        }
+    }
+    # Also set machine-wide (HKLM) so it applies even if per-user keys are missing
+    $hklmHide = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel"
+    if (-not (Test-Path $hklmHide)) { New-Item -Path $hklmHide -Force | Out-Null }
+    foreach ($guid in $hideGuids) {
+        New-ItemProperty -Path $hklmHide -Name $guid -Value 1 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
+    }
+
+    # Force Explorer to re-read hide flags by toggling all desktop icons off then on
+    foreach ($hive in $hkuPaths) {
+        $advPath = "$hive\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+        if (Test-Path $advPath) {
+            Set-ItemProperty -Path $advPath -Name "HideIcons" -Value 1 -Force -ErrorAction SilentlyContinue
+        }
+    }
+    Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
+    Start-Sleep -Seconds 2
+    foreach ($hive in $hkuPaths) {
+        $advPath = "$hive\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+        if (Test-Path $advPath) {
+            Set-ItemProperty -Path $advPath -Name "HideIcons" -Value 0 -Force -ErrorAction SilentlyContinue
+        }
+    }
+    Start-Process explorer.exe
+    Start-Sleep -Seconds 2
+    Write-Log "Hidden system icons (Recycle Bin, Spotlight, This PC) and forced desktop refresh" "INFO"
 
     # Number-prefixed shortcuts so alphabetical sort = logical navigation order.
     # Screen reader users arrow through the desktop; this guarantees a consistent,
