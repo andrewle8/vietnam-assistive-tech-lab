@@ -347,17 +347,60 @@ try {
     Write-Log "Cleared all existing desktop shortcuts" "INFO"
 
     # Disable Windows Spotlight "Learn about this picture" overlay (distracting for screen readers)
-    $spotlightPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\DesktopSpotlight"
-    if (-not (Test-Path $spotlightPath)) { New-Item -Path $spotlightPath -Force | Out-Null }
-    Set-ItemProperty -Path $spotlightPath -Name "Enabled" -Value 0
-    $cdmPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
-    if (Test-Path $cdmPath) {
-        Set-ItemProperty -Path $cdmPath -Name "SubscribedContent-338387Enabled" -Value 0 -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $cdmPath -Name "RotatingLockScreenOverlayEnabled" -Value 0 -ErrorAction SilentlyContinue
+    # Use HKLM Group Policy keys — these apply machine-wide regardless of which user is logged in
+    $polPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent"
+    if (-not (Test-Path $polPath)) { New-Item -Path $polPath -Force | Out-Null }
+    New-ItemProperty -Path $polPath -Name "DisableWindowsSpotlightFeatures" -Value 1 -PropertyType DWord -Force | Out-Null
+    New-ItemProperty -Path $polPath -Name "DisableWindowsSpotlightOnDesktop" -Value 1 -PropertyType DWord -Force | Out-Null
+    New-ItemProperty -Path $polPath -Name "DisableWindowsSpotlightWindowsWelcomeExperience" -Value 1 -PropertyType DWord -Force | Out-Null
+    New-ItemProperty -Path $polPath -Name "DisableTailoredExperiencesWithDiagnosticData" -Value 1 -PropertyType DWord -Force | Out-Null
+
+    # Also set HKCU keys for the Student user via their registry hive (this script runs as Admin,
+    # so HKCU would target Admin — we need to load the Student profile's NTUSER.DAT instead)
+    $studentSID = $null
+    try {
+        $studentSID = (New-Object System.Security.Principal.NTAccount("Student")).Translate(
+            [System.Security.Principal.SecurityIdentifier]).Value
+    } catch {
+        Write-Log "Student account not found yet — HKCU Spotlight keys will be set via Default profile" "INFO"
     }
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Wallpapers" -Name "BackgroundType" -Value 1 -ErrorAction SilentlyContinue
-    Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name Wallpaper -Value "" -ErrorAction SilentlyContinue
-    Write-Log "Disabled Windows Spotlight desktop overlay" "INFO"
+
+    # Target all three hives: current user (Admin), Student (via SID), and Default (new users)
+    $hkuPaths = @("HKCU:")
+    if ($studentSID) {
+        $hkuPaths += "REGISTRY::HKEY_USERS\$studentSID"
+    }
+    $defaultNtuser = "C:\Users\Default\NTUSER.DAT"
+    $defaultLoaded = $false
+    if ((Test-Path $defaultNtuser) -and -not (Test-Path "REGISTRY::HKEY_USERS\DefaultProfile")) {
+        reg load "HKU\DefaultProfile" $defaultNtuser 2>$null | Out-Null
+        if ($?) { $defaultLoaded = $true; $hkuPaths += "REGISTRY::HKEY_USERS\DefaultProfile" }
+    }
+
+    foreach ($hive in $hkuPaths) {
+        $spotlightPath = "$hive\Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\DesktopSpotlight"
+        if (-not (Test-Path $spotlightPath)) { New-Item -Path $spotlightPath -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $spotlightPath -Name "Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
+
+        $cdmPath = "$hive\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
+        if (Test-Path $cdmPath) {
+            Set-ItemProperty -Path $cdmPath -Name "SubscribedContent-338387Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path $cdmPath -Name "RotatingLockScreenOverlayEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path $cdmPath -Name "RotatingLockScreenEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+        }
+
+        # Set wallpaper to solid color (BackgroundType 1 = solid)
+        $wpPath = "$hive\Software\Microsoft\Windows\CurrentVersion\Explorer\Wallpapers"
+        if (-not (Test-Path $wpPath)) { New-Item -Path $wpPath -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $wpPath -Name "BackgroundType" -Value 1 -Force -ErrorAction SilentlyContinue
+        $deskPath = "$hive\Control Panel\Desktop"
+        if (Test-Path $deskPath) {
+            Set-ItemProperty -Path $deskPath -Name "Wallpaper" -Value "" -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    if ($defaultLoaded) { reg unload "HKU\DefaultProfile" 2>$null | Out-Null }
+    Write-Log "Disabled Windows Spotlight (Group Policy + per-user) and set solid wallpaper" "INFO"
 
     # Number-prefixed shortcuts so alphabetical sort = logical navigation order.
     # Screen reader users arrow through the desktop; this guarantees a consistent,
@@ -817,37 +860,24 @@ if (Test-Path $backupDir) {
     $failCount++
 }
 
-# Step 17: Create Vietnamese-labeled desktop folders
-Write-Log "Step 17: Creating Vietnamese desktop folders..." "INFO"
+# Step 17: Create Vietnamese-labeled content folders (no desktop shortcuts — desktop is managed in Step 6)
+Write-Log "Step 17: Creating Vietnamese content folders..." "INFO"
 
 try {
-    $publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
     $studentDocs = "C:\Users\Public\Documents"
 
-    $viFolders = @(
-        @{ Name = "Tai Lieu"; Desc = "Tài Liệu - Documents" },
-        @{ Name = "Am Nhac"; Desc = "Âm Nhạc - Music" },
-        @{ Name = "Truyen"; Desc = "Truyện - Stories" },
-        @{ Name = "Hoc Tap"; Desc = "Học Tập - Study" },
-        @{ Name = "Tro Choi"; Desc = "Trò Chơi - Games" }
-    )
+    $viFolders = @("Tai Lieu", "Am Nhac", "Truyen", "Hoc Tap", "Tro Choi")
 
-    foreach ($folder in $viFolders) {
-        $folderPath = Join-Path $studentDocs $folder.Name
+    foreach ($folderName in $viFolders) {
+        $folderPath = Join-Path $studentDocs $folderName
         if (-not (Test-Path $folderPath)) {
             New-Item -Path $folderPath -ItemType Directory -Force | Out-Null
         }
-
-        # Create desktop shortcut to each folder
-        $WshShell = New-Object -ComObject WScript.Shell
-        $folderShortcutPath = Join-Path $publicDesktop "$($folder.Name).lnk"
-        $folderShortcut = $WshShell.CreateShortcut($folderShortcutPath)
-        $folderShortcut.TargetPath = $folderPath
-        $folderShortcut.Description = $folder.Desc
-        $folderShortcut.Save()
     }
+    # NOTE: No desktop shortcuts created here. Step 6 owns the full desktop layout.
+    # Students access these folders through File Explorer / My USB shortcut.
 
-    Write-Log "Vietnamese desktop folders created (Tai Lieu, Am Nhac, Truyen, Hoc Tap, Tro Choi)" "SUCCESS"
+    Write-Log "Vietnamese content folders created (Tai Lieu, Am Nhac, Truyen, Hoc Tap, Tro Choi)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not create Vietnamese folders: $($_.Exception.Message)" "ERROR"
