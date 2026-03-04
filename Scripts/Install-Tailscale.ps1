@@ -113,13 +113,9 @@ try {
     Write-Host "       tailscale up --authkey=YOUR_KEY --hostname=$hostname" -ForegroundColor Yellow
 }
 
-# Hide Tailscale tray icon (service runs without it)
-$tsAutorun = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
-Remove-ItemProperty -Path $tsAutorun -Name "Tailscale" -ErrorAction SilentlyContinue
-# Also remove from per-user autorun
-$tsUserAutorun = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
-Remove-ItemProperty -Path $tsUserAutorun -Name "Tailscale" -ErrorAction SilentlyContinue
-Write-Host "[OK] Tailscale tray icon disabled (service still runs)" -ForegroundColor Green
+# Note: tailscale-ipn.exe (tray icon) is required for Tailscale to function.
+# Do NOT remove it from autorun or Tailscale will be stuck in NoState after reboot.
+Write-Host "[OK] Tailscale autorun left enabled (tailscale-ipn.exe required for operation)" -ForegroundColor Green
 
 Write-Host "--- Tailscale Setup Complete ---" -ForegroundColor Cyan
 Write-Host ""

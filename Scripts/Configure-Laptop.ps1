@@ -365,8 +365,8 @@ try {
         @{ Name = "VLC Media Player"; Target = "C:\Program Files\VideoLAN\VLC\vlc.exe"; AltTarget = "C:\Program Files (x86)\VideoLAN\VLC\vlc.exe"; Desc = "VLC Media Player" },
         @{ Name = "Audacity"; Target = "C:\Program Files\Audacity\Audacity.exe"; AltTarget = "C:\Program Files (x86)\Audacity\Audacity.exe"; Desc = "Audacity Audio Editor" },
         # --- Education ---
-        @{ Name = "Sao Mai Typing Tutor"; Target = "C:\Program Files\SaoMai\SMTTypingTutor\SMTTypingTutor.exe"; AltTarget = "C:\Program Files (x86)\SaoMai\SMTTypingTutor\SMTTypingTutor.exe"; Desc = "Sao Mai Vietnamese Typing Tutor" },
-        @{ Name = "SM Readmate"; Target = "C:\Program Files\SaoMai\SMReadmate\SMReadmate.exe"; AltTarget = "C:\Program Files (x86)\SaoMai\SMReadmate\SMReadmate.exe"; Desc = "SM Readmate Accessible Reader" },
+        @{ Name = "Sao Mai Typing Tutor"; Target = "C:\Program Files (x86)\SaoMai\SMTT\SMTT.exe"; AltTarget = "C:\Program Files\SaoMai\SMTT\SMTT.exe"; Desc = "Sao Mai Vietnamese Typing Tutor" },
+        @{ Name = "SM Readmate"; Target = "C:\Program Files\SaoMai\sm_readmate\sm_readmate.exe"; AltTarget = "C:\Program Files (x86)\SaoMai\sm_readmate\sm_readmate.exe"; Desc = "SM Readmate Accessible Reader" },
         @{ Name = "Quorum Studio"; Target = "C:\Program Files\QuorumStudio\QuorumStudio.exe"; AltTarget = "C:\Program Files (x86)\QuorumStudio\QuorumStudio.exe"; Desc = "Quorum Studio - Accessible IDE" },
         # --- Utilities ---
         @{ Name = "Calculator"; Target = "calc.exe"; Desc = "Windows Calculator" },
