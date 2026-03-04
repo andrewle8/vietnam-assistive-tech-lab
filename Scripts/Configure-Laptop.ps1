@@ -1267,19 +1267,41 @@ try {
     if (-not (Test-Path $searchRegPath)) { New-Item -Path $searchRegPath -Force | Out-Null }
     Set-ItemProperty -Path $searchRegPath -Name "SearchboxTaskbarMode" -Value 0 -Force
 
-    # Clear pinned taskbar items (Win11 stores these as shortcut files, not registry)
-    $pinnedPath = "$env:APPDATA\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar"
-    if (Test-Path $pinnedPath) {
-        Get-ChildItem -Path $pinnedPath -Filter "*.lnk" -ErrorAction SilentlyContinue |
+    # Clear pinned taskbar items for ALL user profiles (Win11 stores pins per-user)
+    $userProfiles = Get-ChildItem "C:\Users" -Directory | Where-Object { $_.Name -notin @("Public", "Default", "Default User", "All Users") }
+    foreach ($profile in $userProfiles) {
+        $pinnedPath = Join-Path $profile.FullName "AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar"
+        if (Test-Path $pinnedPath) {
+            Get-ChildItem -Path $pinnedPath -Filter "*.lnk" -ErrorAction SilentlyContinue |
+                Where-Object { $_.Name -notlike "*File Explorer*" } |
+                Remove-Item -Force -ErrorAction SilentlyContinue
+            Write-Log "Cleared taskbar pins for $($profile.Name)" "INFO"
+        }
+    }
+    # Also clear for Default profile (new users)
+    $defaultPinned = "C:\Users\Default\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar"
+    if (Test-Path $defaultPinned) {
+        Get-ChildItem -Path $defaultPinned -Filter "*.lnk" -ErrorAction SilentlyContinue |
             Where-Object { $_.Name -notlike "*File Explorer*" } |
             Remove-Item -Force -ErrorAction SilentlyContinue
     }
 
-    # Also clear the Win10-era Taskband registry (in case it's used)
+    # Clear Taskband registry for current user and Student user
     $taskband = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband"
     if (Test-Path $taskband) {
         Remove-ItemProperty -Path $taskband -Name "Favorites" -Force -ErrorAction SilentlyContinue
         Remove-ItemProperty -Path $taskband -Name "FavoritesResolve" -Force -ErrorAction SilentlyContinue
+    }
+    # Clear for Student via SID
+    try {
+        $studentSID = (New-Object System.Security.Principal.NTAccount("Student")).Translate([System.Security.Principal.SecurityIdentifier]).Value
+        $studentTB = "REGISTRY::HKEY_USERS\$studentSID\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband"
+        if (Test-Path $studentTB) {
+            Remove-ItemProperty -Path $studentTB -Name "Favorites" -Force -ErrorAction SilentlyContinue
+            Remove-ItemProperty -Path $studentTB -Name "FavoritesResolve" -Force -ErrorAction SilentlyContinue
+        }
+    } catch {
+        Write-Log "Could not clear Student taskband (user may not exist yet): $($_.Exception.Message)" "INFO"
     }
 
     # Restart Explorer to apply changes
