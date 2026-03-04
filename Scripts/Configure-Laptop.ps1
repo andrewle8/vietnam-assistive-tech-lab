@@ -1406,7 +1406,7 @@ try {
         if (-not (Test-Path $taskbarPath)) { New-Item -Path $taskbarPath -Force -ErrorAction SilentlyContinue | Out-Null }
         Set-ItemProperty -Path $taskbarPath -Name "TaskbarMn" -Value 0 -Force -ErrorAction SilentlyContinue
         Set-ItemProperty -Path $taskbarPath -Name "ShowTaskViewButton" -Value 0 -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $taskbarPath -Name "TaskbarDa" -Value 0 -Force -ErrorAction SilentlyContinue
+        # TaskbarDa (Widgets) is ACL-protected per-user; disabled machine-wide via HKLM Dsh policy in Step 26
         Set-ItemProperty -Path $taskbarPath -Name "ShowCopilotButton" -Value 0 -Force -ErrorAction SilentlyContinue
 
         $searchRegPath = "$hive\Software\Microsoft\Windows\CurrentVersion\Search"
