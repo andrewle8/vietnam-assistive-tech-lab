@@ -1,14 +1,14 @@
 {
-  "manifest_version": "2026.02.19",
+  "manifest_version": "2026.03.05",
   "created": "2026-02-19",
-  "tested_on": null,
-  "notes": "Release candidate — pending first laptop test",
+  "tested_on": "PC-01 (2026-03-05)",
+  "notes": "Tested and validated on PC-01 test bench",
 
   "os": {
     "name": "Windows 11 Pro",
     "min_build": "22631",
-    "feature_update": "24H2",
-    "auto_update": "disabled"
+    "feature_update": "25H2",
+    "auto_update": "manual-only"
   },
 
   "software": {
@@ -35,8 +35,8 @@
       "installer": "SMTTSetup.exe",
       "critical": false,
       "paths": [
-        "C:\\Program Files\\SaoMai\\TypingTutor\\*",
-        "C:\\Program Files (x86)\\SaoMai\\TypingTutor\\*"
+        "C:\\Program Files (x86)\\SaoMai\\SMTT\\SMTT.exe",
+        "C:\\Program Files\\SaoMai\\SMTT\\SMTT.exe"
       ]
     },
     "saomai_readmate": {
@@ -44,8 +44,8 @@
       "installer": "SMReadmate1.0.5-setup.exe",
       "critical": false,
       "paths": [
-        "C:\\Program Files\\SaoMai\\SMReadmate\\*",
-        "C:\\Program Files (x86)\\SaoMai\\SMReadmate\\*"
+        "C:\\Program Files\\SaoMai\\sm_readmate\\sm_readmate.exe",
+        "C:\\Program Files (x86)\\SaoMai\\sm_readmate\\sm_readmate.exe"
       ]
     },
     "msoffice": {
@@ -103,6 +103,7 @@
       "installer": "SumatraPDF-3.5.2-64-install.exe",
       "critical": false,
       "paths": [
+        "C:\\Users\\Student\\AppData\\Local\\SumatraPDF\\SumatraPDF.exe",
         "C:\\Program Files\\SumatraPDF\\SumatraPDF.exe"
       ]
     },
@@ -185,7 +186,7 @@
     "volume_limit_percent": 70,
     "magnifier_mode": "full-screen",
     "magnifier_zoom": 200,
-    "windows_update": "disabled",
+    "windows_update": "manual-only",
     "narrator_shortcut": "disabled",
     "hibernate": "disabled"
   }

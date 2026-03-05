@@ -706,26 +706,28 @@ try {
     $failCount++
 }
 
-# Step 10: Disable Windows Update (offline machines, prevents unexpected reboots)
-Write-Log "Step 10: Disabling Windows Update..." "INFO"
+# Step 10: Configure Windows Update (manual-only — no auto-downloads or auto-installs)
+Write-Log "Step 10: Configuring Windows Update for manual-only..." "INFO"
 
 try {
-    # Disable Windows Update service
-    Set-Service -Name "wuauserv" -StartupType Disabled -ErrorAction SilentlyContinue
-    Stop-Service -Name "wuauserv" -Force -ErrorAction SilentlyContinue
+    # Keep services at Manual so updates CAN run when the admin chooses
+    Set-Service -Name "wuauserv" -StartupType Manual -ErrorAction SilentlyContinue
+    Set-Service -Name "WaaSMedicSvc" -StartupType Manual -ErrorAction SilentlyContinue
+    Set-Service -Name "UsoSvc" -StartupType Manual -ErrorAction SilentlyContinue
 
-    # Disable Windows Update Medic Service (re-enables Windows Update)
-    Set-Service -Name "WaaSMedicSvc" -StartupType Disabled -ErrorAction SilentlyContinue
-    Stop-Service -Name "WaaSMedicSvc" -Force -ErrorAction SilentlyContinue
+    # Set Group Policy: "Notify for download and notify for install" (AUOptions=2)
+    # This prevents automatic downloads/installs but allows manual "Check for updates"
+    $auPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
+    if (-not (Test-Path $auPath)) { New-Item -Path $auPath -Force | Out-Null }
+    Set-ItemProperty -Path $auPath -Name "NoAutoUpdate" -Value 0 -Force
+    Set-ItemProperty -Path $auPath -Name "AUOptions" -Value 2 -Force
+    # Disable auto-reboot when users are logged in
+    Set-ItemProperty -Path $auPath -Name "NoAutoRebootWithLoggedOnUsers" -Value 1 -Force
 
-    # Disable Update Orchestrator Service
-    Set-Service -Name "UsoSvc" -StartupType Disabled -ErrorAction SilentlyContinue
-    Stop-Service -Name "UsoSvc" -Force -ErrorAction SilentlyContinue
-
-    Write-Log "Windows Update services disabled" "SUCCESS"
+    Write-Log "Windows Update set to manual-only (notify, no auto-install)" "SUCCESS"
     $successCount++
 } catch {
-    Write-Log "Could not disable Windows Update: $($_.Exception.Message)" "ERROR"
+    Write-Log "Could not configure Windows Update: $($_.Exception.Message)" "ERROR"
     $failCount++
 }
 
@@ -1405,9 +1407,25 @@ try {
     $tsStartup = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\Tailscale.lnk"
     if (Test-Path $tsStartup) { Remove-Item $tsStartup -Force }
 
-    # Suppress UniKey startup dialog and auto-update checks for all user profiles
-    # Note: UniKey may reset ShowDlg=1 on first launch; setting it here ensures it's correct
-    # if the script runs after UniKey has already created its registry keys
+    # UniKey: ensure startup shortcut uses the wrapper VBS that sets ShowDlg=0
+    # (UniKey overwrites ShowDlg=1 on exit, so registry-only fix doesn't persist)
+    $unikeyLnk = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\UniKey.lnk"
+    $launcherVbs = "C:\LabTools\start-unikey.vbs"
+    if ((Test-Path $unikeyLnk) -and (Test-Path $launcherVbs)) {
+        $WshShell = New-Object -ComObject WScript.Shell
+        $shortcut = $WshShell.CreateShortcut($unikeyLnk)
+        if ($shortcut.TargetPath -ne (Get-Command wscript.exe).Path) {
+            $shortcut.TargetPath = "wscript.exe"
+            $shortcut.Arguments = "`"$launcherVbs`""
+            $shortcut.WorkingDirectory = "C:\Program Files\UniKey"
+            $shortcut.WindowStyle = 7
+            $shortcut.Description = "UniKey Vietnamese Input (silent start)"
+            $shortcut.Save()
+            Write-Log "UniKey startup shortcut updated to use wrapper" "INFO"
+        }
+    }
+
+    # Also set registry values for good measure (covers fresh profiles)
     foreach ($hive in $hkuPaths) {
         $uniKeyPath = "$hive\Software\PkLong\UniKey"
         if (-not (Test-Path $uniKeyPath)) { New-Item -Path $uniKeyPath -Force -ErrorAction SilentlyContinue | Out-Null }
@@ -1415,7 +1433,7 @@ try {
         Set-ItemProperty -Path $uniKeyPath -Name "AutoUpdate" -Value 0 -Force -ErrorAction SilentlyContinue
     }
 
-    Write-Log "Startup apps cleaned (Tailscale GUI removed, UniKey dialog suppressed)" "SUCCESS"
+    Write-Log "Startup apps cleaned (Tailscale GUI removed, UniKey dialog suppressed via wrapper)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not clean startup apps: $($_.Exception.Message)" "ERROR"
