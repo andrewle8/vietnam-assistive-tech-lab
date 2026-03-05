@@ -62,7 +62,29 @@ try {
 
 # Build array of registry hive paths to target (Admin HKCU + Student HKU + Default profile)
 $hkuPaths = @("HKCU:")
-if ($studentSID) { $hkuPaths += "REGISTRY::HKEY_USERS\$studentSID" }
+$studentHiveLoaded = $false
+if ($studentSID) {
+    $studentHivePath = "REGISTRY::HKEY_USERS\$studentSID"
+    if (Test-Path $studentHivePath) {
+        # Student is logged in — SID already in HKU
+        $hkuPaths += $studentHivePath
+    } else {
+        # Student is NOT logged in — manually load their NTUSER.DAT
+        $studentNtuser = "C:\Users\Student\NTUSER.DAT"
+        if (Test-Path $studentNtuser) {
+            reg load "HKU\$studentSID" $studentNtuser 2>$null | Out-Null
+            if ($?) {
+                $studentHiveLoaded = $true
+                $hkuPaths += $studentHivePath
+                Write-Log "Loaded Student registry hive from NTUSER.DAT" "INFO"
+            } else {
+                Write-Log "WARNING: Could not load Student NTUSER.DAT — per-user settings will not apply to Student." "ERROR"
+            }
+        } else {
+            Write-Log "WARNING: Student NTUSER.DAT not found — Student has never logged in. Per-user settings will apply via Default profile only." "ERROR"
+        }
+    }
+}
 $defaultLoaded = $false
 $defaultNtuser = "C:\Users\Default\NTUSER.DAT"
 if ((Test-Path $defaultNtuser) -and -not (Test-Path "REGISTRY::HKEY_USERS\DefaultProfile")) {
@@ -494,8 +516,8 @@ try {
         @{ Name = "05 Firefox"; Target = "C:\Program Files\Mozilla Firefox\firefox.exe"; AltTarget = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"; Desc = "Firefox Web Browser" },
         @{ Name = "06 Wikipedia (Offline)"; Target = "C:\Program Files\Kiwix\kiwix-desktop.exe"; Desc = "Kiwix - Offline Vietnamese Wikipedia" },
         @{ Name = "07 Tu Dien - Dictionary"; Target = "C:\Program Files\GoldenDict\GoldenDict.exe"; AltTarget = "C:\Program Files (x86)\GoldenDict\GoldenDict.exe"; Desc = "GoldenDict - Offline Dictionary" },
-        @{ Name = "08 Thorium Reader"; Target = "$env:LOCALAPPDATA\Programs\Thorium\Thorium.exe"; AltTarget = "C:\Program Files\Thorium\Thorium.exe"; Desc = "Thorium EPUB/DAISY Reader" },
-        @{ Name = "09 SumatraPDF"; Target = "C:\Program Files\SumatraPDF\SumatraPDF.exe"; AltTarget = "$env:LOCALAPPDATA\SumatraPDF\SumatraPDF.exe"; Desc = "SumatraPDF Reader" },
+        @{ Name = "08 Thorium Reader"; Target = "C:\Users\Student\AppData\Local\Programs\Thorium\Thorium.exe"; AltTarget = "C:\Program Files\Thorium\Thorium.exe"; Desc = "Thorium EPUB/DAISY Reader" },
+        @{ Name = "09 SumatraPDF"; Target = "C:\Program Files\SumatraPDF\SumatraPDF.exe"; AltTarget = "C:\Users\Student\AppData\Local\SumatraPDF\SumatraPDF.exe"; Desc = "SumatraPDF Reader" },
         # --- 10-11 Media ---
         @{ Name = "10 VLC media player"; Target = "C:\Program Files\VideoLAN\VLC\vlc.exe"; AltTarget = "C:\Program Files (x86)\VideoLAN\VLC\vlc.exe"; Desc = "VLC Media Player" },
         @{ Name = "11 Audacity"; Target = "C:\Program Files\Audacity\Audacity.exe"; AltTarget = "C:\Program Files (x86)\Audacity\Audacity.exe"; Desc = "Audacity Audio Editor" },
@@ -1849,7 +1871,13 @@ Write-Host "Log file: $LogPath" -ForegroundColor Cyan
 Write-Host "`n========================================" -ForegroundColor Green
 Write-Host ""
 
-# Unload Default profile hive if we loaded it
+# Unload registry hives if we loaded them
+if ($studentHiveLoaded) {
+    [gc]::Collect()
+    Start-Sleep -Seconds 1
+    reg unload "HKU\$studentSID" 2>$null | Out-Null
+    Write-Log "Unloaded Student registry hive" "INFO"
+}
 if ($defaultLoaded) {
     reg unload "HKU\DefaultProfile" 2>$null | Out-Null
     Write-Log "Unloaded Default profile registry hive" "INFO"
