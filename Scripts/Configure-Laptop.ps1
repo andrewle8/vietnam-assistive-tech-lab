@@ -1445,10 +1445,27 @@ try {
 Write-Log "Step 27b: Cleaning startup apps..." "INFO"
 
 try {
-    # Remove Tailscale GUI auto-start (service runs independently via StartType=Automatic)
+    # Tailscale GUI (tailscale-ipn.exe) must autostart or Tailscale gets stuck in NoState after reboot.
+    # Set the startup shortcut to start minimized so it goes straight to the tray without a popup.
     Remove-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "Tailscale" -Force -ErrorAction SilentlyContinue
     $tsStartup = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\Tailscale.lnk"
-    if (Test-Path $tsStartup) { Remove-Item $tsStartup -Force }
+    if (Test-Path $tsStartup) {
+        $WshShell = New-Object -ComObject WScript.Shell
+        $shortcut = $WshShell.CreateShortcut($tsStartup)
+        $shortcut.WindowStyle = 7
+        $shortcut.Save()
+        Write-Log "Tailscale startup shortcut set to minimized" "INFO"
+    } else {
+        # Recreate the shortcut if the installer didn't leave one
+        $WshShell = New-Object -ComObject WScript.Shell
+        $shortcut = $WshShell.CreateShortcut($tsStartup)
+        $shortcut.TargetPath = "C:\Program Files\Tailscale\tailscale-ipn.exe"
+        $shortcut.WorkingDirectory = "C:\Program Files\Tailscale\"
+        $shortcut.WindowStyle = 7
+        $shortcut.Description = "Tailscale VPN (silent start)"
+        $shortcut.Save()
+        Write-Log "Tailscale startup shortcut created (minimized)" "INFO"
+    }
 
     # UniKey: ensure startup shortcut uses the wrapper VBS that sets ShowDlg=0
     # (UniKey overwrites ShowDlg=1 on exit, so registry-only fix doesn't persist)
