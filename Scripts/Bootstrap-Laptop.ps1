@@ -302,7 +302,7 @@ Write-Host "========================================" -ForegroundColor Cyan
 
 $winrmStatus = try { (Get-Service WinRM).Status } catch { "Unknown" }
 $currentIP = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.InterfaceAlias -match "Wi-Fi|Wireless|WLAN" -and $_.PrefixOrigin -ne "WellKnown" }).IPAddress
-$tailscaleIP = if (Test-Path "C:\LabTools\tailscale-ip.txt") { Get-Content "C:\LabTools\tailscale-ip.txt" -ErrorAction SilentlyContinue } else { "Not configured" }
+$tailscaleIP = try { & "C:\Program Files\Tailscale\tailscale.exe" ip -4 2>$null } catch { "Not connected" }
 
 Write-Host ""
 Write-Host "  Hostname:      $hostname (effective after reboot)" -ForegroundColor White

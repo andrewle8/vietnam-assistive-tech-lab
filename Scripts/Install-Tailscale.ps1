@@ -96,13 +96,6 @@ try {
 
     if ($tailscaleIP) {
         Write-Host "[OK] Joined tailnet. IP: $tailscaleIP" -ForegroundColor Green
-
-        # Write IP to LabTools for reference
-        $labToolsDir = "C:\LabTools"
-        if (-not (Test-Path $labToolsDir)) {
-            New-Item -Path $labToolsDir -ItemType Directory -Force | Out-Null
-        }
-        Set-Content -Path "$labToolsDir\tailscale-ip.txt" -Value $tailscaleIP -Force
     } else {
         Write-Host "[WARN] Tailscale installed but no IP assigned yet" -ForegroundColor Yellow
         Write-Host "       May need internet connection to complete registration" -ForegroundColor Yellow

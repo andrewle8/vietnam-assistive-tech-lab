@@ -1164,18 +1164,39 @@ try {
     Start-Service sshd
     Set-Service -Name sshd -StartupType Automatic
 
-    # Ensure firewall rule exists
+    # Ensure firewall rule exists and allows SSH on all network profiles (Wi-Fi may be Public)
     $fwRule = Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyContinue
     if (-not $fwRule) {
         New-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -DisplayName "OpenSSH Server (sshd)" `
-            -Direction Inbound -Protocol TCP -LocalPort 22 -Action Allow | Out-Null
+            -Direction Inbound -Protocol TCP -LocalPort 22 -Action Allow -Profile Any | Out-Null
+    } else {
+        Set-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -Profile Any
+    }
+    # Also fix the built-in rule if it exists
+    $builtinRule = Get-NetFirewallRule -DisplayName "OpenSSH SSH Server (sshd)" -ErrorAction SilentlyContinue
+    if ($builtinRule) {
+        Set-NetFirewallRule -DisplayName "OpenSSH SSH Server (sshd)" -Profile Any
+    }
+
+    # Enable password auth for admin users in sshd_config
+    $sshdConfig = "C:\ProgramData\ssh\sshd_config"
+    if (Test-Path $sshdConfig) {
+        $content = Get-Content $sshdConfig -Raw
+        # Uncomment PasswordAuthentication if commented
+        $content = $content -replace '(?m)^#PasswordAuthentication yes', 'PasswordAuthentication yes'
+        # Add PasswordAuthentication to administrators match block if missing
+        if ($content -match 'Match Group administrators' -and $content -notmatch 'Match Group administrators[\s\S]*?PasswordAuthentication') {
+            $content = $content -replace '(Match Group administrators\s*\r?\n\s*AuthorizedKeysFile[^\r\n]*)', "`$1`r`n       PasswordAuthentication yes"
+        }
+        Set-Content -Path $sshdConfig -Value $content -Force
+        Restart-Service sshd
     }
 
     # Set default shell to PowerShell
     New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell `
         -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -PropertyType String -Force | Out-Null
 
-    Write-Log "OpenSSH Server enabled (auto-start, PowerShell default shell)" "SUCCESS"
+    Write-Log "OpenSSH Server enabled (auto-start, password auth, all profiles)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not enable OpenSSH Server: $($_.Exception.Message)" "ERROR"
