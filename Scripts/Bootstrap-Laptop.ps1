@@ -10,14 +10,15 @@ param(
     [ValidateRange(1,19)]
     [int]$PCNumber,
 
+    [Parameter(Mandatory=$true)]
+    [string]$WifiSSID,
+
+    [Parameter(Mandatory=$true)]
+    [string]$WifiPassword,
+
     [switch]$SkipInstall,
     [switch]$SkipReboot
 )
-
-# ---- CONFIGURE THESE BEFORE USE ----
-$WifiSSID     = "YOUR_SSID_HERE"
-$WifiPassword = "YOUR_PASSWORD_HERE"
-# -------------------------------------
 
 $hostname = "PC-{0:D2}" -f $PCNumber
 $totalSteps = 10
