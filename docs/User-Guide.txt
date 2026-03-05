@@ -1,0 +1,182 @@
+LAPTOP USER GUIDE
+
+This guide explains how to use the laptop with the NVDA screen reader.
+
+
+GETTING STARTED
+
+When the laptop turns on, NVDA starts automatically and says "NVDA is running".
+You will hear a welcome message. After that, you are on the Desktop.
+
+
+PORTS AND CONNECTIONS
+
+The Dell Latitude 5420 has ports on both sides and the rear.
+Place the laptop in front of you with the screen open. The hinge side is away from you.
+
+Left Side (from rear to front):
+  1. Small USB-C port (Thunderbolt) - for charging or external display
+  2. Second small USB-C port (Thunderbolt)
+  3. Full-size USB-A port (rectangular) - plug your USB drive here
+  4. HDMI port (trapezoid shape) - for external display
+
+Right Side (from rear to front):
+  1. Security lock slot (small wedge-shaped slot)
+  2. Second full-size USB-A port (rectangular) - also works for USB drives
+  3. Headphone jack (small round hole) - plug your headphones here
+  4. microSD card slot (thin slot)
+
+Rear (near the hinge):
+  1. RJ-45 Ethernet port (large square port) - for wired network
+
+Quick Summary:
+  Headphones: right side, round hole, near the middle of the edge
+  USB drive: large rectangular port, one on each side (left and right)
+  Charging: plug charger into USB-C port on left side (port closest to hinge)
+
+
+HEADPHONES
+
+The laptop uses Audio-Technica ATH-M40x headphones.
+
+  Plug the headphone cable into the round jack on the right side of the laptop.
+  The cable is detachable. The small end (2.5mm) plugs into the headphones, the large end (3.5mm) plugs into the laptop.
+  Use the volume keys on the keyboard to increase or decrease volume.
+  Volume is set to 70% each time the laptop starts.
+
+
+YOUR USB DRIVE
+
+Each student has a personal USB drive (16GB) with an ID number (e.g., STU-001).
+Your USB drive has a Braille label tag attached.
+
+Plugging In:
+  1. Find a USB-A port (large rectangular shape) on the left or right side of the laptop.
+  2. The USB plug only goes in one way. If it does not fit, flip it over.
+  3. Push gently until you hear a click.
+
+Opening Your USB:
+  1. Use arrow keys to navigate to icon 19 "My USB" on the Desktop.
+  2. Press Enter. The "This PC" window will open.
+  3. Press Tab to move into the drive list, use arrow keys to find your USB drive.
+  4. Press Enter to open the USB.
+
+Saving Files to USB:
+  In programs like Word:
+  1. Press Ctrl + S to save.
+  2. Use Alt + D to jump to the address bar, type the USB path (e.g., E:\)
+  3. Or use "Save As" (Ctrl + Shift + S) and select USB from the left panel.
+
+Safely Removing USB:
+  Always safely remove USB to avoid losing data.
+  1. Press Windows + E to open File Explorer.
+  2. Press Tab to the drive section, use arrow keys to find your USB.
+  3. Press the Menu key (or Shift + F10) to open the right-click menu.
+  4. Select "Eject" and press Enter.
+  5. Wait until you hear the "Safe to Remove Hardware" notification.
+  6. Pull the USB out.
+
+Automatic Backup:
+  Your USB data is automatically backed up to Google Drive every 15 minutes (when internet is available).
+
+
+DESKTOP NAVIGATION
+
+The desktop has 21 icons, numbered 01 to 21.
+Use arrow keys (Left, Right, Up, Down) to move between icons.
+Press Enter to open a program.
+
+Program List:
+  01. NVDA - Screen reader
+  02. Word - Word processor
+  03. Excel - Spreadsheet
+  04. PowerPoint - Presentations
+  05. Firefox - Web browser
+  06. Wikipedia - Offline encyclopedia
+  07. Tu Dien - English-Vietnamese dictionary
+  08. Thorium Reader - EPUB book reader
+  09. SumatraPDF - PDF reader
+  10. VLC - Media player
+  11. Audacity - Audio editor
+  12. Sao Mai Typing - Vietnamese typing tutor
+  13. SM Readmate - Accessible document reader
+  14. Quorum Studio - Accessible programming
+  15. LEAP TicTacToe - Tic-tac-toe game
+  16. LEAP Tennis - Tennis game
+  17. LEAP Curve - Curve game
+  18. Calculator - Calculator
+  19. My USB - Open your USB drive
+  20. Doi Ngon Ngu - Switch Vietnamese/English
+  21. Khoi Phuc NVDA - Restore NVDA if broken
+
+
+IMPORTANT NVDA SHORTCUTS
+
+This laptop uses the "Laptop" keyboard layout. The NVDA key is Caps Lock.
+
+  Caps Lock + T: Read window title
+  Caps Lock + B: Read entire window
+  Caps Lock + F7: List of links
+  Caps Lock + Space: Toggle browse/focus mode
+  Caps Lock + N: Open NVDA menu
+  Caps Lock + Q: Quit NVDA
+  Ctrl: Stop reading
+  Caps Lock + Down Arrow: Read from current position
+  Tab: Move to next item
+  Shift + Tab: Move to previous item
+  Alt + F4: Close program
+  Alt + Tab: Switch programs
+
+Focus Mode:
+  When using PowerShell, Command Prompt, or other apps where the keyboard does not work normally:
+  Press Caps Lock + Space to switch to "Focus Mode".
+  In this mode, all keys you press go directly to the application (including Backspace, Delete, etc.).
+  Press Caps Lock + Space again to return to browse mode.
+
+
+TYPING VIETNAMESE
+
+UniKey starts automatically when the laptop turns on.
+Default input method is Telex.
+
+Telex examples:
+  aa = a with circumflex
+  aw = a with breve
+  oo = o with circumflex
+  ow = o with horn
+  uw = u with horn
+  dd = d with stroke
+  s = acute accent, f = grave accent, r = hook above, x = tilde, j = dot below
+
+
+USEFUL WINDOWS SHORTCUTS
+
+  Windows + E: Open File Explorer
+  Ctrl + C: Copy
+  Ctrl + V: Paste
+  Ctrl + X: Cut
+  Ctrl + Z: Undo
+  Ctrl + S: Save
+  Ctrl + A: Select all
+  Ctrl + Shift + S: Save As
+  Windows + L: Lock laptop
+  Ctrl + W: Close current tab or window
+
+
+IF NVDA BREAKS
+
+If NVDA stops talking or speaks incorrectly:
+  1. Use arrow keys to navigate to icon 21 "Khoi Phuc NVDA"
+  2. Press Enter
+  3. Wait a few seconds, NVDA will restart with default settings
+
+
+NOTES
+
+  No password needed to log in.
+  USB data auto-backs up every 15 minutes.
+  If you need help, ask your teacher.
+  Always safely eject USB before shutting down.
+
+
+Last updated: 2026-03-05
