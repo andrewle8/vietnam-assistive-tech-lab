@@ -2,6 +2,9 @@
 # Standalone script containing Steps 23-29 from Configure-Laptop.ps1
 # Run this on machines that already have Configure-Laptop applied but need debloating.
 # Requires Administrator.
+# NOTE: HKCU writes only target the Admin profile running this script.
+# Configure-Laptop.ps1 handles Student-profile debloating via $hkuPaths.
+# This script is for quick re-application, not initial deployment.
 
 param(
     [string]$LogPath = "$PSScriptRoot\debloat.log"

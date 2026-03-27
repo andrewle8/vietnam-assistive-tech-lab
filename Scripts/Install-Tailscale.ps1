@@ -16,6 +16,12 @@ param(
 
 $hostname = "PC-{0:D2}" -f $PCNumber
 
+if ($AuthKey -eq "tskey-auth-CHANGE_ME") {
+    Write-Host "[ERROR] Auth key is still the placeholder. Pass a real key:" -ForegroundColor Red
+    Write-Host "        .\Install-Tailscale.ps1 -PCNumber $PCNumber -AuthKey tskey-auth-YOUR_REAL_KEY" -ForegroundColor Red
+    return
+}
+
 Write-Host "`n--- Tailscale VPN Setup ---" -ForegroundColor Cyan
 Write-Host "Hostname: $hostname" -ForegroundColor White
 Write-Host ""
@@ -106,9 +112,10 @@ try {
     Write-Host "       tailscale up --authkey=YOUR_KEY --hostname=$hostname" -ForegroundColor Yellow
 }
 
-# Note: tailscale-ipn.exe (tray icon) is required for Tailscale to function.
-# Do NOT remove it from autorun or Tailscale will be stuck in NoState after reboot.
-Write-Host "[OK] Tailscale autorun left enabled (tailscale-ipn.exe required for operation)" -ForegroundColor Green
+# Note: tailscale-ipn.exe (IPN client) is required for Tailscale to connect.
+# Configure-Laptop.ps1 sets up a PowerShell startup script that launches it
+# and hides the window via Win32 ShowWindow API, so students never see a popup.
+Write-Host "[OK] Tailscale installed (Configure-Laptop.ps1 will set up hidden startup)" -ForegroundColor Green
 
 Write-Host "--- Tailscale Setup Complete ---" -ForegroundColor Cyan
 Write-Host ""

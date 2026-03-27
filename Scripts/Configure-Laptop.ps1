@@ -72,8 +72,8 @@ if ($studentSID) {
         # Student is NOT logged in — manually load their NTUSER.DAT
         $studentNtuser = "C:\Users\Student\NTUSER.DAT"
         if (Test-Path $studentNtuser) {
-            reg load "HKU\$studentSID" $studentNtuser 2>$null | Out-Null
-            if ($?) {
+            reg load "HKU\$studentSID" $studentNtuser 2>$null
+            if ($LASTEXITCODE -eq 0) {
                 $studentHiveLoaded = $true
                 $hkuPaths += $studentHivePath
                 Write-Log "Loaded Student registry hive from NTUSER.DAT" "INFO"
@@ -88,8 +88,8 @@ if ($studentSID) {
 $defaultLoaded = $false
 $defaultNtuser = "C:\Users\Default\NTUSER.DAT"
 if ((Test-Path $defaultNtuser) -and -not (Test-Path "REGISTRY::HKEY_USERS\DefaultProfile")) {
-    reg load "HKU\DefaultProfile" $defaultNtuser 2>$null | Out-Null
-    if ($?) { $defaultLoaded = $true; $hkuPaths += "REGISTRY::HKEY_USERS\DefaultProfile" }
+    reg load "HKU\DefaultProfile" $defaultNtuser 2>$null
+    if ($LASTEXITCODE -eq 0) { $defaultLoaded = $true; $hkuPaths += "REGISTRY::HKEY_USERS\DefaultProfile" }
 }
 
 Write-Log "Registry targets: $($hkuPaths -join ', ')" "INFO"
@@ -404,8 +404,8 @@ try {
     $failCount++
 }
 
-# Step 6: Clean desktop and create numbered shortcuts sorted for blind navigation
-Write-Log "Step 6: Wiping desktop shortcuts and creating numbered set for screen reader navigation..." "INFO"
+# Step 6: Clean desktop and create shortcuts for screen reader navigation
+Write-Log "Step 6: Wiping desktop shortcuts and creating clean set for screen reader navigation..." "INFO"
 
 try {
     $publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
@@ -501,36 +501,36 @@ try {
     Start-Sleep -Seconds 2
     Write-Log "Hidden system icons (Recycle Bin, Spotlight, This PC) and forced desktop refresh" "INFO"
 
-    # Number-prefixed shortcuts so alphabetical sort = logical navigation order.
-    # Screen reader users arrow through the desktop; this guarantees a consistent,
-    # grouped sequence: accessibility > productivity > reading > media > education > games > utilities > lab tools.
+    # Plain names — no number prefixes. NVDA users navigate the desktop alphabetically
+    # and use first-letter keys to jump (press "W" for Word, "F" for Firefox, etc.).
+    # Numbers broke first-letter nav and added noisy "zero one" speech on every item.
     $WshShell = New-Object -ComObject WScript.Shell
     $shortcuts = @(
-        # --- 01 Core accessibility ---
-        @{ Name = "01 NVDA"; Target = "C:\Program Files\NVDA\nvda.exe"; AltTarget = "C:\Program Files (x86)\NVDA\nvda.exe"; Desc = "NVDA Screen Reader" },
-        # --- 02-04 Productivity ---
-        @{ Name = "02 Word"; Target = "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE"; Desc = "Microsoft Word" },
-        @{ Name = "03 Excel"; Target = "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE"; Desc = "Microsoft Excel" },
-        @{ Name = "04 PowerPoint"; Target = "C:\Program Files\Microsoft Office\root\Office16\POWERPNT.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\POWERPNT.EXE"; Desc = "Microsoft PowerPoint" },
-        # --- 05-09 Web & Reading ---
-        @{ Name = "05 Firefox"; Target = "C:\Program Files\Mozilla Firefox\firefox.exe"; AltTarget = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"; Desc = "Firefox Web Browser" },
-        @{ Name = "06 Wikipedia (Offline)"; Target = "C:\Program Files\Kiwix\kiwix-desktop.exe"; Desc = "Kiwix - Offline Vietnamese Wikipedia" },
-        @{ Name = "07 Tu Dien - Dictionary"; Target = "C:\Program Files\GoldenDict\GoldenDict.exe"; AltTarget = "C:\Program Files (x86)\GoldenDict\GoldenDict.exe"; Desc = "GoldenDict - Offline Dictionary" },
-        @{ Name = "08 Thorium Reader"; Target = "C:\Users\Student\AppData\Local\Programs\Thorium\Thorium.exe"; AltTarget = "C:\Program Files\Thorium\Thorium.exe"; Desc = "Thorium EPUB/DAISY Reader" },
-        @{ Name = "09 SumatraPDF"; Target = "C:\Program Files\SumatraPDF\SumatraPDF.exe"; AltTarget = "C:\Users\Student\AppData\Local\SumatraPDF\SumatraPDF.exe"; Desc = "SumatraPDF Reader" },
-        # --- 10-11 Media ---
-        @{ Name = "10 VLC media player"; Target = "C:\Program Files\VideoLAN\VLC\vlc.exe"; AltTarget = "C:\Program Files (x86)\VideoLAN\VLC\vlc.exe"; Desc = "VLC Media Player" },
-        @{ Name = "11 Audacity"; Target = "C:\Program Files\Audacity\Audacity.exe"; AltTarget = "C:\Program Files (x86)\Audacity\Audacity.exe"; Desc = "Audacity Audio Editor" },
-        # --- 12-14 Education ---
-        @{ Name = "12 Sao Mai Typing Tutor"; Target = "C:\Program Files (x86)\SaoMai\SMTT\SMTT.exe"; AltTarget = "C:\Program Files\SaoMai\SMTT\SMTT.exe"; Desc = "Sao Mai Vietnamese Typing Tutor" },
-        @{ Name = "13 SM Readmate"; Target = "C:\Program Files\SaoMai\sm_readmate\sm_readmate.exe"; AltTarget = "C:\Program Files (x86)\SaoMai\sm_readmate\sm_readmate.exe"; Desc = "SM Readmate Accessible Reader" },
-        @{ Name = "14 Quorum Studio"; Target = "C:\Program Files\QuorumStudio\QuorumStudio.exe"; AltTarget = "C:\Program Files (x86)\QuorumStudio\QuorumStudio.exe"; Desc = "Quorum Studio - Accessible IDE" },
-        # --- 18-19 Utilities (numbers leave 15-17 gap for LEAP games below) ---
-        @{ Name = "18 Calculator"; Target = "calc.exe"; Desc = "Windows Calculator" },
-        @{ Name = "19 My USB"; Target = "explorer.exe"; Args = "shell:MyComputerFolder"; IconLocation = "%SystemRoot%\System32\imageres.dll,109"; Desc = "Open This PC to access your USB drive" },
-        # --- 20-21 Lab tools ---
-        @{ Name = "20 Doi Ngon Ngu - Switch Language"; Target = "powershell.exe"; Args = "-NoProfile -ExecutionPolicy Bypass -File `"C:\LabTools\toggle-language.ps1`""; Desc = "Toggle Vietnamese/English" },
-        @{ Name = "21 Khoi Phuc NVDA - Restore NVDA"; Target = "powershell.exe"; Args = "-NoProfile -ExecutionPolicy Bypass -File `"C:\LabTools\restore-nvda.ps1`""; Desc = "Restore NVDA to default configuration" }
+        # --- Core accessibility ---
+        @{ Name = "NVDA"; Target = "C:\Program Files\NVDA\nvda.exe"; AltTarget = "C:\Program Files (x86)\NVDA\nvda.exe"; Desc = "NVDA Screen Reader" },
+        # --- Productivity ---
+        @{ Name = "Word"; Target = "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE"; Desc = "Microsoft Word" },
+        @{ Name = "Excel"; Target = "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE"; Desc = "Microsoft Excel" },
+        @{ Name = "PowerPoint"; Target = "C:\Program Files\Microsoft Office\root\Office16\POWERPNT.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\POWERPNT.EXE"; Desc = "Microsoft PowerPoint" },
+        # --- Web & Reading ---
+        @{ Name = "Firefox"; Target = "C:\Program Files\Mozilla Firefox\firefox.exe"; AltTarget = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"; Desc = "Firefox Web Browser" },
+        @{ Name = "Wikipedia (Offline)"; Target = "C:\Program Files\Kiwix\kiwix-desktop.exe"; Desc = "Kiwix - Offline Vietnamese Wikipedia" },
+        @{ Name = "Tu Dien - Dictionary"; Target = "C:\Program Files\GoldenDict\GoldenDict.exe"; AltTarget = "C:\Program Files (x86)\GoldenDict\GoldenDict.exe"; Desc = "GoldenDict - Offline Dictionary" },
+        @{ Name = "Thorium Reader"; Target = "C:\Users\Student\AppData\Local\Programs\Thorium\Thorium.exe"; AltTarget = "C:\Program Files\Thorium\Thorium.exe"; Desc = "Thorium EPUB/DAISY Reader" },
+        @{ Name = "SumatraPDF"; Target = "C:\Program Files\SumatraPDF\SumatraPDF.exe"; AltTarget = "C:\Users\Student\AppData\Local\SumatraPDF\SumatraPDF.exe"; Desc = "SumatraPDF Reader" },
+        # --- Media ---
+        @{ Name = "VLC media player"; Target = "C:\Program Files\VideoLAN\VLC\vlc.exe"; AltTarget = "C:\Program Files (x86)\VideoLAN\VLC\vlc.exe"; Desc = "VLC Media Player" },
+        @{ Name = "Audacity"; Target = "C:\Program Files\Audacity\Audacity.exe"; AltTarget = "C:\Program Files (x86)\Audacity\Audacity.exe"; Desc = "Audacity Audio Editor" },
+        # --- Education ---
+        @{ Name = "Sao Mai Typing Tutor"; Target = "C:\Program Files (x86)\SaoMai\SMTT\SMTT.exe"; AltTarget = "C:\Program Files\SaoMai\SMTT\SMTT.exe"; Desc = "Sao Mai Vietnamese Typing Tutor" },
+        @{ Name = "Readmate"; Target = "C:\Program Files\SaoMai\sm_readmate\sm_readmate.exe"; AltTarget = "C:\Program Files (x86)\SaoMai\sm_readmate\sm_readmate.exe"; Desc = "Sao Mai Readmate Accessible Reader" },
+        @{ Name = "Quorum Studio"; Target = "C:\Program Files\QuorumStudio\QuorumStudio.exe"; AltTarget = "C:\Program Files (x86)\QuorumStudio\QuorumStudio.exe"; Desc = "Quorum Studio - Accessible IDE" },
+        # --- Utilities ---
+        @{ Name = "Calculator"; Target = "calc.exe"; Desc = "Windows Calculator" },
+        @{ Name = "My USB"; Target = "explorer.exe"; Args = "shell:MyComputerFolder"; IconLocation = "%SystemRoot%\System32\imageres.dll,109"; Desc = "Open This PC to access your USB drive" },
+        # --- Lab tools ---
+        @{ Name = "Doi Ngon Ngu - Switch Language"; Target = "powershell.exe"; Args = "-NoProfile -ExecutionPolicy Bypass -File `"C:\LabTools\toggle-language.ps1`""; Desc = "Toggle Vietnamese/English" },
+        @{ Name = "Khoi Phuc NVDA - Restore NVDA"; Target = "powershell.exe"; Args = "-NoProfile -ExecutionPolicy Bypass -File `"C:\LabTools\restore-nvda.ps1`""; Desc = "Restore NVDA to default configuration" }
     )
 
     $createdCount = 0
@@ -574,26 +574,24 @@ try {
         $createdCount++
     }
 
-    # LEAP Games shortcuts (dynamic — numbered 15-17 to slot between Education and Utilities)
+    # LEAP Games shortcuts (dynamic — discovered from C:\Games\LEAP subdirectories)
     $leapDir = "C:\Games\LEAP"
-    $leapNum = 15
     if (Test-Path $leapDir) {
         Get-ChildItem -Path $leapDir -Directory | ForEach-Object {
             $gameExe = Get-ChildItem -Path $_.FullName -Filter "*.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
             if ($gameExe) {
-                $gameLnk = Join-Path $publicDesktop "$leapNum LEAP $($_.Name).lnk"
+                $gameLnk = Join-Path $publicDesktop "Game - $($_.Name).lnk"
                 $gameShortcut = $WshShell.CreateShortcut($gameLnk)
                 $gameShortcut.TargetPath = $gameExe.FullName
                 $gameShortcut.WorkingDirectory = $_.FullName
-                $gameShortcut.Description = "LEAP Game - $($_.Name)"
+                $gameShortcut.Description = "Game - $($_.Name)"
                 $gameShortcut.Save()
-                $leapNum++
                 $createdCount++
             }
         }
     }
 
-    Write-Log "Created $createdCount numbered desktop shortcuts (sorted for blind navigation)" "SUCCESS"
+    Write-Log "Created $createdCount desktop shortcuts (alphabetical for screen reader first-letter navigation)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not set up desktop shortcuts: $($_.Exception.Message)" "ERROR"
@@ -610,15 +608,28 @@ try {
         New-Item -Path $welcomeScriptDir -ItemType Directory -Force | Out-Null
     }
 
+    # Deploy the NVDA controller client DLL (no longer bundled with NVDA since 2023.1)
+    $dllSource = Join-Path (Split-Path -Parent $PSScriptRoot) "Installers\NVDA\nvdaControllerClient64.dll"
+    $dllFallback = "C:\Program Files\QuorumStudio\jni\nvdaControllerClient64.dll"
+    $dllDest = Join-Path $welcomeScriptDir "nvdaControllerClient64.dll"
+    if ((Test-Path $dllSource) -and -not (Test-Path $dllDest)) {
+        Copy-Item -Path $dllSource -Destination $dllDest -Force
+        Write-Log "Deployed nvdaControllerClient64.dll from USB" "SUCCESS"
+    } elseif ((Test-Path $dllFallback) -and -not (Test-Path $dllDest)) {
+        Copy-Item -Path $dllFallback -Destination $dllDest -Force
+        Write-Log "Deployed nvdaControllerClient64.dll from QuorumStudio" "SUCCESS"
+    }
+
     $welcomeScript = @'
 # Lab Welcome Audio - plays on Student login
 # Speaks through NVDA using the configured Vietnamese voice (Sao Mai VNVoice)
 Start-Sleep -Seconds 8
 
 # Use NVDA's controller client DLL to speak through NVDA's configured voice
-$nvdaDll = "C:\Program Files\NVDA\lib\nvdaControllerClient64.dll"
+# The DLL is no longer bundled with NVDA since 2023.1 — we ship it in LabTools
+$nvdaDll = "C:\LabTools\nvdaControllerClient64.dll"
 if (-not (Test-Path $nvdaDll)) {
-    $nvdaDll = "C:\Program Files (x86)\NVDA\lib\nvdaControllerClient64.dll"
+    $nvdaDll = "C:\Program Files\QuorumStudio\jni\nvdaControllerClient64.dll"
 }
 
 if (Test-Path $nvdaDll) {
@@ -728,6 +739,41 @@ try {
     $failCount++
 }
 
+# Step 9b: Set Windows SAPI voice to English for games
+# LEAP audio games use Windows TTS — without this, they pick up the first SAPI voice
+# (Vietnamese), which makes games speak the wrong language.
+# This does NOT affect NVDA, which uses its own speech synthesizer.
+Write-Log "Step 9b: Setting Windows SAPI default voice to English for games..." "INFO"
+
+try {
+    # Machine-wide SAPI default
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Speech\Voices" `
+        -Name "DefaultTokenId" `
+        -Value "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_DAVID_11.0" -Force
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Speech_OneCore\Voices" `
+        -Name "DefaultTokenId" `
+        -Value "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech_OneCore\Voices\Tokens\MSTTS_V110_enUS_DavidM" -Force
+
+    # Per-user SAPI default (Student + any other loaded hives)
+    foreach ($hive in $hkuPaths) {
+        $speechPath = "$hive\Software\Microsoft\Speech\Voices"
+        if (-not (Test-Path $speechPath)) { New-Item -Path $speechPath -Force | Out-Null }
+        Set-ItemProperty -Path $speechPath -Name "DefaultTokenId" `
+            -Value "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_DAVID_11.0" -Force
+
+        $oneCorePath = "$hive\Software\Microsoft\Speech_OneCore\Voices"
+        if (-not (Test-Path $oneCorePath)) { New-Item -Path $oneCorePath -Force | Out-Null }
+        Set-ItemProperty -Path $oneCorePath -Name "DefaultTokenId" `
+            -Value "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech_OneCore\Voices\Tokens\MSTTS_V110_enUS_DavidM" -Force
+    }
+
+    Write-Log "SAPI default voice set to English (David) — LEAP games will speak English" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not set SAPI default voice: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
 # Step 10: Configure Windows Update (manual-only — no auto-downloads or auto-installs)
 Write-Log "Step 10: Configuring Windows Update for manual-only..." "INFO"
 
@@ -745,8 +791,12 @@ try {
     Set-ItemProperty -Path $auPath -Name "AUOptions" -Value 2 -Force
     # Disable auto-reboot when users are logged in
     Set-ItemProperty -Path $auPath -Name "NoAutoRebootWithLoggedOnUsers" -Value 1 -Force
+    # Suppress Windows Update restart notification popups (interrupts NVDA)
+    $wuPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+    if (-not (Test-Path $wuPath)) { New-Item -Path $wuPath -Force | Out-Null }
+    Set-ItemProperty -Path $wuPath -Name "SetAutoRestartNotificationDisable" -Value 1 -Force
 
-    Write-Log "Windows Update set to manual-only (notify, no auto-install)" "SUCCESS"
+    Write-Log "Windows Update set to manual-only (notify, no auto-install, no restart popups)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not configure Windows Update: $($_.Exception.Message)" "ERROR"
@@ -764,13 +814,20 @@ try {
             Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-338389Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
             Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-310093Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
             Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-338393Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-353698Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
             Set-ItemProperty -Path $contentDelivery -Name "SoftLandingEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
             Set-ItemProperty -Path $contentDelivery -Name "SystemPaneSuggestionsEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
         }
 
+        # Disable toast notifications (prevents popups that interrupt NVDA speech)
         $pushNotify = "$hive\Software\Microsoft\Windows\CurrentVersion\PushNotifications"
         if (-not (Test-Path $pushNotify)) { New-Item -Path $pushNotify -Force -ErrorAction SilentlyContinue | Out-Null }
-        Set-ItemProperty -Path $pushNotify -Name "ToastEnabled" -Value 1 -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $pushNotify -Name "ToastEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+
+        # Disable Notification Center entirely
+        $explorerPolicy = "$hive\Software\Policies\Microsoft\Windows\Explorer"
+        if (-not (Test-Path $explorerPolicy)) { New-Item -Path $explorerPolicy -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $explorerPolicy -Name "DisableNotificationCenter" -Value 1 -Force -ErrorAction SilentlyContinue
     }
 
     # Disable Windows Defender notifications (machine-wide)
@@ -778,7 +835,7 @@ try {
     if (-not (Test-Path $defenderNotify)) { New-Item -Path $defenderNotify -Force | Out-Null }
     Set-ItemProperty -Path $defenderNotify -Name "DisableNotifications" -Value 1 -Force
 
-    Write-Log "Non-essential notifications disabled" "SUCCESS"
+    Write-Log "Non-essential notifications disabled (toast, Notification Center, suggestions)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not disable notifications: $($_.Exception.Message)" "ERROR"
@@ -913,9 +970,25 @@ try {
 
     # Deploy the repo template as the known-good config
     $nvdaTemplate = Join-Path (Split-Path -Parent $PSScriptRoot) "Config\nvda-config\nvda.ini"
-    if ((Test-Path $nvdaTemplate) -and (Test-Path $nvdaConfigDir)) {
+    if (-not (Test-Path $nvdaConfigDir)) {
+        New-Item -Path $nvdaConfigDir -ItemType Directory -Force | Out-Null
+    }
+    if (Test-Path $nvdaTemplate) {
         Copy-Item -Path $nvdaTemplate -Destination "$nvdaConfigDir\nvda.ini" -Force
         Write-Log "Deployed NVDA config template (laptop layout, Vietnamese, rate 35) to Student profile" "SUCCESS"
+    }
+
+    # Copy NVDA addons from Admin profile to Student (3-Configure-NVDA.ps1 installs
+    # addons to $env:APPDATA which resolves to Admin when run from Bootstrap)
+    $adminAddons = Join-Path $env:APPDATA "nvda\addons"
+    $studentAddons = Join-Path $nvdaConfigDir "addons"
+    if ((Test-Path $adminAddons) -and (Get-ChildItem $adminAddons -ErrorAction SilentlyContinue)) {
+        if (-not (Test-Path $studentAddons)) {
+            New-Item -Path $studentAddons -ItemType Directory -Force | Out-Null
+        }
+        Copy-Item -Path "$adminAddons\*" -Destination $studentAddons -Recurse -Force -ErrorAction SilentlyContinue
+        $addonCount = (Get-ChildItem $studentAddons -Directory -ErrorAction SilentlyContinue).Count
+        Write-Log "Copied $addonCount NVDA addon(s) from Admin to Student profile" "SUCCESS"
     }
 
     # Backup the config
@@ -932,7 +1005,8 @@ try {
 # NVDA Config Restore - Restores NVDA to known good configuration
 # Run this if NVDA stops speaking Vietnamese or has wrong settings
 $backupDir = "C:\LabTools\nvda-backup"
-$nvdaConfigDir = Join-Path $env:APPDATA "nvda"
+# Always target Student profile, even when run as Admin
+$nvdaConfigDir = "C:\Users\Student\AppData\Roaming\nvda"
 
 if (Test-Path $backupDir) {
     # Stop NVDA
@@ -943,8 +1017,8 @@ if (Test-Path $backupDir) {
     Copy-Item -Path "$backupDir\*" -Destination $nvdaConfigDir -Recurse -Force
 
     # Restart NVDA
-    $nvdaExe = "C:\Program Files\NVDA\nvda.exe"
-    if (-not (Test-Path $nvdaExe)) { $nvdaExe = "C:\Program Files (x86)\NVDA\nvda.exe" }
+    $nvdaExe = "C:\Program Files (x86)\NVDA\nvda.exe"
+    if (-not (Test-Path $nvdaExe)) { $nvdaExe = "C:\Program Files\NVDA\nvda.exe" }
     if (Test-Path $nvdaExe) { Start-Process -FilePath $nvdaExe }
 
     Add-Type -AssemblyName PresentationFramework
@@ -1317,7 +1391,7 @@ try {
         Write-Log "OneDrive uninstalled" "INFO"
     }
 
-    # Remove leftover folders
+    # Remove leftover folders (Admin profile via env vars)
     $oneDriveFolders = @(
         "$env:USERPROFILE\OneDrive"
         "$env:LOCALAPPDATA\Microsoft\OneDrive"
@@ -1328,6 +1402,13 @@ try {
         if (Test-Path $folder) {
             Remove-Item -Path $folder -Recurse -Force -ErrorAction SilentlyContinue
         }
+    }
+
+    # Also clean Student profile (env vars point to Admin when running as Admin)
+    $studentProfileDir = "C:\Users\Student"
+    if (Test-Path $studentProfileDir) {
+        Remove-Item "$studentProfileDir\OneDrive" -Recurse -Force -ErrorAction SilentlyContinue
+        Remove-Item "$studentProfileDir\AppData\Local\Microsoft\OneDrive" -Recurse -Force -ErrorAction SilentlyContinue
     }
 
     # Remove OneDrive from Explorer sidebar
@@ -1377,15 +1458,16 @@ try {
     if (-not (Test-Path $searchPath)) { New-Item -Path $searchPath -Force | Out-Null }
     Set-ItemProperty -Path $searchPath -Name "AllowCortana" -Value 0 -Force
 
-    # Disable Search Highlights (visual clutter in Start menu)
-    $searchSettings = "HKCU:\Software\Microsoft\Windows\CurrentVersion\SearchSettings"
-    if (-not (Test-Path $searchSettings)) { New-Item -Path $searchSettings -Force | Out-Null }
-    Set-ItemProperty -Path $searchSettings -Name "IsDynamicSearchBoxEnabled" -Value 0 -Force
+    # Disable Search Highlights and web search for all user profiles
+    foreach ($hive in $hkuPaths) {
+        $searchSettings = "$hive\Software\Microsoft\Windows\CurrentVersion\SearchSettings"
+        if (-not (Test-Path $searchSettings)) { New-Item -Path $searchSettings -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $searchSettings -Name "IsDynamicSearchBoxEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
 
-    # Disable web search in Start menu
-    $explorerPolicies = "HKCU:\Software\Policies\Microsoft\Windows\Explorer"
-    if (-not (Test-Path $explorerPolicies)) { New-Item -Path $explorerPolicies -Force | Out-Null }
-    Set-ItemProperty -Path $explorerPolicies -Name "DisableSearchBoxSuggestions" -Value 1 -Force
+        $explorerPolicies = "$hive\Software\Policies\Microsoft\Windows\Explorer"
+        if (-not (Test-Path $explorerPolicies)) { New-Item -Path $explorerPolicies -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $explorerPolicies -Name "DisableSearchBoxSuggestions" -Value 1 -Force -ErrorAction SilentlyContinue
+    }
 
     Write-Log "Widgets, Cortana, and Search Highlights disabled" "SUCCESS"
     $successCount++
@@ -1445,27 +1527,56 @@ try {
 Write-Log "Step 27b: Cleaning startup apps..." "INFO"
 
 try {
-    # Tailscale GUI (tailscale-ipn.exe) must autostart or Tailscale gets stuck in NoState after reboot.
-    # Set the startup shortcut to start minimized so it goes straight to the tray without a popup.
+    # Tailscale GUI (tailscale-ipn.exe) MUST run for the service to establish connections.
+    # But it creates its own window that can't be suppressed via launch flags or VBS style 0.
+    # Solution: PowerShell script that starts it then hides the window via Win32 ShowWindow API.
     Remove-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "Tailscale" -Force -ErrorAction SilentlyContinue
-    $tsStartup = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\Tailscale.lnk"
-    if (Test-Path $tsStartup) {
-        $WshShell = New-Object -ComObject WScript.Shell
-        $shortcut = $WshShell.CreateShortcut($tsStartup)
-        $shortcut.WindowStyle = 7
-        $shortcut.Save()
-        Write-Log "Tailscale startup shortcut set to minimized" "INFO"
-    } else {
-        # Recreate the shortcut if the installer didn't leave one
-        $WshShell = New-Object -ComObject WScript.Shell
-        $shortcut = $WshShell.CreateShortcut($tsStartup)
-        $shortcut.TargetPath = "C:\Program Files\Tailscale\tailscale-ipn.exe"
-        $shortcut.WorkingDirectory = "C:\Program Files\Tailscale\"
-        $shortcut.WindowStyle = 7
-        $shortcut.Description = "Tailscale VPN (silent start)"
-        $shortcut.Save()
-        Write-Log "Tailscale startup shortcut created (minimized)" "INFO"
+    $tsLauncher = @'
+# Tailscale IPN launcher - starts the client and hides its window.
+# The IPN client is required for the Tailscale service to establish connections,
+# but students never need to see or interact with it.
+Add-Type -TypeDefinition @"
+using System;
+using System.Runtime.InteropServices;
+public class Win32 {
+    [DllImport("user32.dll")]
+    public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+    public const int SW_HIDE = 0;
+}
+"@
+
+$exe = "C:\Program Files\Tailscale\tailscale-ipn.exe"
+if (-not (Test-Path $exe)) { exit }
+
+# Don't launch if already running
+if (Get-Process -Name "tailscale-ipn" -ErrorAction SilentlyContinue) { exit }
+
+Start-Process -FilePath $exe -WindowStyle Hidden
+# Wait for the window to appear, then hide it
+for ($i = 0; $i -lt 30; $i++) {
+    Start-Sleep -Milliseconds 500
+    $proc = Get-Process -Name "tailscale-ipn" -ErrorAction SilentlyContinue
+    if ($proc -and $proc.MainWindowHandle -ne [IntPtr]::Zero) {
+        [Win32]::ShowWindow($proc.MainWindowHandle, [Win32]::SW_HIDE) | Out-Null
+        break
     }
+}
+'@
+    Set-Content -Path "C:\LabTools\start-tailscale.ps1" -Value $tsLauncher -Force
+
+    # Clean up legacy VBS wrapper (replaced by .ps1 launcher above)
+    Remove-Item "C:\LabTools\start-tailscale.vbs" -Force -ErrorAction SilentlyContinue
+
+    $tsStartup = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\Tailscale.lnk"
+    if (Test-Path $tsStartup) { Remove-Item -Path $tsStartup -Force }
+    $WshShell = New-Object -ComObject WScript.Shell
+    $shortcut = $WshShell.CreateShortcut($tsStartup)
+    $shortcut.TargetPath = "C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe"
+    $shortcut.Arguments = '-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File "C:\LabTools\start-tailscale.ps1"'
+    $shortcut.WindowStyle = 7
+    $shortcut.Description = "Tailscale VPN (hidden via Win32 ShowWindow)"
+    $shortcut.Save()
+    Write-Log "Tailscale startup set to PowerShell launcher with Win32 window hide" "INFO"
 
     # UniKey: ensure startup shortcut uses the wrapper VBS that sets ShowDlg=0
     # (UniKey overwrites ShowDlg=1 on exit, so registry-only fix doesn't persist)
@@ -1576,10 +1687,12 @@ try {
     if (-not (Test-Path $dataCollection)) { New-Item -Path $dataCollection -Force | Out-Null }
     Set-ItemProperty -Path $dataCollection -Name "AllowTelemetry" -Value 0 -Force
 
-    # Disable advertising ID
-    $adInfo = "HKCU:\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo"
-    if (-not (Test-Path $adInfo)) { New-Item -Path $adInfo -Force | Out-Null }
-    Set-ItemProperty -Path $adInfo -Name "Enabled" -Value 0 -Force
+    # Disable advertising ID for all user profiles
+    foreach ($hive in $hkuPaths) {
+        $adInfo = "$hive\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo"
+        if (-not (Test-Path $adInfo)) { New-Item -Path $adInfo -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $adInfo -Name "Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
+    }
 
     # Disable activity history
     $systemPolicies = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System"
@@ -1731,6 +1844,145 @@ try {
     $failCount++
 }
 
+# Step 33b: Set file associations (.pdf -> SumatraPDF, .epub -> Thorium Reader)
+Write-Log "Step 33b: Setting file associations (.pdf -> SumatraPDF, .epub -> Thorium)..." "INFO"
+
+try {
+    $sumatraExe = "C:\Users\Student\AppData\Local\SumatraPDF\SumatraPDF.exe"
+    $thoriumExe = "C:\Users\Student\AppData\Local\Programs\Thorium\Thorium.exe"
+
+    # Resolve actual paths (per-user installs live under Student; fall back to Program Files)
+    if (-not (Test-Path $sumatraExe)) {
+        $sumatraExe = "C:\Program Files\SumatraPDF\SumatraPDF.exe"
+    }
+    if (-not (Test-Path $thoriumExe)) {
+        $thoriumExe = "C:\Program Files\Thorium\Thorium.exe"
+    }
+
+    # ── Register ProgIDs in HKLM (machine-wide) ──
+    # SumatraPDF.pdf
+    $sumatraProgID = "HKLM:\SOFTWARE\Classes\SumatraPDF.pdf"
+    if (-not (Test-Path $sumatraProgID)) { New-Item -Path $sumatraProgID -Force | Out-Null }
+    Set-ItemProperty -Path $sumatraProgID -Name "(default)" -Value "PDF Document" -Force
+    $sumatraShell = "$sumatraProgID\shell\open\command"
+    if (-not (Test-Path $sumatraShell)) { New-Item -Path $sumatraShell -Force | Out-Null }
+    Set-ItemProperty -Path $sumatraShell -Name "(default)" -Value "`"$sumatraExe`" `"%1`"" -Force
+    $sumatraIcon = "$sumatraProgID\DefaultIcon"
+    if (-not (Test-Path $sumatraIcon)) { New-Item -Path $sumatraIcon -Force | Out-Null }
+    Set-ItemProperty -Path $sumatraIcon -Name "(default)" -Value "`"$sumatraExe`",0" -Force
+
+    # ThoriumReader.epub
+    $thoriumProgID = "HKLM:\SOFTWARE\Classes\ThoriumReader.epub"
+    if (-not (Test-Path $thoriumProgID)) { New-Item -Path $thoriumProgID -Force | Out-Null }
+    Set-ItemProperty -Path $thoriumProgID -Name "(default)" -Value "EPUB Document" -Force
+    $thoriumShell = "$thoriumProgID\shell\open\command"
+    if (-not (Test-Path $thoriumShell)) { New-Item -Path $thoriumShell -Force | Out-Null }
+    Set-ItemProperty -Path $thoriumShell -Name "(default)" -Value "`"$thoriumExe`" `"%1`"" -Force
+    $thoriumIcon = "$thoriumProgID\DefaultIcon"
+    if (-not (Test-Path $thoriumIcon)) { New-Item -Path $thoriumIcon -Force | Out-Null }
+    Set-ItemProperty -Path $thoriumIcon -Name "(default)" -Value "`"$thoriumExe`",0" -Force
+
+    # ── Set machine-wide defaults for .pdf and .epub ──
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\.pdf" -Name "(default)" -Value "SumatraPDF.pdf" -Force
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\.epub" -Name "(default)" -Value "ThoriumReader.epub" -Force
+
+    # ── OpenWithProgids (add ours, remove Edge's claim on .pdf) ──
+    $pdfOWP = "HKLM:\SOFTWARE\Classes\.pdf\OpenWithProgids"
+    if (-not (Test-Path $pdfOWP)) { New-Item -Path $pdfOWP -Force | Out-Null }
+    New-ItemProperty -Path $pdfOWP -Name "SumatraPDF.pdf" -Value ([byte[]]@()) -PropertyType Binary -Force | Out-Null
+    Remove-ItemProperty -Path $pdfOWP -Name "MSEdgePDF" -Force -ErrorAction SilentlyContinue
+
+    $epubOWP = "HKLM:\SOFTWARE\Classes\.epub\OpenWithProgids"
+    if (-not (Test-Path $epubOWP)) { New-Item -Path $epubOWP -Force | Out-Null }
+    New-ItemProperty -Path $epubOWP -Name "ThoriumReader.epub" -Value ([byte[]]@()) -PropertyType Binary -Force | Out-Null
+
+    # ── Register in Applications key ──
+    $sumatraApp = "HKLM:\SOFTWARE\Classes\Applications\SumatraPDF.exe\shell\open\command"
+    if (-not (Test-Path $sumatraApp)) { New-Item -Path $sumatraApp -Force | Out-Null }
+    Set-ItemProperty -Path $sumatraApp -Name "(default)" -Value "`"$sumatraExe`" `"%1`"" -Force
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Applications\SumatraPDF.exe" -Name "FriendlyAppName" -Value "SumatraPDF" -Force
+    $sumatraST = "HKLM:\SOFTWARE\Classes\Applications\SumatraPDF.exe\SupportedTypes"
+    if (-not (Test-Path $sumatraST)) { New-Item -Path $sumatraST -Force | Out-Null }
+    Set-ItemProperty -Path $sumatraST -Name ".pdf" -Value "" -Force
+
+    $thoriumApp = "HKLM:\SOFTWARE\Classes\Applications\Thorium.exe\shell\open\command"
+    if (-not (Test-Path $thoriumApp)) { New-Item -Path $thoriumApp -Force | Out-Null }
+    Set-ItemProperty -Path $thoriumApp -Name "(default)" -Value "`"$thoriumExe`" `"%1`"" -Force
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Applications\Thorium.exe" -Name "FriendlyAppName" -Value "Thorium Reader" -Force
+    $thoriumST = "HKLM:\SOFTWARE\Classes\Applications\Thorium.exe\SupportedTypes"
+    if (-not (Test-Path $thoriumST)) { New-Item -Path $thoriumST -Force | Out-Null }
+    Set-ItemProperty -Path $thoriumST -Name ".epub" -Value "" -Force
+
+    # ── Neuter MSEdgePDF so even if UserChoice still points there, SumatraPDF opens ──
+    $edgePdfCmd = "HKLM:\SOFTWARE\Classes\MSEdgePDF\shell\open\command"
+    if (Test-Path $edgePdfCmd) {
+        Set-ItemProperty -Path $edgePdfCmd -Name "(default)" -Value "`"$sumatraExe`" `"%1`"" -Force
+        Write-Log "MSEdgePDF ProgID neutered (now opens SumatraPDF)" "INFO"
+    }
+
+    # ── Per-user: register ProgIDs, OpenWithProgids, OpenWithList for all profiles ──
+    foreach ($hive in $hkuPaths) {
+        # SumatraPDF.pdf ProgID
+        $uSumatraCmd = "$hive\SOFTWARE\Classes\SumatraPDF.pdf\shell\open\command"
+        if (-not (Test-Path $uSumatraCmd)) { New-Item -Path $uSumatraCmd -Force | Out-Null }
+        Set-ItemProperty -Path $uSumatraCmd -Name "(default)" -Value "`"$sumatraExe`" `"%1`"" -Force
+        Set-ItemProperty -Path "$hive\SOFTWARE\Classes\SumatraPDF.pdf" -Name "(default)" -Value "PDF Document" -Force
+
+        # ThoriumReader.epub ProgID
+        $uThoriumCmd = "$hive\SOFTWARE\Classes\ThoriumReader.epub\shell\open\command"
+        if (-not (Test-Path $uThoriumCmd)) { New-Item -Path $uThoriumCmd -Force | Out-Null }
+        Set-ItemProperty -Path $uThoriumCmd -Name "(default)" -Value "`"$thoriumExe`" `"%1`"" -Force
+        Set-ItemProperty -Path "$hive\SOFTWARE\Classes\ThoriumReader.epub" -Name "(default)" -Value "EPUB Document" -Force
+
+        # .pdf OpenWithProgids (add SumatraPDF, remove Edge)
+        $uPdfOWP = "$hive\SOFTWARE\Classes\.pdf\OpenWithProgids"
+        if (-not (Test-Path $uPdfOWP)) { New-Item -Path $uPdfOWP -Force | Out-Null }
+        New-ItemProperty -Path $uPdfOWP -Name "SumatraPDF.pdf" -Value ([byte[]]@()) -PropertyType Binary -Force | Out-Null
+        Remove-ItemProperty -Path $uPdfOWP -Name "MSEdgePDF" -Force -ErrorAction SilentlyContinue
+
+        # .epub OpenWithProgids
+        $uEpubOWP = "$hive\SOFTWARE\Classes\.epub\OpenWithProgids"
+        if (-not (Test-Path $uEpubOWP)) { New-Item -Path $uEpubOWP -Force | Out-Null }
+        New-ItemProperty -Path $uEpubOWP -Name "ThoriumReader.epub" -Value ([byte[]]@()) -PropertyType Binary -Force | Out-Null
+
+        # OpenWithList — put our apps first
+        $uPdfOWL = "$hive\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.pdf\OpenWithList"
+        if (-not (Test-Path $uPdfOWL)) { New-Item -Path $uPdfOWL -Force | Out-Null }
+        Set-ItemProperty -Path $uPdfOWL -Name "a" -Value "SumatraPDF.exe" -Force
+        Set-ItemProperty -Path $uPdfOWL -Name "MRUList" -Value "a" -Force
+
+        $uEpubOWL = "$hive\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.epub\OpenWithList"
+        if (-not (Test-Path $uEpubOWL)) { New-Item -Path $uEpubOWL -Force | Out-Null }
+        Set-ItemProperty -Path $uEpubOWL -Name "a" -Value "Thorium.exe" -Force
+        Set-ItemProperty -Path $uEpubOWL -Name "MRUList" -Value "a" -Force
+
+        # Remove UserChoice if it points to something else (ACL-protected, best-effort)
+        foreach ($ext in @(".pdf", ".epub")) {
+            $ucPath = "$hive\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\$ext\UserChoice"
+            if (Test-Path $ucPath) {
+                Remove-Item -Path $ucPath -Force -ErrorAction SilentlyContinue
+            }
+        }
+    }
+
+    # ── Use assoc/ftype as belt-and-suspenders ──
+    cmd /c ftype SumatraPDF.pdf="`"$sumatraExe`" `"%1`"" 2>$null
+    cmd /c assoc .pdf=SumatraPDF.pdf 2>$null
+    cmd /c ftype ThoriumReader.epub="`"$thoriumExe`" `"%1`"" 2>$null
+    cmd /c assoc .epub=ThoriumReader.epub 2>$null
+
+    # Notify Explorer shell of association changes
+    $shChangeCode = 'using System; using System.Runtime.InteropServices; public class Shell32Assoc { [DllImport("shell32.dll", CharSet = CharSet.Auto, SetLastError = true)] public static extern void SHChangeNotify(int wEventId, int uFlags, IntPtr dwItem1, IntPtr dwItem2); }'
+    Add-Type -TypeDefinition $shChangeCode -ErrorAction SilentlyContinue
+    [Shell32Assoc]::SHChangeNotify(0x08000000, 0, [IntPtr]::Zero, [IntPtr]::Zero)
+
+    Write-Log "File associations set: .pdf -> SumatraPDF, .epub -> Thorium Reader" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not set file associations: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
 # Step 34: Deploy Kiwix accessibility config (130% zoom, reopen tabs)
 Write-Log "Step 34: Deploying Kiwix accessibility config..." "INFO"
 
@@ -1809,6 +2061,23 @@ try {
     $successCount++  # Non-critical
 }
 
+# Step 37: Grant write permissions to Sao Mai apps (SMTT stores data in its install folder)
+Write-Log "Step 37: Fixing Sao Mai app permissions..." "INFO"
+
+try {
+    $smttPath = "C:\Program Files (x86)\SaoMai\SMTT"
+    if (Test-Path $smttPath) {
+        icacls $smttPath /grant "BUILTIN\Users:(OI)(CI)(M)" /T /Q 2>$null
+        Write-Log "Granted Users modify access to $smttPath" "SUCCESS"
+    } else {
+        Write-Log "SMTT not found at $smttPath — skipping" "INFO"
+    }
+    $successCount++
+} catch {
+    Write-Log "Could not set SMTT permissions: $($_.Exception.Message)" "INFO"
+    $successCount++  # Non-critical
+}
+
 # Summary
 Write-Host "`n========================================" -ForegroundColor Green
 Write-Host "Loaner Laptop Configuration Complete!" -ForegroundColor Green
@@ -1828,7 +2097,7 @@ Write-Host "Desktop:" -ForegroundColor White
 Write-Host "  Shortcuts     Standardized (wiped + recreated for all apps)" -ForegroundColor White
 Write-Host "  Apps          NVDA, Word, Excel, PowerPoint, Firefox, VLC, Audacity," -ForegroundColor White
 Write-Host "                Thorium, SumatraPDF, Kiwix, GoldenDict, Quorum Studio," -ForegroundColor White
-Write-Host "                Sao Mai Typing Tutor, SM Readmate, LEAP Games," -ForegroundColor White
+Write-Host "                Sao Mai Typing Tutor, Readmate, Game - Curve/Tennis/TicTacToe," -ForegroundColor White
 Write-Host "                Calculator, My USB, Language Toggle, NVDA Restore" -ForegroundColor White
 Write-Host "  Vi folders    Tai Lieu, Am Nhac, Truyen, Hoc Tap, Tro Choi" -ForegroundColor White
 Write-Host ""
@@ -1841,6 +2110,7 @@ Write-Host "  Firefox       Policies deployed (no updates, Vietnamese, no PiP, a
 Write-Host "  VLC           Audio-only, NVDA-friendly, volume cap 100%" -ForegroundColor White
 Write-Host "  Audacity      MME audio host, no splash, beep on completion" -ForegroundColor White
 Write-Host "  SumatraPDF    Continuous scroll, fit-width, system colors" -ForegroundColor White
+Write-Host "  File assoc    .pdf -> SumatraPDF, .epub -> Thorium Reader" -ForegroundColor White
 Write-Host "  Kiwix         130% zoom, reopen last tab" -ForegroundColor White
 Write-Host "  GoldenDict    150% zoom, 18px article font, UI Automation" -ForegroundColor White
 Write-Host "  Sticky Keys   Popup disabled (Shift x5)" -ForegroundColor White
@@ -1848,7 +2118,7 @@ Write-Host "  Filter Keys   Popup disabled (hold key)" -ForegroundColor White
 Write-Host "  Toggle Keys   Beep enabled (Caps/Num/Scroll Lock)" -ForegroundColor White
 Write-Host "  Volume limit  70% on each login" -ForegroundColor White
 Write-Host "  Win Update    Disabled (offline)" -ForegroundColor White
-Write-Host "  Notifications Tips/suggestions disabled" -ForegroundColor White
+Write-Host "  Notifications Toast, Notification Center, tips/suggestions all disabled" -ForegroundColor White
 Write-Host "  Narrator      Shortcut disabled (NVDA only)" -ForegroundColor White
 Write-Host "  Power         No sleep on AC, no hibernate" -ForegroundColor White
 Write-Host "  Battery       Report saved to C:\LabTools\battery-report.htm" -ForegroundColor White

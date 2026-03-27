@@ -1,7 +1,7 @@
 {
-  "manifest_version": "2026.03.05",
+  "manifest_version": "2026.03.23",
   "created": "2026-02-19",
-  "tested_on": "PC-01 (2026-03-05)",
+  "tested_on": "PC-01 (2026-03-23)",
   "notes": "Tested and validated on PC-01 test bench",
 
   "os": {
@@ -150,8 +150,8 @@
       ]
     },
     "tailscale": {
-      "version": "1.82.0",
-      "installer": "tailscale-setup-1.82.0-amd64.msi",
+      "version": "1.94.2",
+      "installer": "tailscale-setup-1.94.2-amd64.msi",
       "critical": false,
       "paths": [
         "C:\\Program Files\\Tailscale\\tailscale.exe"

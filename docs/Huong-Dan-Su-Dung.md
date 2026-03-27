@@ -75,7 +75,7 @@ USB cua ban co the nhan bang chu noi Braille.
 
 ### Mo USB
 
-1. Dung phim mui ten den bieu tuong so 19 "My USB" tren Desktop.
+1. Dung phim mui ten den bieu tuong "My USB" tren Desktop (nhan phim "M" de nhay nhanh).
 2. Nhan Enter. Cua so "This PC" se mo ra.
 3. Nhan Tab de di chuyen vao danh sach o dia, dung phim mui ten de tim USB cua ban.
 4. Nhan Enter de mo USB.
@@ -107,35 +107,37 @@ Du lieu USB cua ban duoc tu dong sao luu len Google Drive moi 15 phut (khi co ma
 
 ## Dieu Huong Tren Desktop
 
-Desktop co 21 bieu tuong, duoc danh so tu 01 den 21.
+Desktop co cac bieu tuong xep theo thu tu ABC.
 
 Dung phim mui ten (Trai, Phai, Len, Xuong) de di chuyen giua cac bieu tuong.
 
 Nhan Enter de mo chuong trinh.
 
+Meo: Nhan chu cai dau cua ten chuong trinh de nhay nhanh. Vi du, nhan "F" de nhay den Firefox, nhan "W" de nhay den Word.
+
 ### Danh Sach Chuong Trinh
 
-01. NVDA - Trinh doc man hinh
-02. Word - Soan thao van ban
-03. Excel - Bang tinh
-04. PowerPoint - Trinh chieu
-05. Firefox - Trinh duyet web
-06. Wikipedia - Bach khoa toan thu offline
-07. Tu Dien - Tu dien Anh-Viet
-08. Thorium Reader - Doc sach EPUB
-09. SumatraPDF - Doc file PDF
-10. VLC - Nghe nhac, xem video
-11. Audacity - Chinh sua am thanh
-12. Sao Mai Typing - Luyen go phim tieng Viet
-13. SM Readmate - Doc tai lieu
-14. Quorum Studio - Lap trinh
-15. LEAP TicTacToe - Tro choi co ca ro
-16. LEAP Tennis - Tro choi tennis
-17. LEAP Curve - Tro choi Curve
-18. Calculator - May tinh bo tui
-19. My USB - Mo USB cua ban
-20. Doi Ngon Ngu - Chuyen tieng Viet/Anh
-21. Khoi Phuc NVDA - Sua NVDA neu bi loi
+- Audacity - Chinh sua am thanh
+- Calculator - May tinh bo tui
+- Doi Ngon Ngu - Switch Language - Chuyen tieng Viet/Anh
+- Excel - Bang tinh
+- Firefox - Trinh duyet web
+- Khoi Phuc NVDA - Restore NVDA - Sua NVDA neu bi loi
+- Game - Curve - Tro choi Curve
+- Game - Tennis - Tro choi tennis
+- Game - TicTacToe - Tro choi co ca ro
+- My USB - Mo USB cua ban
+- NVDA - Trinh doc man hinh
+- PowerPoint - Trinh chieu
+- Quorum Studio - Lap trinh
+- Sao Mai Typing Tutor - Luyen go phim tieng Viet
+- Readmate - Doc tai lieu
+- SumatraPDF - Doc file PDF
+- Thorium Reader - Doc sach EPUB
+- Tu Dien - Dictionary - Tu dien Anh-Viet
+- VLC media player - Nghe nhac, xem video
+- Wikipedia (Offline) - Bach khoa toan thu offline
+- Word - Soan thao van ban
 
 ---
 
@@ -208,7 +210,7 @@ Vi du Telex:
 
 Neu NVDA khong noi hoac noi sai:
 
-1. Dung phim mui ten den bieu tuong so 21 "Khoi Phuc NVDA"
+1. Dung phim mui ten den bieu tuong "Khoi Phuc NVDA" (nhan phim "K" de nhay nhanh)
 2. Nhan Enter
 3. Doi vai giay, NVDA se khoi dong lai voi cai dat goc
 
@@ -223,4 +225,4 @@ Neu NVDA khong noi hoac noi sai:
 
 ---
 
-*Cap nhat lan cuoi: 2026-03-05*
+*Cap nhat lan cuoi: 2026-03-17*

@@ -75,7 +75,7 @@ Your USB drive has a Braille label tag attached.
 
 ### Opening Your USB
 
-1. Use arrow keys to navigate to icon 19 "My USB" on the Desktop.
+1. Use arrow keys to navigate to "My USB" on the Desktop (press "M" to jump quickly).
 2. Press Enter. The "This PC" window will open.
 3. Press Tab to move into the drive list, use arrow keys to find your USB drive.
 4. Press Enter to open the USB.
@@ -107,35 +107,37 @@ Your USB data is automatically backed up to Google Drive every 15 minutes (when 
 
 ## Desktop Navigation
 
-The desktop has 21 icons, numbered 01 to 21.
+The desktop icons are sorted alphabetically.
 
 Use arrow keys (Left, Right, Up, Down) to move between icons.
 
 Press Enter to open a program.
 
+Tip: Press the first letter of a program name to jump to it. For example, press "F" for Firefox, "W" for Word.
+
 ### Program List
 
-01. NVDA - Screen reader
-02. Word - Word processor
-03. Excel - Spreadsheet
-04. PowerPoint - Presentations
-05. Firefox - Web browser
-06. Wikipedia - Offline encyclopedia
-07. Tu Dien - English-Vietnamese dictionary
-08. Thorium Reader - EPUB book reader
-09. SumatraPDF - PDF reader
-10. VLC - Media player
-11. Audacity - Audio editor
-12. Sao Mai Typing - Vietnamese typing tutor
-13. SM Readmate - Accessible document reader
-14. Quorum Studio - Accessible programming
-15. LEAP TicTacToe - Tic-tac-toe game
-16. LEAP Tennis - Tennis game
-17. LEAP Curve - Curve game
-18. Calculator - Calculator
-19. My USB - Open your USB drive
-20. Doi Ngon Ngu - Switch Vietnamese/English
-21. Khoi Phuc NVDA - Restore NVDA if broken
+- Audacity - Audio editor
+- Calculator - Calculator
+- Doi Ngon Ngu - Switch Language - Switch Vietnamese/English
+- Excel - Spreadsheet
+- Firefox - Web browser
+- Khoi Phuc NVDA - Restore NVDA - Resets NVDA to defaults if broken
+- Game - Curve - Curve game
+- Game - Tennis - Tennis game
+- Game - TicTacToe - Tic-tac-toe game
+- My USB - Open your USB drive
+- NVDA - Screen reader
+- PowerPoint - Presentations
+- Quorum Studio - Accessible programming
+- Sao Mai Typing Tutor - Vietnamese typing tutor
+- Readmate - Accessible document reader
+- SumatraPDF - PDF reader
+- Thorium Reader - EPUB book reader
+- Tu Dien - Dictionary - English-Vietnamese dictionary
+- VLC media player - Media player
+- Wikipedia (Offline) - Offline encyclopedia
+- Word - Word processor
 
 ---
 
@@ -208,7 +210,7 @@ Telex examples:
 
 If NVDA stops talking or speaks incorrectly:
 
-1. Use arrow keys to navigate to icon 21 "Khoi Phuc NVDA"
+1. Use arrow keys to navigate to "Khoi Phuc NVDA" (press "K" to jump quickly)
 2. Press Enter
 3. Wait a few seconds, NVDA will restart with default settings
 
@@ -223,4 +225,4 @@ If NVDA stops talking or speaks incorrectly:
 
 ---
 
-*Last updated: 2026-03-05*
+*Last updated: 2026-03-17*

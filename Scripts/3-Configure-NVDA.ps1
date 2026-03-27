@@ -189,6 +189,7 @@ if (Test-Path $unikeySourceDir) {
         # Deploy UniKey launcher wrapper (sets ShowDlg=0 before launching, since
         # UniKey overwrites ShowDlg=1 on exit and ignores shortcut WindowStyle)
         $launcherVbs = @'
+On Error Resume Next
 ' UniKey launcher - suppresses the startup dialog by setting ShowDlg=0
 ' before launching UniKeyNT.exe. UniKey overwrites this value on exit,
 ' so it must be re-applied every login.

@@ -21,7 +21,7 @@ param(
 )
 
 $hostname = "PC-{0:D2}" -f $PCNumber
-$totalSteps = 10
+$totalSteps = 9
 $currentStep = 0
 $stepResults = @{}
 
