@@ -10,10 +10,8 @@ param(
     [ValidateRange(1,19)]
     [int]$PCNumber,
 
-    [Parameter(Mandatory=$true)]
     [string]$WifiSSID,
 
-    [Parameter(Mandatory=$true)]
     [string]$WifiPassword,
 
     [switch]$SkipInstall,
@@ -65,6 +63,7 @@ if ($env:COMPUTERNAME -eq $hostname) {
     Write-Host "      Hostname set to $hostname" -ForegroundColor Green
 }
 
+if ($WifiSSID -and $WifiPassword) {
 Step "Connecting to Wi-Fi ($WifiSSID)"
 $profileXml = @"
 <?xml version="1.0"?>
@@ -120,6 +119,10 @@ if ($ip) {
     Write-Host "      Connected. IP: $ip" -ForegroundColor Green
 } else {
     Write-Host "      WARNING: Wi-Fi not connected after ${maxWait}s. Continuing..." -ForegroundColor Red
+}
+} else {
+    Step "Skipping Wi-Fi (no SSID provided - offline deployment)"
+    Write-Host "      No Wi-Fi configured. Continuing offline..." -ForegroundColor Yellow
 }
 
 Step "Enabling WinRM"
