@@ -131,7 +131,7 @@ Tip: Press the first letter of a program name to jump to it. For example, press 
 - PowerPoint - Presentations
 - Quorum Studio - Accessible programming
 - Sao Mai Typing Tutor - Vietnamese typing tutor
-- Readmate - Accessible document reader
+- Readmate - Vietnamese textbook reader (103 books pre-loaded)
 - SumatraPDF - PDF reader
 - Thorium Reader - EPUB book reader
 - Tu Dien - Dictionary - English-Vietnamese dictionary
@@ -143,20 +143,25 @@ Tip: Press the first letter of a program name to jump to it. For example, press 
 
 ## Important NVDA Shortcuts
 
-This laptop uses the "Laptop" keyboard layout. The NVDA key is Caps Lock.
+This laptop uses the "Laptop" keyboard layout. The NVDA key is Caps Lock or Insert (both work).
 
 | Key | Function |
 |---|---|
-| Caps Lock + T | Read window title |
-| Caps Lock + B | Read entire window |
-| Caps Lock + F7 | List of links |
-| Caps Lock + Space | Toggle browse/focus mode |
-| Caps Lock + N | Open NVDA menu |
-| Caps Lock + Q | Quit NVDA |
+| NVDA + 1 | Input Help Mode - press any key to hear what it does |
+| NVDA + T | Read window title |
+| NVDA + B | Read entire window |
+| NVDA + F7 | List of links |
+| NVDA + Space | Toggle browse/focus mode |
+| NVDA + N | Open NVDA menu |
+| NVDA + Q | Quit NVDA |
+| NVDA + S | Cycle speech modes (speech / beep / off) |
+| NVDA + Ctrl + Up Arrow | Increase speech rate |
+| NVDA + Ctrl + Down Arrow | Decrease speech rate |
 | Ctrl | Stop reading |
-| Caps Lock + Down Arrow | Read from current position |
+| NVDA + Down Arrow | Read from current position |
 | Tab | Move to next item |
 | Shift + Tab | Move to previous item |
+| Ctrl + Alt + N | Restart NVDA |
 | Alt + F4 | Close program |
 | Alt + Tab | Switch programs |
 
@@ -206,6 +211,25 @@ Telex examples:
 
 ---
 
+## Reading Textbooks
+
+The laptop comes with 103 Vietnamese textbooks pre-loaded (Canh Dieu, Chan Troi Sang Tao, Ket Noi Tri Thuc, Tieng Anh).
+
+### Using Readmate
+
+1. Navigate to "Readmate" on the Desktop (press "R" to jump quickly).
+2. Press Enter to open.
+3. The book list appears. Use arrow keys to select a book.
+4. Press Enter to open and read.
+
+### Using Thorium Reader
+
+1. Navigate to "Thorium Reader" on the Desktop (press "T" to jump quickly).
+2. Press Enter to open.
+3. Use Tab to navigate and arrow keys to browse books from C:\Ebooks.
+
+---
+
 ## If NVDA Breaks
 
 If NVDA stops talking or speaks incorrectly:
@@ -225,4 +249,4 @@ If NVDA stops talking or speaks incorrectly:
 
 ---
 
-*Last updated: 2026-03-17*
+*Last updated: 2026-04-01*

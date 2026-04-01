@@ -1,183 +1,252 @@
-LAPTOP USER GUIDE
+# Laptop User Guide
 
 This guide explains how to use the laptop with the NVDA screen reader.
 
+---
 
-GETTING STARTED
+## Getting Started
 
 When the laptop turns on, NVDA starts automatically and says "NVDA is running".
+
 You will hear a welcome message. After that, you are on the Desktop.
 
+---
 
-PORTS AND CONNECTIONS
+## Ports and Connections
 
 The Dell Latitude 5420 has ports on both sides and the rear.
+
 Place the laptop in front of you with the screen open. The hinge side is away from you.
 
-Left Side (from rear to front):
-  1. Small USB-C port (Thunderbolt) - for charging or external display
-  2. Second small USB-C port (Thunderbolt)
-  3. Full-size USB-A port (rectangular) - plug your USB drive here
-  4. HDMI port (trapezoid shape) - for external display
+### Left Side
 
-Right Side (from rear to front):
-  1. Security lock slot (small wedge-shaped slot)
-  2. Second full-size USB-A port (rectangular) - also works for USB drives
-  3. Headphone jack (small round hole) - plug your headphones here
-  4. microSD card slot (thin slot)
+From rear to front (from hinge toward you):
 
-Rear (near the hinge):
-  1. RJ-45 Ethernet port (large square port) - for wired network
+1. Small USB-C port (Thunderbolt) - for charging or external display
+2. Second small USB-C port (Thunderbolt)
+3. Full-size USB-A port (rectangular) - plug your USB drive here
+4. HDMI port (trapezoid shape) - for external display
 
-Quick Summary:
-  Headphones: right side, round hole, near the middle of the edge
-  USB drive: large rectangular port, one on each side (left and right)
-  Charging: plug charger into USB-C port on left side (port closest to hinge)
+### Right Side
 
+From rear to front (from hinge toward you):
 
-HEADPHONES
+1. Security lock slot (small wedge-shaped slot)
+2. Second full-size USB-A port (rectangular) - also works for USB drives
+3. Headphone jack (small round hole) - plug your headphones here
+4. microSD card slot (thin slot)
+
+### Rear
+
+Near the hinge:
+
+1. RJ-45 Ethernet port (large square port) - for wired network
+
+### Quick Summary
+
+- Headphones: right side, round hole, near the middle of the edge
+- USB drive: large rectangular port, one on each side (left and right)
+- Charging: plug charger into USB-C port on left side (port closest to hinge)
+
+---
+
+## Headphones
 
 The laptop uses Audio-Technica ATH-M40x headphones.
 
-  Plug the headphone cable into the round jack on the right side of the laptop.
-  The cable is detachable. The small end (2.5mm) plugs into the headphones, the large end (3.5mm) plugs into the laptop.
-  Use the volume keys on the keyboard to increase or decrease volume.
-  Volume is set to 70% each time the laptop starts.
+- Plug the headphone cable into the round jack on the right side of the laptop.
+- The cable is detachable. The small end (2.5mm) plugs into the headphones, the large end (3.5mm) plugs into the laptop.
+- Use the volume keys on the keyboard to increase or decrease volume.
+- Volume is set to 70% each time the laptop starts.
 
+---
 
-YOUR USB DRIVE
+## Your USB Drive
 
 Each student has a personal USB drive (16GB) with an ID number (e.g., STU-001).
+
 Your USB drive has a Braille label tag attached.
 
-Plugging In:
-  1. Find a USB-A port (large rectangular shape) on the left or right side of the laptop.
-  2. The USB plug only goes in one way. If it does not fit, flip it over.
-  3. Push gently until you hear a click.
+### Plugging In
 
-Opening Your USB:
-  1. Use arrow keys to navigate to "My USB" on the Desktop (press "M" to jump quickly).
-  2. Press Enter. The "This PC" window will open.
-  3. Press Tab to move into the drive list, use arrow keys to find your USB drive.
-  4. Press Enter to open the USB.
+1. Find a USB-A port (large rectangular shape) on the left or right side of the laptop.
+2. The USB plug only goes in one way. If it does not fit, flip it over.
+3. Push gently until you hear a click.
 
-Saving Files to USB:
-  In programs like Word:
-  1. Press Ctrl + S to save.
-  2. Use Alt + D to jump to the address bar, type the USB path (e.g., E:\)
-  3. Or use "Save As" (Ctrl + Shift + S) and select USB from the left panel.
+### Opening Your USB
 
-Safely Removing USB:
-  Always safely remove USB to avoid losing data.
-  1. Press Windows + E to open File Explorer.
-  2. Press Tab to the drive section, use arrow keys to find your USB.
-  3. Press the Menu key (or Shift + F10) to open the right-click menu.
-  4. Select "Eject" and press Enter.
-  5. Wait until you hear the "Safe to Remove Hardware" notification.
-  6. Pull the USB out.
+1. Use arrow keys to navigate to "My USB" on the Desktop (press "M" to jump quickly).
+2. Press Enter. The "This PC" window will open.
+3. Press Tab to move into the drive list, use arrow keys to find your USB drive.
+4. Press Enter to open the USB.
 
-Automatic Backup:
-  Your USB data is automatically backed up to Google Drive every 15 minutes (when internet is available).
+### Saving Files to USB
 
+In programs like Word:
 
-DESKTOP NAVIGATION
+1. Press Ctrl + S to save.
+2. Use Alt + D to jump to the address bar, type the USB path (e.g., E:\)
+3. Or use "Save As" (Ctrl + Shift + S) and select USB from the left panel.
+
+### Safely Removing USB
+
+Always safely remove USB to avoid losing data.
+
+1. Press Windows + E to open File Explorer.
+2. Press Tab to the drive section, use arrow keys to find your USB.
+3. Press the Menu key (or Shift + F10) to open the right-click menu.
+4. Select "Eject" and press Enter.
+5. Wait until you hear the "Safe to Remove Hardware" notification.
+6. Pull the USB out.
+
+### Automatic Backup
+
+Your USB data is automatically backed up to Google Drive every 15 minutes (when internet is available).
+
+---
+
+## Desktop Navigation
 
 The desktop icons are sorted alphabetically.
+
 Use arrow keys (Left, Right, Up, Down) to move between icons.
+
 Press Enter to open a program.
+
 Tip: Press the first letter of a program name to jump to it. For example, press "F" for Firefox, "W" for Word.
 
-Program List:
-  Audacity - Audio editor
-  Calculator - Calculator
-  Doi Ngon Ngu - Switch Language - Switch Vietnamese/English
-  Excel - Spreadsheet
-  Firefox - Web browser
-  Khoi Phuc NVDA - Restore NVDA - Resets NVDA to defaults if broken
-  Game - Curve - Curve game
-  Game - Tennis - Tennis game
-  Game - TicTacToe - Tic-tac-toe game
-  My USB - Open your USB drive
-  NVDA - Screen reader
-  PowerPoint - Presentations
-  Quorum Studio - Accessible programming
-  Sao Mai Typing Tutor - Vietnamese typing tutor
-  Readmate - Accessible document reader
-  SumatraPDF - PDF reader
-  Thorium Reader - EPUB book reader
-  Tu Dien - Dictionary - English-Vietnamese dictionary
-  VLC media player - Media player
-  Wikipedia (Offline) - Offline encyclopedia
-  Word - Word processor
+### Program List
 
+- Audacity - Audio editor
+- Calculator - Calculator
+- Doi Ngon Ngu - Switch Language - Switch Vietnamese/English
+- Excel - Spreadsheet
+- Firefox - Web browser
+- Khoi Phuc NVDA - Restore NVDA - Resets NVDA to defaults if broken
+- Game - Curve - Curve game
+- Game - Tennis - Tennis game
+- Game - TicTacToe - Tic-tac-toe game
+- My USB - Open your USB drive
+- NVDA - Screen reader
+- PowerPoint - Presentations
+- Quorum Studio - Accessible programming
+- Sao Mai Typing Tutor - Vietnamese typing tutor
+- Readmate - Vietnamese textbook reader (103 books pre-loaded)
+- SumatraPDF - PDF reader
+- Thorium Reader - EPUB book reader
+- Tu Dien - Dictionary - English-Vietnamese dictionary
+- VLC media player - Media player
+- Wikipedia (Offline) - Offline encyclopedia
+- Word - Word processor
 
-IMPORTANT NVDA SHORTCUTS
+---
 
-This laptop uses the "Laptop" keyboard layout. The NVDA key is Caps Lock.
+## Important NVDA Shortcuts
 
-  Caps Lock + T: Read window title
-  Caps Lock + B: Read entire window
-  Caps Lock + F7: List of links
-  Caps Lock + Space: Toggle browse/focus mode
-  Caps Lock + N: Open NVDA menu
-  Caps Lock + Q: Quit NVDA
-  Ctrl: Stop reading
-  Caps Lock + Down Arrow: Read from current position
-  Tab: Move to next item
-  Shift + Tab: Move to previous item
-  Alt + F4: Close program
-  Alt + Tab: Switch programs
+This laptop uses the "Laptop" keyboard layout. The NVDA key is Caps Lock or Insert (both work).
 
-Focus Mode:
-  When using PowerShell, Command Prompt, or other apps where the keyboard does not work normally:
-  Press Caps Lock + Space to switch to "Focus Mode".
-  In this mode, all keys you press go directly to the application (including Backspace, Delete, etc.).
-  Press Caps Lock + Space again to return to browse mode.
+| Key | Function |
+|---|---|
+| NVDA + 1 | Input Help Mode - press any key to hear what it does |
+| NVDA + T | Read window title |
+| NVDA + B | Read entire window |
+| NVDA + F7 | List of links |
+| NVDA + Space | Toggle browse/focus mode |
+| NVDA + N | Open NVDA menu |
+| NVDA + Q | Quit NVDA |
+| NVDA + S | Cycle speech modes (speech / beep / off) |
+| NVDA + Ctrl + Up Arrow | Increase speech rate |
+| NVDA + Ctrl + Down Arrow | Decrease speech rate |
+| Ctrl | Stop reading |
+| NVDA + Down Arrow | Read from current position |
+| Tab | Move to next item |
+| Shift + Tab | Move to previous item |
+| Ctrl + Alt + N | Restart NVDA |
+| Alt + F4 | Close program |
+| Alt + Tab | Switch programs |
 
+### Focus Mode
 
-TYPING VIETNAMESE
+When using PowerShell, Command Prompt, or other apps where the keyboard does not work normally:
+
+Press Caps Lock + Space to switch to "Focus Mode".
+
+In this mode, all keys you press go directly to the application (including Backspace, Delete, etc.).
+
+Press Caps Lock + Space again to return to browse mode.
+
+---
+
+## Typing Vietnamese
 
 UniKey starts automatically when the laptop turns on.
+
 Default input method is Telex.
 
 Telex examples:
-  aa = a with circumflex
-  aw = a with breve
-  oo = o with circumflex
-  ow = o with horn
-  uw = u with horn
-  dd = d with stroke
-  s = acute accent, f = grave accent, r = hook above, x = tilde, j = dot below
+- aa = a with circumflex
+- aw = a with breve
+- oo = o with circumflex
+- ow = o with horn
+- uw = u with horn
+- dd = d with stroke
+- s = acute accent, f = grave accent, r = hook above, x = tilde, j = dot below
 
+---
 
-USEFUL WINDOWS SHORTCUTS
+## Useful Windows Shortcuts
 
-  Windows + E: Open File Explorer
-  Ctrl + C: Copy
-  Ctrl + V: Paste
-  Ctrl + X: Cut
-  Ctrl + Z: Undo
-  Ctrl + S: Save
-  Ctrl + A: Select all
-  Ctrl + Shift + S: Save As
-  Windows + L: Lock laptop
-  Ctrl + W: Close current tab or window
+| Key | Function |
+|---|---|
+| Windows + E | Open File Explorer |
+| Ctrl + C | Copy |
+| Ctrl + V | Paste |
+| Ctrl + X | Cut |
+| Ctrl + Z | Undo |
+| Ctrl + S | Save |
+| Ctrl + A | Select all |
+| Ctrl + Shift + S | Save As |
+| Windows + L | Lock laptop |
+| Ctrl + W | Close current tab or window |
 
+---
 
-IF NVDA BREAKS
+## Reading Textbooks
+
+The laptop comes with 103 Vietnamese textbooks pre-loaded (Canh Dieu, Chan Troi Sang Tao, Ket Noi Tri Thuc, Tieng Anh).
+
+### Using Readmate
+
+1. Navigate to "Readmate" on the Desktop (press "R" to jump quickly).
+2. Press Enter to open.
+3. The book list appears. Use arrow keys to select a book.
+4. Press Enter to open and read.
+
+### Using Thorium Reader
+
+1. Navigate to "Thorium Reader" on the Desktop (press "T" to jump quickly).
+2. Press Enter to open.
+3. Use Tab to navigate and arrow keys to browse books from C:\Ebooks.
+
+---
+
+## If NVDA Breaks
 
 If NVDA stops talking or speaks incorrectly:
-  1. Use arrow keys to navigate to "Khoi Phuc NVDA" (press "K" to jump quickly)
-  2. Press Enter
-  3. Wait a few seconds, NVDA will restart with default settings
 
+1. Use arrow keys to navigate to "Khoi Phuc NVDA" (press "K" to jump quickly)
+2. Press Enter
+3. Wait a few seconds, NVDA will restart with default settings
 
-NOTES
+---
 
-  No password needed to log in.
-  USB data auto-backs up every 15 minutes.
-  If you need help, ask your teacher.
-  Always safely eject USB before shutting down.
+## Notes
 
+- No password needed to log in
+- USB data auto-backs up every 15 minutes
+- If you need help, ask your teacher
+- Always safely eject USB before shutting down
 
-Last updated: 2026-03-17
+---
+
+*Last updated: 2026-04-01*

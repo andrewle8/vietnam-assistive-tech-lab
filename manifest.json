@@ -1,8 +1,8 @@
 {
-  "manifest_version": "2026.03.23",
+  "manifest_version": "2026.04.01",
   "created": "2026-02-19",
-  "tested_on": "PC-01 (2026-03-23)",
-  "notes": "Tested and validated on PC-01 test bench",
+  "tested_on": "PC-01 (2026-04-01)",
+  "notes": "Pre-deployment audit: updated SumatraPDF, Firefox, rclone, Tailscale; added ebook pipeline",
 
   "os": {
     "name": "Windows 11 Pro",
@@ -58,8 +58,8 @@
       ]
     },
     "firefox": {
-      "version": "147.0.4",
-      "installer": "Firefox Setup 147.0.4.msi",
+      "version": "149.0",
+      "installer": "Firefox Setup 149.0.msi",
       "critical": true,
       "paths": [
         "C:\\Program Files\\Mozilla Firefox\\firefox.exe"
@@ -99,8 +99,8 @@
       ]
     },
     "sumatrapdf": {
-      "version": "3.5.2",
-      "installer": "SumatraPDF-3.5.2-64-install.exe",
+      "version": "3.6",
+      "installer": "SumatraPDF-3.6-64-install.exe",
       "critical": false,
       "paths": [
         "C:\\Users\\Student\\AppData\\Local\\SumatraPDF\\SumatraPDF.exe",
@@ -142,16 +142,16 @@
       ]
     },
     "rclone": {
-      "version": "1.73.1",
-      "installer": "rclone-v1.73.1-windows-amd64.zip",
+      "version": "1.73.3",
+      "installer": "rclone-v1.73.3-windows-amd64.zip",
       "critical": false,
       "paths": [
         "C:\\LabTools\\rclone\\rclone.exe"
       ]
     },
     "tailscale": {
-      "version": "1.94.2",
-      "installer": "tailscale-setup-1.94.2-amd64.msi",
+      "version": "1.96.2",
+      "installer": "tailscale-setup-1.96.2-amd64.msi",
       "critical": false,
       "paths": [
         "C:\\Program Files\\Tailscale\\tailscale.exe"

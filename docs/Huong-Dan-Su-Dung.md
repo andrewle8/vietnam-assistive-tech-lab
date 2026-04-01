@@ -131,7 +131,7 @@ Meo: Nhan chu cai dau cua ten chuong trinh de nhay nhanh. Vi du, nhan "F" de nha
 - PowerPoint - Trinh chieu
 - Quorum Studio - Lap trinh
 - Sao Mai Typing Tutor - Luyen go phim tieng Viet
-- Readmate - Doc tai lieu
+- Readmate - Doc sach giao khoa (103 sach da duoc cai san)
 - SumatraPDF - Doc file PDF
 - Thorium Reader - Doc sach EPUB
 - Tu Dien - Dictionary - Tu dien Anh-Viet
@@ -143,20 +143,25 @@ Meo: Nhan chu cai dau cua ten chuong trinh de nhay nhanh. Vi du, nhan "F" de nha
 
 ## Phim Tat NVDA Quan Trong
 
-May tinh nay dung che do ban phim "Laptop". Phim NVDA la phim Caps Lock.
+May tinh nay dung che do ban phim "Laptop". Phim NVDA la phim Caps Lock hoac Insert (ca hai deu dung duoc).
 
 | Phim | Chuc nang |
 |---|---|
-| Caps Lock + T | Nghe tieu de cua so |
-| Caps Lock + B | Doc toan bo cua so |
-| Caps Lock + F7 | Danh sach lien ket |
-| Caps Lock + Space | Chuyen che do duyet/tap trung |
-| Caps Lock + N | Mo menu NVDA |
-| Caps Lock + Q | Thoat NVDA |
+| NVDA + 1 | Che do hoc phim - nhan bat ky phim nao de nghe chuc nang cua no |
+| NVDA + T | Nghe tieu de cua so |
+| NVDA + B | Doc toan bo cua so |
+| NVDA + F7 | Danh sach lien ket |
+| NVDA + Space | Chuyen che do duyet/tap trung |
+| NVDA + N | Mo menu NVDA |
+| NVDA + Q | Thoat NVDA |
+| NVDA + S | Chuyen che do noi (noi / beep / tat) |
+| NVDA + Ctrl + Mui ten len | Tang toc do noi |
+| NVDA + Ctrl + Mui ten xuong | Giam toc do noi |
 | Ctrl | Dung doc |
-| Caps Lock + Mui ten xuong | Doc tu vi tri hien tai |
+| NVDA + Mui ten xuong | Doc tu vi tri hien tai |
 | Tab | Di chuyen den muc tiep theo |
 | Shift + Tab | Di chuyen den muc truoc |
+| Ctrl + Alt + N | Khoi dong lai NVDA |
 | Alt + F4 | Dong chuong trinh |
 | Alt + Tab | Chuyen chuong trinh |
 
@@ -206,6 +211,25 @@ Vi du Telex:
 
 ---
 
+## Doc Sach Giao Khoa
+
+May tinh co san 103 sach giao khoa tieng Viet (Canh Dieu, Chan Troi Sang Tao, Ket Noi Tri Thuc, Tieng Anh).
+
+### Dung Readmate
+
+1. Dung phim mui ten den "Readmate" tren Desktop (nhan phim "R" de nhay nhanh).
+2. Nhan Enter de mo.
+3. Danh sach sach se hien len. Dung phim mui ten de chon sach.
+4. Nhan Enter de mo sach va doc.
+
+### Dung Thorium Reader
+
+1. Dung phim mui ten den "Thorium Reader" tren Desktop (nhan phim "T" de nhay nhanh).
+2. Nhan Enter de mo.
+3. Nhan Tab de di chuyen qua cac muc, dung phim mui ten de chon sach tu thu muc C:\Ebooks.
+
+---
+
 ## Khi NVDA Bi Loi
 
 Neu NVDA khong noi hoac noi sai:
@@ -225,4 +249,4 @@ Neu NVDA khong noi hoac noi sai:
 
 ---
 
-*Cap nhat lan cuoi: 2026-03-17*
+*Cap nhat lan cuoi: 2026-04-01*

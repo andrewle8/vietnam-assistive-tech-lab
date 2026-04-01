@@ -41,28 +41,26 @@ $checks = @(
             "C:\Program Files (x86)\SaoMai\VNVoice\*",
             "C:\Program Files\SaoMai\*voice*"
         )
-        RegCheck = "HKLM:\SOFTWARE\Microsoft\Speech\Voices\Tokens\*VN*"
+        RegCheck = "HKLM:\SOFTWARE\Microsoft\Speech\Voices\Tokens\Minh Du"
         Critical = $true
     },
     @{
         Name = "Sao Mai Typing Tutor"
         Paths = @(
+            "C:\Program Files (x86)\SaoMai\SMTT\SMTT.exe",
+            "C:\Program Files\SaoMai\SMTT\SMTT.exe",
             "C:\Program Files\SaoMai\TypingTutor\*",
-            "C:\Program Files (x86)\SaoMai\TypingTutor\*",
-            "C:\Program Files\SaoMai\SMTTypingTutor\*",
-            "C:\Program Files (x86)\SaoMai\SMTTypingTutor\*",
-            "C:\Program Files\Sao Mai\*",
-            "C:\Program Files (x86)\Sao Mai\*"
+            "C:\Program Files (x86)\SaoMai\TypingTutor\*"
         )
         Critical = $false
     },
     @{
         Name = "SM Readmate"
         Paths = @(
+            "C:\Program Files\SaoMai\sm_readmate\sm_readmate.exe",
+            "C:\Program Files (x86)\SaoMai\sm_readmate\sm_readmate.exe",
             "C:\Program Files\SaoMai\Readmate\*",
-            "C:\Program Files (x86)\SaoMai\Readmate\*",
-            "C:\Program Files\SaoMai\SMReadmate\*",
-            "C:\Program Files (x86)\SaoMai\SMReadmate\*"
+            "C:\Program Files (x86)\SaoMai\Readmate\*"
         )
         Critical = $false
     },
@@ -93,6 +91,7 @@ $checks = @(
     @{
         Name = "Thorium Reader"
         Paths = @(
+            "C:\Users\Student\AppData\Local\Programs\Thorium\Thorium.exe",
             "$env:LOCALAPPDATA\Programs\Thorium\Thorium.exe",
             "C:\Program Files\Thorium\Thorium.exe",
             "C:\Program Files (x86)\Thorium\Thorium.exe"
@@ -151,6 +150,38 @@ $checks = @(
             "C:\Games\LEAP\TicTacToe\*.exe",
             "C:\Games\LEAP\Tennis\*.exe",
             "C:\Games\LEAP\Curve\*.exe"
+        )
+        Critical = $false
+    },
+    @{
+        Name = "Ebooks (Vietnamese Textbooks)"
+        Paths = @(
+            "C:\Ebooks\Canh Dieu\*.epub",
+            "C:\Ebooks\Chan Troi Sang Tao\*.epub",
+            "C:\Ebooks\Ket Noi Tri Thuc\*.epub",
+            "C:\Ebooks\Tieng Anh\*.epub"
+        )
+        Critical = $false
+    },
+    @{
+        Name = "SM Readmate Library"
+        Paths = @(
+            "C:\Users\Student\AppData\Roaming\SaoMai\SM Readmate\databases\app_database.db"
+        )
+        Critical = $false
+    },
+    @{
+        Name = "GoldenDict Dictionaries"
+        Paths = @(
+            "C:\Program Files\GoldenDict\content\*\*.ifo",
+            "C:\Program Files (x86)\GoldenDict\content\*\*.ifo"
+        )
+        Critical = $false
+    },
+    @{
+        Name = "Kiwix ZIM Content"
+        Paths = @(
+            "C:\Program Files\Kiwix\*.zim"
         )
         Critical = $false
     }

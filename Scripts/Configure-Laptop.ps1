@@ -1064,6 +1064,30 @@ try {
     $failCount++
 }
 
+# Step 17b: Populate SM Readmate library with ebooks from C:\Ebooks
+Write-Log "Step 17b: Populating SM Readmate ebook library..." "INFO"
+
+try {
+    $ebookDir = "C:\Ebooks"
+    $studentDbPath = "C:\Users\Student\AppData\Roaming\SaoMai\SM Readmate\databases\app_database.db"
+    $populateScript = Join-Path $PSScriptRoot "Populate-ReadmateDB.ps1"
+
+    if ((Test-Path $ebookDir) -and (Test-Path $populateScript)) {
+        # Script creates the database + schema if it doesn't exist yet (fresh install)
+        & $populateScript -EbookDir $ebookDir -DbPath $studentDbPath
+        Write-Log "SM Readmate library populated with ebooks from $ebookDir" "SUCCESS"
+        $successCount++
+    } else {
+        $missing = @()
+        if (-not (Test-Path $ebookDir))       { $missing += "C:\Ebooks (run 1-Install-All.ps1 first)" }
+        if (-not (Test-Path $populateScript))  { $missing += "Populate-ReadmateDB.ps1" }
+        Write-Log "Skipped SM Readmate population - missing: $($missing -join ', ')" "WARNING"
+    }
+} catch {
+    Write-Log "Could not populate SM Readmate library: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
 # Step 18: Deploy Update Agent
 Write-Log "Step 18: Deploying auto-update agent..." "INFO"
 
