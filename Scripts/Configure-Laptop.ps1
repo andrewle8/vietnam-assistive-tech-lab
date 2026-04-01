@@ -404,6 +404,39 @@ try {
     $failCount++
 }
 
+# Step 5b: Copy per-user apps (Thorium, SumatraPDF) from Admin to Student profile
+# These installers install to Admin's %LOCALAPPDATA% since Bootstrap runs as Admin
+Write-Log "Step 5b: Copying per-user apps to Student profile..." "INFO"
+
+try {
+    $adminProfile = $env:USERPROFILE
+    $studentProfile = "C:\Users\Student"
+
+    # Thorium Reader
+    $adminThorium = "$adminProfile\AppData\Local\Programs\Thorium"
+    $studentThorium = "$studentProfile\AppData\Local\Programs\Thorium"
+    if ((Test-Path "$adminThorium\Thorium.exe") -and -not (Test-Path "$studentThorium\Thorium.exe")) {
+        $parent = Split-Path $studentThorium -Parent
+        if (-not (Test-Path $parent)) { New-Item -Path $parent -ItemType Directory -Force | Out-Null }
+        Copy-Item $adminThorium $studentThorium -Recurse -Force
+        icacls $studentThorium /grant "Student:(OI)(CI)F" /T /Q 2>$null
+        Write-Log "Copied Thorium Reader to Student profile" "SUCCESS"
+    }
+
+    # SumatraPDF
+    $adminSumatra = "$adminProfile\AppData\Local\SumatraPDF"
+    $studentSumatra = "$studentProfile\AppData\Local\SumatraPDF"
+    if ((Test-Path "$adminSumatra\SumatraPDF.exe") -and -not (Test-Path "$studentSumatra\SumatraPDF.exe")) {
+        Copy-Item $adminSumatra $studentSumatra -Recurse -Force
+        icacls $studentSumatra /grant "Student:(OI)(CI)F" /T /Q 2>$null
+        Write-Log "Copied SumatraPDF to Student profile" "SUCCESS"
+    }
+
+    $successCount++
+} catch {
+    Write-Log "Could not copy per-user apps: $($_.Exception.Message)" "WARNING"
+}
+
 # Step 6: Clean desktop and create shortcuts for screen reader navigation
 Write-Log "Step 6: Wiping desktop shortcuts and creating clean set for screen reader navigation..." "INFO"
 
