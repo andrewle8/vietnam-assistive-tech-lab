@@ -84,18 +84,6 @@ $installations += @(
         WaitTime = 30
     },
     @{
-        Name = "Quorum Studio 7.3.0"
-        Path = ".\Installers\Quorum\QuorumStudio-win64.exe"
-        Args = @("/S")
-        WaitTime = 60
-    },
-    @{
-        Name = "Thorium Reader 3.3.0"
-        Path = ".\Installers\Thorium\Thorium.Setup.3.3.0.exe"
-        Args = @("/S")
-        WaitTime = 30
-    },
-    @{
         Name = "SumatraPDF 3.6"
         Path = ".\Installers\Utilities\SumatraPDF\SumatraPDF-3.6-64-install.exe"
         Args = @("-s", "-install")
@@ -261,7 +249,7 @@ if ($goldenDictExe) {
     }
 }
 
-# Install Ebooks (copy EPUB textbooks to local folder for Thorium Reader / SM Readmate)
+# Install Ebooks (copy EPUB textbooks to local folder for SM Readmate library)
 Write-Log "Installing Vietnamese ebooks (textbooks)..." "INFO"
 
 $ebookSourceDir = Join-Path $usbRoot "Installers\Ebooks"

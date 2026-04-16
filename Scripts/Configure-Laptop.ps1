@@ -1,8 +1,9 @@
 # Vietnam Lab Deployment - Loaner Laptop Configuration
 # Version: 1.0
 # Run on each lab laptop after scripts 1-3. Requires Administrator.
-# Deploys rclone, backup script, scheduled task, and desktop shortcut.
-# Last Updated: February 2026
+# Applies Windows hardening, desktop shortcuts, NVDA config, file associations,
+# LabAdmin/Student accounts, language pack, power settings, and more.
+# Last Updated: April 2026
 
 param(
     [string]$LogPath = "$PSScriptRoot\laptop-config.log"
@@ -33,7 +34,7 @@ if (-not $isAdmin) {
 Write-Log "=== Loaner Laptop Configuration Started on $env:COMPUTERNAME ===" "INFO"
 
 $usbRoot = Split-Path -Parent $PSScriptRoot
-$labToolsDir = "C:\LabTools\rclone"
+$labToolsDir = "C:\LabTools"
 $successCount = 0
 $failCount = 0
 
@@ -94,56 +95,28 @@ if ((Test-Path $defaultNtuser) -and -not (Test-Path "REGISTRY::HKEY_USERS\Defaul
 
 Write-Log "Registry targets: $($hkuPaths -join ', ')" "INFO"
 
-# Step 1: Deploy rclone
-Write-Log "Step 1: Deploying rclone..." "INFO"
-
-$rcloneSource = Join-Path $usbRoot "Installers\Utilities\rclone\rclone.exe"
-$rcloneConfSource = Join-Path $usbRoot "Config\rclone\rclone.conf"
-$backupScriptSource = Join-Path $usbRoot "Scripts\backup-usb.ps1"
+# Step 1: Ensure LabTools directory exists
+Write-Log "Step 1: Creating LabTools directory..." "INFO"
 
 if (-not (Test-Path $labToolsDir)) {
     New-Item -Path $labToolsDir -ItemType Directory -Force | Out-Null
-    Write-Log "Created directory: $labToolsDir" "INFO"
-}
-
-# Copy rclone.exe
-if (Test-Path $rcloneSource) {
-    Copy-Item -Path $rcloneSource -Destination $labToolsDir -Force
-    Write-Log "Copied rclone.exe to $labToolsDir" "SUCCESS"
+    Write-Log "Created directory: $labToolsDir" "SUCCESS"
     $successCount++
-} else {
-    Write-Log "rclone.exe not found at $rcloneSource" "ERROR"
-    Write-Log "Run 0-Download-Installers.ps1 first to download rclone." "ERROR"
-    $failCount++
 }
 
-# Copy rclone.conf
-if (Test-Path $rcloneConfSource) {
-    Copy-Item -Path $rcloneConfSource -Destination $labToolsDir -Force
-    Write-Log "Copied rclone.conf to $labToolsDir" "SUCCESS"
-    $successCount++
-} else {
-    Write-Log "rclone.conf not found at $rcloneConfSource" "ERROR"
-    Write-Log "Run Setup-Rclone-Auth.ps1 first to authorize Google Drive." "ERROR"
-    $failCount++
+# Cleanup legacy rclone/Tailscale artifacts from prior deployments
+foreach ($legacy in @("$labToolsDir\rclone", "$labToolsDir\fleet-reports", "$labToolsDir\start-tailscale.ps1", "$labToolsDir\start-tailscale.vbs")) {
+    if (Test-Path $legacy) { Remove-Item -Path $legacy -Recurse -Force -ErrorAction SilentlyContinue }
 }
-
-# Copy backup script
-if (Test-Path $backupScriptSource) {
-    Copy-Item -Path $backupScriptSource -Destination $labToolsDir -Force
-    Write-Log "Copied backup-usb.ps1 to $labToolsDir" "SUCCESS"
-    $successCount++
-} else {
-    Write-Log "backup-usb.ps1 not found at $backupScriptSource" "ERROR"
-    $failCount++
+foreach ($taskName in @("LabUSBBackup", "LabFleetReport")) {
+    $existingTask = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
+    if ($existingTask) {
+        Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue
+        Write-Log "Removed legacy scheduled task: $taskName" "INFO"
+    }
 }
-
-# Create logs directory
-$logSubDir = Join-Path $labToolsDir "logs"
-if (-not (Test-Path $logSubDir)) {
-    New-Item -Path $logSubDir -ItemType Directory -Force | Out-Null
-    Write-Log "Created logs directory: $logSubDir" "INFO"
-}
+Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\Tailscale.lnk" -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "Tailscale" -Force -ErrorAction SilentlyContinue
 
 # Step 2: Set AutoPlay for removable drives to open folder
 Write-Log "Step 2: Configuring AutoPlay for removable drives..." "INFO"
@@ -169,50 +142,6 @@ try {
     $successCount++
 } catch {
     Write-Log "Could not configure AutoPlay: $($_.Exception.Message)" "ERROR"
-    $failCount++
-}
-
-# Step 3: Create Scheduled Task for USB backup
-Write-Log "Step 3: Creating scheduled task 'LabUSBBackup'..." "INFO"
-
-try {
-    # Remove existing task if present
-    $existingTask = Get-ScheduledTask -TaskName "LabUSBBackup" -ErrorAction SilentlyContinue
-    if ($existingTask) {
-        Unregister-ScheduledTask -TaskName "LabUSBBackup" -Confirm:$false
-        Write-Log "Removed existing LabUSBBackup task" "INFO"
-    }
-
-    $taskAction = New-ScheduledTaskAction `
-        -Execute "powershell.exe" `
-        -Argument "-NoProfile -NonInteractive -ExecutionPolicy Bypass -File `"$labToolsDir\backup-usb.ps1`""
-
-    $taskTrigger = New-ScheduledTaskTrigger -Once -At (Get-Date) `
-        -RepetitionInterval (New-TimeSpan -Minutes 15) `
-        -RepetitionDuration (New-TimeSpan -Days 9999)
-
-    $taskSettings = New-ScheduledTaskSettingsSet `
-        -AllowStartIfOnBatteries `
-        -DontStopIfGoingOnBatteries `
-        -StartWhenAvailable `
-        -MultipleInstances IgnoreNew `
-        -ExecutionTimeLimit (New-TimeSpan -Minutes 10)
-
-    $taskPrincipal = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType S4U -RunLevel Limited
-
-    Register-ScheduledTask `
-        -TaskName "LabUSBBackup" `
-        -Action $taskAction `
-        -Trigger $taskTrigger `
-        -Settings $taskSettings `
-        -Principal $taskPrincipal `
-        -Description "Backs up student USB drives to Google Drive every 15 minutes" | Out-Null
-
-    Write-Log "Scheduled task 'LabUSBBackup' created (runs every 15 minutes)" "SUCCESS"
-    $successCount++
-} catch {
-    Write-Log "Could not create scheduled task: $($_.Exception.Message)" "ERROR"
-    Write-Log "You can manually create the task or run backup-usb.ps1 from $labToolsDir" "ERROR"
     $failCount++
 }
 
@@ -404,24 +333,13 @@ try {
     $failCount++
 }
 
-# Step 5b: Copy per-user apps (Thorium, SumatraPDF) from Admin to Student profile
+# Step 5b: Copy per-user apps (SumatraPDF) from Admin to Student profile
 # These installers install to Admin's %LOCALAPPDATA% since Bootstrap runs as Admin
 Write-Log "Step 5b: Copying per-user apps to Student profile..." "INFO"
 
 try {
     $adminProfile = $env:USERPROFILE
     $studentProfile = "C:\Users\Student"
-
-    # Thorium Reader
-    $adminThorium = "$adminProfile\AppData\Local\Programs\Thorium"
-    $studentThorium = "$studentProfile\AppData\Local\Programs\Thorium"
-    if ((Test-Path "$adminThorium\Thorium.exe") -and -not (Test-Path "$studentThorium\Thorium.exe")) {
-        $parent = Split-Path $studentThorium -Parent
-        if (-not (Test-Path $parent)) { New-Item -Path $parent -ItemType Directory -Force | Out-Null }
-        Copy-Item $adminThorium $studentThorium -Recurse -Force
-        icacls $studentThorium /grant "Student:(OI)(CI)F" /T /Q 2>$null
-        Write-Log "Copied Thorium Reader to Student profile" "SUCCESS"
-    }
 
     # SumatraPDF
     $adminSumatra = "$adminProfile\AppData\Local\SumatraPDF"
@@ -549,7 +467,6 @@ try {
         @{ Name = "Firefox"; Target = "C:\Program Files\Mozilla Firefox\firefox.exe"; AltTarget = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"; Desc = "Firefox Web Browser" },
         @{ Name = "Wikipedia (Offline)"; Target = "C:\Program Files\Kiwix\kiwix-desktop.exe"; Desc = "Kiwix - Offline Vietnamese Wikipedia" },
         @{ Name = "Tu Dien - Dictionary"; Target = "C:\Program Files\GoldenDict\GoldenDict.exe"; AltTarget = "C:\Program Files (x86)\GoldenDict\GoldenDict.exe"; Desc = "GoldenDict - Offline Dictionary" },
-        @{ Name = "Thorium Reader"; Target = "C:\Users\Student\AppData\Local\Programs\Thorium\Thorium.exe"; AltTarget = "C:\Program Files\Thorium\Thorium.exe"; Desc = "Thorium EPUB/DAISY Reader" },
         @{ Name = "SumatraPDF"; Target = "C:\Program Files\SumatraPDF\SumatraPDF.exe"; AltTarget = "C:\Users\Student\AppData\Local\SumatraPDF\SumatraPDF.exe"; Desc = "SumatraPDF Reader" },
         # --- Media ---
         @{ Name = "VLC media player"; Target = "C:\Program Files\VideoLAN\VLC\vlc.exe"; AltTarget = "C:\Program Files (x86)\VideoLAN\VLC\vlc.exe"; Desc = "VLC Media Player" },
@@ -557,7 +474,6 @@ try {
         # --- Education ---
         @{ Name = "Sao Mai Typing Tutor"; Target = "C:\Program Files (x86)\SaoMai\SMTT\SMTT.exe"; AltTarget = "C:\Program Files\SaoMai\SMTT\SMTT.exe"; Desc = "Sao Mai Vietnamese Typing Tutor" },
         @{ Name = "Readmate"; Target = "C:\Program Files\SaoMai\sm_readmate\sm_readmate.exe"; AltTarget = "C:\Program Files (x86)\SaoMai\sm_readmate\sm_readmate.exe"; Desc = "Sao Mai Readmate Accessible Reader" },
-        @{ Name = "Quorum Studio"; Target = "C:\Program Files\QuorumStudio\QuorumStudio.exe"; AltTarget = "C:\Program Files (x86)\QuorumStudio\QuorumStudio.exe"; Desc = "Quorum Studio - Accessible IDE" },
         # --- Utilities ---
         @{ Name = "Calculator"; Target = "calc.exe"; Desc = "Windows Calculator" },
         @{ Name = "My USB"; Target = "explorer.exe"; Args = "shell:MyComputerFolder"; IconLocation = "%SystemRoot%\System32\imageres.dll,109"; Desc = "Open This PC to access your USB drive" },
@@ -626,14 +542,10 @@ try {
 
     # Deploy the NVDA controller client DLL (no longer bundled with NVDA since 2023.1)
     $dllSource = Join-Path (Split-Path -Parent $PSScriptRoot) "Installers\NVDA\nvdaControllerClient64.dll"
-    $dllFallback = "C:\Program Files\QuorumStudio\jni\nvdaControllerClient64.dll"
     $dllDest = Join-Path $welcomeScriptDir "nvdaControllerClient64.dll"
     if ((Test-Path $dllSource) -and -not (Test-Path $dllDest)) {
         Copy-Item -Path $dllSource -Destination $dllDest -Force
         Write-Log "Deployed nvdaControllerClient64.dll from USB" "SUCCESS"
-    } elseif ((Test-Path $dllFallback) -and -not (Test-Path $dllDest)) {
-        Copy-Item -Path $dllFallback -Destination $dllDest -Force
-        Write-Log "Deployed nvdaControllerClient64.dll from QuorumStudio" "SUCCESS"
     }
 
     $welcomeScript = @'
@@ -644,9 +556,6 @@ Start-Sleep -Seconds 8
 # Use NVDA's controller client DLL to speak through NVDA's configured voice
 # The DLL is no longer bundled with NVDA since 2023.1 — we ship it in LabTools
 $nvdaDll = "C:\LabTools\nvdaControllerClient64.dll"
-if (-not (Test-Path $nvdaDll)) {
-    $nvdaDll = "C:\Program Files\QuorumStudio\jni\nvdaControllerClient64.dll"
-}
 
 if (Test-Path $nvdaDll) {
     Add-Type -TypeDefinition @"
@@ -1174,60 +1083,6 @@ try {
     $failCount++
 }
 
-# Step 19: Deploy Fleet Health Reporter
-Write-Log "Step 19: Deploying fleet health reporter..." "INFO"
-
-try {
-    # Copy fleet health script
-    $healthSource = Join-Path $PSScriptRoot "Report-FleetHealth.ps1"
-    if (Test-Path $healthSource) {
-        Copy-Item -Path $healthSource -Destination "C:\LabTools\Report-FleetHealth.ps1" -Force
-        Write-Log "Copied Report-FleetHealth.ps1 to C:\LabTools\" "SUCCESS"
-    }
-
-    # Register LabFleetReport scheduled task
-    $existingTask = Get-ScheduledTask -TaskName "LabFleetReport" -ErrorAction SilentlyContinue
-    if ($existingTask) {
-        Unregister-ScheduledTask -TaskName "LabFleetReport" -Confirm:$false
-    }
-
-    # Stagger by PC number: PC-01 at 03:00, PC-02 at 03:05, etc.
-    $reportTime = "03:00"
-    if ($env:COMPUTERNAME -match "PC-(\d+)") {
-        $offset = ([int]$Matches[1] - 1) * 5
-        $reportTime = (Get-Date "03:00").AddMinutes($offset).ToString("HH:mm")
-    }
-
-    $taskAction = New-ScheduledTaskAction `
-        -Execute "powershell.exe" `
-        -Argument "-NoProfile -NonInteractive -ExecutionPolicy Bypass -File `"C:\LabTools\Report-FleetHealth.ps1`""
-
-    $taskTrigger = New-ScheduledTaskTrigger -Daily -At $reportTime
-
-    $taskSettings = New-ScheduledTaskSettingsSet `
-        -AllowStartIfOnBatteries `
-        -DontStopIfGoingOnBatteries `
-        -StartWhenAvailable `
-        -MultipleInstances IgnoreNew `
-        -ExecutionTimeLimit (New-TimeSpan -Minutes 30)
-
-    $taskPrincipal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount -RunLevel Highest
-
-    Register-ScheduledTask `
-        -TaskName "LabFleetReport" `
-        -Action $taskAction `
-        -Trigger $taskTrigger `
-        -Settings $taskSettings `
-        -Principal $taskPrincipal `
-        -Description "Uploads health report to Google Drive (daily at $reportTime)" | Out-Null
-
-    Write-Log "Scheduled task 'LabFleetReport' created (daily at $reportTime)" "SUCCESS"
-    $successCount++
-} catch {
-    Write-Log "Could not deploy fleet reporter: $($_.Exception.Message)" "ERROR"
-    $failCount++
-}
-
 # Step 20: Create LabAdmin account for remote troubleshooting and local maintenance
 Write-Log "Step 20: Creating LabAdmin account..." "INFO"
 
@@ -1565,57 +1420,6 @@ try {
 Write-Log "Step 27b: Cleaning startup apps..." "INFO"
 
 try {
-    # Tailscale GUI (tailscale-ipn.exe) MUST run for the service to establish connections.
-    # But it creates its own window that can't be suppressed via launch flags or VBS style 0.
-    # Solution: PowerShell script that starts it then hides the window via Win32 ShowWindow API.
-    Remove-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "Tailscale" -Force -ErrorAction SilentlyContinue
-    $tsLauncher = @'
-# Tailscale IPN launcher - starts the client and hides its window.
-# The IPN client is required for the Tailscale service to establish connections,
-# but students never need to see or interact with it.
-Add-Type -TypeDefinition @"
-using System;
-using System.Runtime.InteropServices;
-public class Win32 {
-    [DllImport("user32.dll")]
-    public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-    public const int SW_HIDE = 0;
-}
-"@
-
-$exe = "C:\Program Files\Tailscale\tailscale-ipn.exe"
-if (-not (Test-Path $exe)) { exit }
-
-# Don't launch if already running
-if (Get-Process -Name "tailscale-ipn" -ErrorAction SilentlyContinue) { exit }
-
-Start-Process -FilePath $exe -WindowStyle Hidden
-# Wait for the window to appear, then hide it
-for ($i = 0; $i -lt 30; $i++) {
-    Start-Sleep -Milliseconds 500
-    $proc = Get-Process -Name "tailscale-ipn" -ErrorAction SilentlyContinue
-    if ($proc -and $proc.MainWindowHandle -ne [IntPtr]::Zero) {
-        [Win32]::ShowWindow($proc.MainWindowHandle, [Win32]::SW_HIDE) | Out-Null
-        break
-    }
-}
-'@
-    Set-Content -Path "C:\LabTools\start-tailscale.ps1" -Value $tsLauncher -Force
-
-    # Clean up legacy VBS wrapper (replaced by .ps1 launcher above)
-    Remove-Item "C:\LabTools\start-tailscale.vbs" -Force -ErrorAction SilentlyContinue
-
-    $tsStartup = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\Tailscale.lnk"
-    if (Test-Path $tsStartup) { Remove-Item -Path $tsStartup -Force }
-    $WshShell = New-Object -ComObject WScript.Shell
-    $shortcut = $WshShell.CreateShortcut($tsStartup)
-    $shortcut.TargetPath = "C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe"
-    $shortcut.Arguments = '-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File "C:\LabTools\start-tailscale.ps1"'
-    $shortcut.WindowStyle = 7
-    $shortcut.Description = "Tailscale VPN (hidden via Win32 ShowWindow)"
-    $shortcut.Save()
-    Write-Log "Tailscale startup set to PowerShell launcher with Win32 window hide" "INFO"
-
     # UniKey: ensure startup shortcut uses the wrapper VBS that sets ShowDlg=0
     # (UniKey overwrites ShowDlg=1 on exit, so registry-only fix doesn't persist)
     $unikeyLnk = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\UniKey.lnk"
@@ -1642,7 +1446,7 @@ for ($i = 0; $i -lt 30; $i++) {
         Set-ItemProperty -Path $uniKeyPath -Name "AutoUpdate" -Value 0 -Force -ErrorAction SilentlyContinue
     }
 
-    Write-Log "Startup apps cleaned (Tailscale GUI removed, UniKey dialog suppressed via wrapper)" "SUCCESS"
+    Write-Log "Startup apps cleaned (UniKey dialog suppressed via wrapper)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not clean startup apps: $($_.Exception.Message)" "ERROR"
@@ -1882,23 +1686,22 @@ try {
     $failCount++
 }
 
-# Step 33b: Set file associations (.pdf -> SumatraPDF, .epub -> Thorium Reader)
-Write-Log "Step 33b: Setting file associations (.pdf -> SumatraPDF, .epub -> Thorium)..." "INFO"
+# Step 33b: Set file associations (.pdf -> SumatraPDF). Students read EPUBs via SM Readmate library.
+Write-Log "Step 33b: Setting file associations (.pdf -> SumatraPDF)..." "INFO"
 
 try {
     $sumatraExe = "C:\Users\Student\AppData\Local\SumatraPDF\SumatraPDF.exe"
-    $thoriumExe = "C:\Users\Student\AppData\Local\Programs\Thorium\Thorium.exe"
-
-    # Resolve actual paths (per-user installs live under Student; fall back to Program Files)
     if (-not (Test-Path $sumatraExe)) {
         $sumatraExe = "C:\Program Files\SumatraPDF\SumatraPDF.exe"
     }
-    if (-not (Test-Path $thoriumExe)) {
-        $thoriumExe = "C:\Program Files\Thorium\Thorium.exe"
-    }
 
-    # ── Register ProgIDs in HKLM (machine-wide) ──
-    # SumatraPDF.pdf
+    # ── Unregister any leftover Thorium .epub associations from prior deployments ──
+    Remove-Item -Path "HKLM:\SOFTWARE\Classes\ThoriumReader.epub" -Recurse -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path "HKLM:\SOFTWARE\Classes\Applications\Thorium.exe" -Recurse -Force -ErrorAction SilentlyContinue
+    cmd /c ftype ThoriumReader.epub= 2>$null
+    cmd /c assoc .epub= 2>$null
+
+    # ── Register SumatraPDF ProgID in HKLM (machine-wide) ──
     $sumatraProgID = "HKLM:\SOFTWARE\Classes\SumatraPDF.pdf"
     if (-not (Test-Path $sumatraProgID)) { New-Item -Path $sumatraProgID -Force | Out-Null }
     Set-ItemProperty -Path $sumatraProgID -Name "(default)" -Value "PDF Document" -Force
@@ -1909,30 +1712,14 @@ try {
     if (-not (Test-Path $sumatraIcon)) { New-Item -Path $sumatraIcon -Force | Out-Null }
     Set-ItemProperty -Path $sumatraIcon -Name "(default)" -Value "`"$sumatraExe`",0" -Force
 
-    # ThoriumReader.epub
-    $thoriumProgID = "HKLM:\SOFTWARE\Classes\ThoriumReader.epub"
-    if (-not (Test-Path $thoriumProgID)) { New-Item -Path $thoriumProgID -Force | Out-Null }
-    Set-ItemProperty -Path $thoriumProgID -Name "(default)" -Value "EPUB Document" -Force
-    $thoriumShell = "$thoriumProgID\shell\open\command"
-    if (-not (Test-Path $thoriumShell)) { New-Item -Path $thoriumShell -Force | Out-Null }
-    Set-ItemProperty -Path $thoriumShell -Name "(default)" -Value "`"$thoriumExe`" `"%1`"" -Force
-    $thoriumIcon = "$thoriumProgID\DefaultIcon"
-    if (-not (Test-Path $thoriumIcon)) { New-Item -Path $thoriumIcon -Force | Out-Null }
-    Set-ItemProperty -Path $thoriumIcon -Name "(default)" -Value "`"$thoriumExe`",0" -Force
-
-    # ── Set machine-wide defaults for .pdf and .epub ──
+    # ── Set machine-wide default for .pdf ──
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\.pdf" -Name "(default)" -Value "SumatraPDF.pdf" -Force
-    Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\.epub" -Name "(default)" -Value "ThoriumReader.epub" -Force
 
     # ── OpenWithProgids (add ours, remove Edge's claim on .pdf) ──
     $pdfOWP = "HKLM:\SOFTWARE\Classes\.pdf\OpenWithProgids"
     if (-not (Test-Path $pdfOWP)) { New-Item -Path $pdfOWP -Force | Out-Null }
     New-ItemProperty -Path $pdfOWP -Name "SumatraPDF.pdf" -Value ([byte[]]@()) -PropertyType Binary -Force | Out-Null
     Remove-ItemProperty -Path $pdfOWP -Name "MSEdgePDF" -Force -ErrorAction SilentlyContinue
-
-    $epubOWP = "HKLM:\SOFTWARE\Classes\.epub\OpenWithProgids"
-    if (-not (Test-Path $epubOWP)) { New-Item -Path $epubOWP -Force | Out-Null }
-    New-ItemProperty -Path $epubOWP -Name "ThoriumReader.epub" -Value ([byte[]]@()) -PropertyType Binary -Force | Out-Null
 
     # ── Register in Applications key ──
     $sumatraApp = "HKLM:\SOFTWARE\Classes\Applications\SumatraPDF.exe\shell\open\command"
@@ -1943,14 +1730,6 @@ try {
     if (-not (Test-Path $sumatraST)) { New-Item -Path $sumatraST -Force | Out-Null }
     Set-ItemProperty -Path $sumatraST -Name ".pdf" -Value "" -Force
 
-    $thoriumApp = "HKLM:\SOFTWARE\Classes\Applications\Thorium.exe\shell\open\command"
-    if (-not (Test-Path $thoriumApp)) { New-Item -Path $thoriumApp -Force | Out-Null }
-    Set-ItemProperty -Path $thoriumApp -Name "(default)" -Value "`"$thoriumExe`" `"%1`"" -Force
-    Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Applications\Thorium.exe" -Name "FriendlyAppName" -Value "Thorium Reader" -Force
-    $thoriumST = "HKLM:\SOFTWARE\Classes\Applications\Thorium.exe\SupportedTypes"
-    if (-not (Test-Path $thoriumST)) { New-Item -Path $thoriumST -Force | Out-Null }
-    Set-ItemProperty -Path $thoriumST -Name ".epub" -Value "" -Force
-
     # ── Neuter MSEdgePDF so even if UserChoice still points there, SumatraPDF opens ──
     $edgePdfCmd = "HKLM:\SOFTWARE\Classes\MSEdgePDF\shell\open\command"
     if (Test-Path $edgePdfCmd) {
@@ -1960,17 +1739,15 @@ try {
 
     # ── Per-user: register ProgIDs, OpenWithProgids, OpenWithList for all profiles ──
     foreach ($hive in $hkuPaths) {
+        # Clean up any leftover Thorium associations for this user
+        Remove-Item -Path "$hive\SOFTWARE\Classes\ThoriumReader.epub" -Recurse -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path "$hive\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.epub\UserChoice" -Force -ErrorAction SilentlyContinue
+
         # SumatraPDF.pdf ProgID
         $uSumatraCmd = "$hive\SOFTWARE\Classes\SumatraPDF.pdf\shell\open\command"
         if (-not (Test-Path $uSumatraCmd)) { New-Item -Path $uSumatraCmd -Force | Out-Null }
         Set-ItemProperty -Path $uSumatraCmd -Name "(default)" -Value "`"$sumatraExe`" `"%1`"" -Force
         Set-ItemProperty -Path "$hive\SOFTWARE\Classes\SumatraPDF.pdf" -Name "(default)" -Value "PDF Document" -Force
-
-        # ThoriumReader.epub ProgID
-        $uThoriumCmd = "$hive\SOFTWARE\Classes\ThoriumReader.epub\shell\open\command"
-        if (-not (Test-Path $uThoriumCmd)) { New-Item -Path $uThoriumCmd -Force | Out-Null }
-        Set-ItemProperty -Path $uThoriumCmd -Name "(default)" -Value "`"$thoriumExe`" `"%1`"" -Force
-        Set-ItemProperty -Path "$hive\SOFTWARE\Classes\ThoriumReader.epub" -Name "(default)" -Value "EPUB Document" -Force
 
         # .pdf OpenWithProgids (add SumatraPDF, remove Edge)
         $uPdfOWP = "$hive\SOFTWARE\Classes\.pdf\OpenWithProgids"
@@ -1978,43 +1755,27 @@ try {
         New-ItemProperty -Path $uPdfOWP -Name "SumatraPDF.pdf" -Value ([byte[]]@()) -PropertyType Binary -Force | Out-Null
         Remove-ItemProperty -Path $uPdfOWP -Name "MSEdgePDF" -Force -ErrorAction SilentlyContinue
 
-        # .epub OpenWithProgids
-        $uEpubOWP = "$hive\SOFTWARE\Classes\.epub\OpenWithProgids"
-        if (-not (Test-Path $uEpubOWP)) { New-Item -Path $uEpubOWP -Force | Out-Null }
-        New-ItemProperty -Path $uEpubOWP -Name "ThoriumReader.epub" -Value ([byte[]]@()) -PropertyType Binary -Force | Out-Null
-
-        # OpenWithList — put our apps first
+        # OpenWithList — put SumatraPDF first
         $uPdfOWL = "$hive\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.pdf\OpenWithList"
         if (-not (Test-Path $uPdfOWL)) { New-Item -Path $uPdfOWL -Force | Out-Null }
         Set-ItemProperty -Path $uPdfOWL -Name "a" -Value "SumatraPDF.exe" -Force
         Set-ItemProperty -Path $uPdfOWL -Name "MRUList" -Value "a" -Force
 
-        $uEpubOWL = "$hive\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.epub\OpenWithList"
-        if (-not (Test-Path $uEpubOWL)) { New-Item -Path $uEpubOWL -Force | Out-Null }
-        Set-ItemProperty -Path $uEpubOWL -Name "a" -Value "Thorium.exe" -Force
-        Set-ItemProperty -Path $uEpubOWL -Name "MRUList" -Value "a" -Force
-
-        # Remove UserChoice if it points to something else (ACL-protected, best-effort)
-        foreach ($ext in @(".pdf", ".epub")) {
-            $ucPath = "$hive\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\$ext\UserChoice"
-            if (Test-Path $ucPath) {
-                Remove-Item -Path $ucPath -Force -ErrorAction SilentlyContinue
-            }
-        }
+        # Remove UserChoice for .pdf if it points elsewhere (ACL-protected, best-effort)
+        $ucPath = "$hive\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.pdf\UserChoice"
+        if (Test-Path $ucPath) { Remove-Item -Path $ucPath -Force -ErrorAction SilentlyContinue }
     }
 
     # ── Use assoc/ftype as belt-and-suspenders ──
     cmd /c ftype SumatraPDF.pdf="`"$sumatraExe`" `"%1`"" 2>$null
     cmd /c assoc .pdf=SumatraPDF.pdf 2>$null
-    cmd /c ftype ThoriumReader.epub="`"$thoriumExe`" `"%1`"" 2>$null
-    cmd /c assoc .epub=ThoriumReader.epub 2>$null
 
     # Notify Explorer shell of association changes
     $shChangeCode = 'using System; using System.Runtime.InteropServices; public class Shell32Assoc { [DllImport("shell32.dll", CharSet = CharSet.Auto, SetLastError = true)] public static extern void SHChangeNotify(int wEventId, int uFlags, IntPtr dwItem1, IntPtr dwItem2); }'
     Add-Type -TypeDefinition $shChangeCode -ErrorAction SilentlyContinue
     [Shell32Assoc]::SHChangeNotify(0x08000000, 0, [IntPtr]::Zero, [IntPtr]::Zero)
 
-    Write-Log "File associations set: .pdf -> SumatraPDF, .epub -> Thorium Reader" "SUCCESS"
+    Write-Log "File associations set: .pdf -> SumatraPDF (.epub unregistered, use SM Readmate library)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not set file associations: $($_.Exception.Message)" "ERROR"
@@ -2126,15 +1887,12 @@ Write-Host "Successful:    $successCount" -ForegroundColor Green
 Write-Host "Failed:        $failCount" -ForegroundColor $(if($failCount -gt 0){"Red"}else{"Green"})
 Write-Host ""
 Write-Host "Deployed to:   $labToolsDir" -ForegroundColor White
-Write-Host "  rclone.exe   $(if(Test-Path "$labToolsDir\rclone.exe"){"OK"}else{"MISSING"})" -ForegroundColor $(if(Test-Path "$labToolsDir\rclone.exe"){"Green"}else{"Red"})
-Write-Host "  rclone.conf  $(if(Test-Path "$labToolsDir\rclone.conf"){"OK"}else{"MISSING"})" -ForegroundColor $(if(Test-Path "$labToolsDir\rclone.conf"){"Green"}else{"Red"})
-Write-Host "  backup-usb   $(if(Test-Path "$labToolsDir\backup-usb.ps1"){"OK"}else{"MISSING"})" -ForegroundColor $(if(Test-Path "$labToolsDir\backup-usb.ps1"){"Green"}else{"Red"})
 Write-Host "  welcome-audio $(if(Test-Path "C:\LabTools\welcome-audio.ps1"){"OK"}else{"MISSING"})" -ForegroundColor $(if(Test-Path "C:\LabTools\welcome-audio.ps1"){"Green"}else{"Red"})
 Write-Host ""
 Write-Host "Desktop:" -ForegroundColor White
 Write-Host "  Shortcuts     Standardized (wiped + recreated for all apps)" -ForegroundColor White
 Write-Host "  Apps          NVDA, Word, Excel, PowerPoint, Firefox, VLC, Audacity," -ForegroundColor White
-Write-Host "                Thorium, SumatraPDF, Kiwix, GoldenDict, Quorum Studio," -ForegroundColor White
+Write-Host "                SumatraPDF, Kiwix, GoldenDict," -ForegroundColor White
 Write-Host "                Sao Mai Typing Tutor, Readmate," -ForegroundColor White
 Write-Host "                Calculator, My USB, Language Toggle, NVDA Restore" -ForegroundColor White
 Write-Host "  Vi folders    Tai Lieu, Am Nhac, Truyen, Hoc Tap, Tro Choi" -ForegroundColor White
@@ -2148,7 +1906,7 @@ Write-Host "  Firefox       Policies deployed (no updates, Vietnamese, no PiP, a
 Write-Host "  VLC           Audio-only, NVDA-friendly, volume cap 100%" -ForegroundColor White
 Write-Host "  Audacity      MME audio host, no splash, beep on completion" -ForegroundColor White
 Write-Host "  SumatraPDF    Continuous scroll, fit-width, system colors" -ForegroundColor White
-Write-Host "  File assoc    .pdf -> SumatraPDF, .epub -> Thorium Reader" -ForegroundColor White
+Write-Host "  File assoc    .pdf -> SumatraPDF (EPUBs via SM Readmate library)" -ForegroundColor White
 Write-Host "  Kiwix         130% zoom, reopen last tab" -ForegroundColor White
 Write-Host "  GoldenDict    150% zoom, 18px article font, UI Automation" -ForegroundColor White
 Write-Host "  Sticky Keys   Popup disabled (Shift x5)" -ForegroundColor White
@@ -2177,18 +1935,13 @@ Write-Host "  Start menu    Suggestions/promoted apps disabled" -ForegroundColor
 Write-Host ""
 Write-Host "Remote Management:" -ForegroundColor White
 Write-Host "  SSH server    Enabled (port 22, PowerShell default shell)" -ForegroundColor White
-Write-Host "  Update agent  Daily 2-4 AM (LabUpdateAgent task)" -ForegroundColor White
-Write-Host "  Fleet report  Daily health upload to Google Drive (LabFleetReport task)" -ForegroundColor White
+Write-Host "  Update agent  Daily 2-4 AM (LabUpdateAgent task, pulls from GitHub)" -ForegroundColor White
 Write-Host ""
 
 if ($failCount -gt 0) {
-    Write-Host "Some steps failed. Check the log and ensure:" -ForegroundColor Yellow
-    Write-Host "  1. Run 0-Download-Installers.ps1 to download rclone" -ForegroundColor White
-    Write-Host "  2. Run Setup-Rclone-Auth.ps1 to authorize Google Drive" -ForegroundColor White
-    Write-Host "  3. Re-run this script" -ForegroundColor White
+    Write-Host "Some steps failed. Check the log and re-run this script." -ForegroundColor Yellow
 } else {
-    Write-Host "This laptop is ready for student USB backups." -ForegroundColor Green
-    Write-Host "USB drives labeled STU-### will auto-backup to Google Drive." -ForegroundColor White
+    Write-Host "This laptop is ready for deployment." -ForegroundColor Green
 }
 
 Write-Host ""

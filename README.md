@@ -3,7 +3,7 @@
 **Project:** Blind Children's Computer Lab - Vietnam Orphanages
 **Deployment:** April 2026 (1-3 days on-site)
 
-This repo contains everything needed to deploy and remotely manage an assistive technology lab for blind children in Vietnam. Includes automated software installation, Tailscale VPN for remote access, pull-based auto-updates, and fleet health monitoring via Google Drive.
+This repo contains everything needed to deploy an assistive technology lab for blind children in Vietnam. Includes automated software installation, NVDA screen reader setup with Vietnamese voice, 103 pre-loaded Vietnamese textbooks, and offline educational content.
 
 ---
 
@@ -19,16 +19,13 @@ This repo contains everything needed to deploy and remotely manage an assistive 
 | **Firefox 147** | MPL-2.0 | Accessible web browser |
 | **VLC Media Player 3.0.23** | GPL-2.0 | Media playback |
 | **Audacity 3.7** | GPL-3.0 | Audio recording/editing |
-| **Quorum Studio** | BSD | Accessible IDE purpose-built for blind students |
 | **UniKey 4.6** | GPL | Vietnamese Telex keyboard input |
 | **Kiwix 2.5.1** | GPL-3.0 | Offline encyclopedia reader |
 | **Vietnamese Wikipedia** | CC BY-SA | Offline Vietnamese encyclopedia (~550 MB) |
 | **Vietnamese Wiktionary** | CC BY-SA | Offline Vietnamese dictionary via Kiwix |
 | **Vietnamese Wikisource** | CC BY-SA | Offline Vietnamese literature via Kiwix |
-| **Thorium Reader 3.3.0** | BSD-3 | EPUB/DAISY ebook reader for accessible reading |
 | **SumatraPDF 3.5.2** | GPL-3.0 | Lightweight PDF reader for textbooks |
 | **GoldenDict** | GPL-3.0 | Offline dictionary (Vietnamese-English, Vietnamese-Vietnamese) |
-| **Tailscale** | BSD-3 | Mesh VPN for remote management from the US |
 
 **NVDA Add-ons:** VLC, Speech History, NVDA Remote, Focus Highlight, Audacity Access, Clock & Calendar, MathCAT — see [NVDA Add-on Store](https://addonstore.nvaccess.org/)
 
@@ -93,19 +90,7 @@ The Dell Latitude 5420s may ship with Windows 10. To upgrade:
 
 > **Note:** The Arm64 ISO is not needed — Dell Latitude 5420 is x64.
 
-### 3. Set Up Tailscale
-
-Before configuring PCs, set up your Tailscale account for remote management:
-
-1. Create account at [tailscale.com](https://tailscale.com)
-2. In Access Controls, add `"tag:vietnam-lab"` to `tagOwners` under your admin group
-3. Generate a **reusable** pre-auth key (90-day expiry is fine — only needed during setup):
-   - **Reusable:** checked
-   - **Ephemeral:** unchecked
-   - **Tags:** `tag:vietnam-lab` (this disables node key expiry, so devices stay connected permanently)
-4. Replace `tskey-auth-CHANGE_ME` in `Scripts/Install-Tailscale.ps1` with your key
-
-### 4. Configure Laptops
+### 3. Configure Laptops
 
 Test on one PC first, then batch the remaining 18.
 
@@ -120,7 +105,7 @@ Supply values for the following parameters:
 PCNumber: _
 ```
 
-Enter a number 1–19 for each laptop. The script handles everything: hostname, Wi-Fi, software install, NVDA config, Windows hardening, Tailscale, and scheduled tasks.
+Enter a number 1–19 for each laptop. The script handles everything: hostname, Wi-Fi, software install, NVDA config, Windows hardening, and scheduled tasks.
 
 **Microsoft Office setup:**
 
@@ -138,7 +123,7 @@ After it finishes, verify the machine matches `manifest.json`:
 .\Scripts\7-Audit.ps1
 ```
 
-### 5. Pre-Flight Validation
+### 4. Pre-Flight Validation
 
 Run from your machine before traveling:
 
@@ -146,17 +131,9 @@ Run from your machine before traveling:
 .\Scripts\Pre-Deployment-Check.ps1    # Validates everything is ready for deployment
 ```
 
-### 6. Remote Management (Post-Deployment)
+### 5. Updates (Post-Deployment)
 
-From the US, monitor and manage all 19 PCs:
-
-```powershell
-.\Scripts\Get-FleetStatus.ps1             # Dashboard: heartbeats from Google Drive
-.\Scripts\Check-Fleet.ps1 -UseTailscale   # Ping all PCs via Tailscale VPN
-.\Scripts\Deploy-All.ps1 -UseTailscale    # Run commands on all PCs remotely
-```
-
-Software updates are automatic — edit `update-manifest.json`, push to GitHub, and all online PCs update within 24 hours.
+Software updates are automatic — edit `update-manifest.json`, push to GitHub, and all online PCs pull updates within 24 hours via the update agent.
 
 ---
 
@@ -172,19 +149,14 @@ Software updates are automatic — edit `update-manifest.json`, push to GitHub, 
 | `3-Configure-NVDA.ps1` | Configure NVDA with Vietnamese voice |
 | `4-Prepare-Student-USB.ps1` | Prepare student USB drives |
 | `7-Audit.ps1` | Full audit against manifest.json (with JSON output) |
-| `Bootstrap-Laptop.ps1` | Full PC setup (hostname, Wi-Fi, software, NVDA, hardening, Tailscale) |
-| `Configure-Laptop.ps1` | Windows hardening, rclone, power settings, desktop shortcuts, scheduled tasks (called by Bootstrap) |
-| `Install-Tailscale.ps1` | Install Tailscale VPN and join tailnet |
-| `Deploy-All.ps1` | Run scripts across fleet (local LAN or Tailscale) |
-| `Check-Fleet.ps1` | Ping all PCs (local LAN or Tailscale) |
-| `Get-FleetStatus.ps1` | Fleet dashboard from Google Drive heartbeats |
-| `Get-FleetTailscaleIPs.ps1` | List Tailscale IPs from API |
-| `Update-Agent.ps1` | Auto-update agent (runs as scheduled task on each PC) |
-| `Report-FleetHealth.ps1` | Fleet health reporter (runs as scheduled task on each PC) |
+| `Bootstrap-Laptop.ps1` | Full PC setup (hostname, Wi-Fi, software, NVDA, hardening) |
+| `Configure-Laptop.ps1` | Windows hardening, power settings, desktop shortcuts, scheduled tasks (called by Bootstrap) |
+| `Populate-ReadmateDB.ps1` | Auto-import 103 Vietnamese textbooks into SM Readmate library |
+| `Debloat-Windows.ps1` | Remove Windows bloatware (standalone re-run tool) |
+| `Fix-Student-Account.ps1` | Repair per-user app paths and shortcuts for Student profile |
+| `Update-Agent.ps1` | Auto-update agent (runs as scheduled task on each PC, pulls from GitHub) |
 | `Verify-Installers.ps1` | Validate installer files and SHA256 checksums |
 | `Pre-Deployment-Check.ps1` | Pre-trip validation of entire deployment kit |
-| `Setup-Rclone-Auth.ps1` | Configure rclone with Google Drive OAuth |
-| `backup-usb.ps1` | Sync student USB drives to Google Drive via rclone |
 
 ---
 
@@ -200,7 +172,6 @@ This deployment kit uses free and open-source software where possible, plus Micr
 - **Sao Mai Center** - NVDA Vietnamese modules and VNVoice TTS
 - **Microsoft** - Office 365 (non-profit licensing)
 - **Mozilla Foundation** - Firefox browser
-- **Tailscale** - Mesh VPN for remote management
 
 ---
 
@@ -212,5 +183,6 @@ This deployment kit uses free and open-source software where possible, plus Micr
 
 ## Version History
 
-- **v0.2** (February 2026): Remote fleet management (Tailscale VPN, auto-update agent, fleet health monitoring), smart installer downloads, pre-deployment validation
+- **v0.2** (February 2026): Auto-update agent via GitHub, smart installer downloads, pre-deployment validation
+- **v1.0** (April 2026): Simplified for offline-first deployment — removed Tailscale/rclone/Thorium/Quorum/LEAP games, added ebook auto-import (103 textbooks)
 - **v0.1** (February 2026): Initial deployment kit created

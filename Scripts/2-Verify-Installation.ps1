@@ -89,27 +89,10 @@ $checks = @(
         Critical = $false
     },
     @{
-        Name = "Thorium Reader"
-        Paths = @(
-            "C:\Users\Student\AppData\Local\Programs\Thorium\Thorium.exe",
-            "$env:LOCALAPPDATA\Programs\Thorium\Thorium.exe",
-            "C:\Program Files\Thorium\Thorium.exe",
-            "C:\Program Files (x86)\Thorium\Thorium.exe"
-        )
-        Critical = $false
-    },
-    @{
         Name = "Audacity"
         Paths = @(
             "C:\Program Files\Audacity\Audacity.exe",
             "C:\Program Files (x86)\Audacity\Audacity.exe"
-        )
-        Critical = $false
-    },
-    @{
-        Name = "Quorum Studio"
-        Paths = @(
-            "C:\Program Files\QuorumStudio\*"
         )
         Critical = $false
     },

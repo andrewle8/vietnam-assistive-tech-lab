@@ -24,25 +24,10 @@
     "asset_pattern": "audacity-win-{version}-64bit.exe",
     "destination": "Audacity/audacity-win-{version}-64bit.exe"
   },
-  "thorium_reader": {
-    "source": "github",
-    "repo": "edrlab/thorium-reader",
-    "asset_pattern": "Thorium.Setup.{version}.exe",
-    "destination": "Thorium/Thorium.Setup.{version}.exe"
-  },
   "sumatrapdf": {
     "source": "vendor",
     "url_template": "https://www.sumatrapdfreader.org/dl/rel/{version}/SumatraPDF-{version}-64-install.exe",
     "destination": "Utilities/SumatraPDF/SumatraPDF-{version}-64-install.exe"
-  },
-  "rclone": {
-    "source": "github",
-    "repo": "rclone/rclone",
-    "asset_pattern": "rclone-v{version}-windows-amd64.zip",
-    "destination": "Utilities/rclone/rclone-v{version}-windows-amd64.zip",
-    "extract": true,
-    "extract_file": "rclone.exe",
-    "final_path": "Utilities/rclone/rclone.exe"
   },
   "kiwix": {
     "source": "vendor",
@@ -52,12 +37,6 @@
     "extract_file": "kiwix-desktop.exe",
     "final_path": "Kiwix/kiwix-desktop.exe"
   },
-  "tailscale": {
-    "source": "vendor",
-    "url_template": "https://pkgs.tailscale.com/stable/tailscale-setup-{version}-amd64.msi",
-    "destination": "Utilities/Tailscale/tailscale-setup-{version}-amd64.msi"
-  },
-
   "wikipedia_vi": {
     "source": "kiwix",
     "url_template": "https://download.kiwix.org/zim/wikipedia/wikipedia_vi_all_mini_{date}.zim",
@@ -74,11 +53,6 @@
     "destination": "Kiwix/{filename}"
   },
 
-  "quorum_studio": {
-    "source": "vendor",
-    "url_template": "https://github.com/qorf/quorum-studio/releases/latest/download/Quorum-Studio-Windows.exe",
-    "destination": "Quorum/QuorumStudio-win64.exe"
-  },
   "saomai_vnvoice": {
     "source": "vendor",
     "url_template": "https://saomaicenter.org/sites/default/files/inline-files/SaoMai_voice1.0.exe",

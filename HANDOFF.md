@@ -15,7 +15,6 @@
 | **Microsoft Office** | Word, Excel, PowerPoint, Outlook (non-profit license) |
 | **Firefox** | Web browser |
 | **VLC** | Music and video player |
-| **Thorium Reader** | EPUB/DAISY ebook and audiobook reader |
 | **SumatraPDF** | PDF reader for textbooks and documents |
 | **GoldenDict** | Offline Vietnamese-English dictionary (Từ điển) |
 | **Kiwix** | Offline Wikipedia, Wiktionary, and Wikisource in Vietnamese |

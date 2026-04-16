@@ -60,7 +60,7 @@ foreach ($cfg in $appConfigs) {
     }
 }
 
-# ---- 4. SumatraPDF and Thorium (per-user apps) ----
+# ---- 4. SumatraPDF (per-user app) ----
 Write-Host "`n[4/7] Copying per-user apps to Student..." -ForegroundColor Yellow
 
 # SumatraPDF
@@ -69,16 +69,6 @@ $studentSumatra = "$studentProfile\AppData\Local\SumatraPDF"
 if (Test-Path "$adminSumatra\SumatraPDF.exe") {
     Copy-Item $adminSumatra $studentSumatra -Recurse -Force
     Write-Host "  [OK] SumatraPDF copied to Student" -ForegroundColor Green
-}
-
-# Thorium
-$adminThorium = "$adminProfile\AppData\Local\Programs\Thorium"
-$studentThorium = "$studentProfile\AppData\Local\Programs\Thorium"
-if (Test-Path "$adminThorium\Thorium.exe") {
-    $parent = Split-Path $studentThorium -Parent
-    if (-not (Test-Path $parent)) { New-Item -Path $parent -ItemType Directory -Force | Out-Null }
-    Copy-Item $adminThorium $studentThorium -Recurse -Force
-    Write-Host "  [OK] Thorium copied to Student" -ForegroundColor Green
 }
 
 # ---- 5. Fix desktop shortcuts to use Student-accessible paths ----
@@ -93,14 +83,6 @@ $s.WorkingDirectory = "$studentProfile\AppData\Local\SumatraPDF"
 $s.Description = "SumatraPDF Reader"
 $s.Save()
 Write-Host "  [OK] SumatraPDF shortcut updated" -ForegroundColor Green
-
-# Thorium - point to Student's copy
-$s = $WshShell.CreateShortcut("$publicDesktop\Thorium Reader.lnk")
-$s.TargetPath = "$studentProfile\AppData\Local\Programs\Thorium\Thorium.exe"
-$s.WorkingDirectory = "$studentProfile\AppData\Local\Programs\Thorium"
-$s.Description = "Thorium EPUB/DAISY Reader"
-$s.Save()
-Write-Host "  [OK] Thorium shortcut updated" -ForegroundColor Green
 
 # ---- 6. HKCU settings for Student (load hive) ----
 Write-Host "`n[6/7] Applying registry settings to Student account..." -ForegroundColor Yellow
@@ -231,7 +213,6 @@ icacls "$studentProfile\AppData\Roaming\vlc" /grant "Student:(OI)(CI)F" /T /Q 2>
 icacls "$studentProfile\AppData\Roaming\audacity" /grant "Student:(OI)(CI)F" /T /Q 2>$null
 icacls "$studentProfile\AppData\Roaming\GoldenDict" /grant "Student:(OI)(CI)F" /T /Q 2>$null
 icacls "$studentProfile\AppData\Local\SumatraPDF" /grant "Student:(OI)(CI)F" /T /Q 2>$null
-icacls "$studentProfile\AppData\Local\Programs\Thorium" /grant "Student:(OI)(CI)F" /T /Q 2>$null
 icacls "$studentProfile\AppData\Local\kiwix-desktop" /grant "Student:(OI)(CI)F" /T /Q 2>$null
 Write-Host "  [OK] Permissions set" -ForegroundColor Green
 

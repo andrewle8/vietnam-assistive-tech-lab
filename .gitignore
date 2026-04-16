@@ -50,9 +50,6 @@ nul
 .AppleDouble
 .LSOverride
 
-# Rclone config (contains OAuth tokens)
-Config/rclone/rclone.conf
-
 # IDE and tool configurations
 .claude/
 CLAUDE.md

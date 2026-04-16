@@ -8,9 +8,7 @@ param(
     [string]$ManifestUrl = "https://raw.githubusercontent.com/andrewle8/vietnam-assistive-tech-lab/main/update-manifest.json",
     [string]$LocalManifest = "C:\LabTools\manifest.json",
     [string]$AgentDir = "C:\LabTools\update-agent",
-    [string]$AuditScript = "C:\LabTools\update-agent\7-Audit.ps1",
-    [string]$RcloneExe = "C:\LabTools\rclone\rclone.exe",
-    [string]$RcloneConf = "C:\LabTools\rclone\rclone.conf"
+    [string]$AuditScript = "C:\LabTools\update-agent\7-Audit.ps1"
 )
 
 $ErrorActionPreference = "Stop"
@@ -41,17 +39,6 @@ function Write-Result {
     $resultFile = Join-Path $resultsDir "update-$(Get-Date -Format 'yyyy-MM-dd').json"
     $Result | ConvertTo-Json -Depth 5 | Out-File $resultFile -Encoding UTF8
     Write-AgentLog "Result written to $resultFile"
-
-    # Upload to Google Drive if rclone is available
-    if ((Test-Path $RcloneExe) -and (Test-Path $RcloneConf)) {
-        $pcName = $env:COMPUTERNAME
-        try {
-            & $RcloneExe copy $resultFile "gdrive:VietnamLabFleet/$pcName/" --config $RcloneConf --quiet 2>&1 | Out-Null
-            Write-AgentLog "Result uploaded to gdrive:VietnamLabFleet/$pcName/"
-        } catch {
-            Write-AgentLog "Could not upload result: $($_.Exception.Message)" "WARN"
-        }
-    }
 }
 
 # ---- Safety checks ----

@@ -1,6 +1,6 @@
 # Vietnam Lab Deployment - Full Laptop Setup
 # End-to-end: hostname, Wi-Fi, WinRM, install software, configure NVDA,
-# Windows hardening, Tailscale VPN, scheduled tasks (update agent + fleet reporter)
+# Windows hardening, scheduled tasks (update agent)
 # Must be run as Administrator from USB
 # Usage: .\Bootstrap-Laptop.ps1 -PCNumber 5
 # Last Updated: February 2026
@@ -215,7 +215,7 @@ if (Test-Path $configLaptopScript) {
     try {
         & $configLaptopScript
         if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) { throw "Exit code: $LASTEXITCODE" }
-        Write-Host "      Laptop configured (hardening, rclone, scheduled tasks)" -ForegroundColor Green
+        Write-Host "      Laptop configured (hardening, scheduled tasks)" -ForegroundColor Green
         $stepResults["Configure-Laptop"] = $true
     } catch {
         Write-Host "      ERROR: Configure-Laptop.ps1 failed: $($_.Exception.Message)" -ForegroundColor Red
@@ -224,22 +224,6 @@ if (Test-Path $configLaptopScript) {
 } else {
     Write-Host "      ERROR: Configure-Laptop.ps1 not found at $configLaptopScript" -ForegroundColor Red
     $stepResults["Configure-Laptop"] = $false
-}
-
-Step "Installing Tailscale VPN"
-$tailscaleScript = Join-Path $scriptsDir "Install-Tailscale.ps1"
-if (Test-Path $tailscaleScript) {
-    try {
-        & $tailscaleScript -PCNumber $PCNumber
-        if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) { throw "Exit code: $LASTEXITCODE" }
-        $stepResults["Install-Tailscale"] = $true
-    } catch {
-        Write-Host "      ERROR: Install-Tailscale.ps1 failed: $($_.Exception.Message)" -ForegroundColor Red
-        $stepResults["Install-Tailscale"] = $false
-    }
-} else {
-    Write-Host "      WARNING: Install-Tailscale.ps1 not found. Skipping VPN setup." -ForegroundColor Red
-    $stepResults["Install-Tailscale"] = $false
 }
 
 # =============================================
@@ -306,20 +290,17 @@ Write-Host "========================================" -ForegroundColor Cyan
 
 $winrmStatus = try { (Get-Service WinRM).Status } catch { "Unknown" }
 $currentIP = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.InterfaceAlias -match "Wi-Fi|Wireless|WLAN" -and $_.PrefixOrigin -ne "WellKnown" }).IPAddress
-$tailscaleIP = try { & "C:\Program Files\Tailscale\tailscale.exe" ip -4 2>$null } catch { "Not connected" }
 
 Write-Host ""
 Write-Host "  Hostname:      $hostname (effective after reboot)" -ForegroundColor White
 Write-Host "  IP Address:    $currentIP" -ForegroundColor White
-Write-Host "  Tailscale IP:  $tailscaleIP" -ForegroundColor White
 Write-Host "  WinRM:         $winrmStatus" -ForegroundColor White
 Write-Host ""
 Write-Host "  Office Suite:  Microsoft Office" -ForegroundColor White
 Write-Host "  Software:      $(if(-not $SkipInstall){'Installed + Verified'}else{'Skipped'})" -ForegroundColor White
 Write-Host "  NVDA:          $(if(-not $SkipInstall){'Configured (Vietnamese)'}else{'Skipped'})" -ForegroundColor White
 Write-Host "  Hardening:     Applied (Configure-Laptop.ps1)" -ForegroundColor White
-Write-Host "  Update Agent:  Scheduled (daily 2-4 AM)" -ForegroundColor White
-Write-Host "  Fleet Report:  Scheduled (daily 3 AM)" -ForegroundColor White
+Write-Host "  Update Agent:  Scheduled (daily 2-4 AM, pulls from GitHub)" -ForegroundColor White
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host ""
 

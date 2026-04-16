@@ -99,10 +99,6 @@ Always safely remove USB to avoid losing data.
 5. Wait until you hear the "Safe to Remove Hardware" notification.
 6. Pull the USB out.
 
-### Automatic Backup
-
-Your USB data is automatically backed up to Google Drive every 15 minutes (when internet is available).
-
 ---
 
 ## Desktop Navigation
@@ -130,7 +126,6 @@ Tip: Press the first letter of a program name to jump to it. For example, press 
 - Sao Mai Typing Tutor - Vietnamese typing tutor
 - Readmate - Vietnamese textbook reader (103 books pre-loaded)
 - SumatraPDF - PDF reader
-- Thorium Reader - EPUB book reader
 - Tu Dien - Dictionary - English-Vietnamese dictionary
 - VLC media player - Media player
 - Wikipedia (Offline) - Offline encyclopedia
@@ -219,12 +214,6 @@ The laptop comes with 103 Vietnamese textbooks pre-loaded (Canh Dieu, Chan Troi 
 3. The book list appears. Use arrow keys to select a book.
 4. Press Enter to open and read.
 
-### Using Thorium Reader
-
-1. Navigate to "Thorium Reader" on the Desktop (press "T" to jump quickly).
-2. Press Enter to open.
-3. Use Tab to navigate and arrow keys to browse books from C:\Ebooks.
-
 ---
 
 ## If NVDA Breaks
@@ -240,7 +229,7 @@ If NVDA stops talking or speaks incorrectly:
 ## Notes
 
 - No password needed to log in
-- USB data auto-backs up every 15 minutes
+- Save important files to your USB drive
 - If you need help, ask your teacher
 - Always safely eject USB before shutting down
 

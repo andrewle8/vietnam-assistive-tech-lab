@@ -14,7 +14,7 @@ The download script automatically fetches installers from the best source for ea
 | Source | What | Example |
 |--------|------|---------|
 | **Vendor URL** | Direct from software publisher | NVDA, Firefox, VLC |
-| **GitHub Releases** | From the project's GitHub repo | Audacity, Thorium, SumatraPDF, Tailscale, rclone |
+| **GitHub Releases** | From the project's GitHub repo | Audacity, SumatraPDF |
 | **Kiwix** | ZIM files from download.kiwix.org | Vietnamese Wikipedia, Wiktionary, Wikisource |
 | **Manual** | Must be pre-placed or on GitHub Release `installers-v1` | Sao Mai VNVoice, Typing Tutor, NVDA Addons |
 
@@ -33,13 +33,9 @@ Source definitions are in `Scripts/installer-sources.json`. Versions come from `
 | `Utilities/` | `VLC-3.0.23.exe` | Vendor (videolan.org) | ~40 MB |
 | `Utilities/UniKey/` | `UniKeyNT.exe` | Manual (GitHub Release) | ~1 MB |
 | `Audacity/` | `audacity-win-3.7.7-64bit.exe` | GitHub (audacity/audacity) | ~30 MB |
-| `Quorum/` | `QuorumStudio-win64.exe` | Manual (GitHub Release) | ~335 MB |
 | `Kiwix/` | Kiwix desktop + 3 Vietnamese ZIM files | GitHub + Kiwix | ~770 MB |
-| `Thorium/` | `Thorium.Setup.3.3.0.exe` | GitHub (edrlab/thorium-reader) | ~117 MB |
 | `Utilities/SumatraPDF/` | `SumatraPDF-3.5.2-64-install.exe` | GitHub (sumatrapdfreader/sumatrapdf) | ~15 MB |
 | `Utilities/GoldenDict/` | GoldenDict portable | Manual (GitHub Release) | ~30 MB |
-| `Utilities/Tailscale/` | `tailscale-setup-1.82.0-amd64.msi` | GitHub (tailscale/tailscale) | ~30 MB |
-| `Utilities/rclone/` | rclone portable | GitHub (rclone/rclone) | ~15 MB |
 | `Ebooks/` | 103 Vietnamese textbook EPUBs | Manual (Sao Mai Center) | ~250 MB |
 
 ## Pre-Deployment Checklist
@@ -77,8 +73,6 @@ Installers/
 │   └── Firefox Setup 147.0.4.msi
 ├── Audacity/
 │   └── audacity-win-3.7.7-64bit.exe
-├── Quorum/
-│   └── QuorumStudio-win64.exe
 ├── Utilities/
 │   ├── VLC-3.0.23.exe
 │   ├── UniKey/
@@ -87,12 +81,6 @@ Installers/
 │   │   └── SumatraPDF-3.5.2-64-install.exe
 │   ├── GoldenDict/
 │   │   └── GoldenDict.exe (+ dependencies)
-│   ├── Tailscale/
-│   │   └── tailscale-setup-1.82.0-amd64.msi
-│   └── rclone/
-│       └── rclone.exe
-├── Thorium/
-│   └── Thorium.Setup.3.3.0.exe
 ├── Kiwix/
 │   ├── kiwix-desktop.exe (+ dependencies)
 │   ├── wikipedia_vi_all_mini_2025-11.zim
@@ -113,17 +101,13 @@ Installers/
 - **VLC:** Use stable release (3.0.23 or newer)
 - **UniKey:** 4.6 RC2 or newer (Vietnamese keyboard)
 - **Audacity:** 3.7.7 or newer
-- **Quorum Studio:** Latest release from quorumlanguage.com
-- **Thorium Reader:** 3.3.0 or newer (EPUB/DAISY reader from EDRLab)
 - **Kiwix:** 2.5.1 or newer
 - **SumatraPDF:** 3.5.2 or newer
 - **GoldenDict:** 1.5.0 portable
-- **Tailscale:** 1.82.0 or newer (mesh VPN for remote management)
-- **rclone:** Latest (Google Drive sync for fleet health reports)
 
 ## Storage Requirements
 
-Total installer package size: ~3-4 GB (including Office files, ZIM files, and Tailscale/rclone)
+Total installer package size: ~3-4 GB (including Office files and ZIM files)
 Recommended USB drive: 16 GB or larger (to include training materials)
 
 ## Backup Strategy

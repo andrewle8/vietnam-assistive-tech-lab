@@ -278,28 +278,6 @@ if (Test-Path "C:\LabTools\nvda-backup\nvda.ini") {
 Write-Host "`n--- Remote Management ---" -ForegroundColor White
 Write-Host ""
 
-# Check Tailscale
-$tailscaleExe = "C:\Program Files\Tailscale\tailscale.exe"
-$tailscaleIP = $null
-$tailscaleOnline = $false
-if (Test-Path $tailscaleExe) {
-    Add-Result "Remote" "Tailscale Installed" "Yes" "Installed" "PASS"
-    try {
-        $tsIP = & $tailscaleExe ip -4 2>&1 | Select-Object -First 1
-        if ($tsIP -match "^100\.") {
-            $tailscaleIP = $tsIP.Trim()
-            $tailscaleOnline = $true
-            Add-Result "Remote" "Tailscale Connected" "Connected" $tailscaleIP "PASS"
-        } else {
-            Add-Result "Remote" "Tailscale Connected" "Connected" "Disconnected" "WARN"
-        }
-    } catch {
-        Add-Result "Remote" "Tailscale Connected" "Connected" "Error" "WARN"
-    }
-} else {
-    Add-Result "Remote" "Tailscale Installed" "Yes" "Not installed" "WARN"
-}
-
 # Check update agent
 $updateAgentScript = "C:\LabTools\update-agent\Update-Agent.ps1"
 if (Test-Path $updateAgentScript) {
@@ -321,22 +299,6 @@ if (Test-Path $updateResultsDir) {
             $lastUpdateCheck = $latestResult.LastWriteTime.ToString("yyyy-MM-ddTHH:mm:ss")
         } catch {}
         Add-Result "Remote" "Last Update Check" "Recent" $latestResult.LastWriteTime.ToString("yyyy-MM-dd") "PASS"
-    }
-}
-
-# Last rclone backup
-$lastBackup = $null
-$rcloneLogDir = "C:\LabTools\rclone\logs"
-if (Test-Path $rcloneLogDir) {
-    $latestLog = Get-ChildItem $rcloneLogDir -Filter "*.log" -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-    if ($latestLog) {
-        $lastBackup = $latestLog.LastWriteTime.ToString("yyyy-MM-ddTHH:mm:ss")
-        $backupAge = (Get-Date) - $latestLog.LastWriteTime
-        if ($backupAge.TotalDays -lt 1) {
-            Add-Result "Remote" "Last Backup" "Recent" $latestLog.LastWriteTime.ToString("yyyy-MM-dd HH:mm") "PASS"
-        } else {
-            Add-Result "Remote" "Last Backup" "Recent" "$([math]::Round($backupAge.TotalDays, 0)) days ago" "WARN"
-        }
     }
 }
 
@@ -378,13 +340,10 @@ if ($OutputJson) {
         pass              = $pass
         warn              = $warn
         fail              = $fail
-        tailscale_ip      = if ($tailscaleIP) { $tailscaleIP } else { "N/A" }
-        tailscale_online  = $tailscaleOnline
         uptime_days       = $uptimeDays
         battery_health    = if ($healthPct) { $healthPct } else { "N/A" }
         update_status     = $updateStatus
         last_update_check = $lastUpdateCheck
-        last_backup       = $lastBackup
         results           = $results
     }
 

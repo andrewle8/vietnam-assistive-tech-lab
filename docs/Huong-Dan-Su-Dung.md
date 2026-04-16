@@ -99,10 +99,6 @@ Luon rut USB an toan de tranh mat du lieu.
 5. Doi cho den khi nghe thong bao an toan de rut USB.
 6. Rut USB ra.
 
-### Sao Luu Tu Dong
-
-Du lieu USB cua ban duoc tu dong sao luu len Google Drive moi 15 phut (khi co mang).
-
 ---
 
 ## Dieu Huong Tren Desktop
@@ -130,7 +126,6 @@ Meo: Nhan chu cai dau cua ten chuong trinh de nhay nhanh. Vi du, nhan "F" de nha
 - Sao Mai Typing Tutor - Luyen go phim tieng Viet
 - Readmate - Doc sach giao khoa (103 sach da duoc cai san)
 - SumatraPDF - Doc file PDF
-- Thorium Reader - Doc sach EPUB
 - Tu Dien - Dictionary - Tu dien Anh-Viet
 - VLC media player - Nghe nhac, xem video
 - Wikipedia (Offline) - Bach khoa toan thu offline
@@ -219,12 +214,6 @@ May tinh co san 103 sach giao khoa tieng Viet (Canh Dieu, Chan Troi Sang Tao, Ke
 3. Danh sach sach se hien len. Dung phim mui ten de chon sach.
 4. Nhan Enter de mo sach va doc.
 
-### Dung Thorium Reader
-
-1. Dung phim mui ten den "Thorium Reader" tren Desktop (nhan phim "T" de nhay nhanh).
-2. Nhan Enter de mo.
-3. Nhan Tab de di chuyen qua cac muc, dung phim mui ten de chon sach tu thu muc C:\Ebooks.
-
 ---
 
 ## Khi NVDA Bi Loi
@@ -240,7 +229,7 @@ Neu NVDA khong noi hoac noi sai:
 ## Luu Y
 
 - Khong can mat khau de dang nhap
-- Du lieu USB duoc sao luu tu dong moi 15 phut
+- Luu file quan trong vao USB cua ban
 - Neu can giup do, goi thay co
 - Luon rut USB an toan truoc khi tat may
 

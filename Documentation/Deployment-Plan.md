@@ -9,10 +9,9 @@
 
 ## Executive Summary
 
-Deploy a fully **offline, open-source** assistive technology lab enabling blind children to learn computing through **speech output** from day one. All 19 PCs include **Tailscale VPN** for remote management from the US, **automated updates** via a pull-based update agent, and **fleet health monitoring** via Google Drive.
+Deploy a fully **offline, open-source** assistive technology lab enabling blind children to learn computing through **speech output** from day one. All 19 PCs include **automated updates** via a pull-based update agent that checks GitHub daily when internet is available.
 
 **Pre-trip**
-- Set up Tailscale account and generate reusable auth key with `tag:vietnam-lab` (see Pre-Trip: Tailscale Setup)
 - Pre-configure all 19 laptops using install scripts and verify end-to-end
 - Label each computer (PC-1 through PC-19)
 - Prep personal USB sticks with asset IDs and 3D-printed Braille identifiers
@@ -33,18 +32,15 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 | **Sao Mai VNVoice** | v1.0 | Free (non-commercial) | Vietnamese TTS (Minh Du/Mai Dung voices), SAPI5 |
 | **Sao Mai Typing Tutor** | Latest | Free | Vietnamese typing lessons with speech |
 | **Microsoft Office 365** | Latest | Non-profit license | Office suite (Word, Excel, PowerPoint, Outlook) |
-| **Firefox** | 147 | MPL-2.0 | Accessible web browser |
+| **Firefox** | 149 | MPL-2.0 | Accessible web browser |
 | **VLC Media Player** | 3.0.23 | GPL-2.0 | Media playback |
 | **Audacity** | 3.7.7 | GPL-3.0 | Audio recording/editing |
-| **Quorum Studio** | 7.3.0 | BSD | Accessible IDE purpose-built for blind students |
 | **UniKey** | 4.6 | GPL | Vietnamese Telex keyboard input |
 | **Kiwix** | 2.5.1 | GPL-3.0 | Offline encyclopedia reader |
 | **Vietnamese Wikipedia** | Nov 2025 | CC BY-SA | Offline Vietnamese encyclopedia (~550 MB) |
-| **Thorium Reader** | 3.3.0 | BSD-3 | EPUB/DAISY ebook reader for accessible reading |
-| **SumatraPDF** | 3.5.2 | GPL-3.0 | Lightweight PDF reader for Vietnamese textbooks |
-| **GoldenDict** | 1.5.0 | GPL-3.0 | Offline dictionary (Vietnamese-English/Vietnamese-Vietnamese) |
-| **Tailscale** | 1.82.0 | BSD-3 | Mesh VPN for remote management from the US |
-| **rclone** | Latest | MIT | Google Drive sync for fleet health reports and student backups |
+| **SumatraPDF** | 3.6 | GPL-3.0 | Lightweight PDF reader for Vietnamese textbooks |
+| **GoldenDict** | 1.5.1 | GPL-3.0 | Offline dictionary (Vietnamese-English/Vietnamese-Vietnamese) |
+| **SM Readmate** | 1.0.5 | Free (non-commercial) | Accessible ebook reader with 103 Vietnamese textbooks pre-loaded |
 
 **NVDA Add-ons:**
 
@@ -52,7 +48,6 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 |--------|---------|
 | VLC | VLC accessibility enhancement |
 | Speech History | Review/copy last 100 NVDA utterances (F12) |
-| NVDA Remote | Remote control between NVDA computers for post-deployment support |
 | Focus Highlight | Visual focus indicator — helps sighted teachers follow student activity |
 | Audacity Access Enhancement | NVDA scripts for Audacity (position, selection, transport) |
 | Clock and Calendar | Time/date announcements (NVDA+F12) |
@@ -60,29 +55,14 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 
 ---
 
-## Pre-Trip: Tailscale Setup
+## Remote Management Model
 
-Tailscale creates a mesh VPN — no port forwarding needed, survives NAT changes, auto-reconnects. This gives you SSH/WinRM access to all 19 PCs from the US. Free tier supports 100 devices and 3 users.
+**Design choice (April 2026):** No VPN, no remote access, no cloud sync. Rationale — a foreign-donated orphanage laptop with any VPN or cross-border cloud sync on it invites unnecessary questions under Vietnam's 2026 Cybersecurity Law, especially given the data of minors involved.
 
-**Action items (complete 2-3 weeks before travel):**
-
-1. **Create a Tailscale account** at [tailscale.com](https://tailscale.com)
-2. **Add tag to Access Controls** — in the Tailscale admin console, add `"tag:vietnam-lab"` to `tagOwners` under your admin group
-3. **Generate a pre-auth key** in the Tailscale admin console:
-   - Go to Settings > Keys > Generate auth key
-   - **Reusable:** checked
-   - **Ephemeral:** unchecked
-   - **Tags:** `tag:vietnam-lab` (this disables node key expiry — devices stay connected permanently)
-   - **Expiration:** 90 days (max allowed; only needed during initial setup, not after)
-4. **Update `Install-Tailscale.ps1`** — replace the placeholder `tskey-auth-CHANGE_ME` with your real auth key
-5. **Install Tailscale on your own machine** (macOS/Windows) — this is how you'll connect to PCs remotely
-6. **Download the Tailscale MSI** — `0-Download-Installers.ps1` fetches it automatically from GitHub
-
-**How it works during deployment:**
-- `Bootstrap-Laptop.ps1` installs Tailscale on each PC as part of the setup flow
-- Each PC joins your tailnet as `PC-01`, `PC-02`, etc. with a `100.x.x.x` IP
-- After deployment, you can reach any PC from the US via its Tailscale IP
-- `Deploy-All.ps1 -UseTailscale` and `Check-Fleet.ps1 -UseTailscale` work over the VPN
+**What replaces remote management:**
+- **Update Agent (GitHub pull)** — each PC checks `update-manifest.json` on GitHub daily at 2-4 AM and pulls updates when available. Plain HTTPS, no VPN needed.
+- **On-site support** — staff at the orphanage can re-run `Bootstrap-Laptop.ps1` from USB if a PC breaks.
+- **Annual visits** — any changes requiring hands-on work happen during site visits.
 
 ---
 
@@ -97,7 +77,7 @@ Sao Mai operates Vietnam's largest accessible book library (~10,000 titles) in D
 1. **Email Sao Mai Center** — request an organizational account on [sachtiepcan.vn](https://sachtiepcan.vn/) for the orphanage
 2. **Request offline content** — ask to pre-download age-appropriate DAISY/EPUB books for children (primary/secondary level)
 3. **Ask for recommendations** — Vietnamese textbooks and children's literature suitable for blind students
-4. **Pre-load books** onto each PC's Thorium Reader library before deployment
+4. **Pre-load books** — ebooks auto-imported into SM Readmate library (handled by Configure-Laptop.ps1 Step 17b)
 
 **Contact:** [saomaicenter.org/en](https://saomaicenter.org/en) (Ho Chi Minh City) — they produce the VNVoice TTS already in our stack, so there is an existing relationship.
 
@@ -168,7 +148,7 @@ After confirming Win11, open PowerShell as Admin, navigate to the USB, and run:
 .\Scripts\Bootstrap-Laptop.ps1 -PCNumber 1
 ```
 
-This does everything: install all software, configure NVDA, set up Vietnamese language, harden Windows, create LabAdmin + Student accounts, install Tailscale, and register scheduled tasks. Takes ~30-45 min.
+This does everything: install all software, configure NVDA, set up Vietnamese language, harden Windows, create LabAdmin + Student accounts, and register scheduled tasks (update agent). Takes ~30-45 min.
 
 ### Verify
 
@@ -192,10 +172,8 @@ These are done **once** on your setup PC with internet before deploying any lapt
 1. `.\Scripts\0-Download-Installers.ps1` — downloads all software to the USB
 2. `.\Scripts\Verify-Installers.ps1` — all files present with correct SHA256 checksums
 3. `.\Scripts\0.6-Download-LanguagePack.ps1` — extracts Vietnamese language pack cabs to USB
-4. `.\Scripts\Setup-Rclone-Auth.ps1` — authorizes Google Drive (creates rclone.conf)
-5. Place `setup.exe` in `Installers\MSOffice\` and run `setup.exe /download configuration.xml` (in CMD)
-6. Place Win11 25H2 ISO as `Installers\Windows\Win11_25H2_English_x64.iso`
-7. Update Tailscale auth key in `Install-Tailscale.ps1` (replace `tskey-auth-CHANGE_ME`)
+4. Place `setup.exe` in `Installers\MSOffice\` and run `setup.exe /download configuration.xml` (in CMD)
+5. Place Win11 25H2 ISO as `Installers\Windows\Win11_25H2_English_x64.iso`
 
 ### Per-Laptop Deployment Summary
 
@@ -213,11 +191,9 @@ For each of the 19 laptops, the process is:
 Run the full process on **one laptop** first to verify everything works:
 
 1. Complete steps 1-5 above for PC-1
-2. Verify Tailscale: PC appears in your tailnet as `PC-01` with a `100.x.x.x` IP
-3. Manually test: open each app, verify NVDA reads it correctly
-4. Test Thorium Reader with a sample EPUB/DAISY file
-5. Test student USB workflow with `.\Scripts\4-Prepare-Student-USB.ps1`
-6. From your machine: `.\Scripts\Check-Fleet.ps1 -UseTailscale` — PC-01 shows as reachable
+2. Manually test: open each app, verify NVDA reads it correctly
+3. Test SM Readmate with a sample EPUB/DAISY file
+4. Test student USB workflow with `.\Scripts\4-Prepare-Student-USB.ps1`
 
 Fix any issues, then proceed to configure the remaining 18 laptops.
 
@@ -226,11 +202,10 @@ Fix any issues, then proceed to configure the remaining 18 laptops.
 After the test PC passes, configure the remaining 18 PCs. On each PC, open PowerShell as Administrator, `cd` to the project folder, then:
 
 1. `.\Scripts\Bootstrap-Laptop.ps1` — it will prompt for `PCNumber`, enter 1–19
-   - This runs: install software (including Microsoft Office), verify, configure NVDA, set up Windows hardening, install Tailscale, register scheduled tasks (update agent + fleet reporter)
-2. Verify each PC appears in your Tailscale admin console
-3. `.\Scripts\7-Audit.ps1` on each — all green
-4. Label each PC (PC-1 through PC-19) with physical label
-5. Charge all laptops to 100%
+   - This runs: install software (including Microsoft Office), verify, configure NVDA, set up Windows hardening, register scheduled tasks (update agent)
+2. `.\Scripts\7-Audit.ps1` on each — all green
+3. Label each PC (PC-1 through PC-19) with physical label
+4. Charge all laptops to 100%
 
 ### Prepare USB Drives
 
@@ -253,10 +228,8 @@ This validates:
 - All core scripts and config files exist
 - `manifest.json` has no null critical fields
 - All installers present with correct checksums
-- Tailscale auth key is configured (not placeholder)
 - `update-manifest.json` is reachable on GitHub
 - GitHub Release `installers-v1` has expected assets
-- rclone can reach Google Drive
 
 ### Packing List
 
@@ -300,7 +273,7 @@ This validates:
    - Insert deployment USB drive
    - Open PowerShell as Administrator, `cd` to the project folder on the USB drive
    - Run `.\Scripts\Bootstrap-Laptop.ps1` — it will prompt for `PCNumber`, enter the PC number (1–19)
-   - This handles everything: software install, NVDA config, hardening, Tailscale, scheduled tasks
+   - This handles everything: software install, NVDA config, hardening, scheduled tasks (update agent)
    - If PCs were pre-configured before travel, skip to step 3
 
 3. **Configure NVDA and test speech on every PC**
@@ -311,8 +284,6 @@ This validates:
 
 4. **End-of-day verification**
    - Run `7-Audit.ps1` on all 19 PCs — check for failures
-   - Verify all PCs appear online in Tailscale admin console
-   - If internet is available: run `Get-FleetStatus.ps1` from your laptop to confirm heartbeats are uploading
    - Document any failures with PC number
    - Plan fixes for Day 2
 
@@ -323,7 +294,7 @@ This validates:
    - If a laptop is DOA, see Contingency Plan below
 
 2. **Deploy content and training materials**
-   - Load Sao Mai ebooks into Thorium Reader on each PC
+   - Ebooks auto-imported into SM Readmate library (handled by Configure-Laptop.ps1 Step 17b)
    - Verify Kiwix Vietnamese Wikipedia opens correctly
    - Copy training audio files (if any) to each PC
 
@@ -354,11 +325,8 @@ This validates:
    - Verify student USB drives mount and are recognized
    - Spot-check 2-3 apps per PC (NVDA reads them correctly)
 
-2. **Verify remote management**
-   - All 19 PCs show online in Tailscale admin console
-   - From your laptop: `Check-Fleet.ps1 -UseTailscale` — all 19 PCs reachable
-   - From your laptop: `Get-FleetStatus.ps1` — heartbeats uploading to Google Drive
-   - Test remote command: `Deploy-All.ps1 -UseTailscale -ScriptBlock { hostname }` — all PCs respond
+2. **Verify update agent**
+   - Verify from Update Agent logs that `update-manifest.json` was pulled (check `C:\LabTools\update-agent\update.log` on a sample of PCs)
 
 3. **Train staff on maintenance**
    - How to restart NVDA if it stops talking
@@ -422,21 +390,11 @@ All software can be reinstalled from the deployment USB drive:
 3. Run `Bootstrap-Laptop.ps1 -PCNumber N` (where N matches the PC label)
 4. Run `7-Audit.ps1` to confirm everything passes
 
-Total reimage time: ~30-45 minutes. Tailscale, update agent, and fleet reporter are all re-installed automatically.
-
-### Remote Reimaging (from the US)
-
-If a PC is online via Tailscale, you can push fixes remotely:
-
-```powershell
-# From your machine
-Deploy-All.ps1 -UseTailscale -PCList "PC-07" -ScriptBlock { & C:\LabTools\update-agent\Update-Agent.ps1 }
-```
+Total reimage time: ~30-45 minutes. The update agent is re-installed automatically.
 
 ### Student Work Backup
 
 - Student USB drives are the primary storage for student work
-- If internet is available, `backup-usb.ps1` syncs to Google Drive via rclone (every 15 min)
 - Staff should periodically copy student USB contents to a shared backup drive
 
 ---
@@ -452,21 +410,12 @@ Deploy-All.ps1 -UseTailscale -PCList "PC-07" -ScriptBlock { & C:\LabTools\update
 | **Deployment USB corrupted** | 3 identical copies. Switch to BACKUP-1 or BACKUP-2. |
 | **Power outage** | Laptops have batteries (~6 hrs). Charge overnight. No data loss risk with SSDs. |
 | **Wrong keyboard layout** | Re-run UniKey setup. Verify Telex input method is selected. |
-| **Tailscale not connecting** | Check internet first. Run `tailscale up` manually. If auth key expired, generate a new one and re-run `Install-Tailscale.ps1`. |
-| **PC not reporting to Google Drive** | Check internet and rclone config. Run `Report-FleetHealth.ps1` manually. Check `C:\LabTools\fleet-reports\report.log`. |
 
 ---
 
-## Remote Management Infrastructure
+## Update Infrastructure
 
-All 19 PCs have three automated systems that work when internet is available:
-
-### Tailscale VPN
-
-- Each PC has a Tailscale `100.x.x.x` IP accessible from the US
-- Run `Check-Fleet.ps1 -UseTailscale` to ping all PCs
-- Run `Deploy-All.ps1 -UseTailscale` to execute commands remotely via WinRM
-- Run `Get-FleetTailscaleIPs.ps1` to list all device IPs from the Tailscale API
+All 19 PCs have an automated update system that works when internet is available.
 
 ### Auto-Update Agent (`Update-Agent.ps1`)
 
@@ -475,18 +424,9 @@ Scheduled task on each PC, runs daily at 2-4 AM:
 2. Downloads updated installers with SHA256 verification
 3. Installs silently, verifies with `7-Audit.ps1`
 4. Rolls back critical packages (NVDA, VNVoice) if install fails
-5. Reports results to Google Drive
+5. Logs results locally to `C:\LabTools\update-agent\update.log`
 
 **To push an update:** Edit `update-manifest.json` in the repo with new package versions and SHA256 hashes, push to main. All online PCs pick it up within 24 hours.
-
-### Fleet Health Reporter (`Report-FleetHealth.ps1`)
-
-Scheduled task on each PC, runs daily at 3 AM (staggered per PC):
-1. Runs `7-Audit.ps1` to check machine state against `manifest.json`
-2. Uploads heartbeat JSON to `gdrive:VietnamLabFleet/heartbeats/PC-XX.json`
-3. Uploads full audit report to `gdrive:VietnamLabFleet/PC-XX/`
-
-**To check fleet status:** Run `Get-FleetStatus.ps1` from your machine — downloads heartbeats from Google Drive and displays a dashboard with status, Tailscale IPs, audit results, and staleness warnings.
 
 ---
 
@@ -497,21 +437,16 @@ Scheduled task on each PC, runs daily at 3 AM (staggered per PC):
 Establish a primary contact method **before leaving**:
 - **WhatsApp or Zalo** (most common in Vietnam) group chat with staff
 - Email as backup: staff sends description + PC number, you respond with steps
-- **NVDA Remote** add-on is installed on all PCs — if internet becomes available, you can remote-control a student's NVDA session to diagnose issues in real time
 
 ### Week 1-2: Intensive Monitoring
 - Daily check-in with staff via chat
-- Run `Get-FleetStatus.ps1` daily — check for stale or failing PCs
-- Connect to individual PCs via Tailscale for remote troubleshooting if needed
 - Document all issues and resolutions
 
 ### Week 3-4: Stabilization
 - Check-in every 2-3 days
-- Review fleet dashboard for any drift or failures
 - Address any recurring issues by pushing updates via `update-manifest.json`
 
 ### Month 2+: Ongoing Support
-- Weekly `Get-FleetStatus.ps1` check — flag any PC not seen in 7+ days
 - Push software updates remotely via `update-manifest.json` as new versions release
 - Monthly progress reviews / check-in calls with staff
 - Quarterly maintenance planning
@@ -526,7 +461,7 @@ Establish a primary contact method **before leaving**:
 3. **Skill Progression:** 80%+ students complete typing tutor Lesson 3
 4. **Equipment Durability:** No major hardware failures
 5. **Staff Confidence:** Staff handle 90%+ of issues independently
-6. **Content Usage:** Students are actively reading books in Thorium Reader
+6. **Content Usage:** Students are actively reading books in SM Readmate
 
 ---
 
