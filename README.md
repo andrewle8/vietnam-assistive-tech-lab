@@ -28,7 +28,6 @@ This repo contains everything needed to deploy and remotely manage an assistive 
 | **Thorium Reader 3.3.0** | BSD-3 | EPUB/DAISY ebook reader for accessible reading |
 | **SumatraPDF 3.5.2** | GPL-3.0 | Lightweight PDF reader for textbooks |
 | **GoldenDict** | GPL-3.0 | Offline dictionary (Vietnamese-English, Vietnamese-Vietnamese) |
-| **LEAP Games** | Apache-2.0 | Educational audio games for blind children |
 | **Tailscale** | BSD-3 | Mesh VPN for remote management from the US |
 
 **NVDA Add-ons:** VLC, Speech History, NVDA Remote, Focus Highlight, Audacity Access, Clock & Calendar, MathCAT — see [NVDA Add-on Store](https://addonstore.nvaccess.org/)
@@ -201,7 +200,6 @@ This deployment kit uses free and open-source software where possible, plus Micr
 - **Sao Mai Center** - NVDA Vietnamese modules and VNVoice TTS
 - **Microsoft** - Office 365 (non-profit licensing)
 - **Mozilla Foundation** - Firefox browser
-- **SciFY** - LEAP educational games for blind children
 - **Tailscale** - Mesh VPN for remote management
 
 ---

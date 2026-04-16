@@ -19,7 +19,6 @@
 | **SumatraPDF** | PDF reader for textbooks and documents |
 | **GoldenDict** | Offline Vietnamese-English dictionary (Từ điển) |
 | **Kiwix** | Offline Wikipedia, Wiktionary, and Wikisource in Vietnamese |
-| **LEAP Games** | Audio games (Tic-Tac-Toe, Tennis, Curve) |
 
 All software is **free** and works **offline** (no internet needed).
 

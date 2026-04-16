@@ -174,60 +174,7 @@ if ($msOfficeInstalled) {
     Write-Log "  Place Office Deployment Tool files in Installers\MSOffice\ or pre-install MS Office" "INFO"
 }
 
-# Install LEAP Games (portable - copy to local folder and create shortcuts)
-Write-Log "Installing LEAP Games (educational audio games)..." "INFO"
-
-$leapSourceDir = Join-Path $usbRoot "Installers\Educational"
-$leapDestDir = "C:\Games\LEAP"
 $publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
-
-if (Test-Path $leapSourceDir) {
-    # Find game folders (each contains an exe and a _Data folder)
-    $gameFolders = Get-ChildItem -Path $leapSourceDir -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -notmatch "^\." }
-
-    if ($gameFolders.Count -gt 0) {
-        # Create destination directory
-        if (-not (Test-Path $leapDestDir)) {
-            New-Item -Path $leapDestDir -ItemType Directory -Force | Out-Null
-        }
-
-        foreach ($gameFolder in $gameFolders) {
-            try {
-                # Find the executable in this game folder
-                $gameExe = Get-ChildItem -Path $gameFolder.FullName -Filter "*.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
-
-                if ($gameExe) {
-                    # Copy entire game folder to destination
-                    $destGameFolder = Join-Path $leapDestDir $gameFolder.Name
-                    Copy-Item -Path $gameFolder.FullName -Destination $destGameFolder -Recurse -Force
-                    Write-Log "Copied $($gameFolder.Name) to $leapDestDir" "SUCCESS"
-
-                    # Create desktop shortcut with friendly name
-                    $WshShell = New-Object -ComObject WScript.Shell
-                    $shortcutName = $gameFolder.Name  # Use folder name (TicTacToe, Tennis, Curve)
-                    $shortcutPath = Join-Path $publicDesktop "LEAP $shortcutName.lnk"
-                    $shortcut = $WshShell.CreateShortcut($shortcutPath)
-                    $shortcut.TargetPath = Join-Path $destGameFolder $gameExe.Name
-                    $shortcut.WorkingDirectory = $destGameFolder
-                    $shortcut.Description = "LEAP Game - $shortcutName (Educational audio game for blind children)"
-                    $shortcut.Save()
-                    Write-Log "Created desktop shortcut: LEAP $shortcutName" "SUCCESS"
-
-                    $successCount++
-                } else {
-                    Write-Log "No executable found in $($gameFolder.Name)" "WARNING"
-                }
-            } catch {
-                Write-Log "ERROR installing LEAP game $($gameFolder.Name): $($_.Exception.Message)" "ERROR"
-                $failCount++
-            }
-        }
-    } else {
-        Write-Log "No LEAP game folders found in $leapSourceDir (optional)" "INFO"
-    }
-} else {
-    Write-Log "LEAP Games directory not found at $leapSourceDir (optional)" "INFO"
-}
 
 # Install Kiwix + Vietnamese Wikipedia (portable - copy to local folder and create shortcut)
 Write-Log "Installing Kiwix offline encyclopedia..." "INFO"

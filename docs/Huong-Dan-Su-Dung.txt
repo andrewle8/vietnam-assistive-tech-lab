@@ -123,9 +123,6 @@ Meo: Nhan chu cai dau cua ten chuong trinh de nhay nhanh. Vi du, nhan "F" de nha
 - Excel - Bang tinh
 - Firefox - Trinh duyet web
 - Khoi Phuc NVDA - Restore NVDA - Sua NVDA neu bi loi
-- Game - Curve - Tro choi Curve
-- Game - Tennis - Tro choi tennis
-- Game - TicTacToe - Tro choi co ca ro
 - My USB - Mo USB cua ban
 - NVDA - Trinh doc man hinh
 - PowerPoint - Trinh chieu

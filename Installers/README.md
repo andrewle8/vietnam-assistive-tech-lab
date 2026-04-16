@@ -16,7 +16,7 @@ The download script automatically fetches installers from the best source for ea
 | **Vendor URL** | Direct from software publisher | NVDA, Firefox, VLC |
 | **GitHub Releases** | From the project's GitHub repo | Audacity, Thorium, SumatraPDF, Tailscale, rclone |
 | **Kiwix** | ZIM files from download.kiwix.org | Vietnamese Wikipedia, Wiktionary, Wikisource |
-| **Manual** | Must be pre-placed or on GitHub Release `installers-v1` | Sao Mai VNVoice, Typing Tutor, LEAP Games, NVDA Addons |
+| **Manual** | Must be pre-placed or on GitHub Release `installers-v1` | Sao Mai VNVoice, Typing Tutor, NVDA Addons |
 
 Source definitions are in `Scripts/installer-sources.json`. Versions come from `manifest.json`.
 
@@ -40,7 +40,7 @@ Source definitions are in `Scripts/installer-sources.json`. Versions come from `
 | `Utilities/GoldenDict/` | GoldenDict portable | Manual (GitHub Release) | ~30 MB |
 | `Utilities/Tailscale/` | `tailscale-setup-1.82.0-amd64.msi` | GitHub (tailscale/tailscale) | ~30 MB |
 | `Utilities/rclone/` | rclone portable | GitHub (rclone/rclone) | ~15 MB |
-| `Educational/` | LEAP Games (Tic-Tac-Toe, Tennis, Curve) | Manual (GitHub Release) | ~50 MB |
+| `Ebooks/` | 103 Vietnamese textbook EPUBs | Manual (Sao Mai Center) | ~250 MB |
 
 ## Pre-Deployment Checklist
 
@@ -98,10 +98,11 @@ Installers/
 │   ├── wikipedia_vi_all_mini_2025-11.zim
 │   ├── wiktionary_vi_all_maxi_2025-11.zim
 │   └── wikisource_vi_all_maxi_2025-11.zim
-└── Educational/
-    ├── TicTacToe/
-    ├── Tennis/
-    └── Curve/
+└── Ebooks/
+    ├── Canh Dieu/
+    ├── Chan Troi Sang Tao/
+    ├── Ket Noi Tri Thuc/
+    └── Tieng Anh/
 ```
 
 ## Version Notes

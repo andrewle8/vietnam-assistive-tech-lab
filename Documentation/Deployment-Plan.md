@@ -43,7 +43,6 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 | **Thorium Reader** | 3.3.0 | BSD-3 | EPUB/DAISY ebook reader for accessible reading |
 | **SumatraPDF** | 3.5.2 | GPL-3.0 | Lightweight PDF reader for Vietnamese textbooks |
 | **GoldenDict** | 1.5.0 | GPL-3.0 | Offline dictionary (Vietnamese-English/Vietnamese-Vietnamese) |
-| **LEAP Games** | Latest | Apache-2.0 | Educational audio games (Tic-Tac-Toe, Tennis, Curve) |
 | **Tailscale** | 1.82.0 | BSD-3 | Mesh VPN for remote management from the US |
 | **rclone** | Latest | MIT | Google Drive sync for fleet health reports and student backups |
 

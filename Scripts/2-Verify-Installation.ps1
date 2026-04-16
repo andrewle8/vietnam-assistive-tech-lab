@@ -145,15 +145,6 @@ $checks = @(
         Critical = $true
     },
     @{
-        Name = "LEAP Games"
-        Paths = @(
-            "C:\Games\LEAP\TicTacToe\*.exe",
-            "C:\Games\LEAP\Tennis\*.exe",
-            "C:\Games\LEAP\Curve\*.exe"
-        )
-        Critical = $false
-    },
-    @{
         Name = "Ebooks (Vietnamese Textbooks)"
         Paths = @(
             "C:\Ebooks\Canh Dieu\*.epub",

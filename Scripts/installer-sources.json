@@ -173,30 +173,5 @@
     "version": "3.2.6",
     "url_template": "https://github.com/ibrahim-s/trainingNvdaCommands/releases/download/{version}/trainingKeyboardCommands-{version}.nvda-addon",
     "destination": "NVDA/addons/trainingKeyboardCommands-{version}.nvda-addon"
-  },
-
-  "leap_tictactoe": {
-    "source": "vendor",
-    "url_template": "https://dl.scify.org/games/tictactoe_eng_win64.zip",
-    "destination": "Educational/tictactoe_eng_win64.zip",
-    "extract": true,
-    "extract_to": "Educational/TicTacToe/",
-    "final_path": "Educational/TicTacToe/"
-  },
-  "leap_tennis": {
-    "source": "vendor",
-    "url_template": "https://dl.scify.org/games/tennis_eng_win64.zip",
-    "destination": "Educational/tennis_eng_win64.zip",
-    "extract": true,
-    "extract_to": "Educational/Tennis/",
-    "final_path": "Educational/Tennis/"
-  },
-  "leap_curve": {
-    "source": "vendor",
-    "url_template": "https://dl.scify.org/games/curve_eng_win64.zip",
-    "destination": "Educational/curve_eng_win64.zip",
-    "extract": true,
-    "extract_to": "Educational/Curve/",
-    "final_path": "Educational/Curve/"
   }
 }

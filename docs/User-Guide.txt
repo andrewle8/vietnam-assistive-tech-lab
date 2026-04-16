@@ -123,9 +123,6 @@ Tip: Press the first letter of a program name to jump to it. For example, press 
 - Excel - Spreadsheet
 - Firefox - Web browser
 - Khoi Phuc NVDA - Restore NVDA - Resets NVDA to defaults if broken
-- Game - Curve - Curve game
-- Game - Tennis - Tennis game
-- Game - TicTacToe - Tic-tac-toe game
 - My USB - Open your USB drive
 - NVDA - Screen reader
 - PowerPoint - Presentations

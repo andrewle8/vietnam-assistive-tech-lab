@@ -132,15 +132,6 @@
         "C:\\Program Files\\UniKey\\UniKeyNT.exe"
       ]
     },
-    "leap_games": {
-      "version": "latest",
-      "critical": false,
-      "paths": [
-        "C:\\Games\\LEAP\\TicTacToe\\*.exe",
-        "C:\\Games\\LEAP\\Tennis\\*.exe",
-        "C:\\Games\\LEAP\\Curve\\*.exe"
-      ]
-    },
     "rclone": {
       "version": "1.73.3",
       "installer": "rclone-v1.73.3-windows-amd64.zip",

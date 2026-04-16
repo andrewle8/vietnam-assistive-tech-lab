@@ -607,23 +607,6 @@ try {
         $createdCount++
     }
 
-    # LEAP Games shortcuts (dynamic — discovered from C:\Games\LEAP subdirectories)
-    $leapDir = "C:\Games\LEAP"
-    if (Test-Path $leapDir) {
-        Get-ChildItem -Path $leapDir -Directory | ForEach-Object {
-            $gameExe = Get-ChildItem -Path $_.FullName -Filter "*.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
-            if ($gameExe) {
-                $gameLnk = Join-Path $publicDesktop "Game - $($_.Name).lnk"
-                $gameShortcut = $WshShell.CreateShortcut($gameLnk)
-                $gameShortcut.TargetPath = $gameExe.FullName
-                $gameShortcut.WorkingDirectory = $_.FullName
-                $gameShortcut.Description = "Game - $($_.Name)"
-                $gameShortcut.Save()
-                $createdCount++
-            }
-        }
-    }
-
     Write-Log "Created $createdCount desktop shortcuts (alphabetical for screen reader first-letter navigation)" "SUCCESS"
     $successCount++
 } catch {
@@ -772,35 +755,33 @@ try {
     $failCount++
 }
 
-# Step 9b: Set Windows SAPI voice to English for games
-# LEAP audio games use Windows TTS — without this, they pick up the first SAPI voice
-# (Vietnamese), which makes games speak the wrong language.
-# This does NOT affect NVDA, which uses its own speech synthesizer.
-Write-Log "Step 9b: Setting Windows SAPI default voice to English for games..." "INFO"
+# Step 9b: Set Windows SAPI default voice to Vietnamese (matches NVDA and user audience)
+# This affects any app using Windows TTS. NVDA uses its own voice config and is unaffected.
+Write-Log "Step 9b: Setting Windows SAPI default voice to Vietnamese (Minh Du)..." "INFO"
 
 try {
-    # Machine-wide SAPI default
+    # Machine-wide SAPI default (Vietnamese Minh Du from Sao Mai VNVoice)
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Speech\Voices" `
         -Name "DefaultTokenId" `
-        -Value "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_DAVID_11.0" -Force
+        -Value "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\Minh Du" -Force
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Speech_OneCore\Voices" `
         -Name "DefaultTokenId" `
-        -Value "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech_OneCore\Voices\Tokens\MSTTS_V110_enUS_DavidM" -Force
+        -Value "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech_OneCore\Voices\Tokens\MSTTS_V110_viVN_An" -Force
 
     # Per-user SAPI default (Student + any other loaded hives)
     foreach ($hive in $hkuPaths) {
         $speechPath = "$hive\Software\Microsoft\Speech\Voices"
         if (-not (Test-Path $speechPath)) { New-Item -Path $speechPath -Force | Out-Null }
         Set-ItemProperty -Path $speechPath -Name "DefaultTokenId" `
-            -Value "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_DAVID_11.0" -Force
+            -Value "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\Minh Du" -Force
 
         $oneCorePath = "$hive\Software\Microsoft\Speech_OneCore\Voices"
         if (-not (Test-Path $oneCorePath)) { New-Item -Path $oneCorePath -Force | Out-Null }
         Set-ItemProperty -Path $oneCorePath -Name "DefaultTokenId" `
-            -Value "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech_OneCore\Voices\Tokens\MSTTS_V110_enUS_DavidM" -Force
+            -Value "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech_OneCore\Voices\Tokens\MSTTS_V110_viVN_An" -Force
     }
 
-    Write-Log "SAPI default voice set to English (David) — LEAP games will speak English" "SUCCESS"
+    Write-Log "SAPI default voice set to Vietnamese (Minh Du)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not set SAPI default voice: $($_.Exception.Message)" "ERROR"
@@ -2154,7 +2135,7 @@ Write-Host "Desktop:" -ForegroundColor White
 Write-Host "  Shortcuts     Standardized (wiped + recreated for all apps)" -ForegroundColor White
 Write-Host "  Apps          NVDA, Word, Excel, PowerPoint, Firefox, VLC, Audacity," -ForegroundColor White
 Write-Host "                Thorium, SumatraPDF, Kiwix, GoldenDict, Quorum Studio," -ForegroundColor White
-Write-Host "                Sao Mai Typing Tutor, Readmate, Game - Curve/Tennis/TicTacToe," -ForegroundColor White
+Write-Host "                Sao Mai Typing Tutor, Readmate," -ForegroundColor White
 Write-Host "                Calculator, My USB, Language Toggle, NVDA Restore" -ForegroundColor White
 Write-Host "  Vi folders    Tai Lieu, Am Nhac, Truyen, Hoc Tap, Tro Choi" -ForegroundColor White
 Write-Host ""
