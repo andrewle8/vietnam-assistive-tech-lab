@@ -104,8 +104,8 @@ if (-not (Test-Path $labToolsDir)) {
     $successCount++
 }
 
-# Cleanup legacy rclone/Tailscale artifacts from prior deployments
-foreach ($legacy in @("$labToolsDir\rclone", "$labToolsDir\fleet-reports", "$labToolsDir\start-tailscale.ps1", "$labToolsDir\start-tailscale.vbs")) {
+# Cleanup legacy artifacts from prior deployments (Tailscale, rclone, Thorium, Quorum, LEAP, nvdaRemote)
+foreach ($legacy in @("$labToolsDir\rclone", "$labToolsDir\fleet-reports", "$labToolsDir\start-tailscale.ps1", "$labToolsDir\start-tailscale.vbs", "$labToolsDir\Report-FleetHealth.ps1", "$labToolsDir\backup-usb.ps1", "C:\Games\LEAP")) {
     if (Test-Path $legacy) { Remove-Item -Path $legacy -Recurse -Force -ErrorAction SilentlyContinue }
 }
 foreach ($taskName in @("LabUSBBackup", "LabFleetReport")) {
@@ -116,7 +116,47 @@ foreach ($taskName in @("LabUSBBackup", "LabFleetReport")) {
     }
 }
 Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\Tailscale.lnk" -Force -ErrorAction SilentlyContinue
+Remove-Item "C:\Users\*\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Tailscale.lnk" -Force -ErrorAction SilentlyContinue
 Remove-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "Tailscale" -Force -ErrorAction SilentlyContinue
+
+# Uninstall Tailscale service + app if present
+$tsService = Get-Service -Name "Tailscale" -ErrorAction SilentlyContinue
+if ($tsService) {
+    Stop-Service -Name "Tailscale" -Force -ErrorAction SilentlyContinue
+    Get-Process -Name "tailscale*" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+    $tsUninstall = Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*" -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -eq "Tailscale" } | Select-Object -First 1
+    if ($tsUninstall -and $tsUninstall.UninstallString -match 'MsiExec') {
+        $guid = [regex]::Match($tsUninstall.UninstallString, '\{[0-9A-Fa-f\-]+\}').Value
+        if ($guid) { Start-Process msiexec.exe -ArgumentList "/x $guid /qn /norestart" -Wait -NoNewWindow -ErrorAction SilentlyContinue }
+    }
+    Remove-Item "C:\Program Files\Tailscale" -Recurse -Force -ErrorAction SilentlyContinue
+    Write-Log "Removed legacy Tailscale install" "INFO"
+}
+
+# Uninstall Quorum Studio if present
+$quorumPath = "C:\Program Files\QuorumStudio"
+if (Test-Path $quorumPath) {
+    $quorumUninstall = Get-ItemProperty "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*", "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*" -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -match "Quorum" } | Select-Object -First 1
+    if ($quorumUninstall -and $quorumUninstall.UninstallString) {
+        Start-Process cmd.exe -ArgumentList "/c", "`"$($quorumUninstall.UninstallString)`" /S" -Wait -NoNewWindow -ErrorAction SilentlyContinue
+    }
+    Remove-Item $quorumPath -Recurse -Force -ErrorAction SilentlyContinue
+    Remove-Item "C:\Users\Public\Desktop\Quorum Studio.lnk" -Force -ErrorAction SilentlyContinue
+    Write-Log "Removed legacy Quorum Studio install" "INFO"
+}
+
+# Remove Thorium per-user install (all profiles)
+foreach ($profile in @("Admin", "Student")) {
+    $thPath = "C:\Users\$profile\AppData\Local\Programs\Thorium"
+    if (Test-Path $thPath) {
+        Remove-Item $thPath -Recurse -Force -ErrorAction SilentlyContinue
+        Write-Log "Removed Thorium from $profile profile" "INFO"
+    }
+}
+Remove-Item "C:\Users\Public\Desktop\Thorium Reader.lnk" -Force -ErrorAction SilentlyContinue
+
+# Remove nvdaRemote addon from all profiles
+Get-ChildItem "C:\Users\*\AppData\Roaming\nvda\addons\remote*" -Directory -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
 
 # Step 2: Set AutoPlay for removable drives to open folder
 Write-Log "Step 2: Configuring AutoPlay for removable drives..." "INFO"
@@ -1136,60 +1176,25 @@ try {
     $failCount++
 }
 
-# Step 22: Enable OpenSSH Server for remote management
-Write-Log "Step 22: Enabling OpenSSH Server..." "INFO"
+# Step 22: Ensure OpenSSH Server is disabled (no remote access by design)
+Write-Log "Step 22: Ensuring OpenSSH Server is disabled..." "INFO"
 
 try {
-    # Install OpenSSH Server if not already present
-    $sshCapability = Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH.Server*'
-    if ($sshCapability.State -ne 'Installed') {
-        Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0 | Out-Null
-        Write-Log "OpenSSH Server installed" "INFO"
-    } else {
-        Write-Log "OpenSSH Server already installed" "INFO"
+    $sshService = Get-Service -Name sshd -ErrorAction SilentlyContinue
+    if ($sshService) {
+        if ($sshService.Status -eq 'Running') { Stop-Service sshd -Force -ErrorAction SilentlyContinue }
+        Set-Service -Name sshd -StartupType Disabled -ErrorAction SilentlyContinue
+        Write-Log "OpenSSH Server service stopped and disabled" "INFO"
     }
 
-    # Start and enable the service
-    Start-Service sshd
-    Set-Service -Name sshd -StartupType Automatic
+    # Close firewall rules if they exist
+    Remove-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyContinue
+    Get-NetFirewallRule -DisplayName "OpenSSH SSH Server (sshd)" -ErrorAction SilentlyContinue | Disable-NetFirewallRule -ErrorAction SilentlyContinue
 
-    # Ensure firewall rule exists and allows SSH on all network profiles (Wi-Fi may be Public)
-    $fwRule = Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyContinue
-    if (-not $fwRule) {
-        New-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -DisplayName "OpenSSH Server (sshd)" `
-            -Direction Inbound -Protocol TCP -LocalPort 22 -Action Allow -Profile Any | Out-Null
-    } else {
-        Set-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -Profile Any
-    }
-    # Also fix the built-in rule if it exists
-    $builtinRule = Get-NetFirewallRule -DisplayName "OpenSSH SSH Server (sshd)" -ErrorAction SilentlyContinue
-    if ($builtinRule) {
-        Set-NetFirewallRule -DisplayName "OpenSSH SSH Server (sshd)" -Profile Any
-    }
-
-    # Enable password auth for admin users in sshd_config
-    $sshdConfig = "C:\ProgramData\ssh\sshd_config"
-    if (Test-Path $sshdConfig) {
-        $content = Get-Content $sshdConfig -Raw
-        # Uncomment PasswordAuthentication if commented
-        $content = $content -replace '(?m)^#PasswordAuthentication yes', 'PasswordAuthentication yes'
-        # Add PasswordAuthentication to administrators match block if missing
-        if ($content -match 'Match Group administrators' -and $content -notmatch 'Match Group administrators[\s\S]*?PasswordAuthentication') {
-            $content = $content -replace '(Match Group administrators\s*\r?\n\s*AuthorizedKeysFile[^\r\n]*)', "`$1`r`n       PasswordAuthentication yes"
-        }
-        Set-Content -Path $sshdConfig -Value $content -Force
-        Restart-Service sshd
-    }
-
-    # Set default shell to PowerShell
-    New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell `
-        -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -PropertyType String -Force | Out-Null
-
-    Write-Log "OpenSSH Server enabled (auto-start, password auth, all profiles)" "SUCCESS"
+    Write-Log "SSH disabled (no remote access by design)" "SUCCESS"
     $successCount++
 } catch {
-    Write-Log "Could not enable OpenSSH Server: $($_.Exception.Message)" "ERROR"
-    $failCount++
+    Write-Log "Could not disable SSH: $($_.Exception.Message)" "WARNING"
 }
 
 # Step 23: Generate battery health report
@@ -1934,7 +1939,7 @@ Write-Host "  OOBE nag      'Finish setup' prompt disabled" -ForegroundColor Whi
 Write-Host "  Start menu    Suggestions/promoted apps disabled" -ForegroundColor White
 Write-Host ""
 Write-Host "Remote Management:" -ForegroundColor White
-Write-Host "  SSH server    Enabled (port 22, PowerShell default shell)" -ForegroundColor White
+Write-Host "  SSH server    Disabled (no remote access)" -ForegroundColor White
 Write-Host "  Update agent  Daily 2-4 AM (LabUpdateAgent task, pulls from GitHub)" -ForegroundColor White
 Write-Host ""
 

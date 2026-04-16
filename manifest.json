@@ -121,7 +121,6 @@
     "VLC": "2025.1.0",
     "MathCAT": "0.7.5",
     "speechHistory": "2025.1",
-    "nvdaRemote": "2.6.4",
     "focusHighlight": "6.6",
     "audacityAccessEnhancement": "3.3.2",
     "clock": "20250714"
@@ -129,8 +128,7 @@
 
   "kiwix_content": {
     "wikipedia_vi": "wikipedia_vi_all_mini_2025-11.zim",
-    "wiktionary_vi": "wiktionary_vi_all_nopic_2025-12.zim",
-    "wikisource_vi": "wikisource_vi_all_maxi_2026-01.zim"
+    "wiktionary_vi": "wiktionary_vi_all_nopic_2025-12.zim"
   },
 
   "configuration": {

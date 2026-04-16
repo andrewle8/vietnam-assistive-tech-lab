@@ -57,7 +57,6 @@ Installers/
 │   └── addons/
 │       ├── VLC-2025.1.0.nvda-addon
 │       ├── speechHistory-2024.3.1.nvda-addon
-│       ├── nvdaRemote-2.6.4.nvda-addon
 │       ├── focusHighlight-2.4.nvda-addon
 │       ├── audacityAccessEnhancement-3.3.2.nvda-addon
 │       ├── clock-20250714.nvda-addon
@@ -85,7 +84,7 @@ Installers/
 │   ├── kiwix-desktop.exe (+ dependencies)
 │   ├── wikipedia_vi_all_mini_2025-11.zim
 │   ├── wiktionary_vi_all_maxi_2025-11.zim
-│   └── wikisource_vi_all_maxi_2025-11.zim
+│   └── wiktionary_vi_all_nopic_2025-12.zim
 └── Ebooks/
     ├── Canh Dieu/
     ├── Chan Troi Sang Tao/

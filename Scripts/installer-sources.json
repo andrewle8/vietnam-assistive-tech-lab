@@ -47,12 +47,6 @@
     "url_template": "https://download.kiwix.org/zim/wiktionary/wiktionary_vi_all_nopic_{date}.zim",
     "destination": "Kiwix/{filename}"
   },
-  "wikisource_vi": {
-    "source": "kiwix",
-    "url_template": "https://download.kiwix.org/zim/wikisource/wikisource_vi_all_maxi_{date}.zim",
-    "destination": "Kiwix/{filename}"
-  },
-
   "saomai_vnvoice": {
     "source": "vendor",
     "url_template": "https://saomaicenter.org/sites/default/files/inline-files/SaoMai_voice1.0.exe",
@@ -112,12 +106,6 @@
     "version": "2025.1",
     "url_template": "https://github.com/jscholes/nvda-speech-history/releases/download/v{version}/speechHistory-v{version}.nvda-addon",
     "destination": "NVDA/addons/speechHistory-v{version}.nvda-addon"
-  },
-  "nvda_addon_remote": {
-    "source": "vendor",
-    "version": "2.6.4",
-    "url_template": "https://github.com/NVDARemote/NVDARemote/releases/download/v{version}/remote-{version}.nvda-addon",
-    "destination": "NVDA/addons/remote-{version}.nvda-addon"
   },
   "nvda_addon_focus_highlight": {
     "source": "vendor",
