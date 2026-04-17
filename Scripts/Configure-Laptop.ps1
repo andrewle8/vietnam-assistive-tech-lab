@@ -1027,28 +1027,78 @@ try {
     $failCount++
 }
 
-# Step 17b: Populate SM Readmate library with ebooks from C:\Ebooks
+# Step 17b: Populate SM Readmate library — copies ebooks from USB into Student's
+# SM Readmate data folder and registers them in its SQLite library (uses relative
+# paths, required by SM Readmate 1.1.0+).
 Write-Log "Step 17b: Populating SM Readmate ebook library..." "INFO"
 
 try {
-    $ebookDir = "C:\Ebooks"
+    $ebookSource   = Join-Path $usbRoot "Installers\Ebooks"
     $studentDbPath = "C:\Users\Student\AppData\Roaming\SaoMai\SM Readmate\databases\app_database.db"
     $populateScript = Join-Path $PSScriptRoot "Populate-ReadmateDB.ps1"
 
-    if ((Test-Path $ebookDir) -and (Test-Path $populateScript)) {
-        # Script creates the database + schema if it doesn't exist yet (fresh install)
-        & $populateScript -EbookDir $ebookDir -DbPath $studentDbPath
-        Write-Log "SM Readmate library populated with ebooks from $ebookDir" "SUCCESS"
+    if ((Test-Path $ebookSource) -and (Test-Path $populateScript)) {
+        & $populateScript -EbookSource $ebookSource -DbPath $studentDbPath
+        Write-Log "SM Readmate library populated with ebooks from $ebookSource" "SUCCESS"
         $successCount++
     } else {
         $missing = @()
-        if (-not (Test-Path $ebookDir))       { $missing += "C:\Ebooks (run 1-Install-All.ps1 first)" }
+        if (-not (Test-Path $ebookSource))     { $missing += "$ebookSource (expected on USB)" }
         if (-not (Test-Path $populateScript))  { $missing += "Populate-ReadmateDB.ps1" }
         Write-Log "Skipped SM Readmate population - missing: $($missing -join ', ')" "WARNING"
     }
 } catch {
     Write-Log "Could not populate SM Readmate library: $($_.Exception.Message)" "ERROR"
     $failCount++
+}
+
+# Step 17c: Block SM Readmate auto-update endpoint via hosts file
+# SM Readmate 1.1.0 polls saomaicenter.org for updates and prompts students on new
+# versions. We saw firsthand that 1.0.5 -> 1.1.0 broke the entire library. Block so
+# students never see the prompt. Updates to SM Readmate are pushed via our update
+# agent (update-manifest.json) after testing each version.
+Write-Log "Step 17c: Blocking SM Readmate auto-update endpoint..." "INFO"
+
+try {
+    $hostsFile = "$env:SystemRoot\System32\drivers\etc\hosts"
+    $marker = "# VN-LAB: block SM Readmate auto-update"
+    $blockEntry = "0.0.0.0 saomaicenter.org"
+
+    $content = if (Test-Path $hostsFile) { Get-Content $hostsFile -Raw } else { "" }
+    if ($content -notmatch [regex]::Escape($marker)) {
+        $append = "`r`n$marker`r`n$blockEntry`r`n"
+        Add-Content -Path $hostsFile -Value $append -Encoding ASCII
+        ipconfig /flushdns | Out-Null
+        Write-Log "SM Readmate update check blocked (hosts file entry added)" "SUCCESS"
+        $successCount++
+    } else {
+        Write-Log "SM Readmate update block already present in hosts file" "INFO"
+        $successCount++
+    }
+} catch {
+    Write-Log "Could not block SM Readmate updates: $($_.Exception.Message)" "WARNING"
+}
+
+# Step 17d: Deploy SM Readmate preferences (default to Microsoft An, offline reliable)
+# User can switch to Edge TTS (HoaiMy Neural) in F4 settings if internet is available.
+Write-Log "Step 17d: Deploying SM Readmate preferences..." "INFO"
+
+try {
+    $prefTemplate = Join-Path (Split-Path -Parent $PSScriptRoot) "Config\sm-readmate-config\shared_preferences.json"
+    $prefDest = "C:\Users\Student\AppData\Roaming\SaoMai\SM Readmate\shared_preferences.json"
+    $prefDestDir = Split-Path $prefDest -Parent
+
+    if (Test-Path $prefTemplate) {
+        if (-not (Test-Path $prefDestDir)) { New-Item -Path $prefDestDir -ItemType Directory -Force | Out-Null }
+        Copy-Item -Path $prefTemplate -Destination $prefDest -Force
+        icacls $prefDestDir /grant "Student:(OI)(CI)F" /T /Q 2>$null
+        Write-Log "SM Readmate preferences deployed (default voice: Microsoft An)" "SUCCESS"
+        $successCount++
+    } else {
+        Write-Log "SM Readmate preference template not found at $prefTemplate" "WARNING"
+    }
+} catch {
+    Write-Log "Could not deploy SM Readmate preferences: $($_.Exception.Message)" "WARNING"
 }
 
 # Step 18: Deploy Update Agent
@@ -1088,16 +1138,19 @@ try {
         Unregister-ScheduledTask -TaskName "LabUpdateAgent" -Confirm:$false
     }
 
-    # Random offset per PC (0-120 min) based on PC number to spread load
+    # Random offset per PC (0-90 min) based on PC number to spread GitHub load
+    # Target window: 6 PM - 7:30 PM (dinner time — laptops on, students away eating)
     $pcNum = 0
     if ($env:COMPUTERNAME -match "PC-(\d+)") { $pcNum = [int]$Matches[1] }
-    $randomDelay = New-TimeSpan -Minutes ($pcNum * 6)  # PC-01=6min, PC-19=114min
+    $randomDelay = New-TimeSpan -Minutes ($pcNum * 5)  # PC-01=5min, PC-19=95min
 
     $taskAction = New-ScheduledTaskAction `
         -Execute "powershell.exe" `
         -Argument "-NoProfile -NonInteractive -ExecutionPolicy Bypass -File `"$updateAgentDir\Update-Agent.ps1`""
 
-    $taskTrigger = New-ScheduledTaskTrigger -Daily -At "02:00" -RandomDelay $randomDelay
+    # Trigger at 6 PM local (Vietnam ICT GMT+7) — dinner time, laptops on, students away
+    # StartWhenAvailable = true handles the case where laptop was off at 6 PM
+    $taskTrigger = New-ScheduledTaskTrigger -Daily -At "18:00" -RandomDelay $randomDelay
 
     $taskSettings = New-ScheduledTaskSettingsSet `
         -AllowStartIfOnBatteries `
@@ -1114,9 +1167,9 @@ try {
         -Trigger $taskTrigger `
         -Settings $taskSettings `
         -Principal $taskPrincipal `
-        -Description "Checks for and applies software updates from GitHub (daily 2-4 AM)" | Out-Null
+        -Description "Checks for and applies software updates from GitHub (daily 6-7:30 PM, dinner window)" | Out-Null
 
-    Write-Log "Scheduled task 'LabUpdateAgent' created (daily at 2 AM + ${pcNum}x6 min offset)" "SUCCESS"
+    Write-Log "Scheduled task 'LabUpdateAgent' created (daily at 6 PM + ${pcNum}x5 min offset)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not deploy update agent: $($_.Exception.Message)" "ERROR"
@@ -1940,7 +1993,7 @@ Write-Host "  Start menu    Suggestions/promoted apps disabled" -ForegroundColor
 Write-Host ""
 Write-Host "Remote Management:" -ForegroundColor White
 Write-Host "  SSH server    Disabled (no remote access)" -ForegroundColor White
-Write-Host "  Update agent  Daily 2-4 AM (LabUpdateAgent task, pulls from GitHub)" -ForegroundColor White
+Write-Host "  Update agent  Daily 6-7:30 PM (LabUpdateAgent task, pulls from GitHub)" -ForegroundColor White
 Write-Host ""
 
 if ($failCount -gt 0) {

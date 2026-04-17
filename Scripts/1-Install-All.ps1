@@ -57,7 +57,7 @@ $installations = @(
     },
     @{
         Name = "SM Readmate"
-        Path = ".\Installers\SaoMai\SMReadmate1.0.5-setup.exe"
+        Path = ".\Installers\SaoMai\SMReadmate1.1.0-setup.exe"
         Args = @("/S")
         WaitTime = 30
     }
@@ -249,38 +249,9 @@ if ($goldenDictExe) {
     }
 }
 
-# Install Ebooks (copy EPUB textbooks to local folder for SM Readmate library)
-Write-Log "Installing Vietnamese ebooks (textbooks)..." "INFO"
-
-$ebookSourceDir = Join-Path $usbRoot "Installers\Ebooks"
-$ebookDestDir = "C:\Ebooks"
-
-if (Test-Path $ebookSourceDir) {
-    $epubFiles = Get-ChildItem -Path $ebookSourceDir -Filter "*.epub" -Recurse -ErrorAction SilentlyContinue
-    if ($epubFiles.Count -gt 0) {
-        try {
-            if (-not (Test-Path $ebookDestDir)) {
-                New-Item -Path $ebookDestDir -ItemType Directory -Force | Out-Null
-            }
-            # Copy preserving subfolder structure (Canh Dieu, Chan Troi Sang Tao, etc.)
-            Copy-Item -Path "$ebookSourceDir\*" -Destination $ebookDestDir -Recurse -Force
-
-            # Grant Student full access
-            icacls $ebookDestDir /grant "Student:(OI)(CI)F" /T /Q 2>$null
-
-            $copiedCount = (Get-ChildItem $ebookDestDir -Filter "*.epub" -Recurse -ErrorAction SilentlyContinue).Count
-            Write-Log "Installed $copiedCount Vietnamese ebooks to $ebookDestDir" "SUCCESS"
-            $successCount++
-        } catch {
-            Write-Log "ERROR installing ebooks: $($_.Exception.Message)" "ERROR"
-            $failCount++
-        }
-    } else {
-        Write-Log "No EPUB files found in $ebookSourceDir" "INFO"
-    }
-} else {
-    Write-Log "Ebooks directory not found at $ebookSourceDir (optional)" "INFO"
-}
+# Note: Ebook deployment is now handled by Configure-Laptop.ps1 Step 17b
+# (calls Populate-ReadmateDB.ps1 which copies books directly into SM Readmate's
+# data folder and registers them in its library database).
 
 Write-Log "`n=== Installation Summary ===" "INFO"
 Write-Log "Successful installations: $successCount" "SUCCESS"

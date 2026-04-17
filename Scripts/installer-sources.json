@@ -59,7 +59,7 @@
   },
   "saomai_readmate": {
     "source": "vendor",
-    "version": "1.0.5",
+    "version": "1.1.0",
     "url_template": "https://saomaicenter.org/sites/default/files/SMSoftAutoUpdate/readmate/SMReadmate{version}-setup.exe",
     "destination": "SaoMai/SMReadmate{version}-setup.exe"
   },

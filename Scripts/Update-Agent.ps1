@@ -1,8 +1,9 @@
 # Vietnam Lab Deployment - Auto-Update Agent
 # Pull-based update agent that runs as a scheduled task on each PC
 # Checks GitHub for update-manifest.json, downloads and applies updates
-# Runs daily at 2-4 AM. Never runs during school hours (8AM-6PM).
-# Last Updated: February 2026
+# Scheduled 6 PM Vietnam time (dinner window, laptops on, students away).
+# Safety block: no updates between 7 AM - 5 PM so students aren't interrupted.
+# Last Updated: April 2026
 
 param(
     [string]$ManifestUrl = "https://raw.githubusercontent.com/andrewle8/vietnam-assistive-tech-lab/main/update-manifest.json",
@@ -43,10 +44,11 @@ function Write-Result {
 
 # ---- Safety checks ----
 
-# Check: not during school hours (8AM-6PM local time)
+# Check: not during school hours (7 AM - 5 PM local time)
+# Updates may run 5 PM onwards (task triggers at 6 PM) and any time until 7 AM
 $hour = (Get-Date).Hour
-if ($hour -ge 8 -and $hour -lt 18) {
-    Write-AgentLog "School hours (8AM-6PM). Skipping update check."
+if ($hour -ge 7 -and $hour -lt 17) {
+    Write-AgentLog "School hours (7 AM - 5 PM). Skipping update check."
     exit 0
 }
 

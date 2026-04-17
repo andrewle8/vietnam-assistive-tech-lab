@@ -40,8 +40,8 @@
       ]
     },
     "saomai_readmate": {
-      "version": "1.0.5",
-      "installer": "SMReadmate1.0.5-setup.exe",
+      "version": "1.1.0",
+      "installer": "SMReadmate1.1.0-setup.exe",
       "critical": false,
       "paths": [
         "C:\\Program Files\\SaoMai\\sm_readmate\\sm_readmate.exe",
