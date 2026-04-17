@@ -1139,7 +1139,7 @@ try {
     }
 
     # Random offset per PC (0-90 min) based on PC number to spread GitHub load
-    # Target window: 5 PM - 6:30 PM (right after school ends, laptops likely still on)
+    # Target window: 6 PM - 7:30 PM (dinner, laptops likely still on, students away eating)
     $pcNum = 0
     if ($env:COMPUTERNAME -match "PC-(\d+)") { $pcNum = [int]$Matches[1] }
     $randomDelay = New-TimeSpan -Minutes ($pcNum * 5)  # PC-01=5min, PC-19=95min
@@ -1148,9 +1148,9 @@ try {
         -Execute "powershell.exe" `
         -Argument "-NoProfile -NonInteractive -ExecutionPolicy Bypass -File `"$updateAgentDir\Update-Agent.ps1`""
 
-    # Trigger at 5 PM local (Vietnam is ICT GMT+7) — right after school ends
-    # StartWhenAvailable = true handles the case where laptop was off at 5 PM
-    $taskTrigger = New-ScheduledTaskTrigger -Daily -At "17:00" -RandomDelay $randomDelay
+    # Trigger at 6 PM local (Vietnam is ICT GMT+7) — dinner window, students away
+    # StartWhenAvailable = true handles the case where laptop was off at 6 PM
+    $taskTrigger = New-ScheduledTaskTrigger -Daily -At "18:00" -RandomDelay $randomDelay
 
     $taskSettings = New-ScheduledTaskSettingsSet `
         -AllowStartIfOnBatteries `
@@ -1167,9 +1167,9 @@ try {
         -Trigger $taskTrigger `
         -Settings $taskSettings `
         -Principal $taskPrincipal `
-        -Description "Checks for and applies software updates from GitHub (daily 5-6:30 PM after school)" | Out-Null
+        -Description "Checks for and applies software updates from GitHub (daily 6-7:30 PM dinner window)" | Out-Null
 
-    Write-Log "Scheduled task 'LabUpdateAgent' created (daily at 5 PM + ${pcNum}x5 min offset)" "SUCCESS"
+    Write-Log "Scheduled task 'LabUpdateAgent' created (daily at 6 PM + ${pcNum}x5 min offset)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not deploy update agent: $($_.Exception.Message)" "ERROR"
@@ -1993,7 +1993,7 @@ Write-Host "  Start menu    Suggestions/promoted apps disabled" -ForegroundColor
 Write-Host ""
 Write-Host "Remote Management:" -ForegroundColor White
 Write-Host "  SSH server    Disabled (no remote access)" -ForegroundColor White
-Write-Host "  Update agent  Daily 5-6:30 PM (LabUpdateAgent task, pulls from GitHub)" -ForegroundColor White
+Write-Host "  Update agent  Daily 6-7:30 PM (LabUpdateAgent task, pulls from GitHub)" -ForegroundColor White
 Write-Host ""
 
 if ($failCount -gt 0) {
