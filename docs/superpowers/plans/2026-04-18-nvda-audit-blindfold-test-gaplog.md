@@ -10,10 +10,10 @@ Produced during Phase 1 of `2026-04-18-nvda-audit-blindfold-test.md`. Consumed b
 
 - **Task 1 findings:** None. Guide claims 16 desktop shortcuts; all 16 present (15 on Public Desktop, 1 — NVDA — on Student Desktop). Split across two desktop folders is transparent to the user since Windows merges them visually.
 
-- **Task 2 finding — NVDA voice drift between live and repo:** Live `C:\Users\Student\AppData\Roaming\nvda\nvda.ini` has `voice = HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\Thanh Vi`. Repo `Config/nvda-config/nvda.ini` still has `voice = HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\MSTTS_V110_viVN_An` (Microsoft An). A fresh laptop bootstrap would get Microsoft An, not Thanh Vi — violates test-bench rule. All other keys match between live and repo.
-  - **Fix location:** `Config/nvda-config/nvda.ini` — update voice field to match live.
-  - **Caveat:** This fix is conditional on Task #11 voice decision (handover). If Thanh Vi is the chosen voice, sync repo to live. If a different voice wins, set repo + live to that voice together.
-  - **Status:** 🔧 Queued for Task 5.
+- **Task 2 finding — CORRECTED after initial mis-read.** No live-vs-working-tree drift. Repo working tree already has correct settings from prior session: `Config/nvda-config/nvda.ini` → `Thanh Vi`, `NVDAModifierKeys = 6`, `autoLanguageSwitching = False`, `trustVoiceLanguage = False`. Similarly `Config/sm-readmate-config/shared_preferences.json` → `ttsType: sapi5`, `Microsoft An#vi-VN`, rate 0.3. **The real issue is git HEAD is stale** — HEAD still has `Minh Du` for both NVDA and Readmate. A fresh `Bootstrap-Laptop.ps1` run would clone HEAD and deploy Minh Du, not Thanh Vi / Microsoft An.
+  - **Fix location:** N/A for Phase 2 — this is the "commit the prior session's pending ~20 modified files" item from the deployment-readiness path in the spec. Scope too broad for an audit task; needs its own review session.
+  - **Student-experience impact:** Zero on PC-01 (live config is correct). High on laptops #2-19 (would deploy wrong voices). Deployment-blocking.
+  - **Status:** 🚩 Flagged to deployment-readiness path, not fixed here.
 
 ---
 
