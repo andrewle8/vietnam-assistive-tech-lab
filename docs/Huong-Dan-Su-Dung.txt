@@ -8,7 +8,7 @@ Tai lieu nay huong dan cach su dung may tinh voi trinh doc man hinh NVDA.
 
 Khi may tinh bat len, NVDA se tu dong chay va noi "NVDA dang chay".
 
-Ban se nghe mot loi chao. Sau do, ban o man hinh Desktop.
+Sau do, ban o man hinh Desktop.
 
 ---
 

@@ -8,7 +8,7 @@ This guide explains how to use the laptop with the NVDA screen reader.
 
 When the laptop turns on, NVDA starts automatically and says "NVDA is running".
 
-You will hear a welcome message. After that, you are on the Desktop.
+After that, you are on the Desktop.
 
 ---
 
