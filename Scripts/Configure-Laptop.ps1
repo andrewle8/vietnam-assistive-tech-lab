@@ -1,4 +1,4 @@
-# Vietnam Lab Deployment - Loaner Laptop Configuration
+﻿# Vietnam Lab Deployment - Loaner Laptop Configuration
 # Version: 1.0
 # Run on each lab laptop after scripts 1-3. Requires Administrator.
 # Applies Windows hardening, desktop shortcuts, NVDA config, file associations,
@@ -62,24 +62,29 @@ try {
 }
 
 # Build array of registry hive paths to target (Admin HKCU + Student HKU + Default profile)
+# Verify each hive is actually writable by Test-Path — reg.exe exit codes are unreliable under PowerShell.
 $hkuPaths = @("HKCU:")
 $studentHiveLoaded = $false
 if ($studentSID) {
     $studentHivePath = "REGISTRY::HKEY_USERS\$studentSID"
-    if (Test-Path $studentHivePath) {
-        # Student is logged in — SID already in HKU
+    $studentSoftwarePath = "$studentHivePath\Software"
+    if (Test-Path $studentSoftwarePath) {
+        # Student is logged in — SID already in HKU, hive is writable
         $hkuPaths += $studentHivePath
+        Write-Log "Student hive already loaded (user logged in)" "INFO"
     } else {
         # Student is NOT logged in — manually load their NTUSER.DAT
         $studentNtuser = "C:\Users\Student\NTUSER.DAT"
         if (Test-Path $studentNtuser) {
-            reg load "HKU\$studentSID" $studentNtuser 2>$null
-            if ($LASTEXITCODE -eq 0) {
+            & reg.exe load "HKU\$studentSID" $studentNtuser 2>&1 | Out-Null
+            # Verify the load worked by actually probing the hive (reg.exe exit codes unreliable under PS)
+            Start-Sleep -Milliseconds 200
+            if (Test-Path $studentSoftwarePath) {
                 $studentHiveLoaded = $true
                 $hkuPaths += $studentHivePath
                 Write-Log "Loaded Student registry hive from NTUSER.DAT" "INFO"
             } else {
-                Write-Log "WARNING: Could not load Student NTUSER.DAT — per-user settings will not apply to Student." "ERROR"
+                Write-Log "WARNING: reg load reported ok but Student hive not reachable — per-user settings will not apply to Student." "ERROR"
             }
         } else {
             Write-Log "WARNING: Student NTUSER.DAT not found — Student has never logged in. Per-user settings will apply via Default profile only." "ERROR"
@@ -88,9 +93,16 @@ if ($studentSID) {
 }
 $defaultLoaded = $false
 $defaultNtuser = "C:\Users\Default\NTUSER.DAT"
-if ((Test-Path $defaultNtuser) -and -not (Test-Path "REGISTRY::HKEY_USERS\DefaultProfile")) {
-    reg load "HKU\DefaultProfile" $defaultNtuser 2>$null
-    if ($LASTEXITCODE -eq 0) { $defaultLoaded = $true; $hkuPaths += "REGISTRY::HKEY_USERS\DefaultProfile" }
+$defaultHivePath = "REGISTRY::HKEY_USERS\DefaultProfile"
+if ((Test-Path $defaultNtuser) -and -not (Test-Path "$defaultHivePath\Software")) {
+    & reg.exe load "HKU\DefaultProfile" $defaultNtuser 2>&1 | Out-Null
+    Start-Sleep -Milliseconds 200
+    if (Test-Path "$defaultHivePath\Software") {
+        $defaultLoaded = $true
+        $hkuPaths += $defaultHivePath
+    } else {
+        Write-Log "WARNING: Default profile hive load failed" "WARNING"
+    }
 }
 
 Write-Log "Registry targets: $($hkuPaths -join ', ')" "INFO"
@@ -104,59 +116,9 @@ if (-not (Test-Path $labToolsDir)) {
     $successCount++
 }
 
-# Cleanup legacy artifacts from prior deployments (Tailscale, rclone, Thorium, Quorum, LEAP, nvdaRemote)
-foreach ($legacy in @("$labToolsDir\rclone", "$labToolsDir\fleet-reports", "$labToolsDir\start-tailscale.ps1", "$labToolsDir\start-tailscale.vbs", "$labToolsDir\Report-FleetHealth.ps1", "$labToolsDir\backup-usb.ps1", "C:\Games\LEAP")) {
-    if (Test-Path $legacy) { Remove-Item -Path $legacy -Recurse -Force -ErrorAction SilentlyContinue }
-}
-foreach ($taskName in @("LabUSBBackup", "LabFleetReport")) {
-    $existingTask = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
-    if ($existingTask) {
-        Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue
-        Write-Log "Removed legacy scheduled task: $taskName" "INFO"
-    }
-}
-Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\Tailscale.lnk" -Force -ErrorAction SilentlyContinue
-Remove-Item "C:\Users\*\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Tailscale.lnk" -Force -ErrorAction SilentlyContinue
-Remove-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "Tailscale" -Force -ErrorAction SilentlyContinue
-
-# Uninstall Tailscale service + app if present
-$tsService = Get-Service -Name "Tailscale" -ErrorAction SilentlyContinue
-if ($tsService) {
-    Stop-Service -Name "Tailscale" -Force -ErrorAction SilentlyContinue
-    Get-Process -Name "tailscale*" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
-    $tsUninstall = Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*" -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -eq "Tailscale" } | Select-Object -First 1
-    if ($tsUninstall -and $tsUninstall.UninstallString -match 'MsiExec') {
-        $guid = [regex]::Match($tsUninstall.UninstallString, '\{[0-9A-Fa-f\-]+\}').Value
-        if ($guid) { Start-Process msiexec.exe -ArgumentList "/x $guid /qn /norestart" -Wait -NoNewWindow -ErrorAction SilentlyContinue }
-    }
-    Remove-Item "C:\Program Files\Tailscale" -Recurse -Force -ErrorAction SilentlyContinue
-    Write-Log "Removed legacy Tailscale install" "INFO"
-}
-
-# Uninstall Quorum Studio if present
-$quorumPath = "C:\Program Files\QuorumStudio"
-if (Test-Path $quorumPath) {
-    $quorumUninstall = Get-ItemProperty "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*", "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*" -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -match "Quorum" } | Select-Object -First 1
-    if ($quorumUninstall -and $quorumUninstall.UninstallString) {
-        Start-Process cmd.exe -ArgumentList "/c", "`"$($quorumUninstall.UninstallString)`" /S" -Wait -NoNewWindow -ErrorAction SilentlyContinue
-    }
-    Remove-Item $quorumPath -Recurse -Force -ErrorAction SilentlyContinue
-    Remove-Item "C:\Users\Public\Desktop\Quorum Studio.lnk" -Force -ErrorAction SilentlyContinue
-    Write-Log "Removed legacy Quorum Studio install" "INFO"
-}
-
-# Remove Thorium per-user install (all profiles)
-foreach ($profile in @("Admin", "Student")) {
-    $thPath = "C:\Users\$profile\AppData\Local\Programs\Thorium"
-    if (Test-Path $thPath) {
-        Remove-Item $thPath -Recurse -Force -ErrorAction SilentlyContinue
-        Write-Log "Removed Thorium from $profile profile" "INFO"
-    }
-}
-Remove-Item "C:\Users\Public\Desktop\Thorium Reader.lnk" -Force -ErrorAction SilentlyContinue
-
-# Remove nvdaRemote addon from all profiles
-Get-ChildItem "C:\Users\*\AppData\Roaming\nvda\addons\remote*" -Directory -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+# Legacy artifact cleanup (Tailscale, rclone, Thorium, Quorum, LEAP, nvdaRemote, etc.)
+# moved to Scripts\Uninstall-Legacy.ps1 — run once on upgrade-in-place laptops.
+# Fresh laptops never had these, so Configure-Laptop.ps1 skips this cleanup on every run.
 
 # Step 2: Set AutoPlay for removable drives to open folder
 Write-Log "Step 2: Configuring AutoPlay for removable drives..." "INFO"
@@ -353,10 +315,11 @@ Write-Log "Step 5: Configuring Windows Magnifier for low-vision users..." "INFO"
 
 try {
     # Enable Magnifier keyboard shortcut (Win+Plus) and set sensible defaults for all users
+    # MagnificationMode: 1=docked, 2=full-screen, 3=lens. Manifest requests full-screen (=2).
     foreach ($hive in $hkuPaths) {
         $magPath = "$hive\Software\Microsoft\ScreenMagnifier"
         if (-not (Test-Path $magPath)) { New-Item -Path $magPath -Force -ErrorAction SilentlyContinue | Out-Null }
-        Set-ItemProperty -Path $magPath -Name "MagnificationMode" -Value 1 -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $magPath -Name "MagnificationMode" -Value 2 -Force -ErrorAction SilentlyContinue
         Set-ItemProperty -Path $magPath -Name "Magnification" -Value 200 -Force -ErrorAction SilentlyContinue
 
         # Enable High Contrast keyboard shortcut (Win+Left Alt+Print Screen)
@@ -365,7 +328,7 @@ try {
         Set-ItemProperty -Path $hcPath -Name "Flags" -Value "126" -Force -ErrorAction SilentlyContinue
     }
 
-    Write-Log "Windows Magnifier defaults set (Win+Plus to launch, lens mode, 200%)" "SUCCESS"
+    Write-Log "Windows Magnifier defaults set (Win+Plus to launch, full-screen mode, 200%)" "SUCCESS"
     Write-Log "High contrast toggle enabled (Win+Left Alt+Print Screen)" "SUCCESS"
     $successCount++
 } catch {
@@ -473,53 +436,44 @@ try {
         New-ItemProperty -Path $hklmHide -Name $guid -Value 1 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
     }
 
-    # Force Explorer to re-read hide flags by toggling all desktop icons off then on
-    foreach ($hive in $hkuPaths) {
-        $advPath = "$hive\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
-        if (Test-Path $advPath) {
-            Set-ItemProperty -Path $advPath -Name "HideIcons" -Value 1 -Force -ErrorAction SilentlyContinue
-        }
-    }
-    Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
-    Start-Sleep -Seconds 2
+    # Ensure desktop icons are visible (HideIcons=0) and restart explorer so the
+    # HideDesktopIcons flags (system icons: Recycle Bin, This PC, Spotlight) apply.
     foreach ($hive in $hkuPaths) {
         $advPath = "$hive\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
         if (Test-Path $advPath) {
             Set-ItemProperty -Path $advPath -Name "HideIcons" -Value 0 -Force -ErrorAction SilentlyContinue
         }
     }
+    Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
+    Start-Sleep -Seconds 2
     Start-Process explorer.exe
     Start-Sleep -Seconds 2
-    Write-Log "Hidden system icons (Recycle Bin, Spotlight, This PC) and forced desktop refresh" "INFO"
+    Write-Log "Hidden system icons (Recycle Bin, Spotlight, This PC) and refreshed desktop" "INFO"
 
     # Plain names — no number prefixes. NVDA users navigate the desktop alphabetically
     # and use first-letter keys to jump (press "W" for Word, "F" for Firefox, etc.).
     # Numbers broke first-letter nav and added noisy "zero one" speech on every item.
     $WshShell = New-Object -ComObject WScript.Shell
+    # Alphabetical by display name so creation order matches visual order on a fresh Windows desktop
+    # (Windows places new icons in grid top-to-bottom, left-to-right based on creation sequence).
+    # IconLocation is set only for shortcuts whose target .exe lacks a usable embedded icon.
     $shortcuts = @(
-        # --- Core accessibility ---
-        @{ Name = "NVDA"; Target = "C:\Program Files\NVDA\nvda.exe"; AltTarget = "C:\Program Files (x86)\NVDA\nvda.exe"; Desc = "NVDA Screen Reader" },
-        # --- Productivity ---
-        @{ Name = "Word"; Target = "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE"; Desc = "Microsoft Word" },
-        @{ Name = "Excel"; Target = "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE"; Desc = "Microsoft Excel" },
-        @{ Name = "PowerPoint"; Target = "C:\Program Files\Microsoft Office\root\Office16\POWERPNT.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\POWERPNT.EXE"; Desc = "Microsoft PowerPoint" },
-        # --- Web & Reading ---
-        @{ Name = "Firefox"; Target = "C:\Program Files\Mozilla Firefox\firefox.exe"; AltTarget = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"; Desc = "Firefox Web Browser" },
-        @{ Name = "Wikipedia (Offline)"; Target = "C:\Program Files\Kiwix\kiwix-desktop.exe"; Desc = "Kiwix - Offline Vietnamese Wikipedia" },
-        @{ Name = "Tu Dien - Dictionary"; Target = "C:\Program Files\GoldenDict\GoldenDict.exe"; AltTarget = "C:\Program Files (x86)\GoldenDict\GoldenDict.exe"; Desc = "GoldenDict - Offline Dictionary" },
-        @{ Name = "SumatraPDF"; Target = "C:\Program Files\SumatraPDF\SumatraPDF.exe"; AltTarget = "C:\Users\Student\AppData\Local\SumatraPDF\SumatraPDF.exe"; Desc = "SumatraPDF Reader" },
-        # --- Media ---
-        @{ Name = "VLC media player"; Target = "C:\Program Files\VideoLAN\VLC\vlc.exe"; AltTarget = "C:\Program Files (x86)\VideoLAN\VLC\vlc.exe"; Desc = "VLC Media Player" },
-        @{ Name = "Audacity"; Target = "C:\Program Files\Audacity\Audacity.exe"; AltTarget = "C:\Program Files (x86)\Audacity\Audacity.exe"; Desc = "Audacity Audio Editor" },
-        # --- Education ---
-        @{ Name = "Sao Mai Typing Tutor"; Target = "C:\Program Files (x86)\SaoMai\SMTT\SMTT.exe"; AltTarget = "C:\Program Files\SaoMai\SMTT\SMTT.exe"; Desc = "Sao Mai Vietnamese Typing Tutor" },
-        @{ Name = "Readmate"; Target = "C:\Program Files\SaoMai\sm_readmate\sm_readmate.exe"; AltTarget = "C:\Program Files (x86)\SaoMai\sm_readmate\sm_readmate.exe"; Desc = "Sao Mai Readmate Accessible Reader" },
-        # --- Utilities ---
-        @{ Name = "Calculator"; Target = "calc.exe"; Desc = "Windows Calculator" },
-        @{ Name = "My USB"; Target = "explorer.exe"; Args = "shell:MyComputerFolder"; IconLocation = "%SystemRoot%\System32\imageres.dll,109"; Desc = "Open This PC to access your USB drive" },
-        # --- Lab tools ---
+        @{ Name = "Audacity"; Target = "C:\Program Files\Audacity\Audacity.exe"; AltTarget = "C:\Program Files (x86)\Audacity\Audacity.exe"; IconLocation = "C:\Program Files\Audacity\Audacity.exe,0"; Desc = "Audacity Audio Editor" },
+        @{ Name = "Calculator"; Target = "calc.exe"; IconLocation = "%SystemRoot%\System32\imageres.dll,76"; Desc = "Windows Calculator" },
         @{ Name = "Doi Ngon Ngu - Switch Language"; Target = "powershell.exe"; Args = "-NoProfile -ExecutionPolicy Bypass -File `"C:\LabTools\toggle-language.ps1`""; Desc = "Toggle Vietnamese/English" },
-        @{ Name = "Khoi Phuc NVDA - Restore NVDA"; Target = "powershell.exe"; Args = "-NoProfile -ExecutionPolicy Bypass -File `"C:\LabTools\restore-nvda.ps1`""; Desc = "Restore NVDA to default configuration" }
+        @{ Name = "Excel"; Target = "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE"; Desc = "Microsoft Excel" },
+        @{ Name = "Firefox"; Target = "C:\Program Files\Mozilla Firefox\firefox.exe"; AltTarget = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"; Desc = "Firefox Web Browser" },
+        @{ Name = "Khoi Phuc NVDA - Restore NVDA"; Target = "powershell.exe"; Args = "-NoProfile -ExecutionPolicy Bypass -File `"C:\LabTools\restore-nvda.ps1`""; Desc = "Restore NVDA to default configuration" },
+        @{ Name = "My USB"; Target = "explorer.exe"; Args = "shell:MyComputerFolder"; IconLocation = "%SystemRoot%\System32\imageres.dll,109"; Desc = "Open This PC to access your USB drive" },
+        @{ Name = "NVDA"; Target = "C:\Program Files\NVDA\nvda.exe"; AltTarget = "C:\Program Files (x86)\NVDA\nvda.exe"; Desc = "NVDA Screen Reader" },
+        @{ Name = "PowerPoint"; Target = "C:\Program Files\Microsoft Office\root\Office16\POWERPNT.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\POWERPNT.EXE"; IconLocation = "C:\Program Files\Microsoft Office\root\Office16\POWERPNT.EXE,0"; Desc = "Microsoft PowerPoint" },
+        @{ Name = "Readmate"; Target = "C:\Program Files\SaoMai\sm_readmate\sm_readmate.exe"; AltTarget = "C:\Program Files (x86)\SaoMai\sm_readmate\sm_readmate.exe"; Desc = "Sao Mai Readmate Accessible Reader" },
+        @{ Name = "Sao Mai Typing Tutor"; Target = "C:\Program Files (x86)\SaoMai\SMTT\SMTT.exe"; AltTarget = "C:\Program Files\SaoMai\SMTT\SMTT.exe"; IconLocation = "%SystemRoot%\System32\imageres.dll,116"; Desc = "Sao Mai Vietnamese Typing Tutor" },
+        @{ Name = "SumatraPDF"; Target = "C:\Program Files\SumatraPDF\SumatraPDF.exe"; AltTarget = "C:\Users\Student\AppData\Local\SumatraPDF\SumatraPDF.exe"; IconLocation = "%SystemRoot%\System32\imageres.dll,2"; Desc = "SumatraPDF Reader" },
+        @{ Name = "Tu Dien - Dictionary"; Target = "C:\Program Files\GoldenDict\GoldenDict.exe"; AltTarget = "C:\Program Files (x86)\GoldenDict\GoldenDict.exe"; Desc = "GoldenDict - Offline Dictionary" },
+        @{ Name = "VLC media player"; Target = "C:\Program Files\VideoLAN\VLC\vlc.exe"; AltTarget = "C:\Program Files (x86)\VideoLAN\VLC\vlc.exe"; Desc = "VLC Media Player" },
+        @{ Name = "Wikipedia (Offline)"; Target = "C:\Program Files\Kiwix\kiwix-desktop.exe"; Desc = "Kiwix - Offline Vietnamese Wikipedia" },
+        @{ Name = "Word"; Target = "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE"; Desc = "Microsoft Word" }
     )
 
     $createdCount = 0
@@ -570,81 +524,14 @@ try {
     $failCount++
 }
 
-# Step 7: Create welcome audio startup script for Student login
-Write-Log "Step 7: Setting up welcome audio orientation message..." "INFO"
-
+# Step 7: Welcome audio — REMOVED. NVDA's own "NVDA has started" announcement at login
+# serves the same purpose without the race condition or the bundled controller DLL dependency.
+# Clean up leftovers from any prior deploy that installed the welcome audio.
 try {
-    # Create a small PowerShell script that uses SAPI to speak a welcome message
-    $welcomeScriptDir = "C:\LabTools"
-    if (-not (Test-Path $welcomeScriptDir)) {
-        New-Item -Path $welcomeScriptDir -ItemType Directory -Force | Out-Null
-    }
-
-    # Deploy the NVDA controller client DLL (no longer bundled with NVDA since 2023.1)
-    $dllSource = Join-Path (Split-Path -Parent $PSScriptRoot) "Installers\NVDA\nvdaControllerClient64.dll"
-    $dllDest = Join-Path $welcomeScriptDir "nvdaControllerClient64.dll"
-    if ((Test-Path $dllSource) -and -not (Test-Path $dllDest)) {
-        Copy-Item -Path $dllSource -Destination $dllDest -Force
-        Write-Log "Deployed nvdaControllerClient64.dll from USB" "SUCCESS"
-    }
-
-    $welcomeScript = @'
-# Lab Welcome Audio - plays on Student login
-# Speaks through NVDA using the configured Vietnamese voice (Sao Mai VNVoice)
-Start-Sleep -Seconds 8
-
-# Use NVDA's controller client DLL to speak through NVDA's configured voice
-# The DLL is no longer bundled with NVDA since 2023.1 — we ship it in LabTools
-$nvdaDll = "C:\LabTools\nvdaControllerClient64.dll"
-
-if (Test-Path $nvdaDll) {
-    Add-Type -TypeDefinition @"
-using System;
-using System.Runtime.InteropServices;
-public class NvdaController {
-    [DllImport("$($nvdaDll.Replace('\','\\'))", CharSet = CharSet.Unicode)]
-    public static extern int nvdaController_speakText(string text);
-    [DllImport("$($nvdaDll.Replace('\','\\'))", CharSet = CharSet.Unicode)]
-    public static extern int nvdaController_testIfRunning();
-}
-"@
-    # Wait up to 30 seconds for NVDA to be ready
-    $waited = 0
-    while ($waited -lt 30) {
-        if ([NvdaController]::nvdaController_testIfRunning() -eq 0) { break }
-        Start-Sleep -Seconds 2
-        $waited += 2
-    }
-    if ([NvdaController]::nvdaController_testIfRunning() -eq 0) {
-        # Vietnamese welcome message:
-        # "NVDA dang chay. Nhan Insert cong T de nghe tieu de cua so. Nhan Insert cong F7 de xem danh sach lien ket."
-        [NvdaController]::nvdaController_speakText("NVDA đang chạy. Nhấn Insert cộng T để nghe tiêu đề cửa sổ. Nhấn Insert cộng F7 để xem danh sách liên kết.")
-    }
-}
-'@
-
-    $welcomeScriptPath = Join-Path $welcomeScriptDir "welcome-audio.ps1"
-    Set-Content -Path $welcomeScriptPath -Value $welcomeScript -Force
-
-    # Create a startup shortcut for the Student user profile
-    # This goes in All Users startup so it runs for any user
-    $allUsersStartup = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup"
-    $WshShell = New-Object -ComObject WScript.Shell
-    $welcomeShortcutPath = Join-Path $allUsersStartup "LabWelcome.lnk"
-    $welcomeShortcut = $WshShell.CreateShortcut($welcomeShortcutPath)
-    $welcomeShortcut.TargetPath = "powershell.exe"
-    $welcomeShortcut.Arguments = "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$welcomeScriptPath`""
-    $welcomeShortcut.Description = "Lab welcome audio orientation"
-    $welcomeShortcut.WindowStyle = 7  # Minimized
-    $welcomeShortcut.Save()
-
-    Write-Log "Welcome audio script created at $welcomeScriptPath" "SUCCESS"
-    Write-Log "Startup shortcut created for all users" "SUCCESS"
-    $successCount++
-} catch {
-    Write-Log "Could not set up welcome audio: $($_.Exception.Message)" "ERROR"
-    $failCount++
-}
+    Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\LabWelcome.lnk" -Force -ErrorAction SilentlyContinue
+    Remove-Item "C:\LabTools\welcome-audio.ps1" -Force -ErrorAction SilentlyContinue
+    Remove-Item "C:\LabTools\nvdaControllerClient64.dll" -Force -ErrorAction SilentlyContinue
+} catch {}
 
 # Step 8: (Moved to Step 6 — desktop shortcuts are now created in one pass)
 
@@ -704,36 +591,57 @@ try {
     $failCount++
 }
 
-# Step 9b: Set Windows SAPI default voice to Vietnamese (matches NVDA and user audience)
-# This affects any app using Windows TTS. NVDA uses its own voice config and is unaffected.
-Write-Log "Step 9b: Setting Windows SAPI default voice to Vietnamese (Minh Du)..." "INFO"
+# Step 9b: SAPI5 bridge + default Vietnamese voice
+# - Bridge Microsoft An (OneCore neural vi-VN) into SAPI5 for BOTH 64-bit (Readmate)
+#   and 32-bit (NVDA) apps. Without 32-bit mirror, NVDA falls back to Sao Mai Thanh Vi
+#   which has an internal English voice (Daniel) that spells Vietnamese letter-by-letter
+#   when it mis-detects short Vietnamese fragments.
+# - Set machine + per-user SAPI defaults to Microsoft An for consistency across apps.
+# Note: Microsoft An is Northern dialect. No offline Southern neural voice exists that
+# handles bilingual text correctly. This is the best available option.
+Write-Log "Step 9b: Bridging Microsoft An to SAPI5 (64-bit + 32-bit) and setting default voice..." "INFO"
 
 try {
-    # Machine-wide SAPI default (Vietnamese Minh Du from Sao Mai VNVoice)
-    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Speech\Voices" `
-        -Name "DefaultTokenId" `
-        -Value "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\Minh Du" -Force
-    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Speech_OneCore\Voices" `
-        -Name "DefaultTokenId" `
-        -Value "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech_OneCore\Voices\Tokens\MSTTS_V110_viVN_An" -Force
+    $oneCoreAn = "HKLM:\SOFTWARE\Microsoft\Speech_OneCore\Voices\Tokens\MSTTS_V110_viVN_An"
+    $sapiAn64  = "HKLM:\SOFTWARE\Microsoft\Speech\Voices\Tokens\MSTTS_V110_viVN_An"
+    $sapiAn32  = "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Speech\Voices\Tokens\MSTTS_V110_viVN_An"
+
+    if (Test-Path $oneCoreAn) {
+        if (-not (Test-Path $sapiAn64)) {
+            & reg.exe copy "HKLM\SOFTWARE\Microsoft\Speech_OneCore\Voices\Tokens\MSTTS_V110_viVN_An" `
+                           "HKLM\SOFTWARE\Microsoft\Speech\Voices\Tokens\MSTTS_V110_viVN_An" /s /f 2>&1 | Out-Null
+            Write-Log "Microsoft An bridged to 64-bit SAPI5 (enables Readmate)" "SUCCESS"
+        }
+        if (-not (Test-Path $sapiAn32)) {
+            & reg.exe copy "HKLM\SOFTWARE\Microsoft\Speech\Voices\Tokens\MSTTS_V110_viVN_An" `
+                           "HKLM\SOFTWARE\WOW6432Node\Microsoft\Speech\Voices\Tokens\MSTTS_V110_viVN_An" /s /f 2>&1 | Out-Null
+            Write-Log "Microsoft An mirrored to 32-bit SAPI5 (enables NVDA bilingual reading)" "SUCCESS"
+        }
+    } else {
+        Write-Log "Microsoft An (OneCore) not found — Vietnamese language pack TTS may not be installed" "WARNING"
+    }
+
+    # Machine-wide SAPI default (Microsoft An everywhere — bilingual neural, consistent with NVDA + Readmate)
+    $anPath = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\MSTTS_V110_viVN_An"
+    $anOneCore = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech_OneCore\Voices\Tokens\MSTTS_V110_viVN_An"
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Speech\Voices" -Name "DefaultTokenId" -Value $anPath -Force
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Speech_OneCore\Voices" -Name "DefaultTokenId" -Value $anOneCore -Force
 
     # Per-user SAPI default (Student + any other loaded hives)
     foreach ($hive in $hkuPaths) {
         $speechPath = "$hive\Software\Microsoft\Speech\Voices"
         if (-not (Test-Path $speechPath)) { New-Item -Path $speechPath -Force | Out-Null }
-        Set-ItemProperty -Path $speechPath -Name "DefaultTokenId" `
-            -Value "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\Minh Du" -Force
+        Set-ItemProperty -Path $speechPath -Name "DefaultTokenId" -Value $anPath -Force
 
         $oneCorePath = "$hive\Software\Microsoft\Speech_OneCore\Voices"
         if (-not (Test-Path $oneCorePath)) { New-Item -Path $oneCorePath -Force | Out-Null }
-        Set-ItemProperty -Path $oneCorePath -Name "DefaultTokenId" `
-            -Value "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech_OneCore\Voices\Tokens\MSTTS_V110_viVN_An" -Force
+        Set-ItemProperty -Path $oneCorePath -Name "DefaultTokenId" -Value $anOneCore -Force
     }
 
-    Write-Log "SAPI default voice set to Vietnamese (Minh Du)" "SUCCESS"
+    Write-Log "SAPI default voice set to Microsoft An (bilingual neural)" "SUCCESS"
     $successCount++
 } catch {
-    Write-Log "Could not set SAPI default voice: $($_.Exception.Message)" "ERROR"
+    Write-Log "Could not set SAPI voices: $($_.Exception.Message)" "ERROR"
     $failCount++
 }
 
@@ -764,6 +672,35 @@ try {
 } catch {
     Write-Log "Could not configure Windows Update: $($_.Exception.Message)" "ERROR"
     $failCount++
+}
+
+# Step 10b: Disable Microsoft 365 Office auto-updates. Office still works offline;
+# activation check runs separately (~30 days). Updates can be pushed via update agent if needed.
+Write-Log "Step 10b: Disabling Office 365 auto-updates..." "INFO"
+
+try {
+    $officeUpdatePolicy = "HKLM:\SOFTWARE\Policies\Microsoft\office\16.0\common\officeupdate"
+    if (-not (Test-Path $officeUpdatePolicy)) { New-Item -Path $officeUpdatePolicy -Force | Out-Null }
+    Set-ItemProperty -Path $officeUpdatePolicy -Name "enableautomaticupdates" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $officeUpdatePolicy -Name "hideenabledisableupdates" -Value 1 -Type DWord -Force
+    Set-ItemProperty -Path $officeUpdatePolicy -Name "hideupdatenotifications" -Value 1 -Type DWord -Force
+
+    # Disable Office auto-update scheduled tasks (wildcards via -like — Get-ScheduledTask -TaskName
+    # doesn't reliably expand * on all Win11 builds).
+    $officeTasks = Get-ScheduledTask -ErrorAction SilentlyContinue | Where-Object {
+        $_.TaskName -like "Office Automatic Updates*" -or
+        $_.TaskName -like "Office Feature Updates*" -or
+        $_.TaskName -like "Office Background Push Maintenance*" -or
+        $_.TaskName -like "Office Startup Maintenance*"
+    }
+    foreach ($t in $officeTasks) {
+        Disable-ScheduledTask -TaskName $t.TaskName -TaskPath $t.TaskPath -ErrorAction SilentlyContinue | Out-Null
+    }
+
+    Write-Log "Office 365 auto-updates disabled (policy + $($officeTasks.Count) scheduled tasks)" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not disable Office updates: $($_.Exception.Message)" "WARNING"
 }
 
 # Step 11: Disable non-essential notifications
@@ -828,7 +765,13 @@ try {
 Write-Log "Step 12: Disabling Narrator auto-start shortcut..." "INFO"
 
 try {
-    # Disable the Win+Ctrl+Enter shortcut for Narrator for all users
+    # Machine-wide policy (defense-in-depth; applies to any user, including logon screen)
+    $narratorPolicy = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\Narrator.exe"
+    if (-not (Test-Path $narratorPolicy)) { New-Item -Path $narratorPolicy -Force -ErrorAction SilentlyContinue | Out-Null }
+    # Redirect Narrator.exe invocations to a harmless no-op so it can't run even if triggered
+    Set-ItemProperty -Path $narratorPolicy -Name "Debugger" -Value "%SystemRoot%\System32\systray.exe" -Force -ErrorAction SilentlyContinue
+
+    # Per-user: also disable the Win+Ctrl+Enter shortcut so the key combo does nothing
     foreach ($hive in $hkuPaths) {
         $narratorPath = "$hive\Software\Microsoft\Narrator\NoRoam"
         if (-not (Test-Path $narratorPath)) { New-Item -Path $narratorPath -Force -ErrorAction SilentlyContinue | Out-Null }
@@ -839,10 +782,10 @@ try {
         Set-ItemProperty -Path $easeAccess -Name "selfvoice.ManualStart" -Value 1 -Force -ErrorAction SilentlyContinue
     }
 
-    Write-Log "Narrator shortcut disabled for all users (prevents NVDA conflict)" "SUCCESS"
+    Write-Log "Narrator disabled (HKLM IFEO debugger + per-user hotkey off) — prevents NVDA conflict" "SUCCESS"
     $successCount++
 } catch {
-    Write-Log "Could not disable Narrator shortcut: $($_.Exception.Message)" "ERROR"
+    Write-Log "Could not disable Narrator: $($_.Exception.Message)" "ERROR"
     $failCount++
 }
 
@@ -938,29 +881,86 @@ try {
     }
     if (Test-Path $nvdaTemplate) {
         Copy-Item -Path $nvdaTemplate -Destination "$nvdaConfigDir\nvda.ini" -Force
-        Write-Log "Deployed NVDA config template (laptop layout, Vietnamese, rate 35) to Student profile" "SUCCESS"
+        # Clean up any stale .corrupted.bak from a prior broken deploy
+        Remove-Item "$nvdaConfigDir\nvda.ini.corrupted.bak" -Force -ErrorAction SilentlyContinue
+        Write-Log "Deployed NVDA config template (laptop layout, Vietnamese Thanh Vi, rate 35) to Student profile" "SUCCESS"
+    }
+
+    # NVDA shortcuts: machine-wide Startup for auto-launch + per-user for Ctrl+Alt+N hotkey.
+    # Windows 11 22H2+ only registers .lnk HotKey from the current user's own profile.
+    # Also delete installer-created duplicates (Public Desktop + ProgramData NVDA folder)
+    # so Student doesn't see two icons.
+    try {
+        $nvdaExe = "C:\Program Files (x86)\NVDA\nvda.exe"
+        if (-not (Test-Path $nvdaExe)) { $nvdaExe = "C:\Program Files\NVDA\nvda.exe" }
+        $nvdaDir = Split-Path -Parent $nvdaExe
+        $nvdaIco = Join-Path $nvdaDir "images\nvda.ico"
+
+        $studentStart = "C:\Users\Student\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\NVDA"
+        $studentDesk  = "C:\Users\Student\Desktop"
+        $sysStartup   = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup"
+        New-Item -ItemType Directory -Force -Path $studentStart | Out-Null
+
+        $WshShell = New-Object -ComObject WScript.Shell
+
+        # Per-user Desktop + Start Menu (hotkey sources)
+        foreach ($dir in @($studentStart, $studentDesk)) {
+            $lnk = Join-Path $dir "NVDA.lnk"
+            $sc  = $WshShell.CreateShortcut($lnk)
+            $sc.TargetPath       = $nvdaExe
+            $sc.WorkingDirectory = $nvdaDir
+            if (Test-Path $nvdaIco) { $sc.IconLocation = $nvdaIco }
+            $sc.Hotkey           = "Ctrl+Alt+N"
+            $sc.Description      = "NVDA Screen Reader"
+            $sc.Save()
+            & icacls.exe $lnk /setowner Student /C 2>&1 | Out-Null
+            & icacls.exe $lnk /grant "Student:F" /C 2>&1 | Out-Null
+        }
+
+        # Machine-wide Startup shortcut (auto-launch on login). Idempotent — safe to re-create.
+        $startupLnk = Join-Path $sysStartup "NVDA.lnk"
+        $sc = $WshShell.CreateShortcut($startupLnk)
+        $sc.TargetPath       = $nvdaExe
+        $sc.WorkingDirectory = $nvdaDir
+        if (Test-Path $nvdaIco) { $sc.IconLocation = $nvdaIco }
+        $sc.Description      = "NVDA Screen Reader - Auto-start"
+        $sc.Save()
+
+        # Delete installer-created duplicates (these don't register hotkeys on Win11 22H2+
+        # and just show up as duplicate icons).
+        Remove-Item "C:\Users\Public\Desktop\NVDA.lnk" -Force -ErrorAction SilentlyContinue
+        Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\NVDA\NVDA.lnk" -Force -ErrorAction SilentlyContinue
+
+        Write-Log "NVDA shortcuts deployed (Student Desktop/StartMenu + system Startup); duplicates removed" "SUCCESS"
+    } catch {
+        Write-Log "Could not configure NVDA shortcuts: $($_.Exception.Message)" "WARNING"
     }
 
     # Copy NVDA addons from Admin profile to Student (3-Configure-NVDA.ps1 installs
-    # addons to $env:APPDATA which resolves to Admin when run from Bootstrap)
+    # addons to $env:APPDATA which resolves to Admin when run from Bootstrap).
+    # Prune Student's addon dir first so removed-from-manifest addons don't linger on redeploy.
     $adminAddons = Join-Path $env:APPDATA "nvda\addons"
     $studentAddons = Join-Path $nvdaConfigDir "addons"
     if ((Test-Path $adminAddons) -and (Get-ChildItem $adminAddons -ErrorAction SilentlyContinue)) {
-        if (-not (Test-Path $studentAddons)) {
+        if (Test-Path $studentAddons) {
+            Remove-Item "$studentAddons\*" -Recurse -Force -ErrorAction SilentlyContinue
+        } else {
             New-Item -Path $studentAddons -ItemType Directory -Force | Out-Null
         }
         Copy-Item -Path "$adminAddons\*" -Destination $studentAddons -Recurse -Force -ErrorAction SilentlyContinue
         $addonCount = (Get-ChildItem $studentAddons -Directory -ErrorAction SilentlyContinue).Count
-        Write-Log "Copied $addonCount NVDA addon(s) from Admin to Student profile" "SUCCESS"
+        Write-Log "Copied $addonCount NVDA addon(s) from Admin to Student profile (pruned first)" "SUCCESS"
     }
 
-    # Backup the config
+    # Backup the config — prune first so stale addons don't persist across redeploys
     if (Test-Path $nvdaConfigDir) {
-        if (-not (Test-Path $backupDir)) {
+        if (Test-Path $backupDir) {
+            Remove-Item "$backupDir\*" -Recurse -Force -ErrorAction SilentlyContinue
+        } else {
             New-Item -Path $backupDir -ItemType Directory -Force | Out-Null
         }
         Copy-Item -Path "$nvdaConfigDir\*" -Destination $backupDir -Recurse -Force -ErrorAction SilentlyContinue
-        Write-Log "NVDA config backed up to $backupDir" "SUCCESS"
+        Write-Log "NVDA config backed up to $backupDir (pruned first)" "SUCCESS"
     }
 
     # Create restore script
@@ -1052,31 +1052,31 @@ try {
     $failCount++
 }
 
-# Step 17c: Block SM Readmate auto-update endpoint via hosts file
-# SM Readmate 1.1.0 polls saomaicenter.org for updates and prompts students on new
-# versions. We saw firsthand that 1.0.5 -> 1.1.0 broke the entire library. Block so
-# students never see the prompt. Updates to SM Readmate are pushed via our update
-# agent (update-manifest.json) after testing each version.
-Write-Log "Step 17c: Blocking SM Readmate auto-update endpoint..." "INFO"
+# Step 17c: Remove any legacy saomaicenter.org hosts block
+# Earlier deployments blocked saomaicenter.org to stop SM Readmate self-update prompts.
+# Students need it unblocked so they can reach SMTT lesson downloads and pull extra
+# books from Sao Mai. Readmate's update is dialog-based, so blind users won't
+# accidentally accept a silent upgrade.
+Write-Log "Step 17c: Ensuring saomaicenter.org is not blocked in hosts file..." "INFO"
 
 try {
     $hostsFile = "$env:SystemRoot\System32\drivers\etc\hosts"
     $marker = "# VN-LAB: block SM Readmate auto-update"
-    $blockEntry = "0.0.0.0 saomaicenter.org"
 
-    $content = if (Test-Path $hostsFile) { Get-Content $hostsFile -Raw } else { "" }
-    if ($content -notmatch [regex]::Escape($marker)) {
-        $append = "`r`n$marker`r`n$blockEntry`r`n"
-        Add-Content -Path $hostsFile -Value $append -Encoding ASCII
-        ipconfig /flushdns | Out-Null
-        Write-Log "SM Readmate update check blocked (hosts file entry added)" "SUCCESS"
-        $successCount++
-    } else {
-        Write-Log "SM Readmate update block already present in hosts file" "INFO"
+    if (Test-Path $hostsFile) {
+        $lines = Get-Content $hostsFile
+        $filtered = $lines | Where-Object { $_ -notmatch [regex]::Escape($marker) -and $_ -notmatch 'saomaicenter\.org' }
+        if ($filtered.Count -ne $lines.Count) {
+            Set-Content -Path $hostsFile -Value $filtered -Encoding ASCII
+            ipconfig /flushdns | Out-Null
+            Write-Log "Removed legacy saomaicenter.org block from hosts" "SUCCESS"
+        } else {
+            Write-Log "No saomaicenter.org block present (nothing to remove)" "INFO"
+        }
         $successCount++
     }
 } catch {
-    Write-Log "Could not block SM Readmate updates: $($_.Exception.Message)" "WARNING"
+    Write-Log "Could not scrub hosts file: $($_.Exception.Message)" "WARNING"
 }
 
 # Step 17d: Deploy SM Readmate preferences (default to Microsoft An, offline reliable)
@@ -1099,6 +1099,29 @@ try {
     }
 } catch {
     Write-Log "Could not deploy SM Readmate preferences: $($_.Exception.Message)" "WARNING"
+}
+
+# Step 17e: Deploy SMTT per-user data (DB, lessons, UI lang, help)
+# SMTT looks for .\SMTT.ini / .\SMTT.smdb in %APPDATA%\SaoMai\SMTT. Without it,
+# first launch prompts "File not found. Press OK to select your data". Ship a
+# pre-populated template so Student gets a working app on first run.
+Write-Log "Step 17e: Deploying SMTT per-user data..." "INFO"
+
+try {
+    $smttTemplate = Join-Path (Split-Path -Parent $PSScriptRoot) "Config\smtt-data"
+    $smttDest = "C:\Users\Student\AppData\Roaming\SaoMai\SMTT"
+
+    if (Test-Path $smttTemplate) {
+        if (-not (Test-Path $smttDest)) { New-Item -Path $smttDest -ItemType Directory -Force | Out-Null }
+        Copy-Item -Path "$smttTemplate\*" -Destination $smttDest -Recurse -Force
+        icacls $smttDest /grant "Student:(OI)(CI)M" /T /Q 2>$null | Out-Null
+        Write-Log "SMTT data deployed to Student AppData" "SUCCESS"
+        $successCount++
+    } else {
+        Write-Log "SMTT template not found at $smttTemplate" "WARNING"
+    }
+} catch {
+    Write-Log "Could not deploy SMTT data: $($_.Exception.Message)" "WARNING"
 }
 
 # Step 18: Deploy Update Agent
@@ -1427,6 +1450,30 @@ try {
     $failCount++
 }
 
+# Step 26b: Disable Windows 11 "Soft Landing" content-recommendation tasks. Windows
+# auto-creates per-user tasks at \SoftLanding\<SID>\ that push suggestions; they
+# clutter scheduled tasks and can surface popups. Belt-and-suspenders with Step 11
+# (SoftLandingEnabled=0 in ContentDeliveryManager).
+Write-Log "Step 26b: Disabling SoftLanding content tasks..." "INFO"
+
+try {
+    # schtasks.exe /Delete works where Disable-ScheduledTask cmdlet fails (Access is
+    # denied on per-user protected task paths).
+    $softLandingTasks = Get-ScheduledTask -ErrorAction SilentlyContinue | Where-Object { $_.TaskPath -like "\SoftLanding\*" }
+    foreach ($t in $softLandingTasks) {
+        $full = $t.TaskPath + $t.TaskName
+        & schtasks.exe /Delete /TN $full /F 2>&1 | Out-Null
+    }
+    if ($softLandingTasks) {
+        Write-Log "Deleted $($softLandingTasks.Count) SoftLanding task(s)" "SUCCESS"
+    } else {
+        Write-Log "No SoftLanding tasks found (nothing to delete)" "INFO"
+    }
+    $successCount++
+} catch {
+    Write-Log "Could not remove SoftLanding tasks: $($_.Exception.Message)" "WARNING"
+}
+
 # Step 27: Neuter Microsoft Edge (remove shortcuts, disable auto-start)
 Write-Log "Step 27: Neutering Microsoft Edge..." "INFO"
 
@@ -1467,7 +1514,19 @@ try {
     Get-ScheduledTask -TaskName "MicrosoftEdge*" -ErrorAction SilentlyContinue |
         Disable-ScheduledTask -ErrorAction SilentlyContinue | Out-Null
 
-    Write-Log "Microsoft Edge neutered (shortcuts removed, auto-start disabled, update tasks disabled)" "SUCCESS"
+    # Block Edge auto-update via policy (UpdateDefault=0). Also disables the update
+    # services so Edge can't refresh itself in the background.
+    $edgeUpdatePolicy = "HKLM:\SOFTWARE\Policies\Microsoft\EdgeUpdate"
+    if (-not (Test-Path $edgeUpdatePolicy)) { New-Item -Path $edgeUpdatePolicy -Force | Out-Null }
+    Set-ItemProperty -Path $edgeUpdatePolicy -Name "UpdateDefault" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $edgeUpdatePolicy -Name "AutoUpdateCheckPeriodMinutes" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $edgeUpdatePolicy -Name "InstallDefault" -Value 0 -Type DWord -Force
+    foreach ($svc in @("edgeupdate", "edgeupdatem", "MicrosoftEdgeElevationService")) {
+        Set-Service -Name $svc -StartupType Disabled -ErrorAction SilentlyContinue
+        Stop-Service -Name $svc -Force -ErrorAction SilentlyContinue
+    }
+
+    Write-Log "Microsoft Edge neutered (shortcuts removed, auto-start + auto-update disabled)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not neuter Microsoft Edge: $($_.Exception.Message)" "ERROR"
@@ -1478,33 +1537,33 @@ try {
 Write-Log "Step 27b: Cleaning startup apps..." "INFO"
 
 try {
-    # UniKey: ensure startup shortcut uses the wrapper VBS that sets ShowDlg=0
-    # (UniKey overwrites ShowDlg=1 on exit, so registry-only fix doesn't persist)
+    # UniKey: point Startup shortcut directly at UniKeyNT.exe. With Vietnamese=1, ShowDlg=0,
+    # and AutoUpdate=0 in registry (set below), the old VBS wrapper is no longer needed.
     $unikeyLnk = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\UniKey.lnk"
-    $launcherVbs = "C:\LabTools\start-unikey.vbs"
-    if ((Test-Path $unikeyLnk) -and (Test-Path $launcherVbs)) {
+    $unikeyExe = "C:\Program Files\UniKey\UniKeyNT.exe"
+    if (Test-Path $unikeyExe) {
         $WshShell = New-Object -ComObject WScript.Shell
         $shortcut = $WshShell.CreateShortcut($unikeyLnk)
-        if ($shortcut.TargetPath -ne (Get-Command wscript.exe).Path) {
-            $shortcut.TargetPath = "wscript.exe"
-            $shortcut.Arguments = "`"$launcherVbs`""
-            $shortcut.WorkingDirectory = "C:\Program Files\UniKey"
-            $shortcut.WindowStyle = 7
-            $shortcut.Description = "UniKey Vietnamese Input (silent start)"
-            $shortcut.Save()
-            Write-Log "UniKey startup shortcut updated to use wrapper" "INFO"
-        }
+        $shortcut.TargetPath       = $unikeyExe
+        $shortcut.Arguments        = ""
+        $shortcut.WorkingDirectory = "C:\Program Files\UniKey"
+        $shortcut.WindowStyle      = 7
+        $shortcut.Description      = "UniKey Vietnamese Input"
+        $shortcut.Save()
     }
+    # Remove legacy VBS wrapper if present (from old deploys)
+    Remove-Item "C:\LabTools\start-unikey.vbs" -Force -ErrorAction SilentlyContinue
 
-    # Also set registry values for good measure (covers fresh profiles)
+    # Registry: Vietnamese mode on, no popup, no auto-update
     foreach ($hive in $hkuPaths) {
         $uniKeyPath = "$hive\Software\PkLong\UniKey"
         if (-not (Test-Path $uniKeyPath)) { New-Item -Path $uniKeyPath -Force -ErrorAction SilentlyContinue | Out-Null }
         Set-ItemProperty -Path $uniKeyPath -Name "ShowDlg" -Value 0 -Force -ErrorAction SilentlyContinue
         Set-ItemProperty -Path $uniKeyPath -Name "AutoUpdate" -Value 0 -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $uniKeyPath -Name "Vietnamese" -Value 1 -Force -ErrorAction SilentlyContinue
     }
 
-    Write-Log "Startup apps cleaned (UniKey dialog suppressed via wrapper)" "SUCCESS"
+    Write-Log "Startup apps cleaned (UniKey configured via registry, direct launch)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not clean startup apps: $($_.Exception.Message)" "ERROR"
@@ -1754,10 +1813,9 @@ try {
     }
 
     # ── Unregister any leftover Thorium .epub associations from prior deployments ──
+    # (cmd /c ftype/assoc removed — they don't survive Win11 per-user UserChoice ACL)
     Remove-Item -Path "HKLM:\SOFTWARE\Classes\ThoriumReader.epub" -Recurse -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "HKLM:\SOFTWARE\Classes\Applications\Thorium.exe" -Recurse -Force -ErrorAction SilentlyContinue
-    cmd /c ftype ThoriumReader.epub= 2>$null
-    cmd /c assoc .epub= 2>$null
 
     # ── Register SumatraPDF ProgID in HKLM (machine-wide) ──
     $sumatraProgID = "HKLM:\SOFTWARE\Classes\SumatraPDF.pdf"
@@ -1824,9 +1882,7 @@ try {
         if (Test-Path $ucPath) { Remove-Item -Path $ucPath -Force -ErrorAction SilentlyContinue }
     }
 
-    # ── Use assoc/ftype as belt-and-suspenders ──
-    cmd /c ftype SumatraPDF.pdf="`"$sumatraExe`" `"%1`"" 2>$null
-    cmd /c assoc .pdf=SumatraPDF.pdf 2>$null
+    # (cmd /c assoc/ftype removed — deprecated on Win11 22H2+, HKLM+HKU writes above cover it)
 
     # Notify Explorer shell of association changes
     $shChangeCode = 'using System; using System.Runtime.InteropServices; public class Shell32Assoc { [DllImport("shell32.dll", CharSet = CharSet.Auto, SetLastError = true)] public static extern void SHChangeNotify(int wEventId, int uFlags, IntPtr dwItem1, IntPtr dwItem2); }'
@@ -1854,11 +1910,25 @@ try {
     $kiwixSource = Join-Path (Split-Path -Parent $PSScriptRoot) "Config\kiwix-config\Kiwix-desktop.conf"
     if (Test-Path $kiwixSource) {
         Copy-Item -Path $kiwixSource -Destination "$kiwixConfigDir\Kiwix-desktop.conf" -Force
-        Write-Log "Kiwix config deployed to $kiwixConfigDir (130% zoom)" "SUCCESS"
+        Write-Log "Kiwix config deployed to $kiwixConfigDir (130% zoom, monitorDir)" "SUCCESS"
         $successCount++
     } else {
         Write-Log "Kiwix config not found at $kiwixSource" "ERROR"
         $failCount++
+    }
+
+    # Deploy library.xml so Wikipedia + Wiktionary ZIMs show up in "Local files"
+    # on first launch. Without it, the library is empty and students see nothing.
+    $libraryDir = Join-Path $profileBase "AppData\Roaming\kiwix-desktop"
+    if (-not (Test-Path $libraryDir)) { New-Item -Path $libraryDir -ItemType Directory -Force | Out-Null }
+    $librarySource = Join-Path (Split-Path -Parent $PSScriptRoot) "Config\kiwix-config\library.xml"
+    if (Test-Path $librarySource) {
+        Copy-Item -Path $librarySource -Destination "$libraryDir\library.xml" -Force
+        icacls $libraryDir /grant "Student:(OI)(CI)M" /T /Q 2>$null | Out-Null
+        Write-Log "Kiwix library.xml deployed (Wikipedia + Wiktionary pre-registered)" "SUCCESS"
+        $successCount++
+    } else {
+        Write-Log "Kiwix library.xml template not found at $librarySource" "WARNING"
     }
 } catch {
     Write-Log "Could not deploy Kiwix config: $($_.Exception.Message)" "ERROR"
@@ -1945,7 +2015,6 @@ Write-Host "Successful:    $successCount" -ForegroundColor Green
 Write-Host "Failed:        $failCount" -ForegroundColor $(if($failCount -gt 0){"Red"}else{"Green"})
 Write-Host ""
 Write-Host "Deployed to:   $labToolsDir" -ForegroundColor White
-Write-Host "  welcome-audio $(if(Test-Path "C:\LabTools\welcome-audio.ps1"){"OK"}else{"MISSING"})" -ForegroundColor $(if(Test-Path "C:\LabTools\welcome-audio.ps1"){"Green"}else{"Red"})
 Write-Host ""
 Write-Host "Desktop:" -ForegroundColor White
 Write-Host "  Shortcuts     Standardized (wiped + recreated for all apps)" -ForegroundColor White
