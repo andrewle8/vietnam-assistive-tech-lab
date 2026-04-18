@@ -111,6 +111,10 @@ Nhan Enter de mo chuong trinh.
 
 Meo: Nhan chu cai dau cua ten chuong trinh de nhay nhanh. Vi du, nhan "F" de nhay den Firefox, nhan "W" de nhay den Word.
 
+Neu nhan chu cai khong co phan ung, tieu diem ban phim da roi khoi Desktop. Nhan phim Tab mot lan — NVDA se thong bao "Desktop, danh sach". Bay gio nhan chu cai de nhay se hoat dong. Neu Tab chuyen den thanh tac vu hoac khay he thong, nhan Tab them mot lan de quay lai danh sach Desktop. Hoac nhan mot phim mui ten bat ky de ep tieu diem len bieu tuong.
+
+Giua cac lan nhay, nhan chu cai tiep theo trong vong khoang mot giay, hoac doi hai giay de bo dem "go chu" reset. Tam dung giua hai chu (vi du: "F" roi tam dung roi "W") co the khien Windows hieu la tien to "FW" va khong tim thay gi.
+
 ### Danh Sach Chuong Trinh
 
 - Audacity - Chinh sua am thanh
@@ -122,7 +126,6 @@ Meo: Nhan chu cai dau cua ten chuong trinh de nhay nhanh. Vi du, nhan "F" de nha
 - My USB - Mo USB cua ban
 - NVDA - Trinh doc man hinh
 - PowerPoint - Trinh chieu
-- Quorum Studio - Lap trinh
 - Sao Mai Typing Tutor - Luyen go phim tieng Viet
 - Readmate - Doc sach giao khoa (103 sach da duoc cai san)
 - SumatraPDF - Doc file PDF
@@ -135,25 +138,26 @@ Meo: Nhan chu cai dau cua ten chuong trinh de nhay nhanh. Vi du, nhan "F" de nha
 
 ## Phim Tat NVDA Quan Trong
 
-May tinh nay dung che do ban phim "Laptop". Phim NVDA la phim Caps Lock hoac Insert (ca hai deu dung duoc).
+May tinh nay dung che do ban phim "Laptop". Phim NVDA la phim Insert (phim Insert ben phai hoac phim Insert tren bang so).
 
 | Phim | Chuc nang |
 |---|---|
 | NVDA + 1 | Che do hoc phim - nhan bat ky phim nao de nghe chuc nang cua no |
 | NVDA + T | Nghe tieu de cua so |
-| NVDA + B | Doc toan bo cua so |
-| NVDA + F7 | Danh sach lien ket |
+| NVDA + A | Doc tu vi tri hien tai (Say All) |
+| NVDA + L | Doc dong hien tai |
+| NVDA + F7 | Danh sach lien ket / tieu de |
 | NVDA + Space | Chuyen che do duyet/tap trung |
 | NVDA + N | Mo menu NVDA |
 | NVDA + Q | Thoat NVDA |
 | NVDA + S | Chuyen che do noi (noi / beep / tat) |
 | NVDA + Ctrl + Mui ten len | Tang toc do noi |
 | NVDA + Ctrl + Mui ten xuong | Giam toc do noi |
+| NVDA + Ctrl + F | Tim van ban trong tai lieu |
 | Ctrl | Dung doc |
-| NVDA + Mui ten xuong | Doc tu vi tri hien tai |
 | Tab | Di chuyen den muc tiep theo |
 | Shift + Tab | Di chuyen den muc truoc |
-| Ctrl + Alt + N | Khoi dong lai NVDA |
+| Ctrl + Alt + N | Khoi dong NVDA |
 | Alt + F4 | Dong chuong trinh |
 | Alt + Tab | Chuyen chuong trinh |
 
@@ -161,11 +165,11 @@ May tinh nay dung che do ban phim "Laptop". Phim NVDA la phim Caps Lock hoac Ins
 
 Khi dung PowerShell, Command Prompt, hoac cac ung dung khac ma ban phim khong hoat dong binh thuong:
 
-Nhan Caps Lock + Space de chuyen sang "Che do tap trung".
+Nhan Insert + Space de chuyen sang "Che do tap trung".
 
 O che do nay, tat ca phim ban nhan se gui thang den ung dung (bao gom Backspace, Delete).
 
-Nhan Caps Lock + Space lan nua de quay lai che do duyet.
+Nhan Insert + Space lan nua de quay lai che do duyet.
 
 ---
 
@@ -183,6 +187,9 @@ Vi du Telex:
 - uw = u (u moc)
 - dd = d (d ngang)
 - s = dau sac, f = dau huyen, r = dau hoi, x = dau nga, j = dau nang
+- z = xoa dau (vi du "af" cho ra "à", sau do them "z" tro lai "a")
+
+Chuyen tieng Viet/Anh: nhan Ctrl + Shift. Xem bieu tuong UniKey tren thanh tac vu (V = tieng Viet, E = tieng Anh).
 
 ---
 

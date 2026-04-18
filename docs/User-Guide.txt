@@ -111,6 +111,10 @@ Press Enter to open a program.
 
 Tip: Press the first letter of a program name to jump to it. For example, press "F" for Firefox, "W" for Word.
 
+If pressing a letter does nothing, keyboard focus has drifted off the desktop. Press Tab once — NVDA should announce "Desktop, list". Now first-letter jump works. If Tab lands on the taskbar or system tray instead, press Tab again to cycle into the desktop list. You can also press any arrow key to force focus onto the icon grid.
+
+Between jumps, press the next letter within about one second, or wait two seconds for the type-ahead buffer to reset. Pausing mid-word (for example, "F" then pause then "W") can make Windows interpret it as the prefix "FW" and jump to nothing.
+
 ### Program List
 
 - Audacity - Audio editor
@@ -122,7 +126,6 @@ Tip: Press the first letter of a program name to jump to it. For example, press 
 - My USB - Open your USB drive
 - NVDA - Screen reader
 - PowerPoint - Presentations
-- Quorum Studio - Accessible programming
 - Sao Mai Typing Tutor - Vietnamese typing tutor
 - Readmate - Vietnamese textbook reader (103 books pre-loaded)
 - SumatraPDF - PDF reader
@@ -135,25 +138,26 @@ Tip: Press the first letter of a program name to jump to it. For example, press 
 
 ## Important NVDA Shortcuts
 
-This laptop uses the "Laptop" keyboard layout. The NVDA key is Caps Lock or Insert (both work).
+This laptop uses the "Laptop" keyboard layout. The NVDA key is Insert (either the right-side Insert key or the numpad Insert).
 
 | Key | Function |
 |---|---|
 | NVDA + 1 | Input Help Mode - press any key to hear what it does |
 | NVDA + T | Read window title |
-| NVDA + B | Read entire window |
-| NVDA + F7 | List of links |
+| NVDA + A | Say All - read from current position |
+| NVDA + L | Read current line |
+| NVDA + F7 | Elements list (headings / links) |
 | NVDA + Space | Toggle browse/focus mode |
 | NVDA + N | Open NVDA menu |
 | NVDA + Q | Quit NVDA |
 | NVDA + S | Cycle speech modes (speech / beep / off) |
 | NVDA + Ctrl + Up Arrow | Increase speech rate |
 | NVDA + Ctrl + Down Arrow | Decrease speech rate |
+| NVDA + Ctrl + F | Find text in document |
 | Ctrl | Stop reading |
-| NVDA + Down Arrow | Read from current position |
 | Tab | Move to next item |
 | Shift + Tab | Move to previous item |
-| Ctrl + Alt + N | Restart NVDA |
+| Ctrl + Alt + N | Launch NVDA |
 | Alt + F4 | Close program |
 | Alt + Tab | Switch programs |
 
@@ -161,11 +165,11 @@ This laptop uses the "Laptop" keyboard layout. The NVDA key is Caps Lock or Inse
 
 When using PowerShell, Command Prompt, or other apps where the keyboard does not work normally:
 
-Press Caps Lock + Space to switch to "Focus Mode".
+Press Insert + Space to switch to "Focus Mode".
 
 In this mode, all keys you press go directly to the application (including Backspace, Delete, etc.).
 
-Press Caps Lock + Space again to return to browse mode.
+Press Insert + Space again to return to browse mode.
 
 ---
 
@@ -183,6 +187,9 @@ Telex examples:
 - uw = u with horn
 - dd = d with stroke
 - s = acute accent, f = grave accent, r = hook above, x = tilde, j = dot below
+- z = remove tone mark (e.g. "af" produces "à", then "z" strips back to "a")
+
+Switch Vietnamese/English: press Ctrl + Shift. Check the UniKey tray icon (V = Vietnamese, E = English).
 
 ---
 
