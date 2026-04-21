@@ -126,7 +126,6 @@ Giua cac lan nhay, nhan chu cai tiep theo trong vong khoang mot giay, hoac doi h
 - Doi Ngon Ngu - Switch Language - Chuyen tieng Viet/Anh
 - Excel - Bang tinh
 - Firefox - Trinh duyet web
-- Khoi Phuc NVDA - Restore NVDA - Sua NVDA neu bi loi
 - My USB - Mo USB cua ban
 - NVDA - Trinh doc man hinh
 - PowerPoint - Trinh chieu
@@ -474,9 +473,8 @@ Chuong trinh day go phim cua Sao Mai, da duoc cai san tren may:
 
 Neu NVDA khong noi hoac noi sai:
 
-1. Dung phim mui ten den bieu tuong "Khoi Phuc NVDA" (nhan phim "K" de nhay nhanh)
-2. Nhan Enter
-3. Doi vai giay, NVDA se khoi dong lai voi cai dat goc
+1. Nhan **Ctrl + Alt + N** de khoi dong lai NVDA
+2. Neu van khong duoc, hoi thay co
 
 ---
 

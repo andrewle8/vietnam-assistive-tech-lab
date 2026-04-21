@@ -126,7 +126,6 @@ Between jumps, press the next letter within about one second, or wait two second
 - Doi Ngon Ngu - Switch Language - Switch Vietnamese/English
 - Excel - Spreadsheet
 - Firefox - Web browser
-- Khoi Phuc NVDA - Restore NVDA - Resets NVDA to defaults if broken
 - My USB - Open your USB drive
 - NVDA - Screen reader
 - PowerPoint - Presentations
@@ -474,9 +473,8 @@ Pre-installed Vietnamese typing tutor from Sao Mai:
 
 If NVDA stops talking or speaks incorrectly:
 
-1. Use arrow keys to navigate to "Khoi Phuc NVDA" (press "K" to jump quickly)
-2. Press Enter
-3. Wait a few seconds, NVDA will restart with default settings
+1. Press Ctrl + Alt + N to restart NVDA
+2. If that does not help, ask your teacher
 
 ---
 

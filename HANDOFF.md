@@ -40,7 +40,7 @@ NVDA starts automatically when the PC turns on. If it doesn't, look for the NVDA
 
 ### Restore NVDA Settings
 
-If NVDA stops speaking Vietnamese or has wrong settings, use the **"Khôi Phục NVDA - Restore NVDA"** shortcut on the desktop. This restores NVDA to the original lab configuration.
+If NVDA stops speaking Vietnamese or has wrong settings, robocopy the backup from `C:\LabTools\nvda-backup\` into the Student profile's NVDA config folder (typically `C:\Users\Student\AppData\Roaming\nvda\`). Must be run from an Admin session since Step 16 writes the backup machine-wide. For a full redeploy, re-run `Configure-Laptop.ps1` instead.
 
 ### Backup: Windows Narrator
 

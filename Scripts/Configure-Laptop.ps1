@@ -287,7 +287,13 @@ try {
 
     # Set timezone to Southeast Asia (UTC+7 Ho Chi Minh)
     Set-TimeZone -Id "SE Asia Standard Time"
-    Write-Log "Timezone set to SE Asia Standard Time (UTC+7)" "SUCCESS"
+    # Disable the "Set time zone automatically" service. Without this, Windows geolocates
+    # the laptop and overrides Set-TimeZone the moment it sees a non-VN network (e.g. at
+    # the deployment bench in the US), leaving students on a US clock until someone
+    # flips the toggle in Settings. Stopping + disabling tzautoupdate pins the clock.
+    Stop-Service -Name tzautoupdate -Force -ErrorAction SilentlyContinue
+    Set-Service -Name tzautoupdate -StartupType Disabled -ErrorAction SilentlyContinue
+    Write-Log "Timezone set to SE Asia Standard Time (UTC+7); tzautoupdate service disabled" "SUCCESS"
 
     # Set system locale to Vietnamese (affects non-Unicode programs)
     # This requires a registry change and reboot to take effect
@@ -695,7 +701,6 @@ try {
         @{ Name = "Doi Ngon Ngu - Switch Language"; Target = "powershell.exe"; Args = "-NoProfile -ExecutionPolicy Bypass -File `"C:\LabTools\toggle-language.ps1`""; Desc = "Toggle Vietnamese/English" },
         @{ Name = "Excel"; Target = "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE"; Desc = "Microsoft Excel" },
         @{ Name = "Firefox"; Target = "C:\Program Files\Mozilla Firefox\firefox.exe"; AltTarget = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"; Desc = "Firefox Web Browser" },
-        @{ Name = "Khoi Phuc NVDA - Restore NVDA"; Target = "powershell.exe"; Args = "-NoProfile -ExecutionPolicy Bypass -File `"C:\LabTools\restore-nvda.ps1`""; Desc = "Restore NVDA to default configuration" },
         @{ Name = "My USB"; Target = "explorer.exe"; Args = "shell:MyComputerFolder"; IconLocation = "%SystemRoot%\System32\imageres.dll,109"; Desc = "Open This PC to access your USB drive" },
         @{ Name = "NVDA"; Target = "C:\Program Files\NVDA\nvda.exe"; AltTarget = "C:\Program Files (x86)\NVDA\nvda.exe"; Desc = "NVDA Screen Reader" },
         @{ Name = "PowerPoint"; Target = "C:\Program Files\Microsoft Office\root\Office16\POWERPNT.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\POWERPNT.EXE"; IconLocation = "C:\Program Files\Microsoft Office\root\Office16\POWERPNT.EXE,0"; Desc = "Microsoft PowerPoint" },
@@ -1263,40 +1268,21 @@ try {
         Write-Log "NVDA config backed up to $backupDir (pruned first)" "SUCCESS"
     }
 
-    # Create restore script
-    $restoreScript = @'
-# NVDA Config Restore - Restores NVDA to known good configuration
-# Run this if NVDA stops speaking Vietnamese or has wrong settings
-$backupDir = "C:\LabTools\nvda-backup"
-# Always target Student profile, even when run as Admin
-$nvdaConfigDir = "C:\Users\Student\AppData\Roaming\nvda"
+    # Clean up legacy student-facing restore artifacts. Earlier deployments shipped a
+    # "Khoi Phuc NVDA" desktop shortcut plus C:\LabTools\restore-nvda.ps1. The shortcut
+    # hard-coded C:\Users\Student\AppData\Roaming\nvda, which broke on any laptop whose
+    # Student profile landed at a different path (the orphan-profile bug). The feature
+    # wasn't usable for a blind student who'd need it (if NVDA is broken, they can't
+    # navigate the desktop to find it). Ctrl+Alt+N to restart NVDA and Admin-side
+    # robocopy from C:\LabTools\nvda-backup remain as recovery paths.
+    Remove-Item "C:\LabTools\restore-nvda.ps1" -Force -ErrorAction SilentlyContinue
+    Remove-Item "C:\Users\Public\Desktop\Khoi Phuc NVDA - Restore NVDA.lnk" -Force -ErrorAction SilentlyContinue
+    Remove-Item "C:\Users\Student\Desktop\Khoi Phuc NVDA - Restore NVDA.lnk" -Force -ErrorAction SilentlyContinue
+    Get-ChildItem "C:\Users" -Directory -ErrorAction SilentlyContinue | ForEach-Object {
+        Remove-Item (Join-Path $_.FullName "Desktop\Khoi Phuc NVDA - Restore NVDA.lnk") -Force -ErrorAction SilentlyContinue
+    }
 
-if (Test-Path $backupDir) {
-    # Stop NVDA
-    $nvda = Get-Process nvda -ErrorAction SilentlyContinue
-    if ($nvda) { Stop-Process -Name nvda -Force; Start-Sleep -Seconds 2 }
-
-    # Restore config
-    Copy-Item -Path "$backupDir\*" -Destination $nvdaConfigDir -Recurse -Force
-
-    # Restart NVDA
-    $nvdaExe = "C:\Program Files (x86)\NVDA\nvda.exe"
-    if (-not (Test-Path $nvdaExe)) { $nvdaExe = "C:\Program Files\NVDA\nvda.exe" }
-    if (Test-Path $nvdaExe) { Start-Process -FilePath $nvdaExe }
-
-    Add-Type -AssemblyName PresentationFramework
-    [System.Windows.MessageBox]::Show("NVDA da duoc khoi phuc cai dat goc.`nNVDA has been restored to default settings.", "NVDA Restore", "OK", "Information")
-} else {
-    Add-Type -AssemblyName PresentationFramework
-    [System.Windows.MessageBox]::Show("Khong tim thay ban sao luu NVDA.`nNVDA backup not found.", "Error", "OK", "Error")
-}
-'@
-
-    $restoreScriptPath = "C:\LabTools\restore-nvda.ps1"
-    Set-Content -Path $restoreScriptPath -Value $restoreScript -Force
-
-    # Desktop shortcut is created in Step 6 (standardized desktop shortcuts)
-    Write-Log "NVDA backup/restore script created (shortcut added in Step 6)" "SUCCESS"
+    Write-Log "NVDA config backed up to C:\LabTools\nvda-backup (legacy restore shortcut removed)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not create NVDA backup/restore: $($_.Exception.Message)" "ERROR"
@@ -2270,7 +2256,7 @@ Write-Host "Desktop:" -ForegroundColor White
 Write-Host "  Shortcuts     Standardized (wiped + recreated for all apps)" -ForegroundColor White
 Write-Host "  Apps          NVDA, Word, Excel, PowerPoint, Firefox, VLC, Audacity," -ForegroundColor White
 Write-Host "                Kiwix, GoldenDict, Sao Mai Typing Tutor, Readmate," -ForegroundColor White
-Write-Host "                Calculator, My USB, Language Toggle, NVDA Restore" -ForegroundColor White
+Write-Host "                Calculator, My USB, Language Toggle" -ForegroundColor White
 Write-Host "  Vi folders    Tai Lieu, Am Nhac, Truyen, Hoc Tap, Tro Choi" -ForegroundColor White
 Write-Host ""
 Write-Host "Accessibility:" -ForegroundColor White
@@ -2294,7 +2280,7 @@ Write-Host "  Notifications Toast, Notification Center, tips/suggestions all dis
 Write-Host "  Narrator      Shortcut disabled (NVDA only)" -ForegroundColor White
 Write-Host "  Power         No sleep on AC, no hibernate" -ForegroundColor White
 Write-Host "  Battery       Report saved to C:\LabTools\battery-report.htm" -ForegroundColor White
-Write-Host "  NVDA backup   Restore script at C:\LabTools\restore-nvda.ps1" -ForegroundColor White
+Write-Host "  NVDA backup   C:\LabTools\nvda-backup (robocopy from Admin to restore)" -ForegroundColor White
 Write-Host ""
 Write-Host "Debloat & Cleanup:" -ForegroundColor White
 Write-Host "  Bloatware     Removed (Xbox, News, Weather, Solitaire, Teams, etc.)" -ForegroundColor White
