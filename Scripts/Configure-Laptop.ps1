@@ -1094,12 +1094,20 @@ try {
     powercfg /change standby-timeout-dc 30
     # Disable hibernate entirely
     powercfg /hibernate off
-    # Set lid close to do nothing (AC and battery)
-    powercfg /setacvalueindex SCHEME_CURRENT SUB_BUTTONS LIDACTION 0
-    powercfg /setdcvalueindex SCHEME_CURRENT SUB_BUTTONS LIDACTION 0
+    # Lid close → sleep on AC and battery. Students check laptops out to take home/school;
+    # a closed lid with the system awake in a backpack cooks the battery and throttles the
+    # CPU from restricted airflow. Sleep protects hardware during transport.
+    powercfg /setacvalueindex SCHEME_CURRENT SUB_BUTTONS LIDACTION 1
+    powercfg /setdcvalueindex SCHEME_CURRENT SUB_BUTTONS LIDACTION 1
+    # Skip the lock screen on wake — go straight back to Student's session. Student has no
+    # password anyway (Step 21), so the lock screen is a redundant Enter-press that a blind
+    # student can't see. With CONSOLELOCK 0, opening the lid resumes NVDA mid-sentence and
+    # the desktop is immediately available again.
+    powercfg /setacvalueindex SCHEME_CURRENT SUB_NONE CONSOLELOCK 0
+    powercfg /setdcvalueindex SCHEME_CURRENT SUB_NONE CONSOLELOCK 0
     powercfg /setactive SCHEME_CURRENT
 
-    Write-Log "Power settings configured (no sleep on AC, no hibernate)" "SUCCESS"
+    Write-Log "Power settings configured (sleep on lid close, no lock screen on wake, no hibernate)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not configure power settings: $($_.Exception.Message)" "ERROR"
