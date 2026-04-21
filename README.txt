@@ -43,18 +43,7 @@ Step 2: Download Windows 11 ISO (if upgrading from Windows 10)
      .\Scripts\0.5-Upgrade-Windows11.ps1
   Note: The Arm64 ISO is NOT needed. Dell Latitude 5420 is x64.
 
-Step 3: Set Up Tailscale (for remote management)
-  Go to tailscale.com and create an account.
-  In Access Controls, add "tag:vietnam-lab" to tagOwners.
-  Generate a reusable pre-auth key:
-    - Reusable: checked
-    - Ephemeral: unchecked
-    - Tags: tag:vietnam-lab (disables node key expiry = devices stay connected permanently)
-    - Expiration: 90 days is fine (only needed during initial setup)
-  Open Scripts\Install-Tailscale.ps1 in Notepad and replace
-  tskey-auth-CHANGE_ME with your key.
-
-Step 4: Set Up Each Laptop
+Step 3: Set Up Each Laptop
   .\Scripts\Bootstrap-Laptop.ps1
   It will prompt you:
 
@@ -62,8 +51,8 @@ Step 4: Set Up Each Laptop
     PCNumber: _
 
   Enter a number 1-19 for each laptop. The script handles everything:
-  hostname, Wi-Fi, software install, NVDA config, Windows hardening,
-  Tailscale, and scheduled tasks.
+  hostname, software install, NVDA config, Windows hardening, and
+  scheduled tasks. Wi-Fi is configured manually on-site after deployment.
 
   Microsoft Office setup (before running Bootstrap):
   1. Download the Office Deployment Tool from Microsoft

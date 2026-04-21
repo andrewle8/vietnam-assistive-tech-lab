@@ -10,14 +10,15 @@
 | Software | What It Does |
 |----------|-------------|
 | **NVDA** | Screen reader — speaks everything on screen in Vietnamese |
-| **Sao Mai VNVoice** | Vietnamese voice for NVDA (Minh Du / Mai Dung) |
+| **Microsoft An (neural)** | Primary Vietnamese TTS for NVDA + Readmate (bilingual, offline) |
+| **Sao Mai VNVoice** | Additional Vietnamese SAPI voices (Thanh Vi Southern, Minh Du Northern, etc.) |
+| **Sao Mai Readmate** | Accessible EPUB reader for Vietnamese textbooks (103 books pre-loaded) |
 | **Sao Mai Typing Tutor** | Typing lessons with audio feedback |
 | **Microsoft Office** | Word, Excel, PowerPoint, Outlook (non-profit license) |
 | **Firefox** | Web browser |
 | **VLC** | Music and video player |
-| **SumatraPDF** | PDF reader for textbooks and documents |
 | **GoldenDict** | Offline Vietnamese-English dictionary (Từ điển) |
-| **Kiwix** | Offline Wikipedia, Wiktionary, and Wikisource in Vietnamese |
+| **Kiwix** | Offline Vietnamese Wikipedia and Wiktionary |
 
 All software is **free** and works **offline** (no internet needed).
 
@@ -59,22 +60,23 @@ These features help beginners learn NVDA and are useful for training sessions:
 
 ## Essential NVDA Shortcuts
 
-> **Note:** "NVDA key" = Insert or Caps Lock (both work).
+> **Note:** "NVDA key" = Insert (laptop layout). Ctrl+Alt+N launches NVDA if it stops.
 
 | Shortcut | What It Does |
 |----------|-------------|
 | **NVDA+1** | Input Help (learning mode) |
 | **NVDA+T** | Read window title |
-| **NVDA+B** | Read all (say all) |
+| **NVDA+A** | Say all (read from cursor) |
+| **NVDA+L** | Read current line |
 | **Tab / Shift+Tab** | Navigate controls |
 | **NVDA+Space** | Toggle forms/browse mode |
 | **Arrow keys** | Navigate text |
 | **Ctrl** | Stop speech |
 | **NVDA+S** | Cycle speech modes (talk/beep/off) |
 | **NVDA+Ctrl+Up/Down** | Speech rate |
+| **NVDA+Ctrl+F** | Find text in document |
 | **NVDA+F7** | Elements list (links, headings) |
 | **NVDA+Q** | Quit NVDA |
-| **NVDA+Shift+S** | Screen Curtain |
 
 ---
 
@@ -102,6 +104,8 @@ Windows is set to **Vietnamese** by default. To switch between Vietnamese and En
 3. **Sign out and sign back in** for the change to take effect
 
 This is useful for staff or volunteers who need English temporarily. The keyboard input method (UniKey/Telex) is separate and works in both languages.
+
+**Vietnamese typing is UniKey-only by design.** UniKey's **Ctrl + Shift** toggles Vietnamese ↔ English (watch the tray: V = Vietnamese, E = English). The Windows built-in Vietnamese (Telex) keyboard is still installed as a fallback, but Windows' own language-switch hotkeys (Alt+Shift, Ctrl+Shift) are disabled so they don't desync from UniKey during typing. If a staff member ever needs the Windows IME, reach it via Win+Space or Settings → Time & language → Typing → Advanced keyboard settings.
 
 ---
 

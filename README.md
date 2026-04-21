@@ -23,11 +23,9 @@ This repo contains everything needed to deploy an assistive technology lab for b
 | **Kiwix 2.5.1** | GPL-3.0 | Offline encyclopedia reader |
 | **Vietnamese Wikipedia** | CC BY-SA | Offline Vietnamese encyclopedia (~550 MB) |
 | **Vietnamese Wiktionary** | CC BY-SA | Offline Vietnamese dictionary via Kiwix |
-| **Vietnamese Wikisource** | CC BY-SA | Offline Vietnamese literature via Kiwix |
-| **SumatraPDF 3.5.2** | GPL-3.0 | Lightweight PDF reader for textbooks |
 | **GoldenDict** | GPL-3.0 | Offline dictionary (Vietnamese-English, Vietnamese-Vietnamese) |
 
-**NVDA Add-ons:** VLC, Speech History, NVDA Remote, Focus Highlight, Audacity Access, Clock & Calendar, MathCAT — see [NVDA Add-on Store](https://addonstore.nvaccess.org/)
+**NVDA Add-ons:** VLC, Speech History, Focus Highlight, Audacity Access, Clock & Calendar, MathCAT, Training Keyboard Commands — see [NVDA Add-on Store](https://addonstore.nvaccess.org/)
 
 ### Hardware
 - 19x Dell Latitude 5420 (enterprise grade) upgraded to Windows 11
@@ -105,7 +103,7 @@ Supply values for the following parameters:
 PCNumber: _
 ```
 
-Enter a number 1–19 for each laptop. The script handles everything: hostname, Wi-Fi, software install, NVDA config, Windows hardening, and scheduled tasks.
+Enter a number 1–19 for each laptop. The script handles everything: hostname, software install, NVDA config, Windows hardening, and scheduled tasks. Wi-Fi is configured manually on-site after deployment.
 
 **Microsoft Office setup:**
 
@@ -149,7 +147,7 @@ Software updates are automatic — edit `update-manifest.json`, push to GitHub, 
 | `3-Configure-NVDA.ps1` | Configure NVDA with Vietnamese voice |
 | `4-Prepare-Student-USB.ps1` | Prepare student USB drives |
 | `7-Audit.ps1` | Full audit against manifest.json (with JSON output) |
-| `Bootstrap-Laptop.ps1` | Full PC setup (hostname, Wi-Fi, software, NVDA, hardening) |
+| `Bootstrap-Laptop.ps1` | Full PC setup (hostname, software, NVDA, hardening) |
 | `Configure-Laptop.ps1` | Windows hardening, power settings, desktop shortcuts, scheduled tasks (called by Bootstrap) |
 | `Populate-ReadmateDB.ps1` | Auto-import 103 Vietnamese textbooks into SM Readmate library |
 | `Debloat-Windows.ps1` | Remove Windows bloatware (standalone re-run tool) |

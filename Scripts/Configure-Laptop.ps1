@@ -262,12 +262,194 @@ try {
         Write-Log "Office preferred editing language set to Vietnamese for Student" "SUCCESS"
     }
 
+    # Set Word default save/picture location to D:\ (the student USB).
+    # Blind students can't realistically navigate the Save As folder tree or type full paths —
+    # this makes Ctrl+S → filename → Enter save straight to their USB with no location awareness.
+    # If USB is unplugged, Word gracefully falls back to Documents without errors.
+    # Office 16.0 is stable across 2016/2019/2021/2024/M365 — key name unchanged for 10+ years.
+    # Writes to HKCU + Student SID + DefaultProfile (if loaded) via $hkuPaths so re-running the
+    # script reasserts the setting after any Office reset / profile rebuild.
+    foreach ($hive in $hkuPaths) {
+        $wordOpts = "$hive\Software\Microsoft\Office\16.0\Word\Options"
+        if (-not (Test-Path $wordOpts)) { New-Item -Path $wordOpts -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $wordOpts -Name "DOC-PATH"     -Value "D:\" -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $wordOpts -Name "PICTURE-PATH" -Value "D:\" -Force -ErrorAction SilentlyContinue
+        # Word AutoRecover: save every 5 minutes (default is 10). Blind students can lose work
+        # silently if Word crashes — tight recovery window minimizes data loss.
+        Set-ItemProperty -Path $wordOpts -Name "AutoSave"       -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $wordOpts -Name "AutoRecoverTime" -Value 5 -Type DWord -Force -ErrorAction SilentlyContinue
+    }
+    Write-Log "Word default save location set to D:\ + AutoRecover=5min on $($hkuPaths.Count) hive(s)" "SUCCESS"
+
+    # Suppress the OneDrive / cloud-save nag in file dialogs (no cloud accounts deployed).
+    # (Backstage itself cannot be cleanly disabled in current O365 Enterprise builds —
+    # SkipOpenSaveDialog stopped working somewhere around the 2024 update. Students are
+    # instructed to use F12 for Save As, which bypasses Backstage directly.)
+    foreach ($hive in $hkuPaths) {
+        $commonInt = "$hive\Software\Microsoft\Office\16.0\Common\Internet"
+        if (-not (Test-Path $commonInt)) { New-Item -Path $commonInt -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $commonInt -Name "OnlineStorage" -Value 3 -Type DWord -Force -ErrorAction SilentlyContinue
+    }
+    Write-Log "OneDrive nag suppressed in Office file dialogs" "SUCCESS"
+
     $successCount++
 } catch {
     Write-Log "Could not fully configure Vietnamese locale: $($_.Exception.Message)" "ERROR"
     Write-Log "You may need to set language manually: Settings > Time & Language > Language" "ERROR"
     $failCount++
 }
+
+# Disable Windows language/layout hotkeys so UniKey's Ctrl+Shift is the only V/E toggle.
+# Windows defaults: Alt+Shift switches language, Ctrl+Shift switches layout. Both can desync
+# Windows IME state from UniKey state if hit accidentally during typing drills — invisible
+# to a blind student and hard to recover from. Vietnamese Telex IME stays installed
+# (reachable via Win+Space or Settings) as a deliberate fallback; only the accidental
+# hotkeys are neutralized. Values: "1"=Alt+Shift, "2"=Ctrl+Shift, "3"=disabled.
+# Reversal: delete the two values, or Settings → Time & language → Typing → Advanced
+# keyboard settings → Language bar options → Change Key Sequence.
+Write-Log "Disabling Windows language/layout hotkeys (UniKey remains the single V/E toggle)..." "INFO"
+
+try {
+    $hotkeyHives = 0
+    foreach ($hive in $hkuPaths) {
+        $togglePath = "$hive\Keyboard Layout\Toggle"
+        if (-not (Test-Path $togglePath)) {
+            New-Item -Path $togglePath -Force -ErrorAction SilentlyContinue | Out-Null
+        }
+        Set-ItemProperty -Path $togglePath -Name "Language Hotkey" -Value "3" -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $togglePath -Name "Layout Hotkey"   -Value "3" -Force -ErrorAction SilentlyContinue
+        $hotkeyHives++
+    }
+    Write-Log "Language/layout hotkeys disabled on $hotkeyHives hive(s) — UniKey Ctrl+Shift is the single V/E toggle" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not disable language hotkeys: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Pin the default keyboard input method to US English on every login.
+# Without this, Windows picks the first language's default IME (= Vietnamese Telex, since
+# vi-VN is the primary display language) and the taskbar pill shows "VIE" on boot/unlock.
+# Students open the lid and see Vietnamese by default — confusing and not what we want.
+# Pinning to en-US here means the pill always reads "ENG" on login; UniKey handles Vietnamese
+# input when the student toggles it with Ctrl+Shift.
+#
+# TWO registry mechanisms are needed — InputMethodOverride alone is NOT sufficient:
+#   1. HKCU\Control Panel\International\User Profile\InputMethodOverride — modern (Win10+).
+#   2. HKCU\Keyboard Layout\Preload — legacy, read at logon. New-WinUserLanguageList populates
+#      this based on language-list order, so after making vi-VN the primary display language
+#      above, Preload\1 ends up as Vietnamese (0000042a). Windows loads Preload\1 FIRST at
+#      session start, overriding InputMethodOverride. We must explicitly swap it.
+#      00000409 = US English, 0000042a = Vietnamese.
+# Writes to HKCU + Student SID + Default profile via $hkuPaths.
+Write-Log "Pinning default keyboard to US English on login..." "INFO"
+
+try {
+    $imeHives = 0
+    foreach ($hive in $hkuPaths) {
+        $profPath = "$hive\Control Panel\International\User Profile"
+        if (-not (Test-Path $profPath)) {
+            New-Item -Path $profPath -Force -ErrorAction SilentlyContinue | Out-Null
+        }
+        Set-ItemProperty -Path $profPath -Name "InputMethodOverride" -Value "0409:00000409" -Force -ErrorAction SilentlyContinue
+
+        $preloadPath = "$hive\Keyboard Layout\Preload"
+        if (-not (Test-Path $preloadPath)) {
+            New-Item -Path $preloadPath -Force -ErrorAction SilentlyContinue | Out-Null
+        }
+        Set-ItemProperty -Path $preloadPath -Name "1" -Value "00000409" -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $preloadPath -Name "2" -Value "0000042a" -Force -ErrorAction SilentlyContinue
+
+        $imeHives++
+    }
+    Write-Log "Default input pinned to en-US (InputMethodOverride + Preload\1) on $imeHives hive(s)" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not pin default input method: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 4b: Windows 11 blind-student friction fixes.
+# Each of these was identified as "likely to hit in daily use" by the deployment audit.
+# All are reversible registry tweaks — no policy layers, matches Minimal Upkeep Philosophy.
+Write-Log "Applying Windows 11 friction fixes for blind student use..." "INFO"
+try {
+    # 1. Disable Windows 11 startup sound — it masks NVDA's "NVDA đang chạy" announcement on boot/wake.
+    $bootAnim = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI\BootAnimation"
+    if (-not (Test-Path $bootAnim)) { New-Item -Path $bootAnim -Force -ErrorAction SilentlyContinue | Out-Null }
+    Set-ItemProperty -Path $bootAnim -Name "DisableStartupSound" -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
+    $sysPol = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+    if (-not (Test-Path $sysPol)) { New-Item -Path $sysPol -Force -ErrorAction SilentlyContinue | Out-Null }
+    Set-ItemProperty -Path $sysPol -Name "DisableStartupSound" -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
+
+    # 2. NumLock off at boot — Dell 5420 has no numpad, NumLock state can interfere with NVDA laptop layout commands.
+    # 3. Explorer LaunchTo=1 — open File Explorer to "This PC" (disk list) not "Home" (recent files).
+    # 4. Clipboard history disabled — Win+V triggers a modal dialog that interrupts NVDA flow.
+    # 5. Notifications always unrestricted — prevents Focus Assist from accidentally muting NVDA + toast audio.
+    foreach ($hive in $hkuPaths) {
+        $kbIndicators = "$hive\Control Panel\Keyboard"
+        if (-not (Test-Path $kbIndicators)) { New-Item -Path $kbIndicators -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $kbIndicators -Name "InitialKeyboardIndicators" -Value "0" -Force -ErrorAction SilentlyContinue
+
+        $explAdv = "$hive\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+        if (-not (Test-Path $explAdv)) { New-Item -Path $explAdv -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $explAdv -Name "LaunchTo" -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
+
+        $clip = "$hive\Software\Microsoft\Clipboard"
+        if (-not (Test-Path $clip)) { New-Item -Path $clip -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $clip -Name "EnableClipboardHistory" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+
+        $notifSet = "$hive\Software\Microsoft\Windows\CurrentVersion\Notifications\Settings"
+        if (-not (Test-Path $notifSet)) { New-Item -Path $notifSet -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $notifSet -Name "NOC_GLOBAL_SETTING_TOASTS_ENABLED" -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
+    }
+
+    # 6. Defer Windows feature updates (not quality updates) — prevents disruptive Win11 feature upgrades
+    # that re-enable Spotlight, Copilot, widgets, and the startup sound.
+    $wuPol = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+    if (-not (Test-Path $wuPol)) { New-Item -Path $wuPol -Force -ErrorAction SilentlyContinue | Out-Null }
+    Set-ItemProperty -Path $wuPol -Name "DeferFeatureUpdatesPeriodInDays" -Value 365 -Type DWord -Force -ErrorAction SilentlyContinue
+    Set-ItemProperty -Path $wuPol -Name "DeferQualityUpdatesPeriodInDays" -Value 7 -Type DWord -Force -ErrorAction SilentlyContinue
+
+    Write-Log "Windows 11 friction fixes applied (startup sound, NumLock, Explorer, clipboard, notifications, feature-update deferral)" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not apply all Windows 11 friction fixes: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 4c: Apply Microsoft Edge policies for the PDF reader experience.
+# Edge's built-in PDF reader supports tagged-PDF navigation (H/K/T) with NVDA, exposes
+# SAPI5 voices (including Vi-Vu) via its Read Aloud feature (Ctrl+Shift+U), ships with
+# Windows, and needs no separate installer. SumatraPDF was removed because it exposes
+# no page-body text to screen readers (sumatrapdfreader#321). Adobe Reader DC has 2025
+# NVDA regressions (#18800) and aggressive cloud-sign-in nags — skip it.
+Write-Log "Applying Microsoft Edge policies for NVDA-accessible PDF reading..." "INFO"
+try {
+    # Edge policy keys (HKLM, no ADMX needed) — disable sign-in nag, enable Read Aloud,
+    # keep PDFs inside Edge (not downloaded), disable cloud sync.
+    $edgePol = "HKLM:\SOFTWARE\Policies\Microsoft\Edge"
+    if (-not (Test-Path $edgePol)) { New-Item -Path $edgePol -Force -ErrorAction SilentlyContinue | Out-Null }
+    Set-ItemProperty -Path $edgePol -Name "ReadAloudEnabled"            -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
+    Set-ItemProperty -Path $edgePol -Name "HideFirstRunExperience"      -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
+    Set-ItemProperty -Path $edgePol -Name "BrowserSignin"               -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+    Set-ItemProperty -Path $edgePol -Name "SyncDisabled"                -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
+    Set-ItemProperty -Path $edgePol -Name "DefaultBrowserSettingEnabled" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+    Set-ItemProperty -Path $edgePol -Name "AlwaysOpenPdfExternally"     -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+
+    Write-Log "Edge policies applied; Read Aloud enabled; cloud sign-in disabled" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not apply Edge policies: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Default browser: Edge (Windows default — left intentionally unchanged).
+# Microsoft tightened default-browser-change paths on Win11 24H2 (UCPD.sys + restricted
+# DISM/GPO seeding); Firefox-as-default would require bundling SetUserFTA.exe + a
+# scheduled task and is fragile across Windows updates. Edge is NVDA-accessible for
+# both browsing and PDFs, ships with Windows, and never needs babysitting. Firefox
+# stays installed and on the Student desktop as a shortcut for students who want it.
 
 # Create a language toggle script and desktop shortcut
 Write-Log "Creating language toggle shortcut..." "INFO"
@@ -294,6 +476,15 @@ if ($current -like "vi*") {
     Set-WinUserLanguageList $langList -Force
     $msg = "Language switched to Vietnamese. Sign out to apply.`nNgôn ngữ đã chuyển sang Tiếng Việt. Đăng xuất để áp dụng."
 }
+
+# Re-assert English-default keyboard input after New-WinUserLanguageList rewrites Preload.
+# Without this, toggling display language back to Vietnamese would re-introduce VI-first at
+# logon (Preload\1 gets reset to 0000042a). Keep Preload\1 as English regardless of UI lang.
+Set-ItemProperty -Path "HKCU:\Control Panel\International\User Profile" -Name "InputMethodOverride" -Value "0409:00000409" -Force -ErrorAction SilentlyContinue
+$preloadPath = "HKCU:\Keyboard Layout\Preload"
+if (-not (Test-Path $preloadPath)) { New-Item -Path $preloadPath -Force -ErrorAction SilentlyContinue | Out-Null }
+Set-ItemProperty -Path $preloadPath -Name "1" -Value "00000409" -Force -ErrorAction SilentlyContinue
+Set-ItemProperty -Path $preloadPath -Name "2" -Value "0000042a" -Force -ErrorAction SilentlyContinue
 
 Add-Type -AssemblyName PresentationFramework
 [System.Windows.MessageBox]::Show($msg, "Language / Ngôn ngữ", "OK", "Information")
@@ -336,26 +527,12 @@ try {
     $failCount++
 }
 
-# Step 5b: Copy per-user apps (SumatraPDF) from Admin to Student profile
-# These installers install to Admin's %LOCALAPPDATA% since Bootstrap runs as Admin
-Write-Log "Step 5b: Copying per-user apps to Student profile..." "INFO"
-
+# Step 5b: (Removed — previously copied SumatraPDF per-user install from Admin to Student.
+# SumatraPDF was removed from deployment; Edge handles PDFs accessibly without per-user copy.)
 try {
-    $adminProfile = $env:USERPROFILE
-    $studentProfile = "C:\Users\Student"
-
-    # SumatraPDF
-    $adminSumatra = "$adminProfile\AppData\Local\SumatraPDF"
-    $studentSumatra = "$studentProfile\AppData\Local\SumatraPDF"
-    if ((Test-Path "$adminSumatra\SumatraPDF.exe") -and -not (Test-Path "$studentSumatra\SumatraPDF.exe")) {
-        Copy-Item $adminSumatra $studentSumatra -Recurse -Force
-        icacls $studentSumatra /grant "Student:(OI)(CI)F" /T /Q 2>$null
-        Write-Log "Copied SumatraPDF to Student profile" "SUCCESS"
-    }
-
     $successCount++
 } catch {
-    Write-Log "Could not copy per-user apps: $($_.Exception.Message)" "WARNING"
+    Write-Log "Step 5b placeholder: $($_.Exception.Message)" "WARNING"
 }
 
 # Step 6: Clean desktop and create shortcuts for screen reader navigation
@@ -469,7 +646,6 @@ try {
         @{ Name = "PowerPoint"; Target = "C:\Program Files\Microsoft Office\root\Office16\POWERPNT.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\POWERPNT.EXE"; IconLocation = "C:\Program Files\Microsoft Office\root\Office16\POWERPNT.EXE,0"; Desc = "Microsoft PowerPoint" },
         @{ Name = "Readmate"; Target = "C:\Program Files\SaoMai\sm_readmate\sm_readmate.exe"; AltTarget = "C:\Program Files (x86)\SaoMai\sm_readmate\sm_readmate.exe"; Desc = "Sao Mai Readmate Accessible Reader" },
         @{ Name = "Sao Mai Typing Tutor"; Target = "C:\Program Files (x86)\SaoMai\SMTT\SMTT.exe"; AltTarget = "C:\Program Files\SaoMai\SMTT\SMTT.exe"; IconLocation = "%SystemRoot%\System32\imageres.dll,116"; Desc = "Sao Mai Vietnamese Typing Tutor" },
-        @{ Name = "SumatraPDF"; Target = "C:\Program Files\SumatraPDF\SumatraPDF.exe"; AltTarget = "C:\Users\Student\AppData\Local\SumatraPDF\SumatraPDF.exe"; IconLocation = "%SystemRoot%\System32\imageres.dll,2"; Desc = "SumatraPDF Reader" },
         @{ Name = "Tu Dien - Dictionary"; Target = "C:\Program Files\GoldenDict\GoldenDict.exe"; AltTarget = "C:\Program Files (x86)\GoldenDict\GoldenDict.exe"; Desc = "GoldenDict - Offline Dictionary" },
         @{ Name = "VLC media player"; Target = "C:\Program Files\VideoLAN\VLC\vlc.exe"; AltTarget = "C:\Program Files (x86)\VideoLAN\VLC\vlc.exe"; Desc = "VLC Media Player" },
         @{ Name = "Wikipedia (Offline)"; Target = "C:\Program Files\Kiwix\kiwix-desktop.exe"; Desc = "Kiwix - Offline Vietnamese Wikipedia" },
@@ -645,29 +821,33 @@ try {
     $failCount++
 }
 
-# Step 10: Configure Windows Update (manual-only — no auto-downloads or auto-installs)
-Write-Log "Step 10: Configuring Windows Update for manual-only..." "INFO"
+# Step 10: Configure Windows Update — auto-install quality (security) updates daily at 18:00,
+# matching the LabUpdateAgent dinner window (students away). Feature-update deferral of 365 days
+# is set in Step 6 (HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate). Combined effect:
+# security patches install unattended overnight-equivalent; feature jumps stay locked.
+Write-Log "Step 10: Configuring Windows Update for auto-install of security updates at 18:00..." "INFO"
 
 try {
-    # Keep services at Manual so updates CAN run when the admin chooses
-    Set-Service -Name "wuauserv" -StartupType Manual -ErrorAction SilentlyContinue
+    # Services must run automatically so the scheduled install actually fires
+    Set-Service -Name "wuauserv" -StartupType Automatic -ErrorAction SilentlyContinue
+    Set-Service -Name "UsoSvc" -StartupType Automatic -ErrorAction SilentlyContinue
     Set-Service -Name "WaaSMedicSvc" -StartupType Manual -ErrorAction SilentlyContinue
-    Set-Service -Name "UsoSvc" -StartupType Manual -ErrorAction SilentlyContinue
 
-    # Set Group Policy: "Notify for download and notify for install" (AUOptions=2)
-    # This prevents automatic downloads/installs but allows manual "Check for updates"
+    # Group Policy: "Auto download and schedule install" (AUOptions=4)
     $auPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
     if (-not (Test-Path $auPath)) { New-Item -Path $auPath -Force | Out-Null }
-    Set-ItemProperty -Path $auPath -Name "NoAutoUpdate" -Value 0 -Force
-    Set-ItemProperty -Path $auPath -Name "AUOptions" -Value 2 -Force
-    # Disable auto-reboot when users are logged in
-    Set-ItemProperty -Path $auPath -Name "NoAutoRebootWithLoggedOnUsers" -Value 1 -Force
+    Set-ItemProperty -Path $auPath -Name "NoAutoUpdate" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $auPath -Name "AUOptions" -Value 4 -Type DWord -Force
+    Set-ItemProperty -Path $auPath -Name "ScheduledInstallDay" -Value 0 -Type DWord -Force   # 0 = every day
+    Set-ItemProperty -Path $auPath -Name "ScheduledInstallTime" -Value 18 -Type DWord -Force # 18 = 6 PM, matches LabUpdateAgent
+    # Never reboot while a user is signed in (would interrupt NVDA / a class)
+    Set-ItemProperty -Path $auPath -Name "NoAutoRebootWithLoggedOnUsers" -Value 1 -Type DWord -Force
     # Suppress Windows Update restart notification popups (interrupts NVDA)
     $wuPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
     if (-not (Test-Path $wuPath)) { New-Item -Path $wuPath -Force | Out-Null }
-    Set-ItemProperty -Path $wuPath -Name "SetAutoRestartNotificationDisable" -Value 1 -Force
+    Set-ItemProperty -Path $wuPath -Name "SetAutoRestartNotificationDisable" -Value 1 -Type DWord -Force
 
-    Write-Log "Windows Update set to manual-only (notify, no auto-install, no restart popups)" "SUCCESS"
+    Write-Log "Windows Update set to auto-install quality updates daily at 18:00 (no reboot while signed in)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not configure Windows Update: $($_.Exception.Message)" "ERROR"
@@ -950,6 +1130,71 @@ try {
         Copy-Item -Path "$adminAddons\*" -Destination $studentAddons -Recurse -Force -ErrorAction SilentlyContinue
         $addonCount = (Get-ChildItem $studentAddons -Directory -ErrorAction SilentlyContinue).Count
         Write-Log "Copied $addonCount NVDA addon(s) from Admin to Student profile (pruned first)" "SUCCESS"
+    }
+
+    # Enable NVDA on Windows login screen / UAC / lock screen with Vi-Vu voice.
+    #
+    # Previously this block lived in 3-Configure-NVDA.ps1, but it ran before the
+    # Student profile had nvda.ini or addons, so the mirror source was empty and
+    # the login screen fell back to defaults (silent or English).
+    #
+    # NVDA's _setSystemConfig() reads from <NVDA install>\systemConfig\ when
+    # running on secure desktops (sign-in / UAC), per nvaccess/nvda
+    # source/config/__init__.py. We mirror Student's config there once it's
+    # populated, with exclusions matching NVDA's own code path.
+    #
+    # /XD exclusions MUST be full paths so they only match top-level scratch dirs.
+    # Using bare names like "synthDrivers" would also match
+    # addons\RHVoice\synthDrivers\ and strip out the synth driver that the
+    # sign-in NVDA (SYSTEM account) needs to speak Vi-Vu.
+    try {
+        $nvdaInstallDir = if (Test-Path "C:\Program Files\NVDA\nvda.exe") { "C:\Program Files\NVDA" } else { "C:\Program Files (x86)\NVDA" }
+        $nvdaExeResolved = Join-Path $nvdaInstallDir "nvda.exe"
+        $systemConfigDir = Join-Path $nvdaInstallDir "systemConfig"
+
+        if (-not (Test-Path $systemConfigDir)) { New-Item -ItemType Directory -Path $systemConfigDir -Force | Out-Null }
+        if (Test-Path $nvdaConfigDir) {
+            $excludeFiles = @('*.exe','addonsState.pickle','addonsState.json','updateCheckState.pickle','nvda.log','nvda-old.log')
+            $excludeDirs  = @(
+                (Join-Path $nvdaConfigDir 'appModules'),
+                (Join-Path $nvdaConfigDir 'brailleDisplayDrivers'),
+                (Join-Path $nvdaConfigDir 'brailleTables'),
+                (Join-Path $nvdaConfigDir 'globalPlugins'),
+                (Join-Path $nvdaConfigDir 'synthDrivers'),
+                (Join-Path $nvdaConfigDir 'visionEnhancementProviders'),
+                (Join-Path $nvdaConfigDir 'addonStore'),
+                (Join-Path $nvdaConfigDir 'updates')
+            )
+            & robocopy $nvdaConfigDir $systemConfigDir /MIR /XF @excludeFiles /XD @excludeDirs /R:2 /W:2 /NFL /NDL /NJH /NJS | Out-Null
+            # robocopy exit codes 0-7 are "success variants"
+            if ($LASTEXITCODE -lt 8) {
+                Write-Log "NVDA Student config mirrored to systemConfig (login screen will speak Vi-Vu)" "SUCCESS"
+            } else {
+                Write-Log "robocopy returned $LASTEXITCODE mirroring systemConfig — may be partial" "WARNING"
+            }
+        } else {
+            Write-Log "Student NVDA config not found at $nvdaConfigDir — secure desktop will use defaults" "WARNING"
+        }
+
+        # Remove the stale incorrect copy if a previous buggy script created it.
+        $stale = "C:\Windows\ServiceProfiles\LocalService\AppData\Roaming\nvda"
+        if (Test-Path $stale) {
+            Remove-Item -Path $stale -Recurse -Force -ErrorAction SilentlyContinue
+            Write-Log "Removed stale incorrect NVDA config at $stale" "INFO"
+        }
+
+        # Ease of Access registration — tells Windows which AT to launch when
+        # Win+Ctrl+Enter is pressed at the login screen and lets NVDA run on
+        # secure desktops.
+        $easeOfAccessPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Accessibility\ATs\nvda"
+        if (-not (Test-Path $easeOfAccessPath)) { New-Item -Path $easeOfAccessPath -Force | Out-Null }
+        Set-ItemProperty -Path $easeOfAccessPath -Name "ATExe" -Value $nvdaExeResolved -Force
+        Set-ItemProperty -Path $easeOfAccessPath -Name "StartExe" -Value $nvdaExeResolved -Force
+        Set-ItemProperty -Path $easeOfAccessPath -Name "Description" -Value "NVDA Screen Reader" -Force
+
+        Write-Log "NVDA registered as Ease of Access screen reader; systemConfig has Vi-Vu" "SUCCESS"
+    } catch {
+        Write-Log "Could not configure NVDA login screen: $($_.Exception.Message)" "WARNING"
     }
 
     # Backup the config — prune first so stale addons don't persist across redeploys
@@ -1537,24 +1782,64 @@ try {
 Write-Log "Step 27b: Cleaning startup apps..." "INFO"
 
 try {
-    # UniKey: point Startup shortcut directly at UniKeyNT.exe. With Vietnamese=1, ShowDlg=0,
-    # and AutoUpdate=0 in registry (set below), the old VBS wrapper is no longer needed.
-    $unikeyLnk = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\UniKey.lnk"
+    # UniKey uses a "last-used state" model: on shutdown it writes the current input mode
+    # (V or E) to HKCU\Software\PkLong\UniKey\Vietnamese, and on startup it reads that value
+    # to decide what mode to launch in. A one-time registry write of Vietnamese=1 during
+    # deployment therefore gets OVERWRITTEN the first time a user ever logs out of UniKey
+    # in English mode. To reliably force V-on-every-login we re-assert Vietnamese=1
+    # immediately BEFORE UniKey launches, on every login.
+    #
+    # Implementation: a scheduled task triggered at user logon, with two sequential
+    # actions -- (1) reg.exe writes Vietnamese=1 to the logged-in user's HKCU, (2) UniKeyNT
+    # launches. No script files, no WSH/VBS parsing risk, no console window flash.
+    # An earlier VBS-wrapper approach hit inconsistent "Wrong number of arguments" parse
+    # errors on some sessions -- the scheduled task sidesteps that entire surface area.
+    #
+    # Principal = BUILTIN\Users, so the task fires for both Admin and Student on their
+    # own logons, each writing to their own HKCU.
     $unikeyExe = "C:\Program Files\UniKey\UniKeyNT.exe"
-    if (Test-Path $unikeyExe) {
-        $WshShell = New-Object -ComObject WScript.Shell
-        $shortcut = $WshShell.CreateShortcut($unikeyLnk)
-        $shortcut.TargetPath       = $unikeyExe
-        $shortcut.Arguments        = ""
-        $shortcut.WorkingDirectory = "C:\Program Files\UniKey"
-        $shortcut.WindowStyle      = 7
-        $shortcut.Description      = "UniKey Vietnamese Input"
-        $shortcut.Save()
-    }
-    # Remove legacy VBS wrapper if present (from old deploys)
-    Remove-Item "C:\LabTools\start-unikey.vbs" -Force -ErrorAction SilentlyContinue
+    $taskName  = 'UniKey-Startup-Vietnamese'
 
-    # Registry: Vietnamese mode on, no popup, no auto-update
+    # Clean up prior approaches (idempotent -- safe on re-runs)
+    Remove-Item "C:\LabTools\start-unikey.vbs" -Force -ErrorAction SilentlyContinue
+    Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\UniKey.lnk" -Force -ErrorAction SilentlyContinue
+    if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
+        Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue
+    }
+
+    if (Test-Path $unikeyExe) {
+        $a1 = New-ScheduledTaskAction -Execute 'reg.exe' -Argument 'add "HKCU\Software\PkLong\UniKey" /v Vietnamese /t REG_DWORD /d 1 /f'
+        $a2 = New-ScheduledTaskAction -Execute $unikeyExe
+        $trigger = New-ScheduledTaskTrigger -AtLogOn
+        # ExecutionTimeLimit MUST be zero (unlimited). Default is 3 days and even a short
+        # limit causes Task Scheduler to reap UniKey when the limit expires (UniKey is a
+        # persistent tray app, so the task appears "running" indefinitely -- that is correct).
+        # User-session logout terminates the task naturally when the user signs out.
+        $settings = New-ScheduledTaskSettingsSet `
+            -AllowStartIfOnBatteries `
+            -DontStopIfGoingOnBatteries `
+            -StartWhenAvailable `
+            -ExecutionTimeLimit ([TimeSpan]::Zero)
+        $principal = New-ScheduledTaskPrincipal -GroupId 'S-1-5-32-545' -RunLevel Limited  # BUILTIN\Users
+
+        Register-ScheduledTask `
+            -TaskName $taskName `
+            -Description 'Force UniKey to start in Vietnamese mode on user login (reg write + launch).' `
+            -Action @($a1, $a2) `
+            -Trigger $trigger `
+            -Settings $settings `
+            -Principal $principal `
+            -Force | Out-Null
+    }
+
+    # Baseline registry config -- these are read by UniKey on startup and are safe to pin.
+    # Vietnamese=1 is written here too so the scheduled task's first run has something
+    # correct to reassert, and in case the task fails to fire for any reason.
+    # Windows keyboard is pinned to en-US (see language section above) so Windows IME stays
+    # dormant. UniKey's low-level hook does all Vietnamese composition. Net UX on login:
+    # taskbar shows ENG (Windows dormant) + UniKey tray shows V (active) → student types and
+    # Vietnamese characters come out directly, no toggle needed. Ctrl+Shift flips UniKey to E
+    # for English words, URLs, passwords.
     foreach ($hive in $hkuPaths) {
         $uniKeyPath = "$hive\Software\PkLong\UniKey"
         if (-not (Test-Path $uniKeyPath)) { New-Item -Path $uniKeyPath -Force -ErrorAction SilentlyContinue | Out-Null }
@@ -1563,7 +1848,7 @@ try {
         Set-ItemProperty -Path $uniKeyPath -Name "Vietnamese" -Value 1 -Force -ErrorAction SilentlyContinue
     }
 
-    Write-Log "Startup apps cleaned (UniKey configured via registry, direct launch)" "SUCCESS"
+    Write-Log "UniKey configured: scheduled task '$taskName' (AtLogOn), registry baseline set on $($hkuPaths.Count) hive(s)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not clean startup apps: $($_.Exception.Message)" "ERROR"
@@ -1778,121 +2063,31 @@ try {
     $failCount++
 }
 
-# Step 33: Deploy SumatraPDF accessibility config (continuous scroll, system colors)
-Write-Log "Step 33: Deploying SumatraPDF accessibility config..." "INFO"
+# Step 33: (Removed — previously deployed SumatraPDF accessibility config.
+# SumatraPDF was removed from deployment; Edge handles PDFs. The .pdf default is
+# set during Bootstrap-Laptop.ps1's Phase 4 via the Settings UI — see Step 4c comment.)
 
+# Step 33b: Clean up legacy PDF-reader registry entries and notify Explorer shell.
+Write-Log "Step 33b: Removing legacy reader associations and notifying Explorer..." "INFO"
 try {
-    $profileBase = if (Test-Path "C:\Users\Student") { "C:\Users\Student" } else { $env:USERPROFILE }
-
-    $sumatraConfigDir = Join-Path $profileBase "AppData\Local\SumatraPDF"
-    if (-not (Test-Path $sumatraConfigDir)) {
-        New-Item -Path $sumatraConfigDir -ItemType Directory -Force | Out-Null
-    }
-
-    $sumatraSource = Join-Path (Split-Path -Parent $PSScriptRoot) "Config\sumatrapdf-config\SumatraPDF-settings.txt"
-    if (Test-Path $sumatraSource) {
-        Copy-Item -Path $sumatraSource -Destination "$sumatraConfigDir\SumatraPDF-settings.txt" -Force
-        Write-Log "SumatraPDF config deployed to $sumatraConfigDir (continuous, fit-width)" "SUCCESS"
-        $successCount++
-    } else {
-        Write-Log "SumatraPDF config not found at $sumatraSource" "ERROR"
-        $failCount++
-    }
-} catch {
-    Write-Log "Could not deploy SumatraPDF config: $($_.Exception.Message)" "ERROR"
-    $failCount++
-}
-
-# Step 33b: Set file associations (.pdf -> SumatraPDF). Students read EPUBs via SM Readmate library.
-Write-Log "Step 33b: Setting file associations (.pdf -> SumatraPDF)..." "INFO"
-
-try {
-    $sumatraExe = "C:\Users\Student\AppData\Local\SumatraPDF\SumatraPDF.exe"
-    if (-not (Test-Path $sumatraExe)) {
-        $sumatraExe = "C:\Program Files\SumatraPDF\SumatraPDF.exe"
-    }
-
-    # ── Unregister any leftover Thorium .epub associations from prior deployments ──
-    # (cmd /c ftype/assoc removed — they don't survive Win11 per-user UserChoice ACL)
+    # Clean up any leftover Thorium / SumatraPDF associations from prior deployments
     Remove-Item -Path "HKLM:\SOFTWARE\Classes\ThoriumReader.epub" -Recurse -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "HKLM:\SOFTWARE\Classes\Applications\Thorium.exe" -Recurse -Force -ErrorAction SilentlyContinue
-
-    # ── Register SumatraPDF ProgID in HKLM (machine-wide) ──
-    $sumatraProgID = "HKLM:\SOFTWARE\Classes\SumatraPDF.pdf"
-    if (-not (Test-Path $sumatraProgID)) { New-Item -Path $sumatraProgID -Force | Out-Null }
-    Set-ItemProperty -Path $sumatraProgID -Name "(default)" -Value "PDF Document" -Force
-    $sumatraShell = "$sumatraProgID\shell\open\command"
-    if (-not (Test-Path $sumatraShell)) { New-Item -Path $sumatraShell -Force | Out-Null }
-    Set-ItemProperty -Path $sumatraShell -Name "(default)" -Value "`"$sumatraExe`" `"%1`"" -Force
-    $sumatraIcon = "$sumatraProgID\DefaultIcon"
-    if (-not (Test-Path $sumatraIcon)) { New-Item -Path $sumatraIcon -Force | Out-Null }
-    Set-ItemProperty -Path $sumatraIcon -Name "(default)" -Value "`"$sumatraExe`",0" -Force
-
-    # ── Set machine-wide default for .pdf ──
-    Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\.pdf" -Name "(default)" -Value "SumatraPDF.pdf" -Force
-
-    # ── OpenWithProgids (add ours, remove Edge's claim on .pdf) ──
-    $pdfOWP = "HKLM:\SOFTWARE\Classes\.pdf\OpenWithProgids"
-    if (-not (Test-Path $pdfOWP)) { New-Item -Path $pdfOWP -Force | Out-Null }
-    New-ItemProperty -Path $pdfOWP -Name "SumatraPDF.pdf" -Value ([byte[]]@()) -PropertyType Binary -Force | Out-Null
-    Remove-ItemProperty -Path $pdfOWP -Name "MSEdgePDF" -Force -ErrorAction SilentlyContinue
-
-    # ── Register in Applications key ──
-    $sumatraApp = "HKLM:\SOFTWARE\Classes\Applications\SumatraPDF.exe\shell\open\command"
-    if (-not (Test-Path $sumatraApp)) { New-Item -Path $sumatraApp -Force | Out-Null }
-    Set-ItemProperty -Path $sumatraApp -Name "(default)" -Value "`"$sumatraExe`" `"%1`"" -Force
-    Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Applications\SumatraPDF.exe" -Name "FriendlyAppName" -Value "SumatraPDF" -Force
-    $sumatraST = "HKLM:\SOFTWARE\Classes\Applications\SumatraPDF.exe\SupportedTypes"
-    if (-not (Test-Path $sumatraST)) { New-Item -Path $sumatraST -Force | Out-Null }
-    Set-ItemProperty -Path $sumatraST -Name ".pdf" -Value "" -Force
-
-    # ── Neuter MSEdgePDF so even if UserChoice still points there, SumatraPDF opens ──
-    $edgePdfCmd = "HKLM:\SOFTWARE\Classes\MSEdgePDF\shell\open\command"
-    if (Test-Path $edgePdfCmd) {
-        Set-ItemProperty -Path $edgePdfCmd -Name "(default)" -Value "`"$sumatraExe`" `"%1`"" -Force
-        Write-Log "MSEdgePDF ProgID neutered (now opens SumatraPDF)" "INFO"
-    }
-
-    # ── Per-user: register ProgIDs, OpenWithProgids, OpenWithList for all profiles ──
+    Remove-Item -Path "HKLM:\SOFTWARE\Classes\SumatraPDF.pdf" -Recurse -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path "HKLM:\SOFTWARE\Classes\Applications\SumatraPDF.exe" -Recurse -Force -ErrorAction SilentlyContinue
     foreach ($hive in $hkuPaths) {
-        # Clean up any leftover Thorium associations for this user
         Remove-Item -Path "$hive\SOFTWARE\Classes\ThoriumReader.epub" -Recurse -Force -ErrorAction SilentlyContinue
-        Remove-Item -Path "$hive\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.epub\UserChoice" -Force -ErrorAction SilentlyContinue
-
-        # SumatraPDF.pdf ProgID
-        $uSumatraCmd = "$hive\SOFTWARE\Classes\SumatraPDF.pdf\shell\open\command"
-        if (-not (Test-Path $uSumatraCmd)) { New-Item -Path $uSumatraCmd -Force | Out-Null }
-        Set-ItemProperty -Path $uSumatraCmd -Name "(default)" -Value "`"$sumatraExe`" `"%1`"" -Force
-        Set-ItemProperty -Path "$hive\SOFTWARE\Classes\SumatraPDF.pdf" -Name "(default)" -Value "PDF Document" -Force
-
-        # .pdf OpenWithProgids (add SumatraPDF, remove Edge)
-        $uPdfOWP = "$hive\SOFTWARE\Classes\.pdf\OpenWithProgids"
-        if (-not (Test-Path $uPdfOWP)) { New-Item -Path $uPdfOWP -Force | Out-Null }
-        New-ItemProperty -Path $uPdfOWP -Name "SumatraPDF.pdf" -Value ([byte[]]@()) -PropertyType Binary -Force | Out-Null
-        Remove-ItemProperty -Path $uPdfOWP -Name "MSEdgePDF" -Force -ErrorAction SilentlyContinue
-
-        # OpenWithList — put SumatraPDF first
-        $uPdfOWL = "$hive\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.pdf\OpenWithList"
-        if (-not (Test-Path $uPdfOWL)) { New-Item -Path $uPdfOWL -Force | Out-Null }
-        Set-ItemProperty -Path $uPdfOWL -Name "a" -Value "SumatraPDF.exe" -Force
-        Set-ItemProperty -Path $uPdfOWL -Name "MRUList" -Value "a" -Force
-
-        # Remove UserChoice for .pdf if it points elsewhere (ACL-protected, best-effort)
-        $ucPath = "$hive\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.pdf\UserChoice"
-        if (Test-Path $ucPath) { Remove-Item -Path $ucPath -Force -ErrorAction SilentlyContinue }
+        Remove-Item -Path "$hive\SOFTWARE\Classes\SumatraPDF.pdf" -Recurse -Force -ErrorAction SilentlyContinue
     }
 
-    # (cmd /c assoc/ftype removed — deprecated on Win11 22H2+, HKLM+HKU writes above cover it)
-
-    # Notify Explorer shell of association changes
     $shChangeCode = 'using System; using System.Runtime.InteropServices; public class Shell32Assoc { [DllImport("shell32.dll", CharSet = CharSet.Auto, SetLastError = true)] public static extern void SHChangeNotify(int wEventId, int uFlags, IntPtr dwItem1, IntPtr dwItem2); }'
     Add-Type -TypeDefinition $shChangeCode -ErrorAction SilentlyContinue
     [Shell32Assoc]::SHChangeNotify(0x08000000, 0, [IntPtr]::Zero, [IntPtr]::Zero)
 
-    Write-Log "File associations set: .pdf -> SumatraPDF (.epub unregistered, use SM Readmate library)" "SUCCESS"
+    Write-Log "Cleaned up legacy PDF-reader registrations; Explorer notified of assoc changes" "SUCCESS"
     $successCount++
 } catch {
-    Write-Log "Could not set file associations: $($_.Exception.Message)" "ERROR"
+    Write-Log "Could not notify Explorer of association changes: $($_.Exception.Message)" "ERROR"
     $failCount++
 }
 
@@ -2019,8 +2214,7 @@ Write-Host ""
 Write-Host "Desktop:" -ForegroundColor White
 Write-Host "  Shortcuts     Standardized (wiped + recreated for all apps)" -ForegroundColor White
 Write-Host "  Apps          NVDA, Word, Excel, PowerPoint, Firefox, VLC, Audacity," -ForegroundColor White
-Write-Host "                SumatraPDF, Kiwix, GoldenDict," -ForegroundColor White
-Write-Host "                Sao Mai Typing Tutor, Readmate," -ForegroundColor White
+Write-Host "                Kiwix, GoldenDict, Sao Mai Typing Tutor, Readmate," -ForegroundColor White
 Write-Host "                Calculator, My USB, Language Toggle, NVDA Restore" -ForegroundColor White
 Write-Host "  Vi folders    Tai Lieu, Am Nhac, Truyen, Hoc Tap, Tro Choi" -ForegroundColor White
 Write-Host ""
@@ -2032,8 +2226,8 @@ Write-Host "Safety & Hardening:" -ForegroundColor White
 Write-Host "  Firefox       Policies deployed (no updates, Vietnamese, no PiP, accessibility)" -ForegroundColor White
 Write-Host "  VLC           Audio-only, NVDA-friendly, volume cap 100%" -ForegroundColor White
 Write-Host "  Audacity      MME audio host, no splash, beep on completion" -ForegroundColor White
-Write-Host "  SumatraPDF    Continuous scroll, fit-width, system colors" -ForegroundColor White
-Write-Host "  File assoc    .pdf -> SumatraPDF (EPUBs via SM Readmate library)" -ForegroundColor White
+Write-Host "  Edge (PDF)    Policies: Read Aloud on, sign-in off, sync off, in-browser PDFs" -ForegroundColor White
+Write-Host "                (.pdf default association is set via Settings UI in Bootstrap)" -ForegroundColor DarkGray
 Write-Host "  Kiwix         130% zoom, reopen last tab" -ForegroundColor White
 Write-Host "  GoldenDict    150% zoom, 18px article font, UI Automation" -ForegroundColor White
 Write-Host "  Sticky Keys   Popup disabled (Shift x5)" -ForegroundColor White

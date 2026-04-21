@@ -24,17 +24,12 @@
     "asset_pattern": "audacity-win-{version}-64bit.exe",
     "destination": "Audacity/audacity-win-{version}-64bit.exe"
   },
-  "sumatrapdf": {
-    "source": "vendor",
-    "url_template": "https://www.sumatrapdfreader.org/dl/rel/{version}/SumatraPDF-{version}-64-install.exe",
-    "destination": "Utilities/SumatraPDF/SumatraPDF-{version}-64-install.exe"
-  },
   "kiwix": {
     "source": "vendor",
     "url_template": "https://download.kiwix.org/release/kiwix-desktop/kiwix-desktop_windows_x64_{version}.zip",
     "destination": "Kiwix/kiwix-desktop_windows_x64_{version}.zip",
     "extract": true,
-    "extract_file": "kiwix-desktop.exe",
+    "extract_to": "Kiwix/",
     "final_path": "Kiwix/kiwix-desktop.exe"
   },
   "wikipedia_vi": {
@@ -135,5 +130,35 @@
     "version": "3.2.6",
     "url_template": "https://github.com/ibrahim-s/trainingNvdaCommands/releases/download/{version}/trainingKeyboardCommands-{version}.nvda-addon",
     "destination": "NVDA/addons/trainingKeyboardCommands-{version}.nvda-addon"
+  },
+  "nvda_addon_rhvoice_core": {
+    "source": "vendor",
+    "version": "2.0.19",
+    "url_template": "https://downloads.rhvoice.com/files/nvda/RHVoice-{version}.nvda-addon",
+    "destination": "NVDA/addons/RHVoice-{version}.nvda-addon"
+  },
+  "nvda_addon_rhvoice_vivu_voice": {
+    "source": "vendor",
+    "version": "4.7.1008.11",
+    "url_template": "https://louderpages.org/dl/RHVoice-voice-Vietnamese-Vi-Vu-{version}.nvda-addon",
+    "destination": "NVDA/addons/RHVoice-voice-Vietnamese-Vi-Vu-{version}.nvda-addon"
+  },
+  "nvda_addon_unmute": {
+    "source": "vendor",
+    "version": "1.6.0",
+    "url_template": "https://github.com/grisov/Unmute/releases/download/v{version}/unmute-{version}.nvda-addon",
+    "destination": "NVDA/addons/unmute-{version}.nvda-addon"
+  },
+  "nvda_addon_clipspeak": {
+    "source": "vendor",
+    "version": "2025.06.13",
+    "url_template": "https://github.com/ruifontes/clipspeak/releases/download/{version}/clipspeak-{version}.nvda-addon",
+    "destination": "NVDA/addons/clipspeak-{version}.nvda-addon"
+  },
+  "saomai_vivu_sapi5": {
+    "source": "vendor",
+    "version": "4.8.1009.21",
+    "url_template": "https://louderpages.org/dl/RHVoice-voice-Vietnamese-Vi-Vu-v{version}-setup.exe",
+    "destination": "SaoMai/RHVoice-voice-Vietnamese-Vi-Vu-v{version}-setup.exe"
   }
 }

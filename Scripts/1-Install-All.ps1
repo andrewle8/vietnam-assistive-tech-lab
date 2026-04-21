@@ -84,12 +84,6 @@ $installations += @(
         WaitTime = 30
     },
     @{
-        Name = "SumatraPDF 3.6"
-        Path = ".\Installers\Utilities\SumatraPDF\SumatraPDF-3.6-64-install.exe"
-        Args = @("-s", "-install")
-        WaitTime = 15
-    },
-    @{
         Name = "GoldenDict 1.5.1"
         Path = ".\Installers\Utilities\GoldenDict\GoldenDict-1.5.1-Install.exe"
         Args = @("/S")

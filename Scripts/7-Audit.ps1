@@ -152,7 +152,7 @@ foreach ($sw in $manifest.software.PSObject.Properties) {
 Write-Host "`n--- NVDA Config ---" -ForegroundColor White
 Write-Host ""
 
-$nvdaConfigPath = Join-Path $env:APPDATA "nvda\nvda.ini"
+$nvdaConfigPath = "C:\Users\Student\AppData\Roaming\nvda\nvda.ini"
 if (Test-Path $nvdaConfigPath) {
     $nvdaConfig = Get-Content $nvdaConfigPath -Raw
 
@@ -257,12 +257,22 @@ try {
     Add-Result "System" "Battery Health" "Readable" "Could not read" "WARN"
 }
 
-# Check Firefox is default browser
-$httpHandler = (Get-ItemProperty "HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice" -ErrorAction SilentlyContinue).ProgId
-if ($httpHandler -match "Firefox") {
-    Add-Result "System" "Default Browser" "Firefox" "Firefox" "PASS"
-} else {
-    Add-Result "System" "Default Browser" "Firefox" $httpHandler "FAIL"
+# Default browser is intentionally left as Edge on Win11 24H2 (see Configure-Laptop
+# Step 4c rationale). The default PDF handler is also Edge by default in Windows 11.
+# Firefox stays installed as a desktop shortcut. No verification needed for browser
+# default — accept Windows' default. Audit just informs which handler is current.
+try {
+    $studentSidAudit = (New-Object System.Security.Principal.NTAccount("Student")).Translate(
+        [System.Security.Principal.SecurityIdentifier]).Value
+    $studentHive = "Registry::HKEY_USERS\$studentSidAudit"
+    $httpHandler = (Get-ItemProperty "$studentHive\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice" -ErrorAction SilentlyContinue).ProgId
+    $pdfHandler  = (Get-ItemProperty "$studentHive\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.pdf\UserChoice" -ErrorAction SilentlyContinue).ProgId
+    $httpShown = if ($httpHandler) { $httpHandler } else { "(empty - Windows default applies)" }
+    $pdfShown  = if ($pdfHandler)  { $pdfHandler }  else { "(empty - Windows default applies)" }
+    Add-Result "System" "Default Browser (Student)" "Edge or Windows default" $httpShown "PASS"
+    Add-Result "System" "Default PDF Reader (Student)" "Edge or Windows default" $pdfShown  "PASS"
+} catch {
+    Add-Result "System" "Default App Associations" "Readable" "Could not resolve Student SID" "WARN"
 }
 
 # Check NVDA backup exists

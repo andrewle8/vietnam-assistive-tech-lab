@@ -54,10 +54,15 @@ nul
 .claude/
 CLAUDE.md
 
+# Claude-internal planning / session artifacts (never push to GitHub or USB)
+docs/plans/
+docs/superpowers/
+
 # Temporary files
 *.tmp
 *.temp
 *.log
+tmp-*.ps1
 
 # Keep README files everywhere
 !**/README.md

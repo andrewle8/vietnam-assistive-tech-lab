@@ -119,7 +119,6 @@ Audio-Technica ATH-M40x — 20 units ordered via Sweetwater (Order W308lsXB, 202
   - Asset number labeled in both print and 3D-printed Braille tag (see `Documentation/USB-Braille-Tags.md`)
   - Braille tag clips onto drive keyring loop, lanyard attaches to tag
 - Pre-created folders (Documents, Audio, Schoolwork)
-- Optional Google Drive backup via rclone syncs every 15 minutes if internet is available
 - Asset numbers also stored as hidden `.student-id` file on USB drive
 
 ---

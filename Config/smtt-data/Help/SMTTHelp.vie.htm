@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Hướng Dẫn Sử Dụng Sao Mai Typing Tutor</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+/* GitHub stylesheet for MarkdownPad (http://markdownpad.com) */
+/* Author: Nicolas Hery - http://nicolashery.com */
+/* Version: b13fe65ca28d2e568c6ed5d7f06581183df8f2ff */
+/* Source: https://github.com/nicolahery/markdownpad-github */
+
+/* RESET
+=============================================================================*/
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* BODY
+=============================================================================*/
+
+body {
+  font-family: Helvetica, arial, freesans, clean, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #fff;
+  padding: 20px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+body>*:first-child {
+  margin-top: 0 !important;
+}
+
+body>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* BLOCKS
+=============================================================================*/
+
+p, blockquote, ul, ol, dl, table, pre {
+  margin: 15px 0;
+}
+
+/* HEADERS
+=============================================================================*/
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 20px 0 10px;
+  padding: 0;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 tt, h1 code, h2 tt, h2 code, h3 tt, h3 code, h4 tt, h4 code, h5 tt, h5 code, h6 tt, h6 code {
+  font-size: inherit;
+}
+
+h1 {
+  font-size: 28px;
+  color: #000;
+}
+
+h2 {
+  font-size: 24px;
+  border-bottom: 1px solid #ccc;
+  color: #000;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777;
+  font-size: 14px;
+}
+
+body>h2:first-child, body>h1:first-child, body>h1:first-child+h2, body>h3:first-child, body>h4:first-child, body>h5:first-child, body>h6:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+h1+p, h2+p, h3+p, h4+p, h5+p, h6+p {
+  margin-top: 10px;
+}
+
+/* LINKS
+=============================================================================*/
+
+a {
+  color: #4183C4;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* LISTS
+=============================================================================*/
+
+ul, ol {
+  padding-left: 30px;
+}
+
+ul li > :first-child, 
+ol li > :first-child, 
+ul li ul:first-of-type, 
+ol li ol:first-of-type, 
+ul li ol:first-of-type, 
+ol li ul:first-of-type {
+  margin-top: 0px;
+}
+
+ul ul, ul ol, ol ol, ol ul {
+  margin-bottom: 0;
+}
+
+dl {
+  padding: 0;
+}
+
+dl dt {
+  font-size: 14px;
+  font-weight: bold;
+  font-style: italic;
+  padding: 0;
+  margin: 15px 0 5px;
+}
+
+dl dt:first-child {
+  padding: 0;
+}
+
+dl dt>:first-child {
+  margin-top: 0px;
+}
+
+dl dt>:last-child {
+  margin-bottom: 0px;
+}
+
+dl dd {
+  margin: 0 0 15px;
+  padding: 0 15px;
+}
+
+dl dd>:first-child {
+  margin-top: 0px;
+}
+
+dl dd>:last-child {
+  margin-bottom: 0px;
+}
+
+/* CODE
+=============================================================================*/
+
+pre, code, tt {
+  font-size: 12px;
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+}
+
+code, tt {
+  margin: 0 0px;
+  padding: 0px 0px;
+  white-space: nowrap;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+  border-radius: 3px;
+}
+
+pre>code {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  border: none;
+  background: transparent;
+}
+
+pre {
+  background-color: #f8f8f8;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px;
+}
+
+pre code, pre tt {
+  background-color: transparent;
+  border: none;
+}
+
+kbd {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #DDDDDD;
+    background-image: linear-gradient(#F1F1F1, #DDDDDD);
+    background-repeat: repeat-x;
+    border-color: #DDDDDD #CCCCCC #CCCCCC #DDDDDD;
+    border-image: none;
+    border-radius: 2px 2px 2px 2px;
+    border-style: solid;
+    border-width: 1px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    line-height: 10px;
+    padding: 1px 4px;
+}
+
+/* QUOTES
+=============================================================================*/
+
+blockquote {
+  border-left: 4px solid #DDD;
+  padding: 0 15px;
+  color: #777;
+}
+
+blockquote>:first-child {
+  margin-top: 0px;
+}
+
+blockquote>:last-child {
+  margin-bottom: 0px;
+}
+
+/* HORIZONTAL RULES
+=============================================================================*/
+
+hr {
+  clear: both;
+  margin: 15px 0;
+  height: 0px;
+  overflow: hidden;
+  border: none;
+  background: transparent;
+  border-bottom: 4px solid #ddd;
+  padding: 0;
+}
+
+/* TABLES
+=============================================================================*/
+
+table th {
+  font-weight: bold;
+}
+
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 6px 13px;
+}
+
+table tr {
+  border-top: 1px solid #ccc;
+  background-color: #fff;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+/* IMAGES
+=============================================================================*/
+
+img {
+  max-width: 100%
+}
+</style>
+</head>
+<body>
+<h1>Hướng Dẫn Sử Dụng Sao Mai Typing Tutor</h1>
+<h2>Mục Lục:</h2>
+<ul>
+<li><a href="#introduction">Giới Thiệu</a></li>
+<li><a href="#installation">Cài Đặt</a></li>
+<li><a href="#usage">Sử Dụng SMTT</a></li>
+<li><a href="#config">Hộp Thoại Cấu Hình</a></li>
+<li><a href="#user">Quản Lý Người Dùng</a></li>
+<li><a href="#building">Xây Dựng Bài Học</a></li>
+<li><a href="#localize">Bản Địa Hóa</a></li>
+<li><a href="#license">Mua Khóa Bản Quyền Sử Dụng</a></li>
+<li><a href="#contact">Liên Hệ Trợ Giúp</a></li>
+</ul>
+<h2><a name="introduction">Giới Thiệu</a></h2>
+<p>Chương trình Sao Mai Typing Tutor (SMTT) là một ứng dụng chạy trên nền Windows và được phát triển bởi Trung Tâm Vì Người Mù Sao Mai <a href="http://www.saomaicenter.org">http://www.saomaicenter.org</a>. Mục tiêu chính của chúng tôi là tạo ra một sản phẩm giúp những người bắt đầu với máy tính làm quen với bàn phím và cải thiện kỹ năng đánh máy cũng như hỗ trợ các giáo viên thêm một công cụ dạy học cho những người mới bắt đầu.
+Các bài học được sắp xếp trong hai thư mục: Học bàn phím và Thực hành. Phần Học bàn phím sẽ gồm những bài học làm quen với bàn phím và cách gõ cho một ngôn ngữ nào đó mà chương trình hỗ trợ. Trong khi đó, phần Thực hành sẽ gồm những bài tập từ cơ bản đến nâng cao nhằm giúp người luyện cải thiện kỹ năng đánh máy. Tất cả bài học đều rất dễ tùy chỉnh, thêm vào và chỉnh sửa bằng công cụ Xây Dựng Bài Học đi kèm. Bên cạnh đó, ở chế độ Khám Phá, những người mới bắt đầu có thể thoải mái và an tâm nhấn để khám phá tên của các phím. Chức năng này sẽ rất hữu ích cho những người dùng mới là người khiếm thị.
+SMTT hỗ trợ đọc lên toàn bộ giao diện và nội dung bài học với giọng đọc theo chuẩn SAPI của Microsoft.
+Với công cụ quản lý người dùng, giáo viên có thể tạo những nhóm học viên riêng của mình cũng như theo dõi quá trình học và luyện đánh máy của học viên.
+SMTT có thể được tùy chỉnh linh hoạt để dịch sang những ngôn ngữ mới và thiết kế những bài học, bài luyện tập riêng cho từng ngôn ngữ. Chương trình dự kiến sẽ hỗ trợ thêm nhiều ngôn ngữ khác trong những bản phát hành sắp tới.</p>
+<h2><a name="installation">Cài Đặt</a></h2>
+<p>SMTT sử dụng khá ít tài nguyên trên máy, vì vậy máy bạn chỉ cần có một phiên bản hệ điều hành từ Windows XP trở lên. Người dùng có thể tải SMTT về máy tại: <a href="http://www.saomaicenter.org/downloads/smtt">http://www.saomaicenter.org/downloads/smtt</a>.
+Sau khi tải về máy, chạy tập tin cài đặt và làm theo hướng dẫn.  </p>
+<p>Lưu ý, sau khi hoàn tất việc cài đặt và chạy chương trình lần đầu, người dùng có thể nhấn F5 để mở hộp thoại Cấu Hình và tùy chỉnh các lựa chọn cho phù hợp với nhu cầu, như: chọn giọng đọc để chương trình hỗ trợ phát âm, hay chọn kiểu gõ cho ngôn ngữ của bạn. Nếu chọn kiểu gõ mặc định là tiếng Anh, bạn có thể cần thêm chương trình quản lý bàn phím cho ngôn ngữ riêng của mình.</p>
+<h2><a name="usage">Sử Dụng SMTT</a></h2>
+<p>Khi chạy chương trình lần đầu, con trỏ sẽ nằm trong màn hình chính tại cây thư mục cho phép chọn bài học và bài tập. Dùng phím mũi tên lên/xuống chọn các mục ngang cấp như Học Bàn Phím hay Thực Hành, mũi tên phải hoặc trái mở hoặc đóng mục hiện tại và nhấn Enter để bắt đầu với bài học hiện tại. Ngoài ra, có thể dùng phím Tab hoặc Shift+Tab để xem thêm thông tin về bài học được chọn.</p>
+<p>Ở cửa sổ chính, nhấn:</p>
+<ul>
+<li>F1: mở tài liệu hướng dẫn sử dụng.</li>
+<li>F2: mở chế độ Khám Phá Bàn Phím. Nhấn F2 hai lần để thoát khỏi chế độ khám phá và về lại cửa sổ chính.</li>
+<li>F5: mở hộp thoại Cấu Hình. Có thể xem thêm thông tin tại phần <a href="#config">Hộp Thoại Cấu Hình</a>.</li>
+<li>F6: mở hộp thoại đăng nhập (chỉ xuất hiện khi chế độ quản lý người dùng với giáo viên và học viên được bật).  Xem thêm tại phần <a href="#user">Quản lý người dùng</a>.</li>
+<li>F11: mở hộp thoại giới thiệu về chương trình.</li>
+<li>F12: đóng chương trình.</li>
+<li>Shift: đọc lại mục hiện tại (nếu có dùng giọng đọc cho chương trình).</li>
+<li>Control: ngưng đọc (nếu có dùng giọng đọc cho chương trình).</li>
+</ul>
+<p>Sau khi nhấn Enter để bắt đầu một bài học, SMTT sẽ thông báo, nhấn F1 đọc hướng dẫn cho bài học, Space để bắt đầu, Esc để thoát và Alt để tạm dừng. Chương trình sẽ phát tiếng bíp khi có lỗi đánh máy.
+Khi hoàn thành một bài luyện tập, chương trình sẽ hiện ra hộp thoại kết quả với các thông tin như ngày thực hiện bài luyện tập, tổng thời gian, tốc độ gõ (số ký tự/phút), số điểm và số lỗi.</p>
+<p>Nếu sử dụng với giọng đọc, ở cửa sổ đánh máy có thể nhấn:</p>
+<ul>
+<li>F1: đọc mô tả bài học.</li>
+<li>F2: đọc lại toàn bộ đoạn văn bản cần gõ hiện trên màn hình.</li>
+<li>F3: đọc từ cần gõ.</li>
+<li>F4: đọc ký tự cần gõ.</li>
+<li>F5: chuyển đổi giữa ba chế độ đọc khi gõ, bao gồm Im lặng, Theo ký tự và Theo từ.</li>
+</ul>
+<h2><a name="config">Hộp Thoại Cấu Hình</a></h2>
+<p>Ở cửa sổ chính của chương trình, nhấn F3 để mở hộp thoại cấu hình. Sau đây là những tùy chọn trong hộp thoại này:</p>
+<ul>
+<li>Ngôn ngữ: chọn ngôn ngữ cho giao diện của SMTT.</li>
+<li>Dữ liệu: chọn đường dẫn đến tập tin cơ sở dữ liệu. Tập tin này sẽ lưu mọi hoạt động, thông tin cá nhân và cấu hình riêng của tài khoản người dùng. Có thể kích hoạt nút Duyệt để chọn đường dẫn mới cho tập tin cơ sở dữ liệu.</li>
+<li>Thư mục bài học: chỉ định đường dẫn đến thư mục chứa các bài học.</li>
+<li>Đọc khi gõ: nếu có sử dụng kèm giọng đọc, chế độ này cho phép chọn đọc ký tự, đọc từ hoặc im lặng khi luyện gõ.</li>
+<li>Kiểu gõ: liệt kê các kiểu gõ cho những ngôn ngữ được hỗ trợ. Những tập tin định nghĩa kiểu gõ này nằm trong thư mục &quot;kb&quot;.</li>
+<li>Kiểm tra lỗi khi gõ: nếu đánh dấu chọn vào ô này, chương trình sẽ phát tiếng bíp, nhắc ký tự cần gõ đúng và chờ đến khi bạn gõ đúng mới chuyển qua ký tự kế. Nếu bỏ chọn, vẫn sẽ có tiếng bíp khi gặp lỗi nhưng chương trình sẽ tự động nhảy sang ký tự kế tiếp.</li>
+<li>Voice name: liệt kê những giọng đọc theo chuẩn SAPI của Microsoft hiện có trên máy. Chọn giọng đọc tương ứng cho ngôn ngữ bạn muốn để chương trình hỗ trợ đọc. Chọn &quot;Không đọc&quot; để tắt chức năng đọc của chương trình.</li>
+<li>Tốc độ đọc: điều chỉnh tốc độ đọc của giọng đã chọn.</li>
+<li>Nghe thử: nghe thử giọng đọc đã chọn.</li>
+<li>Đăng ký: kích hoạt mục này để đăng ký khóa bản quyền sử dụng. Hộp thoại đăng ký sẽ xuất hiện gồm các mục: mã ứng dụng, tên của bạn và mã đăng ký. Nếu đã mua phần mềm, bạn vui lòng ghi tên đăng ký và copy mã ứng dụng rồi gửi email cho chúng tôi qua địa chỉ: <a href="sales@saomaicenter.org">sales@saomaicenter.org</a>. Xem thêm thông tin tại phần <a href="#license">mua khóa bản quyền sử dụng</a>.</li>
+</ul>
+<h2><a name="user">Quản Lý Người Dùng</a></h2>
+<p>Đi kèm với chương trình luyện đánh máy SMTT là hai công cụ quản lý người dùng (UserManager.exe) và xây dựng bài học (LessonBuilder.exe). Với công cụ quản lý người dùng, sẽ giúp giáo viên dễ dàng theo dõi và quản lý nhóm học viên riêng của mình. Có thể tìm thấy chương trình UserManager.exe nằm trong cùng thư mục với chương trình SMTT. Mặc định sau khi cài đặt, chương trình sẽ tạo sẵn một user quản trị có tên đăng nhập và mật khẩu là: &quot;saomai&quot;.
+Chạy chương trình quản lý người dùng, đăng nhập lần đầu với user &quot;saomai&quot;. Có thể thay đổi mật khẩu của user &quot;saomai&quot; bằng cách nhấn F5 mở hộp thoại cấu hình, nhấn Tab chọn mục đổi mật khẩu để thay đổi.</p>
+<p>Ở cửa sổ chính của trình quản lý người dùng, nhấn:
+- F1: xem hướng dẫn.
+- F2: xem kết quả học tập của học viên.
+- F3: sắp xếp giáo viên và học viên.
+- F4: thêm/xóa/sửa người dùng.
+- F5: mở hộp thoại cấu hình.
+- F6: mở cửa sổ đăng nhập.
+- F7: mở công cụ xây dựng bài học.
+- F11: giới thiệu về chương trình.
+- F12: đóng chương trình.</p>
+<h3><a name="createuser">Tạo Người Dùng</a></h3>
+<p>Nhấn F4 để mở thẻ thêm người dùng. Trong thẻ này bao gồm các mục chính là nút thêm, xóa và lưu dữ liệu học viên và giáo viên. Ngoài ra, có hai ô tìm học viên và giáo viên theo ID.
+Khi chọn thêm học viên hoặc giáo viên, con trỏ sẽ chuyển đến một ô lưới gồm các cột và dòng dữ liệu. dùng mũi tên trái/phải để di chuyển giữa các cột và mũi tên lên/xuống di chuyển giữa các dòng.
+Đứng tại cột tương ứng và điền thông tin cho cột đó. Chọn nút lưu dữ liệu để ghi thông tin đã điền vào cơ sở dữ liệu. Nhấn Delete để xóa dữ liệu tại cột hiện tại hoặc chọn nút xóa học viên/giáo viên để xóa hàng dữ liệu của học viên/giáo viên hiện tại.
+Nếu có nhiều học viên/giáo viên được tạo, có thể dùng ô tìm theo ID để tìm nhanh.</p>
+<p>Chương trình chia thành ba cấp độ người dùng: quản trị (có toàn quyền), giáo viên (chỉ có quyền thêm/xóa/sửa danh sách học viên) và cấp học viên. Khi thêm người dùng là giáo viên, ở cột GroupID nếu chỉ định giá trị là 1 thì giáo viên đó có quyền quản trị và nếu là 0 sẽ là quyền giáo viên.</p>
+<p>Lưu ý, khi thêm người dùng giáo viên và học viên vào cơ sở dữ liệu, chương trình luyện gõ bàn phím SMTT sẽ tự động bật hộp thoại yêu cầu đăng nhập mỗi khi khởi động.</p>
+<h3><a name="assign">Sắp Xếp Học Viên/Giáo Viên</a></h3>
+<p>Nhấn F3 để chuyển con trỏ đến thẻ sắp xếp học viên và giáo viên. Sẽ gồm các mục: combo box chứa danh sách giáo viên, một ô lưới chứa danh sách học viên của giáo viên đang được chọn trên combo box, một ô lưới chứa danh sách học viên chưa được gán với giáo viên nào, nút gán và nút loại ra.
+Chọn học viên bên ô danh sách học viên chưa được gán nhấn nút gán để gán học viên cho giáo viên đó. Hoặc chọn học viên bên danh sách học viên của giáo viên, nhấn nút loại ra để loại học viên đó ra khỏi danh sách học viên của giáo viên.</p>
+<p>Nếu quản trị đang đăng nhập thì combo box sẽ chứa danh sách giáo viên, quản trị có thể chọn làm việc với giáo viên nào bằng cách chọn trên combo box.
+Nếu giáo viên đang đăng nhập thì trên combo box chỉ có tên giáo viên đó và tự động được chọn</p>
+<h3><a name="viewresult">Xem Kết Quả Học</a></h3>
+<p>Nhấn F2 để đưa con trỏ đến thẻ kết quả. Sẽ bao gồm các mục: 1 ô chứa danh sách học viên của giáo viên đang đăng nhập được xếp thứ tự theo điểm từ cao đến thấp, 1 ô chứa danh sách kết quả học tập của học viên đang được chọn xếp theo ngày học mới nhất lên trên.</p>
+<p>Bên danh sách học viên có 2 cột tên và điểm. Mỗi lần hoàn tất 1 bài học, hệ thống cho điểm và tính thời gian. Điểm và thời gian này được cộng dồn. Điểm ở cột điểm là điểm trung bình bằng tổng điểm chia cho tổng thời gian.
+Điểm ở mỗi bài học được tính theo công thức: corrects * cpm / (1 + errors). Nghĩa là điểm mỗi bài học bằng (tổng số ký tự gõ đúng nhân cho tốc độ gõ) tất cả chia cho (1 + số lỗi gõ).</p>
+<h2><a name="building">Xây Dựng Bài Học</a></h2>
+<p>Trong cửa sổ chính của chương trình quản lý người dùng, nhấn F7 để mở công cụ xây dựng bài học hoặc chạy trực tiếp chương trình trong cùng thư mục &quot;LessonBuilder.exe&quot;. Trên công cụ này có hai thẻ, Xây dựng bài học và Sắp xếp bài học.</p>
+<h3>Ở thẻ Xây dựng bài học có các nút:</h3>
+<ul>
+<li>Tạo gói bài mới: tạo một gói bài học mới. Một tập tin gói bài học có thể chứa nhiều bài học.</li>
+<li>Mở gói bài: mở tập tin gói bài học hiện có và có thể thêm, sửa xóa bài học.</li>
+</ul>
+<p>Lưu ý, chương trình sẽ lưu tập tin gói bài học ở định dạng XML với quy ước đặt tên tập tin là &quot;TutorXX.xml&quot;, &quot;PracticeXX.xml&quot;. XX là số thứ tự của gói bài học, ví dụ &quot;Tutor01.xml&quot;, &quot;Tutor02.xml&quot;, &quot;Practice01.xml&quot;. Gói bài học với tên &quot;Tutor&quot; sẽ nằm trong thư mục Học bàn phím và &quot;Practice&quot; sẽ nằm trong thư mục Thực hành khi đứng ở màn hình chính.</p>
+<p>Sau khi chọn tạo tập tin mới hoặc mở tập tin sẵn có, có thể chọn nút Đặt tên gói bài học để ghi tên cho gói bài đó. Một bài học sẽ gồm các thẻ thông tin sau:</p>
+<ul>
+<li>Tác giả: tác giả của bài học.</li>
+<li>Tựa bài: tựa bài học.</li>
+<li>Mô tả: cung cấp thông tin mô tả hoặc hướng dẫn cho bài học hiện tại. Người  học có thể nhấn F1 để nghe thông tin này khi đứng ở cửa sổ đánh máy.</li>
+<li>Nội dung gõ: nội dung văn bản mà người học cần gõ. Dùng dấu # (báo số) ở đầu nội dung và dấu | (gạch đứng) để phân cách giữa các nhóm bạn muốn chương trình hiện ngẫu nhiên khi gõ. Ví dụ: Nếu bạn nhập &quot;#a|bc|d&quot;, chương trình sẽ hiện ngẫu nhiên các thành phần như &quot;a&quot;, &quot;d&quot;, &quot;bc&quot; vv... Nếu không có dấu báo số ở đầu, chương trình sẽ xuất nội dung đúng như văn bản được đưa vào. Bạn có thể dùng dấu gạch đứng để định nghĩa điểm dừng cho trường hợp một câu dài mà không có dấu câu ngưng nghỉ.</li>
+<li>Tốc độ gõ yêu cầu: chỉ định tốc độ gõ mong muốn người học đạt được (số ký tự/phút).</li>
+<li>Điểm số yêu cầu: chỉ định số điểm mong muốn người học đạt được (tính theo tỷ lệ phần trăm).</li>
+<li>Thời gian học: tổng thời gian bài học cần hoàn tất. Lưu ý, chỉ áp dụng cho những bài học có nội dung gõ hiện ngẫu nhiên (có dấu báo số ở đầu bài), không áp dụng cho những bài học cố định (cần hoàn thành toàn bộ nội dung gõ như giáo viên nhập vào).</li>
+</ul>
+<p>Lưu ý, nếu dùng một chương trình soạn thảo riêng để soạn nội dung gõ, bạn hãy dùng những chương trình soạn thảo văn bản chuẩn như Notepad ++ và lưu với mã unicode.</p>
+<p>Trong hộp thoại này có những nút khác như tạo bài mới, bài kế, bài trước, bài cuối và nút lưu để lưu lại toàn bộ các bài học.</p>
+<h3>Ở thẻ Sắp xếp bài học:</h3>
+<p>Nếu các bài học không hiển thị đúng theo thứ tự bạn mong muốn trong danh mục chọn bài học, bạn có thể sắp xếp lại thứ tự bài học trong thẻ Sắp xếp bài học với công cụ xây dựng bài học. Từ thẻ Xây dựng bài học, nhấn Control+Tab chuyển qua thẻ Sắp xếp bài học, kích hoạt nút Mở, chọn tập tin gói bài học muốn sắp xếp. Ở danh sách liệt kê bài học, dùng mũi tên lên/xuống chọn, chọn nút dời lên hoặc dời xuống để di chuyển bài học đang chọn đến vị trí mong muốn. Sau đó, chọn nút Lưu để lưu lại.</p>
+<h2><a name="localize">Bản Địa Hóa</a></h2>
+<p>Nếu bạn muốn giúp chúng tôi dịch chương trình này sang ngôn ngữ của bạn, vui lòng liên hệ với chúng tôi. Nhóm Công nghệ Sao Mai sẽ gửi những tập tin cần dịch và phần hướng dẫn chi tiết để thêm một ngôn ngữ mới vào chương trình. Ngoài ra, chúng tôi có thể cần tạo tập tin định nghĩa kiểu gõ cho ngôn ngữ riêng của bạn. Tuy nhiên, tất cả những bước này rất đơn giản và không yêu cầu người dịch phải có kỹ năng máy tính chuyên sâu. Khi hoàn tất quá trình dịch và kiểm tra lỗi xong, chúng tôi sẽ đưa ngôn ngữ hoàn tất vào bản phát hành kế đó.
+Vui lòng dùng thông tin liên hệ phía dưới để liên lạc với chúng tôi. Cảm ơn bạn đã quan tâm và xem xét hỗ trợ dịch chương trình này sang ngôn ngữ mới nhằm giúp nhiều người dùng có thể sử dụng.</p>
+<h2><a name="license">Mua Khóa Bản Quyền Sử Dụng</a></h2>
+<p>Để đặt mua khóa bản quyền, vui lòng email cho chúng tôi theo địa chỉ: <a href="sales@saomaicenter.org">sales@saomaicenter.org</a>; hoặc gọi điện thoại theo số: +84-908-882553.</p>
+<p>Trung Tâm Vì Người Mù Sao Mai là một tổ chức phi lợi nhuận dành cho người khiếm thị. Chúng tôi hoạt động nhằm: Tăng năng lực người khiếm thị thông qua việc ứng dụng và phát triển công nghệ trợ giúp trong giáo dục và việc làm; tư vấn giải pháp và cung cấp sản phẩm cho người khiếm thị trong lĩnh vực giáo dục, việc làm và sống tự lập; hướng nghiệp, đào tạo và giới thiệu việc làm cho người khiếm thị.
+Để hỗ trợ cho những hoạt động miễn phí cho người mù cũng như tiếp tục duy trì và phát triển chương trình SMTT, chúng tôi quyết định bán chương trình với mỗi bản quyền cài đặt cho một máy sẽ có mức thu phí là 14 USD. Chúng tôi rất mong nhận được sự đồng hành của mọi người. Nếu tổ chức hay cá nhân bạn là người khiếm thị có nhu cầu sử dụng nhưng gặp khó khăn về chi phí, hãy liên hệ với chúng tôi để chúng tôi có thể xem xét giảm giá hoặc cung cấp miễn phí.</p>
+<h2><a name="contact">Liên Hệ Trợ Giúp</a></h2>
+<p>Trung Tâm Hướng Nghiệp và Công Nghệ Trợ Giúp Cho Người Mù Sao Mai</p>
+<ul>
+<li>Địa chỉ: 52/22 Huỳnh Thiện Lộc, phường Hòa Thạnh, quận Tân Phú, TpHCM, Việt Nam.</li>
+<li>Tel: +84-28-7302-4488</li>
+<li>Hotline: +84-908-882553.</li>
+<li>Email: <a href="support@saomaicenter.org">support@saomaicenter.org</a>
+Website: <a href="http://www.saomaicenter.org">http://www.saomaicenter.org</a></li>
+</ul>
+
+</body>
+</html>
+<!-- This document was created with MarkdownPad, the Markdown editor for Windows (http://markdownpad.com) -->

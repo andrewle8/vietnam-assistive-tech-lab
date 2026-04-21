@@ -84,9 +84,13 @@ Your USB drive has a Braille label tag attached.
 
 In programs like Word:
 
-1. Press Ctrl + S to save.
-2. Use Alt + D to jump to the address bar, type the USB path (e.g., E:\)
-3. Or use "Save As" (Ctrl + Shift + S) and select USB from the left panel.
+1. Press F12 to open the "Save As" dialog. It automatically points to your USB (drive D:).
+2. Type a filename (e.g., homework.docx).
+3. Press Enter to save.
+
+Tip: After the first save, Ctrl + S saves to the same location without asking.
+
+If the USB is not plugged in, Word saves to the Documents folder on the laptop instead. Plug in the USB and press F12 to re-save to the USB.
 
 ### Safely Removing USB
 
@@ -128,7 +132,6 @@ Between jumps, press the next letter within about one second, or wait two second
 - PowerPoint - Presentations
 - Sao Mai Typing Tutor - Vietnamese typing tutor
 - Readmate - Vietnamese textbook reader (103 books pre-loaded)
-- SumatraPDF - PDF reader
 - Tu Dien - Dictionary - English-Vietnamese dictionary
 - VLC media player - Media player
 - Wikipedia (Offline) - Offline encyclopedia
@@ -204,7 +207,7 @@ Switch Vietnamese/English: press Ctrl + Shift. Check the UniKey tray icon (V = V
 | Ctrl + Z | Undo |
 | Ctrl + S | Save |
 | Ctrl + A | Select all |
-| Ctrl + Shift + S | Save As |
+| F12 | Save As (opens dialog on USB drive D:) |
 | Windows + L | Lock laptop |
 | Ctrl + W | Close current tab or window |
 
@@ -214,12 +217,256 @@ Switch Vietnamese/English: press Ctrl + Shift. Check the UniKey tray icon (V = V
 
 The laptop comes with 103 Vietnamese textbooks pre-loaded (Canh Dieu, Chan Troi Sang Tao, Ket Noi Tri Thuc, Tieng Anh).
 
-### Using Readmate
+### Opening Readmate
 
-1. Navigate to "Readmate" on the Desktop (press "R" to jump quickly).
-2. Press Enter to open.
-3. The book list appears. Use arrow keys to select a book.
-4. Press Enter to open and read.
+1. On the Desktop, press "R" to jump to "Readmate".
+2. Press Enter to launch.
+
+### Picking and Opening a Book
+
+When Readmate opens, you are on the main screen with focus on the left sidebar.
+
+1. Press **Ctrl + B** to activate the Bookshelf tab (if you're currently on Settings or User Guide).
+2. Press **F6** (or Tab) to move focus into the book list pane.
+3. Use the **arrow keys** (Up/Down/Left/Right) to move through the book list — NVDA reads each book title.
+4. Or press **Ctrl + F** to search books by name.
+5. When you find the book you want, press **Enter** to open it.
+
+The book **starts reading automatically** when it opens — no need to press Ctrl+P. Press Ctrl+P to pause or resume.
+
+Note: **Tab does not walk through all books** — use arrow keys or Ctrl+F.
+
+### Reading a Book — Essential Shortcuts
+
+Once a book is open:
+
+| Key | Action |
+|---|---|
+| Ctrl + P | Play / pause reading |
+| Right Arrow / Left Arrow | Next / previous phrase |
+| Ctrl + Down / Ctrl + Up | Next / previous paragraph |
+| Ctrl + Page Down / Page Up | Next / previous page |
+| Alt + Right / Alt + Left | Next / previous chapter |
+| H / Shift + H | Next / previous heading |
+| ] (right bracket) | Faster reading |
+| [ (left bracket) | Slower reading |
+| Ctrl + ] / Ctrl + [ | Volume up / down |
+| Ctrl + F | Search text in book |
+| Ctrl + N | Add a note at current position |
+| Ctrl + Shift + N | View all notes |
+| Ctrl + H | Table of contents |
+| Ctrl + G | Page list |
+| Ctrl + W | Close book, return to Bookshelf |
+| Esc | Back to previous screen |
+
+### Navigating Readmate
+
+- **Ctrl + Tab** or **F6**: switch between panes (sidebar, main content, etc.)
+- **Tab**: move within a single pane (e.g. from search field to book list)
+- **Ctrl + B**: jump directly to Bookshelf
+- **Ctrl + S**: Settings
+- **Ctrl + H**: Full Sao Mai user guide (inside the app)
+
+If NVDA goes silent after switching to another program and back to Readmate, press **Alt** then **Esc** to re-engage.
+
+---
+
+## Browsing the Web with Firefox
+
+### NVDA's Two Modes on the Web
+
+When you use Firefox, NVDA operates in one of two modes:
+
+- **Browse Mode** — default on web pages. NVDA creates a "virtual document" you navigate with single-letter shortcuts (H, K, F, etc.).
+- **Focus Mode** — auto-engaged when you enter a text field. Letter keys type normally instead of jumping.
+
+Press **NVDA + Space** to manually toggle between them. NVDA auto-switches when you enter/leave text fields.
+
+### Web Browsing Shortcuts (Browse Mode)
+
+| Key | Action |
+|---|---|
+| Down / Up Arrow | Read next / previous line |
+| H / Shift + H | Next / previous heading |
+| K / Shift + K | Next / previous link |
+| F / Shift + F | Next / previous form field |
+| B / Shift + B | Next / previous button |
+| D / Shift + D | Next / previous landmark (skips menus + ads) |
+| 1 – 6 | Heading level 1–6 |
+| NVDA + F7 | Elements List (all headings / links / landmarks) |
+| NVDA + Down Arrow | Read continuously from here (Say All) |
+| Enter | Follow the link |
+
+### Firefox Shortcuts
+
+| Key | Action |
+|---|---|
+| Ctrl + L | Jump to address bar |
+| Alt + Left Arrow | Back to previous page |
+| Alt + Right Arrow | Forward |
+| Ctrl + T / Ctrl + W | New tab / close tab |
+| Ctrl + Shift + T | Reopen last closed tab |
+| Ctrl + F | Find on page |
+| F9 | Reader Mode — strips ads, shows article only |
+| F5 | Refresh |
+| Ctrl + + / Ctrl + - / Ctrl + 0 | Zoom in / out / reset |
+
+### Tip: Reading News Sites (vnexpress.net, tuoitre.vn, etc.)
+
+1. Open the site → press **D** 2-3 times to skip menus/ads to the "main" landmark.
+2. Press **H** once → usually lands on the article title.
+3. Press **NVDA + Down Arrow** → reads the whole article.
+4. If the page has too many ads → press **F9** for Reader Mode (article only, no clutter).
+5. Press **F9** again or **Alt + Left Arrow** to go back.
+
+English ads are automatically blocked thanks to uBlock Origin (pre-installed in Firefox). If ads still interrupt, press **D** repeatedly until NVDA says "main" (main content).
+
+---
+
+## Music and Audiobooks with VLC
+
+| Key | Action |
+|---|---|
+| Ctrl + O | Open file |
+| Space | Play / pause |
+| Shift + Right / Left Arrow | Forward / back 5 seconds |
+| Alt + Right / Left Arrow | Forward / back 10 seconds |
+| Ctrl + Right / Left Arrow | Forward / back 1 minute |
+| ] / [ | Faster / slower (pitch preserved) |
+| = | Normal speed |
+| Ctrl + T | Jump to specific time |
+| Ctrl + Up / Down Arrow | Volume up / down |
+| M | Mute / unmute |
+| N / P | Next / previous track in playlist |
+| Ctrl + B | Bookmark manager |
+| I | Speak current position info |
+
+Tip: For audiobooks, use `]` and `[` to tune speed — VLC preserves pitch. Use Ctrl + B to mark where you stopped listening.
+
+---
+
+## Offline Wikipedia
+
+The laptop has Vietnamese Wikipedia offline (no internet needed).
+
+1. On Desktop, press "W" to jump to "Wikipedia (Offline)" → Enter.
+2. Press **F6** to jump to the search bar.
+3. Type a topic (e.g., "Vietnam") → press **Enter** to open the article.
+4. **Important**: if NVDA doesn't auto-read the article, press **NVDA + Space** to toggle Browse Mode. This is a known Kiwix+NVDA quirk.
+5. In the article: use **H** to jump by heading, **K** by link — same as regular web browsing.
+6. **Ctrl + F** to find text in the article.
+7. **Alt + Left Arrow** to go back to search results.
+
+---
+
+## Reading PDFs with Microsoft Edge
+
+When you open a PDF (e.g., homework from a teacher), the laptop opens it with Microsoft Edge. Edge reads PDFs well with NVDA.
+
+1. Open the PDF file (press Enter on it, or open from Word).
+2. NVDA automatically switches to Browse Mode.
+3. Use **H** to jump by heading, **down arrow** to read line by line.
+4. Or press **Ctrl + Shift + U** in Edge to enable "Read Aloud" — Edge will read the document aloud using Vi-Vu voice.
+5. **Ctrl + F** to find text in the PDF.
+
+Note: scanned PDFs (image-only, no text) cannot be read by NVDA. Ask your teacher for a text-based PDF.
+
+---
+
+## English-Vietnamese Dictionary with GoldenDict
+
+1. From Desktop, open "Dictionary" (or press "T").
+2. Press **Ctrl + L** to focus the search box.
+3. Type the word → **Enter** → NVDA reads the definition.
+4. Press **Alt + Page Down** or **Alt + Page Up** to switch dictionary groups (English-Vietnamese / Vietnamese-English).
+5. Press **Alt + Down / Up Arrow** to see other dictionaries' results for the same word.
+
+---
+
+## Calculator
+
+1. Open Calculator from Desktop (press "C" or arrow to it).
+2. Type the calculation using number keys and operators: + - * / =
+3. **Press Enter to hear the result** — NVDA only speaks the result after you press Enter, not after each keystroke.
+4. **Esc** or **Delete** to clear and start over — NVDA confirms.
+
+Example: type `25 + 17` then press Enter → NVDA says "42".
+
+---
+
+## Spelling Vietnamese Diacritics
+
+Vietnamese tone marks (á, à, ả, ã, ạ) can sound similar when NVDA reads fast.
+
+To spell a word character-by-character with tone mark names: **put the cursor on the word → press NVDA + Shift + period (.) twice quickly**.
+
+NVDA will spell each letter and name each tone mark.
+
+Example: the word "chào" → spelled as "c, h, a, with grave accent, o".
+
+---
+
+## Daily NVDA Shortcuts (Summary)
+
+| Key | Action |
+|---|---|
+| Ctrl | Stop speech immediately |
+| NVDA + A or NVDA + Down Arrow | Read continuously (Say All) |
+| NVDA + L | Re-read current line |
+| NVDA + Shift + period (.) twice | Spell current word (for Vietnamese tone marks) |
+| NVDA + T | Read window title |
+| NVDA + Ctrl + Up / Down Arrow | Increase / decrease speech rate |
+| NVDA + S | Toggle speech on / off (useful for exams) |
+| NVDA + C | Read clipboard contents (verify after Ctrl + C) |
+| NVDA + Ctrl + F | Find text in document |
+| NVDA + 1 | Keyboard learn mode (press any key to hear its name) |
+
+---
+
+## Learning Keys — When You Don't Know What a Key Does
+
+If your finger lands on a key and you're not sure what it does, there are two safe ways to learn without doing anything wrong:
+
+### Option 1: NVDA Input Help Mode (NVDA + 1)
+
+Works any time, in any program:
+
+1. Press **NVDA + 1** to enable "Input Help mode". NVDA announces "Input help on".
+2. Now press any key → NVDA speaks the key's name and function, **without executing the key**. Completely safe.
+3. Explore the whole keyboard without breaking anything.
+4. Press **NVDA + 1** again to exit (keys do their normal functions again).
+
+This is the fastest way to remind yourself of a key.
+
+### Option 2: Sao Mai Typing Tutor (SMTT)
+
+Pre-installed Vietnamese typing tutor from Sao Mai:
+
+1. On Desktop, press "S" to jump to "Sao Mai Typing Tutor" → Enter.
+2. Choose "Explore Keyboard" (Khám phá bàn phím).
+3. Press any key → SMTT speaks its name in Vietnamese.
+4. SMTT also has structured typing lessons for daily practice — especially useful for Vietnamese Telex.
+
+**Comparison**: NVDA+1 is best for quick key lookup anywhere; SMTT is best for structured learning.
+
+### Keyboard Orientation (Dell Latitude 5420)
+
+- **F** and **J** have factory raised bumps — the "home row" where your 8 fingers rest.
+- **Delete** and **Down Arrow** also have factory bumps.
+- **Insert** (the NVDA key) sits right next to Delete — a small matching bump is added.
+- From F/J, count to other keys: left of F is D → S → A; right of J is K → L → semicolon.
+
+---
+
+## Hardware Care
+
+- Close the lid with two hands, gripping both outer corners to protect the hinges.
+- Orienting by touch: trackpad = front of laptop, hinge = back.
+- Plug the charger into the **back-left USB-C port, closest to the hinge**.
+- Don't eat or drink near the laptop. The keyboard is spill-resistant, not spill-proof.
+- Unplug headphones by gripping the connector, not the cable.
+- If NVDA goes silent unexpectedly, press **NVDA + Shift + B** to hear battery status — the battery may be low.
+- **Do not** enable BitLocker, change your password, or sign into a Microsoft Account — call your teacher first.
 
 ---
 

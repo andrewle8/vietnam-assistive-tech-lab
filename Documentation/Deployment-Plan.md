@@ -38,7 +38,6 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 | **UniKey** | 4.6 | GPL | Vietnamese Telex keyboard input |
 | **Kiwix** | 2.5.1 | GPL-3.0 | Offline encyclopedia reader |
 | **Vietnamese Wikipedia** | Nov 2025 | CC BY-SA | Offline Vietnamese encyclopedia (~550 MB) |
-| **SumatraPDF** | 3.6 | GPL-3.0 | Lightweight PDF reader for Vietnamese textbooks |
 | **GoldenDict** | 1.5.1 | GPL-3.0 | Offline dictionary (Vietnamese-English/Vietnamese-Vietnamese) |
 | **SM Readmate** | 1.0.5 | Free (non-commercial) | Accessible ebook reader with 103 Vietnamese textbooks pre-loaded |
 
@@ -115,14 +114,21 @@ Each Dell Latitude 5420 ships with Windows 10 Pro. On first power-on, walk throu
 
 ### BIOS Setup (Required Before Win11 Upgrade)
 
-Windows 11 requires Secure Boot and TPM 2.0. Enable these **before** running the upgrade:
+Windows 11 requires Secure Boot and TPM 2.0. Enable both **before** running the upgrade:
 
 1. Restart the PC
 2. Press **F2** repeatedly at the Dell logo to enter BIOS
-3. Go to **Security** tab
-4. Enable **Secure Boot**
-5. Verify **TPM 2.0** is enabled (same Security tab)
-6. **Save and Exit** (Apply Changes)
+3. **Security** tab → Enable **Secure Boot**
+4. **Security** tab → Verify **TPM 2.0** is enabled
+5. **Save and Exit** (Apply Changes, F10)
+
+### Fn Lock (Required — Do After First Login)
+
+Blind students invoke NVDA commands like `Insert+F1`, `Insert+F7` dozens of times per session. Without Fn Lock, every command becomes a 3-key chord (`Fn+Insert+F1`). With Fn Lock enabled, F-keys act as function keys by default (media keys need Fn).
+
+**Press `Fn+Esc` once** after logging in. The Fn key lights up with a small lock icon to confirm. This setting persists across reboots.
+
+Verify: press F1 alone in a browser — it should open Help. If it changes brightness or does nothing, press Fn+Esc again.
 
 ### Upgrade to Windows 11
 
@@ -362,7 +368,7 @@ These are shared machines for children. Lock them down to prevent accidental dam
 - Admin account retains a password known only to staff
 
 **Disable unnecessary features:**
-- Disable Windows Update (offline machines, saves disk space and prevents unexpected reboots)
+- Configure Windows Update for auto-install of quality (security) updates daily at 18:00, matching the LabUpdateAgent dinner window. Feature updates deferred 365 days. `NoAutoRebootWithLoggedOnUsers=1` prevents reboots interrupting class.
 - Disable Cortana and web search in Start menu
 - Disable lock screen ads and tips
 - Disable Windows Store (prevents accidental installs)

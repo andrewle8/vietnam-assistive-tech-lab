@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sao Mai Typing Tutor User Guide</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+/* GitHub stylesheet for MarkdownPad (http://markdownpad.com) */
+/* Author: Nicolas Hery - http://nicolashery.com */
+/* Version: b13fe65ca28d2e568c6ed5d7f06581183df8f2ff */
+/* Source: https://github.com/nicolahery/markdownpad-github */
+
+/* RESET
+=============================================================================*/
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* BODY
+=============================================================================*/
+
+body {
+  font-family: Helvetica, arial, freesans, clean, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #fff;
+  padding: 20px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+body>*:first-child {
+  margin-top: 0 !important;
+}
+
+body>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* BLOCKS
+=============================================================================*/
+
+p, blockquote, ul, ol, dl, table, pre {
+  margin: 15px 0;
+}
+
+/* HEADERS
+=============================================================================*/
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 20px 0 10px;
+  padding: 0;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 tt, h1 code, h2 tt, h2 code, h3 tt, h3 code, h4 tt, h4 code, h5 tt, h5 code, h6 tt, h6 code {
+  font-size: inherit;
+}
+
+h1 {
+  font-size: 28px;
+  color: #000;
+}
+
+h2 {
+  font-size: 24px;
+  border-bottom: 1px solid #ccc;
+  color: #000;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777;
+  font-size: 14px;
+}
+
+body>h2:first-child, body>h1:first-child, body>h1:first-child+h2, body>h3:first-child, body>h4:first-child, body>h5:first-child, body>h6:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+h1+p, h2+p, h3+p, h4+p, h5+p, h6+p {
+  margin-top: 10px;
+}
+
+/* LINKS
+=============================================================================*/
+
+a {
+  color: #4183C4;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* LISTS
+=============================================================================*/
+
+ul, ol {
+  padding-left: 30px;
+}
+
+ul li > :first-child, 
+ol li > :first-child, 
+ul li ul:first-of-type, 
+ol li ol:first-of-type, 
+ul li ol:first-of-type, 
+ol li ul:first-of-type {
+  margin-top: 0px;
+}
+
+ul ul, ul ol, ol ol, ol ul {
+  margin-bottom: 0;
+}
+
+dl {
+  padding: 0;
+}
+
+dl dt {
+  font-size: 14px;
+  font-weight: bold;
+  font-style: italic;
+  padding: 0;
+  margin: 15px 0 5px;
+}
+
+dl dt:first-child {
+  padding: 0;
+}
+
+dl dt>:first-child {
+  margin-top: 0px;
+}
+
+dl dt>:last-child {
+  margin-bottom: 0px;
+}
+
+dl dd {
+  margin: 0 0 15px;
+  padding: 0 15px;
+}
+
+dl dd>:first-child {
+  margin-top: 0px;
+}
+
+dl dd>:last-child {
+  margin-bottom: 0px;
+}
+
+/* CODE
+=============================================================================*/
+
+pre, code, tt {
+  font-size: 12px;
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+}
+
+code, tt {
+  margin: 0 0px;
+  padding: 0px 0px;
+  white-space: nowrap;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+  border-radius: 3px;
+}
+
+pre>code {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  border: none;
+  background: transparent;
+}
+
+pre {
+  background-color: #f8f8f8;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px;
+}
+
+pre code, pre tt {
+  background-color: transparent;
+  border: none;
+}
+
+kbd {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #DDDDDD;
+    background-image: linear-gradient(#F1F1F1, #DDDDDD);
+    background-repeat: repeat-x;
+    border-color: #DDDDDD #CCCCCC #CCCCCC #DDDDDD;
+    border-image: none;
+    border-radius: 2px 2px 2px 2px;
+    border-style: solid;
+    border-width: 1px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    line-height: 10px;
+    padding: 1px 4px;
+}
+
+/* QUOTES
+=============================================================================*/
+
+blockquote {
+  border-left: 4px solid #DDD;
+  padding: 0 15px;
+  color: #777;
+}
+
+blockquote>:first-child {
+  margin-top: 0px;
+}
+
+blockquote>:last-child {
+  margin-bottom: 0px;
+}
+
+/* HORIZONTAL RULES
+=============================================================================*/
+
+hr {
+  clear: both;
+  margin: 15px 0;
+  height: 0px;
+  overflow: hidden;
+  border: none;
+  background: transparent;
+  border-bottom: 4px solid #ddd;
+  padding: 0;
+}
+
+/* TABLES
+=============================================================================*/
+
+table th {
+  font-weight: bold;
+}
+
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 6px 13px;
+}
+
+table tr {
+  border-top: 1px solid #ccc;
+  background-color: #fff;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+/* IMAGES
+=============================================================================*/
+
+img {
+  max-width: 100%
+}
+</style>
+</head>
+<body>
+<h1>Sao Mai Typing Tutor User Guide</h1>
+<h2>Table of Contents:</h2>
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#usage">Using SMTT</a></li>
+<li><a href="#options">Options Dialogue</a></li>
+<li><a href="#user">User Management</a></li>
+<li><a href="#building">Building Lessons</a></li>
+<li><a href="#localize">Localization</a></li>
+<li><a href="#license">Purchasing License Key</a></li>
+<li><a href="#contact">Contact for Support</a></li>
+</ul>
+<h2><a name="introduction">Introduction</a></h2>
+<p>Sao Mai Typing Tutor (SMTT) is an application developed by Sao Mai Center for the Blind <a href="http://www.saomaicenter.org">http://www.saomaicenter.org</a>. The main objective of this application is to help all computer beginners explore, learn and improve typing skills.<br />
+Lessons are organized in two folder sections, the Tutor folder containing lessons to learn how to type and the Practice folder containing lessons to enhance typing related skills. All lessons are easy to customize with the Lesson Builder tool. In addition, in the Explore mode, new learners are safe to press and explore all the keys without causing any problems to the computer. This is especially useful for visually impaired users.<br />
+SMTT provides the reading-aloud function so users can either see or listen to all information on the screen and type. It supports all Microsoft SAPI-compliant text-to-speech voices.
+With its user management tool, teachers can create their own group of students and keep track of their students' activities.<br />
+SMTT is easy to translate into other languages. Many new languages are planned to be supported in the coming releases.</p>
+<h2><a name="installation">Installation</a></h2>
+<p>SMTT uses very limited resource so you just need to have Windows XP or higher versions of operating system. Download the software at: <a href="http://www.saomaicenter.org/en/downloads/smtt">http://www.saomaicenter.org/en/downloads/smtt</a> .
+Run the setup file and follow its installation instruction.  </p>
+<p>Please note, in order to have speech support, after running SMTT, click on Options (or press F5) to open the Options dialogue and choose the most suitable option for your usage. In addition, you should also consider choosing the typing method for your own language. If you choose English as the default typing method, you might need to have a third-party keyboard input manager for other languages.</p>
+<h2><a name="usage">Using SMTT</a></h2>
+<p>When you run the application for the first time, focus will be on the main window and located at the tree view to let you choose between the Tutor and the Practice folder. Use the arrow keys to navigate between items and its sub-items. When you move to a certain lesson, press Enter to start the lesson, or you can press Tab or Shift+Tab to read more information about that lesson.</p>
+<p>In this main window, press:</p>
+<ul>
+<li>F1: to open the User guide.</li>
+<li>F2: to open the Explore mode where users can freely and safely explore any keys on the keyboard. Press F2 twice to exit the Explore mode and go back to the main window.</li>
+<li>F5: to open the Options dialogue where users can select the most suitable options for their usage. Read more at the <a href="#options">Options</a> section.</li>
+<li>F6: to open the login dialogue (this will appear when there are users with teacher and student privileges added to the database).</li>
+<li>F11: to open the About dialogue.</li>
+<li>F12: to close the application.</li>
+<li>Shift: to read the current control (if you're using the read-aloud function).</li>
+<li>Control: to stop speaking (if you're using the read-aloud function).</li>
+</ul>
+<p>After pressing Enter to start a lesson, the Typing window will appear on the screen. It will ask you to press F1 for lesson description, Space to start, Esc to cancel and Alt to pause. SMTT will beep when you make a typing mistake.<br />
+After finishing a lesson, a result dialogue will be shown to give information such as total completion time, score, typing speed (characters per minute) and number of errors.</p>
+<p>If you're using the read-aloud function for the application set in the Options dialogue, in the Typing window, you can press:</p>
+<ul>
+<li>F1: to read the lesson description.</li>
+<li>F2: to read the full text-to-type at a certain time.</li>
+<li>F3: to read the current word-to-type.</li>
+<li>F4: to read the character-to-type.</li>
+<li>F5: to switch between different speaking modes, including Silent, By characters and By words.</li>
+</ul>
+<h2><a name="options">Options Dialogue</a></h2>
+<p>From the main window, press F5 to open the Options dialogue. The options are listed as following:</p>
+<ul>
+<li>UI Language: to choose the interface language for the application.</li>
+<li>Database: to specify the path of the database. This database will be used to save all users' information, personal options and typing activities. You can activate the Browse button to specify a different path for your database.</li>
+<li>Lesson folder: to choose the folder where lessons are saved.</li>
+<li>Speak as typing: If you're using the read-aloud function, this option lets you choose between three speaking modes, including Silent, speak by characters and Speak by words.</li>
+<li>Typing method: This will list typing method definition files in folder &quot;kb&quot; for supported languages.</li>
+<li>Check error as typing: If checked, the application will beep and wait until you type correct character. If not, the application still beeps when you make any typing mistakes but it will keep going on to the next character.</li>
+<li>Voice name: This will list all SAPI-compliant voices on the computer. Users can choose suitable voice for associated language to have speech support for the application. If you choose &quot;No speech&quot;, the application will not read aloud the information on the screen.</li>
+<li>Voice speed: to adjust the voice rate.</li>
+<li>Preview: to listen to voice settings.</li>
+<li>Register: to open a license key registration dialogue where you can find the application key, your name and the license key fields. If you have ordered from us, please write down your name, copy the application key and email to us at: <a href="sales@saomaicenter.org">sales@saomaicenter.org</a>. We will send you your license key. Read more at <a href="#license">Purchasing License Key</a>.</li>
+</ul>
+<h2><a name="user">User Management</a></h2>
+<p>There are two extra useful tools shipped with the Sao Mai Typing Tutor application, the User Manager (UserManager.exe) and Lesson Builder (LessonBuilder.exe). User Manager gives teachers options to manage and keep track of their students' typing activities. The application has one default admin user with full privileges. This default user has the username and password as &quot;saomai&quot;.
+UserManager.exe is located in the same folder as SMTT. After running and logging in with user &quot;saomai&quot;, press F5 to open the Options dialogue and choose Change password button to change it if you want.</p>
+<p>In its main window, press:
+- F1: for help.
+- F2: view results of students' typing activities.
+- F3: assign and unassign students with teachers.
+- F4: add/delete/edit users.
+- F5: open Options dialogue.
+- F6: login/logout.
+- F7: open lesson builder tool.
+- F11: about the application.
+- F12: close the application.</p>
+<h3><a name="createuser">Add Users</a></h3>
+<p>Press F4 to move to users tab. this tab has the following options: add/delete/post teacher/student and search student/teacher by ID. Choose Add teacher or student to create new user, focus will move to a grid control where you can use left/right arrows to move between columns and up/down arrows to move between rows.
+At a certain column, input the associated data, then choose post student/teacher button to save the data. Press Delete to delete that data or choose Delete student/teacher to remove current user from the database.
+You can use two edit fields to quickly search for student or teacher by their ID.</p>
+<p>It has three user levels, admin with full privileges, teacher with privileges of managing their students and student level.
+When adding teacher, under the GroupID column, if specified GroupID=1 will have the admin privileges and GroupID=0 will have teacher privileges.</p>
+<h3><a name="assign">Assign and Unassign Students with Teachers</a></h3>
+<p>Press F3 to move to assign tab. This includes: one combo box containing list of teachers, one grid control containing list of students assigned to selected teacher in the combo box, one grid control containing list of unassigned students, assign and unassigned buttons.
+Choose the student from the list of assigned students and choose unassign button to remove that student from the list belonging to selected teacher. Choose the student from the list of unassigned students and choose assign button to add that student to the list belonging to selected teacher.</p>
+<p>If user with admin privileges is logged in, the combo box will list teachers and admin can choose to work with any teacher in that combo box.
+If teacher is logged in, it will show only that teacher in the combo box and is selected by default.</p>
+<h3><a name="viewresult">View Results</a></h3>
+<p>Press F2 to move to results tab. This includes: one control containing list of students of current teacher sorted descending by score and one control containing typing activity results of selected student sorted descending by date.</p>
+<p>In the list of students, it has two columns: name and score. Every time student completes one lesson, the application gives score and time of completion for that lesson. Score column shows the average score calculated by total scores dividing to total completion time.
+Score of each lesson is calculated by the formula: corrects * CPM / (1 + errors).</p>
+<h2><a name="building">Building Lessons</a></h2>
+<p>From the main window of User Manager application, press F7 to run the Lesson Builder tool; or run directly the file &quot;LessonBuilder.exe&quot; from the SMTT installed folder. This dialogue has two tabs, Build lessons and Arrange lesson.</p>
+<h3>In the Build lessons tab:</h3>
+<ul>
+<li>New lesson package: to create new lesson package. One package can contain as many lessons as you like.</li>
+<li>Open lesson package: to open existing lesson package file and add or edit lessons.</li>
+</ul>
+<p>Please note, the lesson package will be saved in XML format and files are named in TutorXX or PracticeXX format, which XX is the order number such as &quot;Tutor01.xml&quot;, Tutor02.xml&quot;, &quot;Practice01.xml etc.</p>
+<p>After activating the New lesson package or Open existing package file, users can add or edit existing lessons. Choose set lesson package title to name the lesson package. Each lesson will have the following tags:</p>
+<ul>
+<li>Author: Lesson author.</li>
+<li>Lesson title: Lesson title.</li>
+<li>Description: give the instruction or more information about the lesson. The description added here will be shown when users press F1 in the typing window.</li>
+<li>Text to type: the content that learners are required to type when choosing a specific lesson. Use a # (number sign) at the beginning of the text and a | (verticle sign) to separate text segments. By this way, you let the application understand that you want to show the text-to-type strings randomly on the screen. For instance, if you write &quot;#a|bc|d&quot;, it will randomly show &quot;a&quot;, &quot;d&quot; or &quot;bc&quot;. Without the number sign, SMTT will show everything exactly the same as what you write. Each segment will be shown and read aloud based on the punctuation marks. For long sentences with no punctuation marks, you can use a verticle sign to add a pause after some phrases.</li>
+<li>Expected speed: to set the typing speed for the lesson (characters per minute).</li>
+<li>Expected point: to set the score that learners should achieve for that lesson.</li>
+<li>Lesson time: to set the time limit (in minutes) for a certain lesson. This setting is applicable only for random lessons, not for fixed lessons.</li>
+</ul>
+<p>In this dialogue, you will find other buttons such as new lesson, delete lesson, previous lesson, next lesson, last lesson. When you finish composing all lessons in a lesson package, click the Save button to save it.</p>
+<h3>In the Arrange lessons tab:</h3>
+<p>Here you can put the lessons in your preferred order. Activate the Load button to open the lesson package file. The application will list down all the lessons in that package. Choose the lesson in the list and activate the Move up or Move down button to put it in a certain place. Then, activate the Save button to save it.</p>
+<h2><a name="localize">Localization</a></h2>
+<p>If you want to help us to develop this application in your local language, please contact us so we can send you specific files to translate. We might work together to add keyboard typing method for your language. However, it's very simple and we will include your language in our next release. Please use the contact information below to get in touch with us. We are very thankful for your consideration to translate this application and happy to make it available to more and more users around the world.</p>
+<h2><a name="license">Purchasing License Key</a></h2>
+<p>If you want to purchase the license key for SMTT, please email us at <a href="sales@saomaicenter.org">sales@saomaicenter.org</a>; or call us at: +84-903-979323.</p>
+<p>Sao Mai Center for the Blind is a non-profit organization for visually impaired people. We work to empower the blind by using and developing assistive technology in education, employment and daily living activities.
+In order to better support our work as well as to maintain and add more features to this application, we decide to sell this application at a very affordable price of 14 USD for one license on a single computer.
+If you are from a non-profit organizations or visually impaired users and don't have fund to purchase the license, please feel free to contact us so we can see if we can contribute to your activities.</p>
+<h2><a name="contact">Contact for Support</a></h2>
+<p>Sao Mai Vocational and Assistive Technology Center for the Blind</p>
+<ul>
+<li>Address: 52/22 Huynh Thien Loc st., Hoa Thanh Ward, Tan Phu District, HCM, Vietnam.</li>
+<li>Tel: +84-28-7302-4488</li>
+<li>Hotline: +84-903-979323.</li>
+<li>Email: <a href="support@saomaicenter.org">support@saomaicenter.org</a>
+Website: <a href="http://www.saomaicenter.org">http://www.saomaicenter.org</a></li>
+</ul>
+
+</body>
+</html>
+<!-- This document was created with MarkdownPad, the Markdown editor for Windows (http://markdownpad.com) -->

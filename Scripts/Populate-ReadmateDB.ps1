@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Copies EPUB textbooks into SM Readmate's data folder and populates its library database.
 .DESCRIPTION

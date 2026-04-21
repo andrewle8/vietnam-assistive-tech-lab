@@ -41,7 +41,7 @@ $checks = @(
             "C:\Program Files (x86)\SaoMai\VNVoice\*",
             "C:\Program Files\SaoMai\*voice*"
         )
-        RegCheck = "HKLM:\SOFTWARE\Microsoft\Speech\Voices\Tokens\Minh Du"
+        RegCheck = "HKLM:\SOFTWARE\Microsoft\Speech\Voices\Tokens\MSTTS_V110_viVN_An"
         Critical = $true
     },
     @{
@@ -93,15 +93,6 @@ $checks = @(
         Paths = @(
             "C:\Program Files\Audacity\Audacity.exe",
             "C:\Program Files (x86)\Audacity\Audacity.exe"
-        )
-        Critical = $false
-    },
-    @{
-        Name = "SumatraPDF"
-        Paths = @(
-            "C:\Program Files\SumatraPDF\SumatraPDF.exe",
-            "C:\Program Files (x86)\SumatraPDF\SumatraPDF.exe",
-            "$env:LOCALAPPDATA\SumatraPDF\SumatraPDF.exe"
         )
         Critical = $false
     },

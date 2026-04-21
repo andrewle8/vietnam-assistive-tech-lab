@@ -1,4 +1,4 @@
-# Vietnam Lab Deployment - NVDA Configuration Script
+﻿# Vietnam Lab Deployment - NVDA Configuration Script
 # Version: 1.0
 # Run after verifying installation
 # Last Updated: February 2026
@@ -227,38 +227,10 @@ WshShell.Run """C:\Program Files\UniKey\UniKeyNT.exe""", 7, False
     Write-Log "Vietnamese input: use Windows Settings > Language > Add Vietnamese" "INFO"
 }
 
-# Step 7: Enable NVDA on Windows login screen (secure desktop)
-Write-Log "Enabling NVDA speech on Windows login screen..." "INFO"
-
-try {
-    # Copy NVDA config to system profile so NVDA speaks at the login screen
-    # This is the equivalent of NVDA > General Settings > "Use NVDA during sign-in"
-    $systemNvdaConfig = "C:\Windows\ServiceProfiles\LocalService\AppData\Roaming\nvda"
-    if (-not (Test-Path $systemNvdaConfig)) {
-        New-Item -Path $systemNvdaConfig -ItemType Directory -Force | Out-Null
-    }
-    if (Test-Path $nvdaConfigPath) {
-        Copy-Item -Path $nvdaConfigPath -Destination (Join-Path $systemNvdaConfig "nvda.ini") -Force
-        Write-Log "NVDA login screen speech enabled (config copied to system profile)" "SUCCESS"
-    }
-
-    # Set NVDA to run on secure desktops (login screen, UAC prompts)
-    $nvdaRegPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI"
-    # Enable the NVDA Ease of Access integration
-    $easeOfAccessPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Accessibility\ATs\nvda"
-    if (-not (Test-Path $easeOfAccessPath)) {
-        New-Item -Path $easeOfAccessPath -Force | Out-Null
-    }
-    $nvdaExeResolved = if (Test-Path "C:\Program Files\NVDA\nvda.exe") { "C:\Program Files\NVDA\nvda.exe" } else { "C:\Program Files (x86)\NVDA\nvda.exe" }
-    Set-ItemProperty -Path $easeOfAccessPath -Name "ATExe" -Value $nvdaExeResolved -Force
-    Set-ItemProperty -Path $easeOfAccessPath -Name "StartExe" -Value $nvdaExeResolved -Force
-    Set-ItemProperty -Path $easeOfAccessPath -Name "Description" -Value "NVDA Screen Reader" -Force
-
-    Write-Log "NVDA registered as Ease of Access screen reader" "SUCCESS"
-} catch {
-    Write-Log "Could not configure NVDA login screen: $($_.Exception.Message)" "ERROR"
-    Write-Log "Manually enable via NVDA > General Settings > Use NVDA during sign-in" "ERROR"
-}
+# Step 7 (secure-desktop / login-screen NVDA with Vi-Vu voice) has moved to
+# Configure-Laptop.ps1 Step 16. It has to run AFTER the Student profile has
+# received nvda.ini and the addons, which happens in Configure-Laptop.ps1 —
+# not here.
 
 # Step 8: Start NVDA now (if not already running)
 $nvdaProcess = Get-Process -Name "nvda" -ErrorAction SilentlyContinue
@@ -279,6 +251,53 @@ if (-not $nvdaProcess) {
     Write-Host ""
 }
 
+# Step 9: Validate deployed config loaded without schema errors.
+# NVDA's config schema changes between releases (e.g. old boolean fields becoming
+# featureFlag enums). If our deployed nvda.ini has syntax NVDA no longer accepts,
+# NVDA saves it to nvda.ini.corrupted.bak and reverts to defaults, showing a
+# Vietnamese error popup on first boot. Fail deployment loud here rather than
+# letting 18 laptops ship with silently-reset configs.
+Write-Log "Validating NVDA config loaded without schema errors..." "INFO"
+Start-Sleep -Seconds 4  # give NVDA time to write its log
+$logCandidates = @(
+    "C:\Users\Student\AppData\Local\Temp\nvda.log",
+    "C:\Users\Admin\AppData\Local\Temp\nvda.log"
+)
+$configRejected = $false
+$logChecked = $null
+foreach ($logPath in $logCandidates) {
+    if (Test-Path $logPath) {
+        $logChecked = $logPath
+        $logContent = Get-Content $logPath -Raw -ErrorAction SilentlyContinue
+        # Only look at current session — previous corruption events are irrelevant.
+        # Each NVDA start logs "Starting NVDA version" — check only since the last one.
+        $lastStart = ($logContent -split "`n" | Select-String -Pattern 'Starting NVDA version' | Select-Object -Last 1).LineNumber
+        if ($lastStart) {
+            $sessionLines = ($logContent -split "`n") | Select-Object -Skip ($lastStart - 1)
+            $sessionText = $sessionLines -join "`n"
+            if ($sessionText -match 'ValidateError|Error loading base configuration') {
+                Write-Log "ERROR: NVDA rejected the deployed config on this start." "ERROR"
+                Write-Log "Log: $logPath" "ERROR"
+                Write-Log "Check the log for 'ValidateError' — config/nvda-config/nvda.ini likely has a key whose type changed in a newer NVDA release (e.g. boolean -> featureFlag)." "ERROR"
+                $configRejected = $true
+            }
+        }
+        break
+    }
+}
+if ($configRejected) {
+    Write-Host "`n========================================" -ForegroundColor Red
+    Write-Host "CONFIG VALIDATION FAILED" -ForegroundColor Red
+    Write-Host "========================================" -ForegroundColor Red
+    Write-Host "NVDA rejected the deployed config. See $logChecked for the ValidateError trace." -ForegroundColor Red
+    Write-Host "Fix Config/nvda-config/nvda.ini in the repo before deploying to more laptops." -ForegroundColor Red
+    Write-Host ""
+} elseif ($logChecked) {
+    Write-Log "NVDA config validated (no schema errors in $logChecked)" "SUCCESS"
+} else {
+    Write-Log "WARNING: Could not locate NVDA log to validate (NVDA may not have started yet)" "WARNING"
+}
+
 Write-Host "`n========================================" -ForegroundColor Green
 Write-Host "NVDA Configuration Complete!" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Green
@@ -288,7 +307,7 @@ Write-Host "  - NVDA profile configured for Vietnamese" -ForegroundColor White
 Write-Host "  - NVDA add-ons installed (if present in Installers\NVDA\addons\)" -ForegroundColor White
 Write-Host "  - Auto-start on Windows login enabled" -ForegroundColor White
 Write-Host "  - UniKey Vietnamese keyboard installed and auto-starting" -ForegroundColor White
-Write-Host "  - Speech synthesizer set to VNVoice (Minh Du voice)" -ForegroundColor White
+Write-Host "  - Speech synthesizer set to Microsoft An (Vietnamese neural, bilingual)" -ForegroundColor White
 Write-Host ""
 
 Write-Host "Next Steps:" -ForegroundColor Yellow

@@ -1,5 +1,5 @@
 # Vietnam Lab Deployment - Full Laptop Setup
-# End-to-end: hostname, Wi-Fi, WinRM, install software, configure NVDA,
+# End-to-end: hostname, WinRM, install software, configure NVDA,
 # Windows hardening, scheduled tasks (update agent)
 # Must be run as Administrator from USB
 # Usage: .\Bootstrap-Laptop.ps1 -PCNumber 5
@@ -10,16 +10,12 @@ param(
     [ValidateRange(1,19)]
     [int]$PCNumber,
 
-    [string]$WifiSSID,
-
-    [string]$WifiPassword,
-
     [switch]$SkipInstall,
     [switch]$SkipReboot
 )
 
 $hostname = "PC-{0:D2}" -f $PCNumber
-$totalSteps = 9
+$totalSteps = 7
 $currentStep = 0
 $stepResults = @{}
 
@@ -61,68 +57,6 @@ if ($env:COMPUTERNAME -eq $hostname) {
 } else {
     Rename-Computer -NewName $hostname -Force -ErrorAction Stop
     Write-Host "      Hostname set to $hostname" -ForegroundColor Green
-}
-
-if ($WifiSSID -and $WifiPassword) {
-Step "Connecting to Wi-Fi ($WifiSSID)"
-$profileXml = @"
-<?xml version="1.0"?>
-<WLANProfile xmlns="http://www.microsoft.com/networking/WLAN/profile/v1">
-    <name>$WifiSSID</name>
-    <SSIDConfig>
-        <SSID>
-            <name>$WifiSSID</name>
-        </SSID>
-    </SSIDConfig>
-    <connectionType>ESS</connectionType>
-    <connectionMode>auto</connectionMode>
-    <MSM>
-        <security>
-            <authEncryption>
-                <authentication>WPA2PSK</authentication>
-                <encryption>AES</encryption>
-                <useOneX>false</useOneX>
-            </authEncryption>
-            <sharedKey>
-                <keyType>passPhrase</keyType>
-                <protected>false</protected>
-                <keyMaterial>$WifiPassword</keyMaterial>
-            </sharedKey>
-        </security>
-    </MSM>
-    <MacRandomization xmlns="http://www.microsoft.com/networking/WLAN/profile/v3">
-        <enableRandomization>false</enableRandomization>
-    </MacRandomization>
-</WLANProfile>
-"@
-
-$profilePath = "$env:TEMP\wifi-profile.xml"
-$profileXml | Out-File -FilePath $profilePath -Encoding UTF8
-netsh wlan add profile filename="$profilePath" | Out-Null
-Remove-Item $profilePath -Force -ErrorAction SilentlyContinue
-netsh wlan connect name="$WifiSSID" | Out-Null
-
-# Wait for connection
-$maxWait = 30
-$waited = 0
-while ($waited -lt $maxWait) {
-    $iface = Get-NetAdapter -Physical | Where-Object { $_.Status -eq "Up" -and $_.InterfaceDescription -match "Wi-Fi|Wireless|WLAN" }
-    if ($iface) {
-        $ip = (Get-NetIPAddress -InterfaceIndex $iface.ifIndex -AddressFamily IPv4 -ErrorAction SilentlyContinue).IPAddress
-        if ($ip) { break }
-    }
-    Start-Sleep -Seconds 2
-    $waited += 2
-}
-
-if ($ip) {
-    Write-Host "      Connected. IP: $ip" -ForegroundColor Green
-} else {
-    Write-Host "      WARNING: Wi-Fi not connected after ${maxWait}s. Continuing..." -ForegroundColor Red
-}
-} else {
-    Step "Skipping Wi-Fi (no SSID provided - offline deployment)"
-    Write-Host "      No Wi-Fi configured. Continuing offline..." -ForegroundColor Yellow
 }
 
 Step "Enabling WinRM"
@@ -233,30 +167,11 @@ if (Test-Path $configLaptopScript) {
 Write-Host "`n--- Phase 4: Manual Steps ---" -ForegroundColor White
 Write-Host ""
 
-# Set Firefox as default browser (Windows 11 blocks automation)
-$httpHandler = (Get-ItemProperty "HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice" -ErrorAction SilentlyContinue).ProgId
-if ($httpHandler -notmatch "Firefox") {
-    Write-Host "  Firefox is NOT the default browser." -ForegroundColor Yellow
-    Write-Host "  Opening Settings > Default Apps..." -ForegroundColor Yellow
-    Write-Host ""
-    Write-Host "  >>> Click Firefox, then click 'Set default' at the top <<<" -ForegroundColor White
-    Write-Host ""
-    Start-Process "ms-settings:defaultapps"
-    Read-Host "  Press Enter after setting Firefox as default (or to skip)"
-
-    # Re-check
-    $httpHandler = (Get-ItemProperty "HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice" -ErrorAction SilentlyContinue).ProgId
-    if ($httpHandler -match "Firefox") {
-        Write-Host "  Firefox set as default browser" -ForegroundColor Green
-        $stepResults["Firefox-Default"] = $true
-    } else {
-        Write-Host "  WARNING: Firefox still not default. Audit will flag this." -ForegroundColor Red
-        $stepResults["Firefox-Default"] = $false
-    }
-} else {
-    Write-Host "  Firefox is already the default browser" -ForegroundColor Green
-    $stepResults["Firefox-Default"] = $true
-}
+# Default browser is left as Edge (Windows default). See Configure-Laptop.ps1 for rationale.
+# Edge is NVDA-accessible, ships with Windows, and is the most reliable choice for an
+# unattended-for-a-year deployment. Firefox stays as a desktop shortcut for students
+# who prefer it.
+Write-Host "  Default apps   Edge stays default (Win11 24H2 lock-down); Firefox on desktop" -ForegroundColor Green
 
 # =============================================
 # Step Results Summary
@@ -298,9 +213,17 @@ Write-Host "  WinRM:         $winrmStatus" -ForegroundColor White
 Write-Host ""
 Write-Host "  Office Suite:  Microsoft Office" -ForegroundColor White
 Write-Host "  Software:      $(if(-not $SkipInstall){'Installed + Verified'}else{'Skipped'})" -ForegroundColor White
-Write-Host "  NVDA:          $(if(-not $SkipInstall){'Configured (Vietnamese)'}else{'Skipped'})" -ForegroundColor White
+Write-Host "  NVDA:          $(if(-not $SkipInstall){'Configured (Vietnamese Thanh Vi)'}else{'Skipped'})" -ForegroundColor White
 Write-Host "  Hardening:     Applied (Configure-Laptop.ps1)" -ForegroundColor White
-Write-Host "  Update Agent:  Scheduled (daily 2-4 AM, pulls from GitHub)" -ForegroundColor White
+Write-Host "  Update Agent:  Scheduled (6 PM daily, school-hours-safe)" -ForegroundColor White
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host ""
+
+Write-Host "MANUAL STEP REQUIRED:" -ForegroundColor Yellow
+Write-Host "  Press Fn+Esc once after login to enable Fn Lock." -ForegroundColor Yellow
+Write-Host "  This makes F1-F12 behave as function keys (NVDA shortcuts)" -ForegroundColor Yellow
+Write-Host "  instead of media keys. Setting persists across reboots." -ForegroundColor Yellow
+Write-Host "  Verify: press F1 alone in a browser - Help should open." -ForegroundColor Yellow
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host ""
 

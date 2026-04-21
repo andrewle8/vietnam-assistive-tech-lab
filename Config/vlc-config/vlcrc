@@ -23,6 +23,9 @@ volume-save=1
 # Skip first-run privacy dialog
 qt-privacy-ask=0
 
+# Never check for updates (ships silent-offline)
+qt-updates-notif=0
+
 # Show filename in title bar (NVDA reads it)
 qt-name-in-title=1
 

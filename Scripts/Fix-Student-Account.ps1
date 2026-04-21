@@ -39,13 +39,12 @@ if (Test-Path $adminAddons) {
     Write-Host "  [SKIP] No addons found in Admin profile" -ForegroundColor DarkGray
 }
 
-# ---- 3. App configs (VLC, Audacity, SumatraPDF, Kiwix, GoldenDict) ----
+# ---- 3. App configs (VLC, Audacity, Kiwix, GoldenDict) ----
 Write-Host "`n[3/7] Copying app configs to Student..." -ForegroundColor Yellow
 $appConfigs = @(
     @{ Name = "VLC"; Src = "$adminProfile\AppData\Roaming\vlc"; Dst = "$studentProfile\AppData\Roaming\vlc" },
     @{ Name = "Audacity"; Src = "$adminProfile\AppData\Roaming\audacity"; Dst = "$studentProfile\AppData\Roaming\audacity" },
     @{ Name = "GoldenDict"; Src = "$adminProfile\AppData\Roaming\GoldenDict"; Dst = "$studentProfile\AppData\Roaming\GoldenDict" },
-    @{ Name = "SumatraPDF"; Src = "$adminProfile\AppData\Local\SumatraPDF"; Dst = "$studentProfile\AppData\Local\SumatraPDF" },
     @{ Name = "Kiwix"; Src = "$adminProfile\AppData\Local\kiwix-desktop"; Dst = "$studentProfile\AppData\Local\kiwix-desktop" }
 )
 
@@ -60,29 +59,9 @@ foreach ($cfg in $appConfigs) {
     }
 }
 
-# ---- 4. SumatraPDF (per-user app) ----
-Write-Host "`n[4/7] Copying per-user apps to Student..." -ForegroundColor Yellow
+# ---- 4. (Removed — previously copied SumatraPDF per-user install. Now using Edge for PDFs.) ----
 
-# SumatraPDF
-$adminSumatra = "$adminProfile\AppData\Local\SumatraPDF"
-$studentSumatra = "$studentProfile\AppData\Local\SumatraPDF"
-if (Test-Path "$adminSumatra\SumatraPDF.exe") {
-    Copy-Item $adminSumatra $studentSumatra -Recurse -Force
-    Write-Host "  [OK] SumatraPDF copied to Student" -ForegroundColor Green
-}
-
-# ---- 5. Fix desktop shortcuts to use Student-accessible paths ----
-Write-Host "`n[5/7] Updating desktop shortcuts..." -ForegroundColor Yellow
-$publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
-$WshShell = New-Object -ComObject WScript.Shell
-
-# SumatraPDF - point to Student's copy since that's who'll use it
-$s = $WshShell.CreateShortcut("$publicDesktop\SumatraPDF.lnk")
-$s.TargetPath = "$studentProfile\AppData\Local\SumatraPDF\SumatraPDF.exe"
-$s.WorkingDirectory = "$studentProfile\AppData\Local\SumatraPDF"
-$s.Description = "SumatraPDF Reader"
-$s.Save()
-Write-Host "  [OK] SumatraPDF shortcut updated" -ForegroundColor Green
+# ---- 5. (Removed — SumatraPDF desktop shortcut no longer deployed.) ----
 
 # ---- 6. HKCU settings for Student (load hive) ----
 Write-Host "`n[6/7] Applying registry settings to Student account..." -ForegroundColor Yellow
@@ -212,7 +191,6 @@ icacls "$studentProfile\AppData\Roaming\nvda" /grant "Student:(OI)(CI)F" /T /Q 2
 icacls "$studentProfile\AppData\Roaming\vlc" /grant "Student:(OI)(CI)F" /T /Q 2>$null
 icacls "$studentProfile\AppData\Roaming\audacity" /grant "Student:(OI)(CI)F" /T /Q 2>$null
 icacls "$studentProfile\AppData\Roaming\GoldenDict" /grant "Student:(OI)(CI)F" /T /Q 2>$null
-icacls "$studentProfile\AppData\Local\SumatraPDF" /grant "Student:(OI)(CI)F" /T /Q 2>$null
 icacls "$studentProfile\AppData\Local\kiwix-desktop" /grant "Student:(OI)(CI)F" /T /Q 2>$null
 Write-Host "  [OK] Permissions set" -ForegroundColor Green
 

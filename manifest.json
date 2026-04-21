@@ -2,7 +2,7 @@
   "manifest_version": "2026.04.01",
   "created": "2026-02-19",
   "tested_on": "PC-01 (2026-04-01)",
-  "notes": "Pre-deployment audit: updated SumatraPDF, Firefox, rclone, Tailscale; added ebook pipeline",
+  "notes": "Pre-deployment audit: switched PDF reader to Microsoft Edge (Read Aloud + NVDA tagged-PDF), added RHVoice Vi-Vu + Unmute + Clipspeak NVDA addons, UniKey Telex handleInjectedKeys fix",
 
   "os": {
     "name": "Windows 11 Pro",
@@ -81,15 +81,6 @@
         "C:\\Program Files\\Audacity\\Audacity.exe"
       ]
     },
-    "sumatrapdf": {
-      "version": "3.6",
-      "installer": "SumatraPDF-3.6-64-install.exe",
-      "critical": false,
-      "paths": [
-        "C:\\Users\\Student\\AppData\\Local\\SumatraPDF\\SumatraPDF.exe",
-        "C:\\Program Files\\SumatraPDF\\SumatraPDF.exe"
-      ]
-    },
     "goldendict": {
       "version": "1.5.1",
       "installer": "GoldenDict-1.5.1-Install.exe",
@@ -118,12 +109,17 @@
   },
 
   "nvda_addons": {
+    "RHVoice": "2.0.19",
+    "RHVoice-voice-Vietnamese-Vi-Vu": "4.7.1008.11",
+    "unmute": "1.6.0",
+    "clipspeak": "2025.06.13",
     "VLC": "2025.1.0",
     "MathCAT": "0.7.5",
     "speechHistory": "2025.1",
     "focusHighlight": "6.6",
     "audacityAccessEnhancement": "3.3.2",
-    "clock": "20250714"
+    "clock": "20250714",
+    "trainingKeyboardCommands": "3.2.6"
   },
 
   "kiwix_content": {
@@ -135,14 +131,17 @@
     "windows_language": "vi-VN",
     "windows_timezone": "SE Asia Standard Time",
     "nvda_language": "vi",
-    "nvda_voice": "Minh Du",
+    "nvda_synth": "rhvoice",
+    "nvda_voice": "Vi-Vu",
+    "readmate_voice": "Microsoft An",
+    "pdf_handler": "Microsoft Edge",
     "nvda_speech_rate": 35,
     "unikey_input_method": "Telex",
     "unikey_charset": "Unicode",
     "volume_limit_percent": 70,
     "magnifier_mode": "full-screen",
     "magnifier_zoom": 200,
-    "windows_update": "manual-only",
+    "windows_update": "auto-security-1800",
     "narrator_shortcut": "disabled",
     "hibernate": "disabled"
   }

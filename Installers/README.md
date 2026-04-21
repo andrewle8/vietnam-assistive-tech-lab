@@ -14,8 +14,8 @@ The download script automatically fetches installers from the best source for ea
 | Source | What | Example |
 |--------|------|---------|
 | **Vendor URL** | Direct from software publisher | NVDA, Firefox, VLC |
-| **GitHub Releases** | From the project's GitHub repo | Audacity, SumatraPDF |
-| **Kiwix** | ZIM files from download.kiwix.org | Vietnamese Wikipedia, Wiktionary, Wikisource |
+| **GitHub Releases** | From the project's GitHub repo | Audacity |
+| **Kiwix** | ZIM files from download.kiwix.org | Vietnamese Wikipedia, Wiktionary |
 | **Manual** | Must be pre-placed or on GitHub Release `installers-v1` | Sao Mai VNVoice, Typing Tutor, NVDA Addons |
 
 Source definitions are in `Scripts/installer-sources.json`. Versions come from `manifest.json`.
@@ -34,7 +34,6 @@ Source definitions are in `Scripts/installer-sources.json`. Versions come from `
 | `Utilities/UniKey/` | `UniKeyNT.exe` | Manual (GitHub Release) | ~1 MB |
 | `Audacity/` | `audacity-win-3.7.7-64bit.exe` | GitHub (audacity/audacity) | ~30 MB |
 | `Kiwix/` | Kiwix desktop + 3 Vietnamese ZIM files | GitHub + Kiwix | ~770 MB |
-| `Utilities/SumatraPDF/` | `SumatraPDF-3.5.2-64-install.exe` | GitHub (sumatrapdfreader/sumatrapdf) | ~15 MB |
 | `Utilities/GoldenDict/` | GoldenDict portable | Manual (GitHub Release) | ~30 MB |
 | `Ebooks/` | 103 Vietnamese textbook EPUBs | Manual (Sao Mai Center) | ~250 MB |
 
@@ -76,8 +75,6 @@ Installers/
 │   ├── VLC-3.0.23.exe
 │   ├── UniKey/
 │   │   └── UniKeyNT.exe
-│   ├── SumatraPDF/
-│   │   └── SumatraPDF-3.5.2-64-install.exe
 │   ├── GoldenDict/
 │   │   └── GoldenDict.exe (+ dependencies)
 ├── Kiwix/
@@ -101,7 +98,6 @@ Installers/
 - **UniKey:** 4.6 RC2 or newer (Vietnamese keyboard)
 - **Audacity:** 3.7.7 or newer
 - **Kiwix:** 2.5.1 or newer
-- **SumatraPDF:** 3.5.2 or newer
 - **GoldenDict:** 1.5.0 portable
 
 ## Storage Requirements

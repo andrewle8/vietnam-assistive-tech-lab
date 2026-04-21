@@ -7,15 +7,15 @@ Deployed: April 2026
 WHAT'S INSTALLED (EVERY PC)
 ---------------------------
 NVDA              Screen reader - speaks everything on screen in Vietnamese
-Sao Mai VNVoice   Vietnamese voice for NVDA (Minh Du / Mai Dung)
+Microsoft An      Primary Vietnamese TTS for NVDA + Readmate (bilingual neural, offline)
+Sao Mai VNVoice   Additional Vietnamese SAPI voices (Thanh Vi, Minh Du, Mai Dung, Thu An)
+Sao Mai Readmate  Accessible EPUB reader for Vietnamese textbooks (103 pre-loaded)
 Sao Mai Typing    Typing lessons with audio feedback
 Microsoft Office  Word, Excel, PowerPoint, Outlook (non-profit license)
 Firefox           Web browser
 VLC               Music and video player
-Thorium Reader    EPUB/DAISY ebook and audiobook reader
-SumatraPDF        PDF reader for textbooks and documents
 GoldenDict        Offline Vietnamese-English dictionary (Tu dien)
-Kiwix             Offline Wikipedia, Wiktionary, and Wikisource in Vietnamese
+Kiwix             Offline Vietnamese Wikipedia and Wiktionary
 
 All software is FREE and works OFFLINE (no internet needed).
 
@@ -103,6 +103,15 @@ Windows is set to Vietnamese by default. To switch to English:
 This is useful for staff or volunteers who need English temporarily.
 The keyboard input method (UniKey/Telex) is separate and works in
 both languages.
+
+Vietnamese typing is UniKey-only by design. UniKey's Ctrl+Shift
+toggles Vietnamese/English (tray: V = Vietnamese, E = English).
+The Windows built-in Vietnamese (Telex) keyboard is still installed
+as a fallback, but Windows' own language-switch hotkeys (Alt+Shift,
+Ctrl+Shift) are disabled so they don't desync from UniKey during
+typing. If a staff member needs the Windows IME, reach it via
+Win+Space or Settings > Time & language > Typing > Advanced
+keyboard settings.
 
 
 QUICK HEALTH CHECK
