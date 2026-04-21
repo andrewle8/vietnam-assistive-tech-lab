@@ -62,9 +62,9 @@ Step 3: Set Up Each Laptop
   The Bootstrap script installs Office automatically. Activate with your
   non-profit license after deployment.
 
-Step 5: Verify
+Step 4: Verify
   .\Scripts\7-Audit.ps1
-  Checks all software, Windows settings, and remote management.
+  Checks software, Windows settings, NVDA config.
   Green = OK, Yellow = warning, Red = problem.
 
 Individual scripts (if running separately instead of Bootstrap):

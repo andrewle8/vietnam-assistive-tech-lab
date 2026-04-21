@@ -1,24 +1,17 @@
-# Vietnam Assistive Technology Lab Deployment Plan
+# Deployment Plan
 
-**Project:** Blind Children's Computer Lab - Vietnam Orphanages
-**Timeline:** April 2026 deployment (1-3 days on-site)
+**Timeline:** April 2026, 1–3 days on-site
 **Equipment:** 19x Dell Latitude 5420
-**Users:** 19+ children, complete beginners to basic computer familiarity
+**Users:** Blind students, beginners through basic computer familiarity
 
----
+## Pre-trip checklist
 
-## Executive Summary
-
-Deploy a fully **offline, open-source** assistive technology lab enabling blind children to learn computing through **speech output** from day one. All 19 PCs include **automated updates** via a pull-based update agent that checks GitHub daily when internet is available.
-
-**Pre-trip**
-- Pre-configure all 19 laptops using install scripts and verify end-to-end
-- Label each computer (PC-1 through PC-19)
-- Prep personal USB sticks with asset IDs and 3D-printed Braille identifiers
+- Pre-configure all 19 laptops, verify end-to-end on one before batching
+- Label each PC (PC-1 through PC-19)
+- Prep student USB drives with asset IDs and Braille tags
 - Prepare 3 identical deployment USB drives
-- Run `Pre-Deployment-Check.ps1` — all checks green
-- Documentation in Vietnamese and English
-- Test full deployment on one PC before packing
+- `Pre-Deployment-Check.ps1` passes
+- Both Vietnamese and English user guides included
 
 ---
 
@@ -53,14 +46,14 @@ Deploy a fully **offline, open-source** assistive technology lab enabling blind 
 
 ---
 
-## Remote Management Model
+## Remote Management
 
-**Design choice (April 2026):** No VPN, no remote access, no cloud sync. Rationale — a foreign-donated orphanage laptop with any VPN or cross-border cloud sync on it invites unnecessary questions under Vietnam's 2026 Cybersecurity Law, especially given the data of minors involved.
+No VPN, no remote access, no cloud sync — a foreign-donated orphanage laptop with cross-border sync invites questions under Vietnam's 2026 Cybersecurity Law, especially with minors' data.
 
-**What replaces remote management:**
-- **Update Agent (GitHub pull)** — each PC checks `update-manifest.json` on GitHub daily at 2-4 AM and pulls updates when available. Plain HTTPS, no VPN needed.
-- **On-site support** — staff at the orphanage can re-run `Bootstrap-Laptop.ps1` from USB if a PC breaks.
-- **Annual visits** — any changes requiring hands-on work happen during site visits.
+Replaced by:
+- **Update agent** — each PC checks `update-manifest.json` on GitHub daily 2–4 AM and pulls updates over plain HTTPS.
+- **On-site support** — staff can re-run `Bootstrap-Laptop.ps1` from USB.
+- **Annual visits** — any hands-on changes happen then.
 
 ---
 
@@ -86,21 +79,19 @@ Each Dell Latitude 5420 ships with Windows 10 Pro. On first power-on, walk throu
 
 ### BIOS Setup (Required Before Win11 Upgrade)
 
-Windows 11 requires Secure Boot and TPM 2.0. Enable both **before** running the upgrade:
+Windows 11 requires Secure Boot and TPM 2.0. TPM 2.0 is enabled by default; Secure Boot must be enabled manually:
 
 1. Restart the PC
 2. Press **F2** repeatedly at the Dell logo to enter BIOS
-3. **Security** tab → Enable **Secure Boot**
-4. **Security** tab → Verify **TPM 2.0** is enabled
+3. **Boot Configuration** → Enable **Secure Boot**
+4. **Security** tab → Verify **TPM 2.0** is enabled (default on)
 5. **Save and Exit** (Apply Changes, F10)
 
 ### Fn Lock (Required — Do After First Login)
 
 Blind students invoke NVDA commands like `Insert+F1`, `Insert+F7` dozens of times per session. Without Fn Lock, every command becomes a 3-key chord (`Fn+Insert+F1`). With Fn Lock enabled, F-keys act as function keys by default (media keys need Fn).
 
-**Press `Fn+Esc` once** after logging in. The Fn key lights up with a small lock icon to confirm. This setting persists across reboots.
-
-Verify: press F1 alone in a browser — it should open Help. If it changes brightness or does nothing, press Fn+Esc again.
+**Press `Fn+Esc` once** after logging in. This setting persists across reboots.
 
 ### Upgrade to Windows 11
 
@@ -143,47 +134,24 @@ All checks should pass. Then manually verify:
 - **Set Firefox as default browser:** Settings > Default Apps > Firefox > Set Default
   (Windows 11 blocks automated default-browser changes; this must be done by hand on each PC)
 
-### Pre-Setup Steps (Done Once on Your Setup PC, Not Per-Laptop)
+### Pre-Setup (once, on your setup PC)
 
-These are done **once** on your setup PC with internet before deploying any laptops:
+1. `0-Download-Installers.ps1` — downloads software to USB
+2. `Verify-Installers.ps1` — checks files and SHA256 checksums
+3. `0.6-Download-LanguagePack.ps1` — Vietnamese language pack cabs
+4. Place Office Deployment Tool `setup.exe` in `Installers\MSOffice\`, run `setup.exe /download configuration.xml`
+5. Place Win11 25H2 ISO at `Installers\Windows\Win11_25H2_English_x64.iso`
 
-1. `.\Scripts\0-Download-Installers.ps1` — downloads all software to the USB
-2. `.\Scripts\Verify-Installers.ps1` — all files present with correct SHA256 checksums
-3. `.\Scripts\0.6-Download-LanguagePack.ps1` — extracts Vietnamese language pack cabs to USB
-4. Place `setup.exe` in `Installers\MSOffice\` and run `setup.exe /download configuration.xml` (in CMD)
-5. Place Win11 25H2 ISO as `Installers\Windows\Win11_25H2_English_x64.iso`
-
-### Per-Laptop Deployment Summary
-
-For each of the 19 laptops, the process is:
+### Per-Laptop
 
 1. **OOBE** — create temporary local Admin account
-2. **BIOS** — enable Secure Boot + TPM 2.0 (F2 at Dell logo)
+2. **BIOS** — enable Secure Boot in Boot Configuration (F2 at Dell logo)
 3. **Upgrade** — `0.5-Upgrade-Windows11.ps1` → reboot → confirm with `winver`
-4. **Bootstrap** — `Bootstrap-Laptop.ps1 -PCNumber N` (where N = 1-19)
+4. **Bootstrap** — `Bootstrap-Laptop.ps1 -PCNumber N` (1–19)
 5. **Verify** — `7-Audit.ps1` → all green
-6. **Label** — apply physical PC-N label
+6. **Label** — apply PC-N label, charge to 100%
 
-### Full End-to-End Test (First Laptop)
-
-Run the full process on **one laptop** first to verify everything works:
-
-1. Complete steps 1-5 above for PC-1
-2. Manually test: open each app, verify NVDA reads it correctly
-3. Test SM Readmate with a sample EPUB/DAISY file
-4. Test student USB workflow with `.\Scripts\4-Prepare-Student-USB.ps1`
-
-Fix any issues, then proceed to configure the remaining 18 laptops.
-
-### Pre-Configure All 19 Laptops
-
-After the test PC passes, configure the remaining 18 PCs. On each PC, open PowerShell as Administrator, `cd` to the project folder, then:
-
-1. `.\Scripts\Bootstrap-Laptop.ps1` — it will prompt for `PCNumber`, enter 1–19
-   - This runs: install software (including Microsoft Office), verify, configure NVDA, set up Windows hardening, register scheduled tasks (update agent)
-2. `.\Scripts\7-Audit.ps1` on each — all green
-3. Label each PC (PC-1 through PC-19) with physical label
-4. Charge all laptops to 100%
+Run end-to-end on PC-1 first. Manually test each app, verify NVDA reads everything, exercise SM Readmate and a student USB. Fix any issues before batching the remaining 18.
 
 ### Prepare USB Drives
 
@@ -432,15 +400,3 @@ Establish a primary contact method **before leaving**:
 
 ---
 
-## Success Metrics (3-Month Evaluation)
-
-1. **Technical Reliability:** 90%+ uptime across all 19 stations
-2. **User Adoption:** All students can independently log in and launch NVDA
-3. **Skill Progression:** 80%+ students complete typing tutor Lesson 3
-4. **Equipment Durability:** No major hardware failures
-5. **Staff Confidence:** Staff handle 90%+ of issues independently
-6. **Content Usage:** Students are actively reading books in SM Readmate
-
----
-
-**Status:** Ready for implementation

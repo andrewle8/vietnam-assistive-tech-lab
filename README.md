@@ -1,9 +1,9 @@
 # Vietnam Assistive Technology Lab Deployment Kit
 
-**Project:** Blind Children's Computer Lab - Vietnam Orphanages
-**Deployment:** April 2026 (1-3 days on-site)
+**Project:** Blind children's computer lab — Vietnam orphanages
+**Deployment:** April 2026 (1–3 days on-site)
 
-This repo contains everything needed to deploy an assistive technology lab for blind children in Vietnam. Includes automated software installation, NVDA screen reader setup with Vietnamese voice, 103 pre-loaded Vietnamese textbooks, and offline educational content.
+Scripts and config to deploy 19 Windows 11 laptops with NVDA, a Vietnamese TTS voice, 103 pre-loaded Vietnamese textbooks, and offline reference material.
 
 ---
 
@@ -28,11 +28,11 @@ This repo contains everything needed to deploy an assistive technology lab for b
 **NVDA Add-ons:** VLC, Speech History, Focus Highlight, Audacity Access, Clock & Calendar, MathCAT, Training Keyboard Commands — see [NVDA Add-on Store](https://addonstore.nvaccess.org/)
 
 ### Hardware
-- 19x Dell Latitude 5420 (enterprise grade) upgraded to Windows 11
-- 21x Audio-Technica ATH-M40x Headphones (trusted by blind professionals and schools)
-- Student Personal USB Drives with unique identifiers labeled in Braille
+- 19x Dell Latitude 5420, upgraded to Windows 11
+- 21x Audio-Technica ATH-M40x headphones
+- Student USB drives, labeled in print and Braille
 
-> [Hardware Details](https://github.com/andrewle8/vietnam-assistive-tech-lab/blob/main/Documentation/Hardware.md)
+See [Hardware.md](Documentation/Hardware.md) for full specs.
 
 ---
 
@@ -61,7 +61,7 @@ From here, run all scripts in this PowerShell window.
 .\Scripts\0-Download-Installers.ps1
 ```
 
-Downloads all installers (~800 MB) from vendor URLs, GitHub Releases, and Kiwix automatically.
+Downloads ~800 MB of installers from vendor URLs, GitHub Releases, and Kiwix.
 
 Then validate files and SHA256 checksums:
 
@@ -139,48 +139,34 @@ Software updates are automatic — edit `update-manifest.json`, push to GitHub, 
 
 | Script | Purpose |
 |--------|---------|
-| `0-Download-Installers.ps1` | Smart download from vendor URLs, GitHub, Kiwix |
+| `0-Download-Installers.ps1` | Download installers from vendor URLs, GitHub, Kiwix |
 | `0.5-Upgrade-Windows11.ps1` | Upgrade Windows 10 to 11 |
 | `0.6-Download-LanguagePack.ps1` | Download Vietnamese language pack for offline install |
 | `1-Install-All.ps1` | Install all software silently (including Microsoft Office) |
-| `2-Verify-Installation.ps1` | Verify all software installed correctly |
+| `2-Verify-Installation.ps1` | Verify installs |
 | `3-Configure-NVDA.ps1` | Configure NVDA with Vietnamese voice |
 | `4-Prepare-Student-USB.ps1` | Prepare student USB drives |
-| `7-Audit.ps1` | Full audit against manifest.json (with JSON output) |
-| `Bootstrap-Laptop.ps1` | Full PC setup (hostname, software, NVDA, hardening) |
-| `Configure-Laptop.ps1` | Windows hardening, power settings, desktop shortcuts, scheduled tasks (called by Bootstrap) |
-| `Populate-ReadmateDB.ps1` | Auto-import 103 Vietnamese textbooks into SM Readmate library |
-| `Debloat-Windows.ps1` | Remove Windows bloatware (standalone re-run tool) |
+| `7-Audit.ps1` | Audit machine against manifest.json |
+| `Bootstrap-Laptop.ps1` | Full per-PC setup (hostname, software, NVDA, hardening) |
+| `Configure-Laptop.ps1` | Windows hardening, power, shortcuts, scheduled tasks (called by Bootstrap) |
+| `Populate-ReadmateDB.ps1` | Import 103 Vietnamese textbooks into SM Readmate library |
+| `Debloat-Windows.ps1` | Remove Windows bloatware (standalone re-run) |
 | `Fix-Student-Account.ps1` | Repair per-user app paths and shortcuts for Student profile |
-| `Update-Agent.ps1` | Auto-update agent (runs as scheduled task on each PC, pulls from GitHub) |
+| `Uninstall-Legacy.ps1` | Remove obsolete fleet/Tailscale/rclone scripts from older deploys |
+| `Update-Agent.ps1` | Daily scheduled task — pulls update-manifest.json from GitHub |
 | `Verify-Installers.ps1` | Validate installer files and SHA256 checksums |
-| `Pre-Deployment-Check.ps1` | Pre-trip validation of entire deployment kit |
+| `Pre-Deployment-Check.ps1` | Pre-trip validation of the deployment kit |
 
 ---
 
 ## License
 
-This deployment kit uses free and open-source software where possible, plus Microsoft Office 365 under non-profit licensing.
-- See respective licenses (GPL, MPL, LGPL)
----
+Free and open-source software (GPL/MPL/LGPL) plus Microsoft Office 365 under non-profit licensing. See each component's license for details.
 
 ## Acknowledgments
 
-- **NV Access** - NVDA screen reader
-- **Sao Mai Center** - NVDA Vietnamese modules and VNVoice TTS
-- **Microsoft** - Office 365 (non-profit licensing)
-- **Mozilla Foundation** - Firefox browser
-
----
+NV Access (NVDA), Sao Mai Center (Vietnamese modules, VNVoice TTS, Readmate, SMTT), Microsoft (Office 365 non-profit), Mozilla (Firefox).
 
 ## Contact
 
-**Project Lead:** Andrew Le — [Contact via GitHub Issues](https://github.com/andrewle8/vietnam-assistive-tech-lab/issues)
-
----
-
-## Version History
-
-- **v0.2** (February 2026): Auto-update agent via GitHub, smart installer downloads, pre-deployment validation
-- **v1.0** (April 2026): Simplified for offline-first deployment — removed Tailscale/rclone/Thorium/Quorum/LEAP games, added ebook auto-import (103 textbooks)
-- **v0.1** (February 2026): Initial deployment kit created
+Andrew Le — [GitHub Issues](https://github.com/andrewle8/vietnam-assistive-tech-lab/issues)
