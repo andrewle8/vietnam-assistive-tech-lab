@@ -26,8 +26,10 @@
       "installer": "SaoMai_voice1.0.exe",
       "critical": true,
       "paths": [
-        "C:\\Windows\\Speech\\Engines\\TTS\\*vnvoice*",
-        "C:\\Program Files\\SaoMai\\VNVoice\\*"
+        "HKLM:\\SOFTWARE\\WOW6432Node\\Microsoft\\Speech\\Voices\\Tokens\\Thanh Vi",
+        "HKLM:\\SOFTWARE\\WOW6432Node\\Microsoft\\Speech\\Voices\\Tokens\\Mai Dung",
+        "HKLM:\\SOFTWARE\\WOW6432Node\\Microsoft\\Speech\\Voices\\Tokens\\Minh Du",
+        "HKLM:\\SOFTWARE\\WOW6432Node\\Microsoft\\Speech\\Voices\\Tokens\\Thu An"
       ]
     },
     "saomai_typing_tutor": {

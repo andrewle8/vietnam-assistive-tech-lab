@@ -95,11 +95,15 @@ if ($tz -eq $expectedTz) {
     Add-Result "Windows" "Timezone" $expectedTz $tz "FAIL"
 }
 
-# Check language
+# Check language — compare primary subtag so expected "vi-VN" accepts actual "vi"
+# (Windows canonicalises Set-WinUserLanguageList "vi-VN" down to LanguageTag "vi" on
+# some builds). Match is bidirectional: either value can be the more specific one.
 $langList = Get-WinUserLanguageList
 $primaryLang = $langList[0].LanguageTag
 $expectedLang = $manifest.configuration.windows_language
-if ($primaryLang -like "$expectedLang*") {
+$primarySubtag  = ($primaryLang  -split '-')[0]
+$expectedSubtag = ($expectedLang -split '-')[0]
+if ($primarySubtag -ieq $expectedSubtag) {
     Add-Result "Windows" "Primary Language" $expectedLang $primaryLang "PASS"
 } else {
     Add-Result "Windows" "Primary Language" $expectedLang $primaryLang "FAIL"

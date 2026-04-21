@@ -255,6 +255,31 @@ try {
     Set-WinUserLanguageList $langList -Force
     Write-Log "Windows display language set to Vietnamese (vi-VN), English (en-US) as secondary" "SUCCESS"
 
+    # Set-WinUserLanguageList only affects the running user (Admin here). Propagate the
+    # same preference list to every OTHER user hive we know about so Student (existing and
+    # future) gets a Vietnamese UI without a manual Settings trip.
+    #
+    # 1) Copy-UserInternationalSettingsToSystem seeds the Default profile + Welcome Screen,
+    #    so any user profile created AFTER this point (e.g. a fresh Student on a machine
+    #    where CreateProfile hasn't run yet) inherits vi-VN on first login. Win10 21H2+.
+    # 2) Direct HKU writes of Languages (REG_MULTI_SZ) into each loaded hive cover Student
+    #    when their profile is already materialized (normal path after the CreateProfile
+    #    call in pre-flight).
+    if (Get-Command Copy-UserInternationalSettingsToSystem -ErrorAction SilentlyContinue) {
+        try {
+            Copy-UserInternationalSettingsToSystem -NewUser $true -WelcomeScreen $true -ErrorAction Stop
+            Write-Log "Propagated language settings to Default profile + Welcome Screen" "SUCCESS"
+        } catch {
+            Write-Log "Copy-UserInternationalSettingsToSystem failed: $($_.Exception.Message)" "WARNING"
+        }
+    }
+    foreach ($hive in $hkuPaths) {
+        $up = "$hive\Control Panel\International\User Profile"
+        if (-not (Test-Path $up)) { New-Item -Path $up -Force -ErrorAction SilentlyContinue | Out-Null }
+        New-ItemProperty -Path $up -Name "Languages" -Value @("vi-VN","en-US") -PropertyType MultiString -Force -ErrorAction SilentlyContinue | Out-Null
+    }
+    Write-Log "Per-user language list (vi-VN primary, en-US secondary) written to $($hkuPaths.Count) hive(s)" "SUCCESS"
+
     # Set region and locale to Vietnam
     Set-WinHomeLocation -GeoId 0xFB  # Vietnam (251)
     Set-Culture "vi-VN"
