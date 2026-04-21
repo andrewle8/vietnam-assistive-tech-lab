@@ -186,39 +186,12 @@ if (Test-Path $unikeySourceDir) {
         Copy-Item -Path "$unikeySourceDir\*" -Destination $unikeyDestDir -Recurse -Force
         Write-Log "Copied UniKey to $unikeyDestDir" "SUCCESS"
 
-        # Deploy UniKey launcher wrapper (sets ShowDlg=0 before launching, since
-        # UniKey overwrites ShowDlg=1 on exit and ignores shortcut WindowStyle)
-        $launcherVbs = @'
-On Error Resume Next
-' UniKey launcher - suppresses the startup dialog by setting ShowDlg=0
-' before launching UniKeyNT.exe. UniKey overwrites this value on exit,
-' so it must be re-applied every login.
-Set WshShell = CreateObject("WScript.Shell")
-WshShell.RegWrite "HKCU\Software\PkLong\UniKey\ShowDlg", 0, "REG_DWORD"
-WshShell.RegWrite "HKCU\Software\PkLong\UniKey\AutoUpdate", 0, "REG_DWORD"
-WshShell.Run """C:\Program Files\UniKey\UniKeyNT.exe""", 7, False
-'@
-        $launcherPath = "C:\LabTools\start-unikey.vbs"
-        Set-Content -Path $launcherPath -Value $launcherVbs -Force
-
-        # Create startup shortcut that uses the wrapper
-        $startupPath = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup"
-        $WshShell = New-Object -ComObject WScript.Shell
-        $shortcut = $WshShell.CreateShortcut((Join-Path $startupPath "UniKey.lnk"))
-        $shortcut.TargetPath = "wscript.exe"
-        $shortcut.Arguments = "`"$launcherPath`""
-        $shortcut.WorkingDirectory = $unikeyDestDir
-        $shortcut.WindowStyle = 7
-        $shortcut.Description = "UniKey Vietnamese Input (silent start)"
-        $shortcut.Save()
-        Write-Log "UniKey auto-start on login enabled (via wrapper script)" "SUCCESS"
-
-        # Start UniKey now (suppressed)
-        $unikeyExe = Join-Path $unikeyDestDir "UniKeyNT.exe"
-        if (Test-Path $unikeyExe) {
-            Start-Process -FilePath "wscript.exe" -ArgumentList "`"$launcherPath`""
-            Write-Log "UniKey started (silent)" "SUCCESS"
-        }
+        # Auto-start on login + per-hive registry baseline (ShowDlg=0, AutoUpdate=0,
+        # Vietnamese=1) are handled by Configure-Laptop.ps1 Step 27b, which installs
+        # the 'UniKey-Startup-Vietnamese' scheduled task. No launcher shortcut or VBS
+        # wrapper is created here -- an earlier approach did, and then Step 27b had to
+        # delete it, producing a transient "cannot find script file start-unikey.vbs"
+        # popup on fresh deployments.
     } catch {
         Write-Log "ERROR installing UniKey: $($_.Exception.Message)" "ERROR"
     }
