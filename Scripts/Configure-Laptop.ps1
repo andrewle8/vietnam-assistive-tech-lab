@@ -61,6 +61,36 @@ try {
     Write-Log "WARNING: Could not resolve Student SID. Per-user settings will only apply to Admin." "ERROR"
 }
 
+# Materialize Student profile (C:\Users\Student\NTUSER.DAT) if missing.
+# New-LocalUser only creates the SAM account — the on-disk profile is normally provisioned
+# by Windows on Student's first interactive logon. Without NTUSER.DAT we cannot reg.exe load
+# Student's hive, so per-user writes below would fall through to the Default profile only,
+# and Win11 24H2 OOBE does NOT reliably propagate every key from Default to a new user's
+# hive on first login (observed: TaskbarMn, SearchboxTaskbarMode, wallpaper). The Win32
+# CreateProfile API provisions the profile directory and hive non-interactively so every
+# per-user write in this script lands in Student's real hive on the first run.
+if ($studentSID -and -not (Test-Path "C:\Users\Student\NTUSER.DAT")) {
+    try {
+        Add-Type -Namespace LabProfile -Name Userenv -MemberDefinition @'
+[DllImport("userenv.dll", SetLastError=true, CharSet=CharSet.Unicode)]
+public static extern int CreateProfile(
+    [MarshalAs(UnmanagedType.LPWStr)] string pszUserSid,
+    [MarshalAs(UnmanagedType.LPWStr)] string pszUserName,
+    [MarshalAs(UnmanagedType.LPWStr)] System.Text.StringBuilder pszProfilePath,
+    uint cchProfilePath);
+'@ -ErrorAction SilentlyContinue
+        $profilePath = New-Object System.Text.StringBuilder 260
+        $hr = [LabProfile.Userenv]::CreateProfile($studentSID, "Student", $profilePath, [uint32]$profilePath.Capacity)
+        if (Test-Path "C:\Users\Student\NTUSER.DAT") {
+            Write-Log "Materialized Student profile at $($profilePath.ToString())" "SUCCESS"
+        } else {
+            Write-Log "CreateProfile returned HRESULT 0x$('{0:X8}' -f $hr) but NTUSER.DAT not found — per-user writes may fall through to Default profile" "WARNING"
+        }
+    } catch {
+        Write-Log "Could not materialize Student profile: $($_.Exception.Message)" "WARNING"
+    }
+}
+
 # Build array of registry hive paths to target (Admin HKCU + Student HKU + Default profile)
 # Verify each hive is actually writable by Test-Path — reg.exe exit codes are unreliable under PowerShell.
 $hkuPaths = @("HKCU:")
