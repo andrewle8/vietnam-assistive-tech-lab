@@ -114,10 +114,10 @@ This upgrades Win10 to Win11 25H2 from the ISO on your USB. The PC will reboot �
 After confirming Win11, open PowerShell as Admin, navigate to the USB, and run:
 
 ```powershell
-.\Scripts\Bootstrap-Laptop.ps1 -PCNumber 1
+.\Scripts\Bootstrap-Laptop.ps1
 ```
 
-This does everything: install all software, configure NVDA, set up Vietnamese language, harden Windows, create LabAdmin + Student accounts, and register scheduled tasks (update agent). Takes ~30-45 min.
+It prompts for `PCNumber` (1–19). The script installs all software, configures NVDA, sets up Vietnamese language, hardens Windows, creates LabAdmin + Student accounts, and registers the update-agent scheduled task. Takes ~30–45 min.
 
 ### Verify
 
