@@ -66,10 +66,21 @@ try {
 # by Windows on Student's first interactive logon. Without NTUSER.DAT we cannot reg.exe load
 # Student's hive, so per-user writes below would fall through to the Default profile only,
 # and Win11 24H2 OOBE does NOT reliably propagate every key from Default to a new user's
-# hive on first login (observed: TaskbarMn, SearchboxTaskbarMode, wallpaper). The Win32
-# CreateProfile API provisions the profile directory and hive non-interactively so every
-# per-user write in this script lands in Student's real hive on the first run.
-if ($studentSID -and -not (Test-Path "C:\Users\Student\NTUSER.DAT")) {
+# hive on first login (observed: TaskbarMn, SearchboxTaskbarMode, wallpaper, UniKey ShowDlg).
+# The Win32 CreateProfile API provisions the profile directory and hive non-interactively so
+# every per-user write in this script lands in Student's real hive on the first run.
+#
+# Historical bug: a previous version gated this block on `-not (Test-Path NTUSER.DAT)`. On
+# freshly-created Student accounts, New-LocalUser's background profile scaffolding can
+# transiently create C:\Users\Student\NTUSER.DAT and then delete it within ~100ms, causing
+# Test-Path to flip TRUE→FALSE between the gate and the later hive-load code. When it
+# returned TRUE we skipped CreateProfile, then NTUSER.DAT was gone by the hive-load step
+# and Student hive was not loaded. Consequence: ShowDlg=0, Languages, wallpaper, etc. only
+# hit Admin + Default profile, leaving Student with a partially-configured hive after first
+# login. Fix: always call CreateProfile when we have a SID (it's idempotent — returns
+# 0x800700B7 ERROR_ALREADY_EXISTS if the profile exists, which we accept as success), then
+# poll for NTUSER.DAT to be present AND non-empty before continuing.
+if ($studentSID) {
     try {
         Add-Type -Namespace LabProfile -Name Userenv -MemberDefinition @'
 [DllImport("userenv.dll", SetLastError=true, CharSet=CharSet.Unicode)]
@@ -81,13 +92,22 @@ public static extern int CreateProfile(
 '@ -ErrorAction SilentlyContinue
         $profilePath = New-Object System.Text.StringBuilder 260
         $hr = [LabProfile.Userenv]::CreateProfile($studentSID, "Student", $profilePath, [uint32]$profilePath.Capacity)
-        if (Test-Path "C:\Users\Student\NTUSER.DAT") {
-            Write-Log "Materialized Student profile at $($profilePath.ToString())" "SUCCESS"
+        # Poll for NTUSER.DAT ready: exists AND readable AND size > 0. Win11 CreateProfile
+        # can return before the hive file is fully flushed; 10×500ms gives up to 5s.
+        $ntUser = "C:\Users\Student\NTUSER.DAT"
+        $ready  = $false
+        for ($i = 0; $i -lt 10; $i++) {
+            $fi = Get-Item $ntUser -Force -ErrorAction SilentlyContinue
+            if ($fi -and $fi.Length -gt 0) { $ready = $true; break }
+            Start-Sleep -Milliseconds 500
+        }
+        if ($ready) {
+            Write-Log "Student profile ready at $($profilePath.ToString()) (HR=0x$('{0:X8}' -f $hr))" "SUCCESS"
         } else {
-            Write-Log "CreateProfile returned HRESULT 0x$('{0:X8}' -f $hr) but NTUSER.DAT not found — per-user writes may fall through to Default profile" "WARNING"
+            Write-Log "CreateProfile HR=0x$('{0:X8}' -f $hr) but NTUSER.DAT not ready after 5s — per-user writes may fall through to Default profile" "WARNING"
         }
     } catch {
-        Write-Log "Could not materialize Student profile: $($_.Exception.Message)" "WARNING"
+        Write-Log "CreateProfile failed: $($_.Exception.Message)" "WARNING"
     }
 }
 
@@ -1832,17 +1852,28 @@ Write-Log "Step 27b: Cleaning startup apps..." "INFO"
 
 try {
     # UniKey uses a "last-used state" model: on shutdown it writes the current input mode
-    # (V or E) to HKCU\Software\PkLong\UniKey\Vietnamese, and on startup it reads that value
-    # to decide what mode to launch in. A one-time registry write of Vietnamese=1 during
-    # deployment therefore gets OVERWRITTEN the first time a user ever logs out of UniKey
-    # in English mode. To reliably force V-on-every-login we re-assert Vietnamese=1
-    # immediately BEFORE UniKey launches, on every login.
+    # (V or E) and the current dialog-visible state to HKCU\Software\PkLong\UniKey, and on
+    # startup it reads those values to decide what to do. One-time registry writes during
+    # deployment therefore get OVERWRITTEN the first time a user ever closes UniKey in a
+    # different state (e.g. ShowDlg=1 if the config dialog was visible at exit, Vietnamese=0
+    # if English mode was last used). To reliably force the silent-Vietnamese startup UX we
+    # re-assert all three knobs (Vietnamese=1, ShowDlg=0, AutoUpdate=0) immediately BEFORE
+    # UniKey launches, on every login.
     #
-    # Implementation: a scheduled task triggered at user logon, with two sequential
-    # actions -- (1) reg.exe writes Vietnamese=1 to the logged-in user's HKCU, (2) UniKeyNT
-    # launches. No script files, no WSH/VBS parsing risk, no console window flash.
-    # An earlier VBS-wrapper approach hit inconsistent "Wrong number of arguments" parse
-    # errors on some sessions -- the scheduled task sidesteps that entire surface area.
+    # Implementation: a scheduled task triggered at user logon, with four sequential actions:
+    # (1-3) reg.exe writes each baseline value to the logged-in user's HKCU, (4) UniKeyNT
+    # launches. No script files, no WSH/VBS parsing risk, no console window flash. Task
+    # Scheduler runs actions sequentially when each preceding action terminates (reg.exe is
+    # short-lived so it completes before UniKey opens and reads the values). An earlier
+    # VBS-wrapper approach hit inconsistent "Wrong number of arguments" parse errors on some
+    # sessions -- the scheduled task sidesteps that entire surface area.
+    #
+    # Why all three (not just Vietnamese): on fresh Win11 profiles that didn't inherit the
+    # Software\PkLong subtree from Default (observed on laptops where Configure-Laptop's
+    # pre-flight couldn't load Student's hive), UniKey launches with partial config, shows
+    # its config dialog, and persists ShowDlg=1 on close even when the user clicks Accept.
+    # Pre-asserting all three on every login breaks the loop: Student's HKCU always has
+    # ShowDlg=0 visible to UniKey before it reads the registry.
     #
     # Principal = BUILTIN\Users, so the task fires for both Admin and Student on their
     # own logons, each writing to their own HKCU.
@@ -1858,7 +1889,9 @@ try {
 
     if (Test-Path $unikeyExe) {
         $a1 = New-ScheduledTaskAction -Execute 'reg.exe' -Argument 'add "HKCU\Software\PkLong\UniKey" /v Vietnamese /t REG_DWORD /d 1 /f'
-        $a2 = New-ScheduledTaskAction -Execute $unikeyExe
+        $a2 = New-ScheduledTaskAction -Execute 'reg.exe' -Argument 'add "HKCU\Software\PkLong\UniKey" /v ShowDlg /t REG_DWORD /d 0 /f'
+        $a3 = New-ScheduledTaskAction -Execute 'reg.exe' -Argument 'add "HKCU\Software\PkLong\UniKey" /v AutoUpdate /t REG_DWORD /d 0 /f'
+        $a4 = New-ScheduledTaskAction -Execute $unikeyExe
         $trigger = New-ScheduledTaskTrigger -AtLogOn
         # ExecutionTimeLimit MUST be zero (unlimited). Default is 3 days and even a short
         # limit causes Task Scheduler to reap UniKey when the limit expires (UniKey is a
@@ -1873,8 +1906,8 @@ try {
 
         Register-ScheduledTask `
             -TaskName $taskName `
-            -Description 'Force UniKey to start in Vietnamese mode on user login (reg write + launch).' `
-            -Action @($a1, $a2) `
+            -Description 'Force UniKey to start silent in Vietnamese mode on user login (reg baseline writes + launch).' `
+            -Action @($a1, $a2, $a3, $a4) `
             -Trigger $trigger `
             -Settings $settings `
             -Principal $principal `
