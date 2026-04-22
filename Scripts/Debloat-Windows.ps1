@@ -2,13 +2,16 @@
 # Standalone script containing Steps 23-29 from Configure-Laptop.ps1
 # Run this on machines that already have Configure-Laptop applied but need debloating.
 # Requires Administrator.
-# NOTE: HKCU writes only target the Admin profile running this script.
-# Configure-Laptop.ps1 handles Student-profile debloating via $hkuPaths.
-# This script is for quick re-application, not initial deployment.
+# Auto-dispatch: Configure-Laptop registers Lab-PostStudent-Debloat task that invokes
+# this script with -MarkerFile/-SelfUnregister after Student first login.
 
 param(
-    [string]$LogPath = "$PSScriptRoot\debloat.log"
+    [string]$LogPath = "$PSScriptRoot\debloat.log",
+    [string]$MarkerFile = $null,
+    [switch]$SelfUnregister
 )
+
+if ($MarkerFile -and (Test-Path $MarkerFile)) { exit 0 }
 
 function Write-Log {
     param([string]$Message, [string]$Level = "INFO")
@@ -347,6 +350,29 @@ Write-Host "  OOBE nag      'Finish setup' prompt disabled" -ForegroundColor Whi
 Write-Host "  Start menu    Suggestions/promoted apps disabled" -ForegroundColor White
 Write-Host ""
 Write-Host "NOTE: A reboot is recommended for all changes to take effect." -ForegroundColor Yellow
+
+# On success: drop marker + unregister task so subsequent logons no-op.
+# On failure: leave both so next logon retries.
+if ($MarkerFile -and $failCount -eq 0) {
+    try {
+        $markerDir = Split-Path $MarkerFile -Parent
+        if ($markerDir -and -not (Test-Path $markerDir)) {
+            New-Item -Path $markerDir -ItemType Directory -Force | Out-Null
+        }
+        Set-Content -Path $MarkerFile -Value "$(Get-Date -Format 'yyyy-MM-ddTHH:mm:ss') debloat sweep completed on $env:COMPUTERNAME" -Force
+        Write-Log "Marker file created: $MarkerFile" "INFO"
+    } catch {
+        Write-Log "Could not create marker file: $($_.Exception.Message)" "WARNING"
+    }
+}
+if ($SelfUnregister -and $failCount -eq 0) {
+    try {
+        Unregister-ScheduledTask -TaskName 'Lab-PostStudent-Debloat' -Confirm:$false -ErrorAction SilentlyContinue
+        Write-Log "Unregistered Lab-PostStudent-Debloat scheduled task (one-shot complete)" "INFO"
+    } catch {
+        Write-Log "Could not unregister scheduled task: $($_.Exception.Message)" "WARNING"
+    }
+}
 Write-Host ""
 Write-Host "Log file: $LogPath" -ForegroundColor Cyan
 Write-Host "`n========================================" -ForegroundColor Green

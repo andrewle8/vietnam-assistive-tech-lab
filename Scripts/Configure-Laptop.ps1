@@ -2093,6 +2093,54 @@ try {
     $failCount++
 }
 
+# Step 30b: Schedule one-shot post-Student-login debloat sweep.
+# Debloat Step 24 runs before Student first login, so Remove-AppxPackage -AllUsers has no
+# Student-installed packages to remove. Win11 24H2 re-pushes some apps (Content Delivery
+# Manager, Store first-run) into Student at first logon. This task fires on every logon
+# as SYSTEM, invokes Debloat-Windows.ps1, and drops a marker + self-unregisters after
+# the first successful run — so it's a true one-shot with no ongoing overhead.
+Write-Log "Step 30b: Registering post-Student-login debloat task..." "INFO"
+
+try {
+    $debloatSrc  = Join-Path $PSScriptRoot "Debloat-Windows.ps1"
+    $debloatDest = "C:\LabTools\Debloat-Windows.ps1"
+    $markerFile  = "C:\LabTools\debloat-done.marker"
+    $taskName    = 'Lab-PostStudent-Debloat'
+
+    if (Test-Path $markerFile) {
+        Write-Log "Post-Student debloat already completed on this machine (marker present) — skipping task registration" "INFO"
+    } elseif (-not (Test-Path $debloatSrc)) {
+        Write-Log "Debloat-Windows.ps1 not found at $debloatSrc — cannot schedule post-login sweep" "WARNING"
+    } else {
+        Copy-Item -Path $debloatSrc -Destination $debloatDest -Force
+        if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
+            Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue
+        }
+        $action = New-ScheduledTaskAction -Execute 'powershell.exe' `
+            -Argument "-NoProfile -NonInteractive -ExecutionPolicy Bypass -File `"$debloatDest`" -MarkerFile `"$markerFile`" -SelfUnregister"
+        $trigger   = New-ScheduledTaskTrigger -AtLogOn
+        $principal = New-ScheduledTaskPrincipal -UserId 'SYSTEM' -RunLevel Highest
+        $settings  = New-ScheduledTaskSettingsSet `
+            -AllowStartIfOnBatteries `
+            -DontStopIfGoingOnBatteries `
+            -StartWhenAvailable `
+            -ExecutionTimeLimit (New-TimeSpan -Minutes 30)
+        Register-ScheduledTask `
+            -TaskName $taskName `
+            -Description 'One-shot debloat sweep after Student first login; self-unregisters on success.' `
+            -Action $action `
+            -Trigger $trigger `
+            -Principal $principal `
+            -Settings $settings `
+            -Force | Out-Null
+        Write-Log "Scheduled task '$taskName' registered (fires at next logon, self-unregisters after success)" "SUCCESS"
+    }
+    $successCount++
+} catch {
+    Write-Log "Could not register post-Student-login debloat task: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
 # Step 31: Deploy VLC accessibility config (audio-only mode, NVDA-friendly)
 Write-Log "Step 31: Deploying VLC accessibility config..." "INFO"
 
