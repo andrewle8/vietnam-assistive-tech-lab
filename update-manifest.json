@@ -4,7 +4,7 @@
   "min_local_version": "2026.02.19",
   "release_tag": "installers-v1",
   "release_base": "https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/download/installers-v1",
-  "notes": "Initial deployment — no updates yet. Update this file to push changes to the fleet.",
+  "notes": "Initial deployment — no updates yet. See docs/Remote-Updates.md for how to push updates.",
   "packages": [],
   "scripts": []
 }
