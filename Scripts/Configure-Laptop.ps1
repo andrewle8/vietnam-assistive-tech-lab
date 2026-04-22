@@ -1875,8 +1875,8 @@ try {
     # Pre-asserting all three on every login breaks the loop: Student's HKCU always has
     # ShowDlg=0 visible to UniKey before it reads the registry.
     #
-    # Trigger+Principal are scoped to Student only -- Admin/LabAdmin logons do NOT fire
-    # this task, so UniKey stays out of Admin sessions (who don't need Vietnamese input).
+    # Principal = BUILTIN\Users, so the task fires for both Admin and Student on their
+    # own logons, each writing to their own HKCU.
     $unikeyExe = "C:\Program Files\UniKey\UniKeyNT.exe"
     $taskName  = 'UniKey-Startup-Vietnamese'
 
@@ -1892,7 +1892,7 @@ try {
         $a2 = New-ScheduledTaskAction -Execute 'reg.exe' -Argument 'add "HKCU\Software\PkLong\UniKey" /v ShowDlg /t REG_DWORD /d 0 /f'
         $a3 = New-ScheduledTaskAction -Execute 'reg.exe' -Argument 'add "HKCU\Software\PkLong\UniKey" /v AutoUpdate /t REG_DWORD /d 0 /f'
         $a4 = New-ScheduledTaskAction -Execute $unikeyExe
-        $trigger = New-ScheduledTaskTrigger -AtLogOn -User "Student"
+        $trigger = New-ScheduledTaskTrigger -AtLogOn
         # ExecutionTimeLimit MUST be zero (unlimited). Default is 3 days and even a short
         # limit causes Task Scheduler to reap UniKey when the limit expires (UniKey is a
         # persistent tray app, so the task appears "running" indefinitely -- that is correct).
@@ -1902,7 +1902,7 @@ try {
             -DontStopIfGoingOnBatteries `
             -StartWhenAvailable `
             -ExecutionTimeLimit ([TimeSpan]::Zero)
-        $principal = New-ScheduledTaskPrincipal -UserId "Student" -LogonType Interactive -RunLevel Limited
+        $principal = New-ScheduledTaskPrincipal -GroupId 'S-1-5-32-545' -RunLevel Limited  # BUILTIN\Users
 
         Register-ScheduledTask `
             -TaskName $taskName `
