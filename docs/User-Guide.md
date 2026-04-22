@@ -57,7 +57,8 @@ The laptop uses Audio-Technica ATH-M40x headphones.
 - Plug the headphone cable into the round jack on the right side of the laptop.
 - The cable is detachable. The small end (2.5mm) plugs into the headphones, the large end (3.5mm) plugs into the laptop.
 - Use the volume keys on the keyboard to increase or decrease volume.
-- Volume is set to 70% each time the laptop starts.
+- Volume is set to 50% each time the laptop starts.
+- Screen brightness is set to 50% each time the laptop starts (saves power and is easier on the eyes).
 
 ---
 

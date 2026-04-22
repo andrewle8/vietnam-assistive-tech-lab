@@ -57,7 +57,8 @@ May tinh dung tai nghe Audio-Technica ATH-M40x.
 - Cam day tai nghe vao lo tron ben phai may tinh.
 - Day cap co the thao roi. Dau nho (2.5mm) cam vao tai nghe, dau lon (3.5mm) cam vao may tinh.
 - Dung phim am luong tren ban phim de tang hoac giam am luong.
-- Am luong duoc dat o 70% moi khi bat may.
+- Am luong duoc dat o 50% moi khi bat may.
+- Do sang man hinh duoc dat o 50% moi khi bat may (de tiet kiem dien va de chiu cho mat).
 
 ---
 

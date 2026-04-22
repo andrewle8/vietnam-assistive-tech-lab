@@ -791,47 +791,94 @@ try {
 
 # Step 8: (Moved to Step 6 — desktop shortcuts are now created in one pass)
 
-# Step 9: Volume safety limit for children's hearing
-Write-Log "Step 9: Setting volume safety limit..." "INFO"
+# Step 9: Login-reset defaults (volume + brightness)
+# Both run on every login via All Users Startup shortcuts. They guarantee a known-good
+# baseline so the previous session can't leave the laptop muted, deafening, blacked-out,
+# or blindingly bright. Each script logs failures next to itself for diagnosis.
+Write-Log "Step 9: Setting login-reset defaults (volume + brightness)..." "INFO"
 
 try {
-    # Cap system volume at 70% to protect children's hearing (ATH-M40x are 98dB sensitivity)
-    # Create a startup script that resets volume to 70% on each login
+    # --- Volume reset script (50%) -------------------------------------------------
+    # Caps system volume at 50% on each login to protect hearing (ATH-M40x are 98dB sensitivity).
+    # Uses a C# static helper so the COM cast happens inside the CLR — PowerShell's
+    # strict cast operator refuses to cast the [ComImport] coclass directly to its
+    # interface, which is why earlier inline-COM versions silently did nothing.
     $volumeScript = @'
-# Reset system volume to safe level for children on each login
-# ATH-M40x headphones at full volume can exceed safe levels for children
-Add-Type -TypeDefinition @"
+# Reset system volume to 50% on each login.
+# Protects children's hearing — ATH-M40x at full volume can exceed safe SPL.
+$logPath = 'C:\LabTools\reset-volume.log'
+try {
+    Add-Type -TypeDefinition @"
 using System;
 using System.Runtime.InteropServices;
+namespace LabVol {
 [Guid("5CDF2C82-841E-4546-9722-0CF74078229A"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-interface IAudioEndpointVolume {
-    int _0(); int _1(); int _2(); int _3(); int _4(); int _5(); int _6(); int _7(); int _8(); int _9(); int _10(); int _11();
-    int SetMasterVolumeLevelScalar(float fLevel, System.Guid pguidEventContext);
+public interface IAudioEndpointVolume {
+    int RegisterControlChangeNotify(IntPtr p);
+    int UnregisterControlChangeNotify(IntPtr p);
+    int GetChannelCount(out uint c);
+    int SetMasterVolumeLevel(float l, ref Guid g);
+    int SetMasterVolumeLevelScalar(float l, ref Guid g);
 }
 [Guid("D666063F-1587-4E43-81F1-B948E807363F"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-interface IMMDevice { int Activate(ref Guid id, int clsCtx, int activationParams, [MarshalAs(UnmanagedType.IUnknown)] out object ppInterface); }
+public interface IMMDevice {
+    int Activate(ref Guid id, uint clsCtx, IntPtr p, [MarshalAs(UnmanagedType.IUnknown)] out object o);
+}
 [Guid("A95664D2-9614-4F35-A746-DE8DB63617E6"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-interface IMMDeviceEnumerator { int GetDefaultAudioEndpoint(int dataFlow, int role, out IMMDevice ppDevice); }
-[ComImport, Guid("BCDE0395-E52F-467C-8E3D-C4579291692E")] class MMDeviceEnumerator {}
+public interface IMMDeviceEnumerator {
+    int EnumAudioEndpoints(int dataFlow, int role, out IntPtr e);
+    int GetDefaultAudioEndpoint(int dataFlow, int role, out IMMDevice d);
+}
+public static class Helper {
+    public static void SetVolume(float level) {
+        var t = Type.GetTypeFromCLSID(new Guid("BCDE0395-E52F-467C-8E3D-C4579291692E"));
+        var enumerator = (IMMDeviceEnumerator)Activator.CreateInstance(t);
+        IMMDevice device;
+        Marshal.ThrowExceptionForHR(enumerator.GetDefaultAudioEndpoint(0, 1, out device));
+        var iid = typeof(IAudioEndpointVolume).GUID;
+        object o;
+        Marshal.ThrowExceptionForHR(device.Activate(ref iid, 1, IntPtr.Zero, out o));
+        var vol = (IAudioEndpointVolume)o;
+        var g = Guid.Empty;
+        Marshal.ThrowExceptionForHR(vol.SetMasterVolumeLevelScalar(level, ref g));
+    }
+}
+}
 "@
-try {
-    $enumerator = New-Object MMDeviceEnumerator
-    $device = $null
-    $enumerator.GetDefaultAudioEndpoint(0, 1, [ref]$device)
-    $iid = [Guid]"5CDF2C82-841E-4546-9722-0CF74078229A"
-    $volume = $null
-    $device.Activate([ref]$iid, 1, 0, [ref]$volume)
-    # Set to 70% max (0.7 = 70%)
-    $volume.SetMasterVolumeLevelScalar(0.70, [Guid]::Empty)
-} catch {}
+    [LabVol.Helper]::SetVolume(0.50)
+} catch {
+    "$([DateTime]::Now.ToString('s')) FAILED: $($_.Exception.Message)" | Out-File -FilePath $logPath -Append -Encoding ASCII
+}
 '@
 
     $volumeScriptPath = Join-Path "C:\LabTools" "reset-volume.ps1"
     Set-Content -Path $volumeScriptPath -Value $volumeScript -Force
 
-    # Add to All Users startup
+    # --- Brightness reset script (50%) ---------------------------------------------
+    # Saves ~3-5W per laptop continuously, eases eye strain, and recovers from any
+    # session that left the panel fully bright or near-black. WMI may return no
+    # instance on hardware without a software-controllable backlight (e.g. desktops
+    # or some external monitors); failures land in the log file.
+    $brightnessScript = @'
+# Reset internal display brightness to 50% on each login.
+# Saves power (~3-5W per laptop), reduces eye strain, and protects against
+# the previous session leaving the panel uncomfortably bright or dim.
+$logPath = 'C:\LabTools\reset-brightness.log'
+try {
+    $br = Get-CimInstance -Namespace root/wmi -ClassName WmiMonitorBrightnessMethods -ErrorAction Stop
+    Invoke-CimMethod -InputObject $br -MethodName WmiSetBrightness -Arguments @{ Timeout = [uint32]0; Brightness = [byte]50 } | Out-Null
+} catch {
+    "$([DateTime]::Now.ToString('s')) FAILED: $($_.Exception.Message)" | Out-File -FilePath $logPath -Append -Encoding ASCII
+}
+'@
+
+    $brightnessScriptPath = Join-Path "C:\LabTools" "reset-brightness.ps1"
+    Set-Content -Path $brightnessScriptPath -Value $brightnessScript -Force
+
+    # --- All Users startup shortcuts -----------------------------------------------
     $allUsersStartup = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup"
     $WshShell = New-Object -ComObject WScript.Shell
+
     $volShortcutPath = Join-Path $allUsersStartup "LabVolumeReset.lnk"
     $volShortcut = $WshShell.CreateShortcut($volShortcutPath)
     $volShortcut.TargetPath = "powershell.exe"
@@ -840,10 +887,18 @@ try {
     $volShortcut.WindowStyle = 7
     $volShortcut.Save()
 
-    Write-Log "Volume safety limit set (70% on each login)" "SUCCESS"
+    $brShortcutPath = Join-Path $allUsersStartup "LabBrightnessReset.lnk"
+    $brShortcut = $WshShell.CreateShortcut($brShortcutPath)
+    $brShortcut.TargetPath = "powershell.exe"
+    $brShortcut.Arguments = "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$brightnessScriptPath`""
+    $brShortcut.Description = "Reset display brightness to default"
+    $brShortcut.WindowStyle = 7
+    $brShortcut.Save()
+
+    Write-Log "Login-reset defaults set (volume 50%, brightness 50%)" "SUCCESS"
     $successCount++
 } catch {
-    Write-Log "Could not set volume limit: $($_.Exception.Message)" "ERROR"
+    Write-Log "Could not set login-reset defaults: $($_.Exception.Message)" "ERROR"
     $failCount++
 }
 
@@ -2363,7 +2418,8 @@ Write-Host "  GoldenDict    150% zoom, 18px article font, UI Automation" -Foregr
 Write-Host "  Sticky Keys   Popup disabled (Shift x5)" -ForegroundColor White
 Write-Host "  Filter Keys   Popup disabled (hold key)" -ForegroundColor White
 Write-Host "  Toggle Keys   Beep enabled (Caps/Num/Scroll Lock)" -ForegroundColor White
-Write-Host "  Volume limit  70% on each login" -ForegroundColor White
+Write-Host "  Volume reset  50% on each login (hearing safety)" -ForegroundColor White
+Write-Host "  Brightness    50% on each login (power saving, eye comfort)" -ForegroundColor White
 Write-Host "  Win Update    Disabled (offline)" -ForegroundColor White
 Write-Host "  Notifications Toast, Notification Center, tips/suggestions all disabled" -ForegroundColor White
 Write-Host "  Narrator      Shortcut disabled (NVDA only)" -ForegroundColor White
