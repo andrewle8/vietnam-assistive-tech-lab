@@ -9,7 +9,7 @@
     "DisableTelemetry": true,
     "DisableFirefoxStudies": true,
     "DisableFirefoxAccounts": true,
-    "DontCheckDefaultBrowser": false,
+    "DontCheckDefaultBrowser": true,
     "OverrideFirstRunPage": "",
     "OverridePostUpdatePage": "",
     "ExtensionSettings": {
@@ -45,8 +45,8 @@
         "Status": "locked"
       },
       "browser.shell.checkDefaultBrowser": {
-        "Value": true,
-        "Status": "default"
+        "Value": false,
+        "Status": "locked"
       },
       "datareporting.policy.dataSubmissionEnabled": {
         "Value": false,
