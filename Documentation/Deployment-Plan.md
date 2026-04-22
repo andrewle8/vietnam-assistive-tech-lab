@@ -159,7 +159,7 @@ Run end-to-end on PC-1 first. Manually test each app, verify NVDA reads everythi
 2. Run `Verify-Installers.ps1` — all files present and checksums match
 3. Copy entire `Vietnam-Lab-Kit` folder to 3 separate USB drives
 4. Label drives: PRIMARY, BACKUP-1, BACKUP-2
-5. Prepare student USB drives with `4-Prepare-Student-USB.ps1`
+5. Prepare student USB drives with `4-Prepare-Student-USB-Batch.ps1`
 6. Store deployment and student USB drives separately to prevent loss
 
 ### Final Pre-Trip Validation

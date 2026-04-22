@@ -145,7 +145,7 @@ Software updates are automatic — edit `update-manifest.json`, push to GitHub, 
 | `1-Install-All.ps1` | Install all software silently (including Microsoft Office) |
 | `2-Verify-Installation.ps1` | Verify installs |
 | `3-Configure-NVDA.ps1` | Configure NVDA with Vietnamese voice |
-| `4-Prepare-Student-USB.ps1` | Prepare student USB drives |
+| `4-Prepare-Student-USB-Batch.ps1` | Batch-prepare student USB drives (parallel format, unplug-to-label) |
 | `7-Audit.ps1` | Audit machine against manifest.json |
 | `Bootstrap-Laptop.ps1` | Full per-PC setup (hostname, software, NVDA, hardening) |
 | `Configure-Laptop.ps1` | Windows hardening, power, shortcuts, scheduled tasks (called by Bootstrap) |
