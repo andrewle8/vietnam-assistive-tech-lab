@@ -804,8 +804,9 @@ try {
     # strict cast operator refuses to cast the [ComImport] coclass directly to its
     # interface, which is why earlier inline-COM versions silently did nothing.
     $volumeScript = @'
-# Reset system volume to 50% on each login.
+# Reset system volume to 50% and clear mute on each login.
 # Protects children's hearing — ATH-M40x at full volume can exceed safe SPL.
+# Level and mute are independent in Core Audio, so both must be set explicitly.
 $logPath = 'C:\LabTools\reset-volume.log'
 try {
     Add-Type -TypeDefinition @"
@@ -819,6 +820,13 @@ public interface IAudioEndpointVolume {
     int GetChannelCount(out uint c);
     int SetMasterVolumeLevel(float l, ref Guid g);
     int SetMasterVolumeLevelScalar(float l, ref Guid g);
+    int GetMasterVolumeLevel(out float l);
+    int GetMasterVolumeLevelScalar(out float l);
+    int SetChannelVolumeLevel(uint c, float l, ref Guid g);
+    int SetChannelVolumeLevelScalar(uint c, float l, ref Guid g);
+    int GetChannelVolumeLevel(uint c, out float l);
+    int GetChannelVolumeLevelScalar(uint c, out float l);
+    int SetMute([MarshalAs(UnmanagedType.Bool)] bool mute, ref Guid g);
 }
 [Guid("D666063F-1587-4E43-81F1-B948E807363F"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 public interface IMMDevice {
@@ -830,7 +838,7 @@ public interface IMMDeviceEnumerator {
     int GetDefaultAudioEndpoint(int dataFlow, int role, out IMMDevice d);
 }
 public static class Helper {
-    public static void SetVolume(float level) {
+    public static void ResetToDefault(float level) {
         var t = Type.GetTypeFromCLSID(new Guid("BCDE0395-E52F-467C-8E3D-C4579291692E"));
         var enumerator = (IMMDeviceEnumerator)Activator.CreateInstance(t);
         IMMDevice device;
@@ -841,11 +849,12 @@ public static class Helper {
         var vol = (IAudioEndpointVolume)o;
         var g = Guid.Empty;
         Marshal.ThrowExceptionForHR(vol.SetMasterVolumeLevelScalar(level, ref g));
+        Marshal.ThrowExceptionForHR(vol.SetMute(false, ref g));
     }
 }
 }
 "@
-    [LabVol.Helper]::SetVolume(0.50)
+    [LabVol.Helper]::ResetToDefault(0.50)
 } catch {
     "$([DateTime]::Now.ToString('s')) FAILED: $($_.Exception.Message)" | Out-File -FilePath $logPath -Append -Encoding ASCII
 }
