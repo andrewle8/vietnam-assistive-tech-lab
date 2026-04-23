@@ -6,7 +6,8 @@
 # Last Updated: April 2026
 
 param(
-    [string]$LogPath = "$PSScriptRoot\laptop-config.log"
+    [string]$LogPath = "$PSScriptRoot\laptop-config.log",
+    [int]$PCNumber = 0
 )
 
 function Write-Log {
@@ -1541,8 +1542,10 @@ try {
 
     # Random offset per PC (0-90 min) based on PC number to spread GitHub load
     # Target window: 6 PM - 7:30 PM (dinner, laptops likely still on, students away eating)
-    $pcNum = 0
-    if ($env:COMPUTERNAME -match "PC-(\d+)") { $pcNum = [int]$Matches[1] }
+    # Prefer -PCNumber param (Bootstrap passes it before the rename has taken effect).
+    # Fall back to hostname regex for standalone re-runs after reboot.
+    $pcNum = $PCNumber
+    if ($pcNum -eq 0 -and $env:COMPUTERNAME -match "PC-(\d+)") { $pcNum = [int]$Matches[1] }
     $randomDelay = New-TimeSpan -Minutes ($pcNum * 5)  # PC-01=5min, PC-19=95min
 
     $taskAction = New-ScheduledTaskAction `

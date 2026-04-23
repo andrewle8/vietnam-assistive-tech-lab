@@ -147,7 +147,7 @@ Step "Applying Windows hardening and laptop config (Configure-Laptop.ps1)"
 $configLaptopScript = Join-Path $scriptsDir "Configure-Laptop.ps1"
 if (Test-Path $configLaptopScript) {
     try {
-        & $configLaptopScript
+        & $configLaptopScript -PCNumber $PCNumber
         if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) { throw "Exit code: $LASTEXITCODE" }
         Write-Host "      Laptop configured (hardening, scheduled tasks)" -ForegroundColor Green
         $stepResults["Configure-Laptop"] = $true
