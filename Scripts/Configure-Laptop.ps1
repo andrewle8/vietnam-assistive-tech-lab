@@ -584,17 +584,22 @@ try {
 }
 
 # Step 6: Clean desktop and create shortcuts for screen reader navigation
-Write-Log "Step 6: Wiping desktop shortcuts and creating clean set for screen reader navigation..." "INFO"
+Write-Log "Step 6: Creating managed desktop shortcuts and removing unmanaged ones..." "INFO"
 
 try {
     $publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
     $userDesktop = [Environment]::GetFolderPath("Desktop")
 
-    # Wipe ALL existing shortcuts from both desktops (clean slate)
-    foreach ($desktop in @($publicDesktop, $userDesktop)) {
-        Get-ChildItem -Path $desktop -Filter "*.lnk" -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
-    }
-    Write-Log "Cleared all existing desktop shortcuts" "INFO"
+    # User desktop: wipe entirely. No lab shortcuts belong here — Step 14 later creates
+    # NVDA.lnk in the user desktop for hotkey registration. Public desktop is cleaned
+    # SELECTIVELY AFTER the create loop (remove only unmanaged .lnk names), so that if
+    # an app is installed at an unexpected path and we can't resolve its target, the
+    # working shortcut is preserved instead of destroyed by an upfront blanket wipe.
+    # Prior behavior wiped upfront; when Kiwix/GoldenDict/Office were at non-standard
+    # paths, shortcuts went missing permanently (see laptop-config.log history on
+    # DEPLOY_02, 2026-04-22 16:38-18:11: Excel/PowerPoint/Word skipped repeatedly).
+    Get-ChildItem -Path $userDesktop -Filter "*.lnk" -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
+    Write-Log "Cleared user desktop shortcuts (public desktop cleaned selectively after create loop)" "INFO"
 
     # Disable Windows Spotlight "Learn about this picture" overlay (distracting for screen readers)
     # Registry-only approaches do NOT reliably kill Spotlight on Win11. What works: set an actual
@@ -757,8 +762,11 @@ public class ShellLinkCreator {
     )
 
     $createdCount = 0
+    $preservedCount = 0
     foreach ($s in $shortcuts) {
-        # Resolve the target path (try primary, then alt)
+        $lnkPath = Join-Path $publicDesktop "$($s.Name).lnk"
+
+        # Resolve the target path: primary → alt → recursive search by exact exe name.
         $targetPath = $null
         if ($s.Target -in @("calc.exe", "explorer.exe", "powershell.exe")) {
             $targetPath = $s.Target
@@ -766,25 +774,37 @@ public class ShellLinkCreator {
             $targetPath = $s.Target
         } elseif ($s.AltTarget -and (Test-Path $s.AltTarget)) {
             $targetPath = $s.AltTarget
-        }
-
-        if (-not $targetPath) {
-            # Try wildcard search for apps with unknown exact exe names
-            $searchDirs = @($s.Target, $s.AltTarget) | Where-Object { $_ } | ForEach-Object { Split-Path $_ -Parent }
-            foreach ($dir in $searchDirs) {
-                if (Test-Path $dir) {
-                    $foundExe = Get-ChildItem -Path $dir -Filter "*.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
-                    if ($foundExe) { $targetPath = $foundExe.FullName; break }
+        } else {
+            # Not at expected path — search for the EXACT exe name recursively under the
+            # primary and alt parent directories. Handles nested installs (e.g. Kiwix
+            # extracted as C:\Program Files\Kiwix\kiwix-desktop-2.4.1\kiwix-desktop.exe
+            # instead of the flat layout the current installer produces).
+            # The old fallback grabbed "first .exe in parent" which for Kiwix picks
+            # aria2c.exe alphabetically — a broken shortcut. Filter by exe name.
+            $exeName = Split-Path $s.Target -Leaf
+            foreach ($t in @($s.Target, $s.AltTarget) | Where-Object { $_ }) {
+                $parentDir = Split-Path $t -Parent
+                if ($parentDir -and (Test-Path $parentDir)) {
+                    $found = Get-ChildItem -Path $parentDir -Filter $exeName -Recurse -Force -ErrorAction SilentlyContinue | Select-Object -First 1
+                    if ($found) { $targetPath = $found.FullName; break }
                 }
             }
         }
 
         if (-not $targetPath) {
-            Write-Log "Skipping shortcut '$($s.Name)' - executable not found" "ERROR"
+            # App genuinely not installed at any expected location. Do NOT destroy an
+            # existing working shortcut — preserve it. (Pre-fix behavior wiped upfront
+            # then skipped creation here, losing the shortcut permanently.) If no
+            # existing .lnk, nothing to do.
+            if (Test-Path $lnkPath) {
+                Write-Log "Preserving existing '$($s.Name)' shortcut - target not at expected path" "WARNING"
+                $preservedCount++
+            } else {
+                Write-Log "Skipping '$($s.Name)' - not installed and no existing shortcut" "WARNING"
+            }
             continue
         }
 
-        $lnkPath = Join-Path $publicDesktop "$($s.Name).lnk"
         $workDir = if ($targetPath -notin @("calc.exe", "explorer.exe", "powershell.exe")) {
             Split-Path $targetPath -Parent
         } else { "" }
@@ -797,7 +817,19 @@ public class ShellLinkCreator {
         }
     }
 
-    Write-Log "Created $createdCount desktop shortcuts (alphabetical for screen reader first-letter navigation)" "SUCCESS"
+    # Cleanup pass: remove any .lnk on the public desktop whose name is NOT in our
+    # managed set. This catches legacy shortcuts from old deployments and shortcuts
+    # created by installers (Edge, GoldenDict installer's own, old "Wikipedia (Offline)"
+    # names, etc.) without touching working shortcuts we intentionally preserved above.
+    $managedNames = @($shortcuts | ForEach-Object { "$($_.Name).lnk" })
+    Get-ChildItem -Path $publicDesktop -Filter "*.lnk" -ErrorAction SilentlyContinue |
+        Where-Object { $_.Name -notin $managedNames } |
+        ForEach-Object {
+            Remove-Item -Path $_.FullName -Force -ErrorAction SilentlyContinue
+            Write-Log "Removed unmanaged shortcut: $($_.Name)" "INFO"
+        }
+
+    Write-Log "Desktop shortcuts: created=$createdCount preserved=$preservedCount (alphabetical for screen reader first-letter navigation)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not set up desktop shortcuts: $($_.Exception.Message)" "ERROR"
