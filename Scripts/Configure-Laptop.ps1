@@ -2239,6 +2239,9 @@ try {
 Write-Log "Step 32: Deploying Audacity accessibility config..." "INFO"
 
 try {
+    # Close Audacity if running — otherwise it rewrites the config on exit and undoes our pins.
+    Stop-Process -Name audacity -Force -ErrorAction SilentlyContinue
+
     $profileBase = if (Test-Path "C:\Users\Student") { "C:\Users\Student" } else { $env:USERPROFILE }
 
     $audacityConfigDir = Join-Path $profileBase "AppData\Roaming\audacity"
