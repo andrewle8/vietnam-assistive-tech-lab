@@ -1329,12 +1329,30 @@ try {
         $sc.Description      = "NVDA Screen Reader - Auto-start"
         $sc.Save()
 
+        # Force-enable NVDA.lnk in StartupApproved. Windows reads this registry key to
+        # decide whether each Startup-folder .lnk actually runs on login. If NVDA was ever
+        # toggled off in Task Manager's Startup tab, or a Windows backup/restore or OEM
+        # image left a disabled value, Windows silently ignores the .lnk even though it's
+        # present. Writing 12 zero bytes (byte[0]=0x02, "enabled default") overwrites any
+        # prior 0x03 (disabled) state. HKCU takes precedence over HKLM, so we clear any
+        # per-user override in Admin/Student/Default hives to guarantee the HKLM state sticks.
+        $saBytes = [byte[]](2,0,0,0,0,0,0,0,0,0,0,0)
+        $saFolder = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\StartupFolder"
+        if (-not (Test-Path $saFolder)) { New-Item -Path $saFolder -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $saFolder -Name "NVDA.lnk" -Value $saBytes -Type Binary -Force -ErrorAction SilentlyContinue
+        foreach ($hive in $hkuPaths) {
+            $hkuSA = "$hive\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\StartupFolder"
+            if (Test-Path $hkuSA) {
+                Remove-ItemProperty -Path $hkuSA -Name "NVDA.lnk" -Force -ErrorAction SilentlyContinue
+            }
+        }
+
         # Delete installer-created duplicates (these don't register hotkeys on Win11 22H2+
         # and just show up as duplicate icons).
         Remove-Item "C:\Users\Public\Desktop\NVDA.lnk" -Force -ErrorAction SilentlyContinue
         Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\NVDA\NVDA.lnk" -Force -ErrorAction SilentlyContinue
 
-        Write-Log "NVDA shortcuts deployed (Student Desktop/StartMenu + system Startup); duplicates removed" "SUCCESS"
+        Write-Log "NVDA shortcuts deployed (Student Desktop/StartMenu + system Startup); StartupApproved enabled; duplicates removed" "SUCCESS"
     } catch {
         Write-Log "Could not configure NVDA shortcuts: $($_.Exception.Message)" "WARNING"
     }
