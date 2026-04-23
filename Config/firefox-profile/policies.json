@@ -93,9 +93,13 @@
         "Status": "locked"
       },
       "browser.download.folderList": {
-        "Value": 1,
+        "Value": 2,
         "Status": "locked",
         "Type": "number"
+      },
+      "browser.download.dir": {
+        "Value": "D:\\",
+        "Status": "locked"
       },
       "browser.download.always_ask_before_handling_new_types": {
         "Value": false,

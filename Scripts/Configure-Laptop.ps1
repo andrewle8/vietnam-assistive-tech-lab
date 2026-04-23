@@ -344,11 +344,12 @@ try {
         Write-Log "Office preferred editing language set to Vietnamese for Student" "SUCCESS"
     }
 
-    # Set Word default save/picture location to D:\ (the student USB).
+    # Set Word/Excel/PowerPoint default save location to D:\ (the student USB).
     # Blind students can't realistically navigate the Save As folder tree or type full paths —
-    # this makes Ctrl+S → filename → Enter save straight to their USB with no location awareness.
-    # If USB is unplugged, Word gracefully falls back to Documents without errors.
-    # Office 16.0 is stable across 2016/2019/2021/2024/M365 — key name unchanged for 10+ years.
+    # this makes Ctrl+S → filename → Enter pre-fill D:\ in the Save As dialog.
+    # If USB is unplugged, Office gracefully falls back to Documents without errors.
+    # Office 16.0 is stable across 2016/2019/2021/2024/M365 — key names unchanged for 10+ years.
+    # D: is force-assigned to the student's STU-### USB by the LabReassignStudentUSB task (Step 19).
     # Writes to HKCU + Student SID + DefaultProfile (if loaded) via $hkuPaths so re-running the
     # script reasserts the setting after any Office reset / profile rebuild.
     foreach ($hive in $hkuPaths) {
@@ -360,8 +361,19 @@ try {
         # silently if Word crashes — tight recovery window minimizes data loss.
         Set-ItemProperty -Path $wordOpts -Name "AutoSave"       -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
         Set-ItemProperty -Path $wordOpts -Name "AutoRecoverTime" -Value 5 -Type DWord -Force -ErrorAction SilentlyContinue
+
+        # Excel: DefaultPath under Options has been the supported key since Office 2003.
+        $excelOpts = "$hive\Software\Microsoft\Office\16.0\Excel\Options"
+        if (-not (Test-Path $excelOpts)) { New-Item -Path $excelOpts -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $excelOpts -Name "DefaultPath" -Value "D:\" -Force -ErrorAction SilentlyContinue
+
+        # PowerPoint: DefaultPath under Options is the documented Save As default folder
+        # (same pattern as Excel, honored by Office 2016 through M365).
+        $pptOpts = "$hive\Software\Microsoft\Office\16.0\PowerPoint\Options"
+        if (-not (Test-Path $pptOpts)) { New-Item -Path $pptOpts -Force -ErrorAction SilentlyContinue | Out-Null }
+        Set-ItemProperty -Path $pptOpts -Name "DefaultPath" -Value "D:\" -Force -ErrorAction SilentlyContinue
     }
-    Write-Log "Word default save location set to D:\ + AutoRecover=5min on $($hkuPaths.Count) hive(s)" "SUCCESS"
+    Write-Log "Office default save location set to D:\ (Word/Excel/PowerPoint) + Word AutoRecover=5min on $($hkuPaths.Count) hive(s)" "SUCCESS"
 
     # Suppress the OneDrive / cloud-save nag in file dialogs (no cloud accounts deployed).
     # (Backstage itself cannot be cleanly disabled in current O365 Enterprise builds —
@@ -626,7 +638,7 @@ try {
     }
 
     # Hide system desktop icons that create dead spots for screen reader arrow-key navigation
-    # (Recycle Bin, Spotlight shell object, This PC — students use "My USB" shortcut instead)
+    # (Recycle Bin, Spotlight shell object, This PC — students use "USB" shortcut instead)
     # Must set both NewStartPanel AND ClassicStartMenu — Win11 checks both paths
     $hideGuids = @(
         "{645FF040-5081-101B-9F08-00AA002F954E}",  # Recycle Bin
@@ -675,15 +687,15 @@ try {
         @{ Name = "Calculator"; Target = "calc.exe"; IconLocation = "%SystemRoot%\System32\imageres.dll,76"; Desc = "Windows Calculator" },
         @{ Name = "Excel"; Target = "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE"; Desc = "Microsoft Excel" },
         @{ Name = "Firefox"; Target = "C:\Program Files\Mozilla Firefox\firefox.exe"; AltTarget = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"; Desc = "Firefox Web Browser" },
-        @{ Name = "My USB"; Target = "explorer.exe"; Args = "shell:MyComputerFolder"; IconLocation = "%SystemRoot%\System32\imageres.dll,109"; Desc = "Open This PC to access your USB drive" },
         @{ Name = "NVDA"; Target = "C:\Program Files\NVDA\nvda.exe"; AltTarget = "C:\Program Files (x86)\NVDA\nvda.exe"; Desc = "NVDA Screen Reader" },
         @{ Name = "PowerPoint"; Target = "C:\Program Files\Microsoft Office\root\Office16\POWERPNT.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\POWERPNT.EXE"; IconLocation = "C:\Program Files\Microsoft Office\root\Office16\POWERPNT.EXE,0"; Desc = "Microsoft PowerPoint" },
         @{ Name = "Readmate"; Target = "C:\Program Files\SaoMai\sm_readmate\sm_readmate.exe"; AltTarget = "C:\Program Files (x86)\SaoMai\sm_readmate\sm_readmate.exe"; Desc = "Sao Mai Readmate Accessible Reader" },
         @{ Name = "Sao Mai Typing Tutor"; Target = "C:\Program Files (x86)\SaoMai\SMTT\SMTT.exe"; AltTarget = "C:\Program Files\SaoMai\SMTT\SMTT.exe"; IconLocation = "%SystemRoot%\System32\imageres.dll,116"; Desc = "Sao Mai Vietnamese Typing Tutor" },
-        @{ Name = "Thung Rac"; Target = "explorer.exe"; Args = "shell:RecycleBinFolder"; IconLocation = "%SystemRoot%\System32\imageres.dll,54"; Desc = "Thung rac - khoi phuc tap tin da xoa" },
-        @{ Name = "Tu Dien - Dictionary"; Target = "C:\Program Files\GoldenDict\GoldenDict.exe"; AltTarget = "C:\Program Files (x86)\GoldenDict\GoldenDict.exe"; Desc = "GoldenDict - Offline Dictionary" },
+        @{ Name = "Thùng Rác"; Target = "explorer.exe"; Args = "shell:RecycleBinFolder"; IconLocation = "%SystemRoot%\System32\shell32.dll,31"; Desc = "Thùng rác - khôi phục tập tin đã xóa" },
+        @{ Name = "Từ Điển"; Target = "C:\Program Files\GoldenDict\GoldenDict.exe"; AltTarget = "C:\Program Files (x86)\GoldenDict\GoldenDict.exe"; Desc = "GoldenDict - Offline Dictionary" },
+        @{ Name = "USB"; Target = "explorer.exe"; Args = "shell:MyComputerFolder"; IconLocation = "%SystemRoot%\System32\imageres.dll,109"; Desc = "Open This PC to access your USB drive" },
         @{ Name = "VLC media player"; Target = "C:\Program Files\VideoLAN\VLC\vlc.exe"; AltTarget = "C:\Program Files (x86)\VideoLAN\VLC\vlc.exe"; Desc = "VLC Media Player" },
-        @{ Name = "Wikipedia (Offline)"; Target = "C:\Program Files\Kiwix\kiwix-desktop.exe"; Desc = "Kiwix - Offline Vietnamese Wikipedia" },
+        @{ Name = "Wikipedia"; Target = "C:\Program Files\Kiwix\kiwix-desktop.exe"; Desc = "Kiwix - Offline Vietnamese Wikipedia" },
         @{ Name = "Word"; Target = "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE"; Desc = "Microsoft Word" }
     )
 
@@ -1351,7 +1363,7 @@ try {
         }
     }
     # NOTE: No desktop shortcuts created here. Step 6 owns the full desktop layout.
-    # Students access these folders through File Explorer / My USB shortcut.
+    # Students access these folders through File Explorer / USB shortcut.
 
     Write-Log "Vietnamese content folders created (Tai Lieu, Am Nhac, Truyen, Hoc Tap, Tro Choi)" "SUCCESS"
     $successCount++
@@ -1531,6 +1543,63 @@ try {
     $successCount++
 } catch {
     Write-Log "Could not deploy update agent: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 19: Pin student USB (STU-###) to drive letter D:
+# Word/Excel/PowerPoint/Firefox/Audacity all default-save to D:\ — must reliably be the
+# student's USB. Windows Mount Manager can drift D: to a different volume GUID if the
+# registry has accumulated stale mappings. This scheduled task assigns any STU-###
+# labeled volume to D: whenever D: is vacant. Never touches another drive's letter.
+# See Scripts/Reassign-StudentUSB.ps1 for the reassignment logic.
+Write-Log "Step 19: Deploying STU → D: reassignment task..." "INFO"
+
+try {
+    $reassignScript = Join-Path $PSScriptRoot "Reassign-StudentUSB.ps1"
+    $reassignDest   = "C:\LabTools\Reassign-StudentUSB.ps1"
+    if (Test-Path $reassignScript) {
+        Copy-Item -Path $reassignScript -Destination $reassignDest -Force
+        Write-Log "Copied Reassign-StudentUSB.ps1 to C:\LabTools\" "SUCCESS"
+    } else {
+        throw "Reassign-StudentUSB.ps1 not found at $reassignScript"
+    }
+
+    $existing = Get-ScheduledTask -TaskName "LabReassignStudentUSB" -ErrorAction SilentlyContinue
+    if ($existing) { Unregister-ScheduledTask -TaskName "LabReassignStudentUSB" -Confirm:$false }
+
+    $action = New-ScheduledTaskAction `
+        -Execute "powershell.exe" `
+        -Argument "-NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$reassignDest`""
+
+    # Three triggers: boot, logon, and every 1 minute. Belt-and-suspenders for
+    # volume-arrival detection without depending on event log channels that may be disabled.
+    # Task Scheduler enforces a 1-minute minimum repetition interval (API hard limit).
+    $trigBoot  = New-ScheduledTaskTrigger -AtStartup
+    $trigLogon = New-ScheduledTaskTrigger -AtLogOn
+    $trigPoll  = New-ScheduledTaskTrigger -Once -At (Get-Date).AddMinutes(1) `
+                    -RepetitionInterval (New-TimeSpan -Minutes 1) `
+                    -RepetitionDuration (New-TimeSpan -Days 3650)
+
+    $settings = New-ScheduledTaskSettingsSet `
+        -AllowStartIfOnBatteries `
+        -DontStopIfGoingOnBatteries `
+        -MultipleInstances IgnoreNew `
+        -ExecutionTimeLimit (New-TimeSpan -Minutes 2)
+
+    $principal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount -RunLevel Highest
+
+    Register-ScheduledTask `
+        -TaskName "LabReassignStudentUSB" `
+        -Action $action `
+        -Trigger @($trigBoot, $trigLogon, $trigPoll) `
+        -Settings $settings `
+        -Principal $principal `
+        -Description "Pins any STU-### labeled USB to drive letter D: (boot/logon/1min)" | Out-Null
+
+    Write-Log "Scheduled task 'LabReassignStudentUSB' registered (3 triggers: boot, logon, 1-min poll)" "SUCCESS"
+    $successCount++
+} catch {
+    Write-Log "Could not deploy STU → D: reassignment task: $($_.Exception.Message)" "ERROR"
     $failCount++
 }
 
@@ -2369,7 +2438,7 @@ Write-Host "Desktop:" -ForegroundColor White
 Write-Host "  Shortcuts     Standardized (wiped + recreated for all apps)" -ForegroundColor White
 Write-Host "  Apps          NVDA, Word, Excel, PowerPoint, Firefox, VLC, Audacity," -ForegroundColor White
 Write-Host "                Kiwix, GoldenDict, Sao Mai Typing Tutor, Readmate," -ForegroundColor White
-Write-Host "                Calculator, My USB, Language Toggle" -ForegroundColor White
+Write-Host "                Calculator, USB, Language Toggle" -ForegroundColor White
 Write-Host "  Vi folders    Tai Lieu, Am Nhac, Truyen, Hoc Tap, Tro Choi" -ForegroundColor White
 Write-Host ""
 Write-Host "Accessibility:" -ForegroundColor White

@@ -76,7 +76,7 @@ Your USB drive has a Braille label tag attached.
 
 ### Opening Your USB
 
-1. Use arrow keys to navigate to "My USB" on the Desktop (press "M" to jump quickly).
+1. Use arrow keys to navigate to "USB" on the Desktop (press "U" to jump quickly).
 2. Press Enter. The "This PC" window will open.
 3. Press Tab to move into the drive list, use arrow keys to find your USB drive.
 4. Press Enter to open the USB.
@@ -126,14 +126,14 @@ Between jumps, press the next letter within about one second, or wait two second
 - Calculator - Calculator
 - Excel - Spreadsheet
 - Firefox - Web browser
-- My USB - Open your USB drive
+- USB - Open your USB drive
 - NVDA - Screen reader
 - PowerPoint - Presentations
 - Sao Mai Typing Tutor - Vietnamese typing tutor
 - Readmate - Vietnamese textbook reader (103 books pre-loaded)
-- Tu Dien - Dictionary - English-Vietnamese dictionary
+- Từ Điển - English-Vietnamese dictionary
 - VLC media player - Media player
-- Wikipedia (Offline) - Offline encyclopedia
+- Wikipedia - Offline encyclopedia
 - Word - Word processor
 
 ---
@@ -348,7 +348,7 @@ Tip: For audiobooks, use `]` and `[` to tune speed — VLC preserves pitch. Use 
 
 The laptop has Vietnamese Wikipedia offline (no internet needed).
 
-1. On Desktop, press "W" to jump to "Wikipedia (Offline)" → Enter.
+1. On Desktop, press "W" to jump to "Wikipedia" → Enter.
 2. Press **F6** to jump to the search bar.
 3. Type a topic (e.g., "Vietnam") → press **Enter** to open the article.
 4. **Important**: if NVDA doesn't auto-read the article, press **NVDA + Space** to toggle Browse Mode. This is a known Kiwix+NVDA quirk.
@@ -374,7 +374,7 @@ Note: scanned PDFs (image-only, no text) cannot be read by NVDA. Ask your teache
 
 ## English-Vietnamese Dictionary with GoldenDict
 
-1. From Desktop, open "Dictionary" (or press "T").
+1. From Desktop, open "Từ Điển" (or press "T").
 2. Press **Ctrl + L** to focus the search box.
 3. Type the word → **Enter** → NVDA reads the definition.
 4. Press **Alt + Page Down** or **Alt + Page Up** to switch dictionary groups (English-Vietnamese / Vietnamese-English).

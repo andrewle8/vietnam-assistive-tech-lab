@@ -1,4 +1,4 @@
-# Vietnam Lab Deployment - Machine Audit Script
+﻿# Vietnam Lab Deployment - Machine Audit Script
 # Version: 1.0
 # Compares a machine's state against the manifest.json and reports drift.
 # Run on any lab PC to check if it matches the expected configuration.

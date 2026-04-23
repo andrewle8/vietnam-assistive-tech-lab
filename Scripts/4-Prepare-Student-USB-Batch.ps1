@@ -1,4 +1,4 @@
-param(
+﻿param(
     [Parameter(Mandatory=$true)]
     [int]$StartStudent,
     [string]$LogPath = "$PSScriptRoot\usb-batch-preparation.log"

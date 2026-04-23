@@ -1,4 +1,4 @@
-# Uninstall-Legacy.ps1 — one-shot cleanup for laptops that were partially deployed
+﻿# Uninstall-Legacy.ps1 — one-shot cleanup for laptops that were partially deployed
 # under an older stack. Removes: Tailscale, rclone, Quorum Studio, Thorium Reader,
 # nvdaRemote addon, Top Speed 3 (LEAP), fleet-report + USB-backup scheduled tasks.
 #

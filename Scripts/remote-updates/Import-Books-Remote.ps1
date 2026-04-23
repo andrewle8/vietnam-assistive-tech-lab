@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$ReleaseBase = "https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/download/installers-v1",
     [string]$StudentDbPath = "C:\Users\Student\AppData\Roaming\SaoMai\SM Readmate\databases\app_database.db",
     [string]$StagingDir = "C:\LabTools\update-agent\staging\books"

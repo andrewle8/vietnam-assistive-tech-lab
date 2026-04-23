@@ -1,4 +1,4 @@
-# Vietnam Lab Deployment - Master Installation Script
+﻿# Vietnam Lab Deployment - Master Installation Script
 # Version: 1.0
 # Run as Administrator
 # Last Updated: February 2026
@@ -178,13 +178,13 @@ if (Test-Path $kiwixSourceDir) {
             $destExe = Join-Path $kiwixDestDir "kiwix-desktop.exe"
             if (Test-Path $destExe) {
                 $WshShell = New-Object -ComObject WScript.Shell
-                $shortcutPath = Join-Path $publicDesktop "Wikipedia (Offline).lnk"
+                $shortcutPath = Join-Path $publicDesktop "Wikipedia.lnk"
                 $shortcut = $WshShell.CreateShortcut($shortcutPath)
                 $shortcut.TargetPath = $destExe
                 $shortcut.WorkingDirectory = $kiwixDestDir
                 $shortcut.Description = "Kiwix - Offline Vietnamese Wikipedia"
                 $shortcut.Save()
-                Write-Log "Created desktop shortcut: Wikipedia (Offline)" "SUCCESS"
+                Write-Log "Created desktop shortcut: Wikipedia" "SUCCESS"
             }
 
             $successCount++
@@ -209,13 +209,13 @@ $goldenDictExe = if (Test-Path "C:\Program Files\GoldenDict\GoldenDict.exe") {
 if ($goldenDictExe) {
     try {
         $WshShell = New-Object -ComObject WScript.Shell
-        $shortcutPath = Join-Path $publicDesktop "Tu Dien - Dictionary.lnk"
+        $shortcutPath = Join-Path $publicDesktop "Từ Điển.lnk"
         $shortcut = $WshShell.CreateShortcut($shortcutPath)
         $shortcut.TargetPath = $goldenDictExe
         $shortcut.WorkingDirectory = Split-Path $goldenDictExe
         $shortcut.Description = "GoldenDict - Offline Dictionary"
         $shortcut.Save()
-        Write-Log "Created desktop shortcut: Tu Dien - Dictionary" "SUCCESS"
+        Write-Log "Created desktop shortcut: Từ Điển" "SUCCESS"
     } catch {
         Write-Log "Could not create GoldenDict shortcut: $($_.Exception.Message)" "WARNING"
     }

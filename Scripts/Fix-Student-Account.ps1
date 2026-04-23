@@ -1,4 +1,4 @@
-# Fix Student Account - PC-01 Post-Bootstrap
+﻿# Fix Student Account - PC-01 Post-Bootstrap
 # Copies NVDA config, addons, app configs, and HKCU settings to Student profile
 # Must run as Administrator
 

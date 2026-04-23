@@ -76,7 +76,7 @@ USB cua ban co the nhan bang chu noi Braille.
 
 ### Mo USB
 
-1. Dung phim mui ten den bieu tuong "My USB" tren Desktop (nhan phim "M" de nhay nhanh).
+1. Dung phim mui ten den bieu tuong "USB" tren Desktop (nhan phim "U" de nhay nhanh).
 2. Nhan Enter. Cua so "This PC" se mo ra.
 3. Nhan Tab de di chuyen vao danh sach o dia, dung phim mui ten de tim USB cua ban.
 4. Nhan Enter de mo USB.
@@ -126,14 +126,14 @@ Giua cac lan nhay, nhan chu cai tiep theo trong vong khoang mot giay, hoac doi h
 - Calculator - May tinh bo tui
 - Excel - Bang tinh
 - Firefox - Trinh duyet web
-- My USB - Mo USB cua ban
+- USB - Mo USB cua ban
 - NVDA - Trinh doc man hinh
 - PowerPoint - Trinh chieu
 - Sao Mai Typing Tutor - Luyen go phim tieng Viet
 - Readmate - Doc sach giao khoa (103 sach da duoc cai san)
-- Tu Dien - Dictionary - Tu dien Anh-Viet
+- Từ Điển - Tu dien Anh-Viet
 - VLC media player - Nghe nhac, xem video
-- Wikipedia (Offline) - Bach khoa toan thu offline
+- Wikipedia - Bach khoa toan thu offline
 - Word - Soan thao van ban
 
 ---
@@ -348,7 +348,7 @@ Meo: Khi nghe sach noi, dung `]` va `[` de chinh toc do — VLC giu nguyen cao d
 
 May tinh co Wikipedia tieng Viet offline (khong can mang).
 
-1. Tu Desktop, nhan phim "W" de nhay den "Wikipedia (Offline)" → Enter.
+1. Tu Desktop, nhan phim "W" de nhay den "Wikipedia" → Enter.
 2. Nhan **F6** de nhay den thanh tim kiem.
 3. Go chu de muon tim (vi du: "Vietnam") → nhan **Enter** de mo bai viet.
 4. **Luu y quan trong**: neu NVDA khong doc bai viet tu dong, nhan **NVDA + Space** de bat Che Do Duyet. Do la su co da biet cua Kiwix khi dung voi NVDA.
@@ -374,7 +374,7 @@ Luu y: neu gap PDF duoc "quet hinh" (PDF hinh anh khong co chu) → NVDA se khon
 
 ## Tu Dien Anh-Viet Voi GoldenDict
 
-1. Tu Desktop, mo "Tu Dien" (hoac nhan phim "T").
+1. Tu Desktop, mo "Từ Điển" (hoac nhan phim "T").
 2. Nhan **Ctrl + L** de nhay den o tim kiem.
 3. Go tu can tra → nhan **Enter** → NVDA doc dinh nghia.
 4. Nhan **Alt + Page Down** hoac **Alt + Page Up** de chuyen giua nhom tu dien (Anh-Viet / Viet-Anh).

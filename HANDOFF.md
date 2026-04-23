@@ -17,7 +17,7 @@
 | **Microsoft Office** | Word, Excel, PowerPoint, Outlook (non-profit license) |
 | **Firefox** | Web browser |
 | **VLC** | Music and video player |
-| **GoldenDict** | Offline Vietnamese-English dictionary (Từ điển) |
+| **GoldenDict** | Offline Vietnamese-English dictionary (Từ Điển) |
 | **Kiwix** | Offline Vietnamese Wikipedia and Wiktionary |
 
 All software is **free** and works **offline** (no internet needed).
