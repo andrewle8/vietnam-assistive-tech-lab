@@ -678,7 +678,64 @@ try {
     # Plain names — no number prefixes. NVDA users navigate the desktop alphabetically
     # and use first-letter keys to jump (press "W" for Word, "F" for Firefox, etc.).
     # Numbers broke first-letter nav and added noisy "zero one" speech on every item.
-    $WshShell = New-Object -ComObject WScript.Shell
+    # Direct IShellLink + IPersistFile::Save. WScript.Shell's Save() lossy-converts
+    # the .lnk filename through the system ANSI codepage (CP-1252 on this box), which
+    # corrupts Vietnamese chars outside Latin-1: "Từ Điển" becomes "T? Ði?n" and Save
+    # throws "Unable to save shortcut". Thùng Rác happens to work because ù and á
+    # are both in CP-1252. IPersistFile::Save takes LPCOLESTR (pure Unicode) so it
+    # handles any Unicode filename regardless of the system codepage.
+    if (-not ('ShellLinkCreator' -as [type])) {
+        Add-Type -TypeDefinition @'
+using System;
+using System.Text;
+using System.Runtime.InteropServices;
+public class ShellLinkCreator {
+    [ComImport, Guid("00021401-0000-0000-C000-000000000046")] public class ShellLink { }
+    [ComImport, Guid("000214F9-0000-0000-C000-000000000046"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IShellLinkW {
+        void GetPath([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder psz, int cch, IntPtr pfd, uint f);
+        void GetIDList(out IntPtr p); void SetIDList(IntPtr p);
+        void GetDescription([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder psz, int cch);
+        void SetDescription([MarshalAs(UnmanagedType.LPWStr)] string psz);
+        void GetWorkingDirectory([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder psz, int cch);
+        void SetWorkingDirectory([MarshalAs(UnmanagedType.LPWStr)] string psz);
+        void GetArguments([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder psz, int cch);
+        void SetArguments([MarshalAs(UnmanagedType.LPWStr)] string psz);
+        void GetHotkey(out short h); void SetHotkey(short h);
+        void GetShowCmd(out int s); void SetShowCmd(int s);
+        void GetIconLocation([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder psz, int cch, out int idx);
+        void SetIconLocation([MarshalAs(UnmanagedType.LPWStr)] string psz, int idx);
+        void SetRelativePath([MarshalAs(UnmanagedType.LPWStr)] string psz, uint r);
+        void Resolve(IntPtr hwnd, uint f);
+        void SetPath([MarshalAs(UnmanagedType.LPWStr)] string psz);
+    }
+    [ComImport, Guid("0000010B-0000-0000-C000-000000000046"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IPersistFile {
+        [PreserveSig] int GetClassID(out Guid g);
+        [PreserveSig] int IsDirty();
+        void Load([MarshalAs(UnmanagedType.LPWStr)] string f, uint m);
+        void Save([MarshalAs(UnmanagedType.LPWStr)] string f, [MarshalAs(UnmanagedType.Bool)] bool r);
+        void SaveCompleted([MarshalAs(UnmanagedType.LPWStr)] string f);
+        void GetCurFile([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder f);
+    }
+    public static void Create(string lnk, string target, string args, string desc, string workDir, string iconLoc) {
+        IShellLinkW l = (IShellLinkW)(new ShellLink());
+        l.SetPath(target);
+        if (!string.IsNullOrEmpty(args))    l.SetArguments(args);
+        if (!string.IsNullOrEmpty(desc))    l.SetDescription(desc);
+        if (!string.IsNullOrEmpty(workDir)) l.SetWorkingDirectory(workDir);
+        if (!string.IsNullOrEmpty(iconLoc)) {
+            int idx = 0; string file = iconLoc; int c = iconLoc.LastIndexOf(',');
+            if (c > 0) { file = iconLoc.Substring(0, c); int.TryParse(iconLoc.Substring(c + 1), out idx); }
+            l.SetIconLocation(file, idx);
+        }
+        ((IPersistFile)l).Save(lnk, true);
+        Marshal.ReleaseComObject(l);
+    }
+}
+'@
+    }
+
     # Alphabetical by display name so creation order matches visual order on a fresh Windows desktop
     # (Windows places new icons in grid top-to-bottom, left-to-right based on creation sequence).
     # IconLocation is set only for shortcuts whose target .exe lacks a usable embedded icon.
@@ -728,16 +785,16 @@ try {
         }
 
         $lnkPath = Join-Path $publicDesktop "$($s.Name).lnk"
-        $shortcut = $WshShell.CreateShortcut($lnkPath)
-        $shortcut.TargetPath = $targetPath
-        if ($s.Args) { $shortcut.Arguments = $s.Args }
-        if ($s.IconLocation) { $shortcut.IconLocation = $s.IconLocation }
-        $shortcut.Description = $s.Desc
-        if ($targetPath -notin @("calc.exe", "explorer.exe", "powershell.exe")) {
-            $shortcut.WorkingDirectory = Split-Path $targetPath -Parent
+        $workDir = if ($targetPath -notin @("calc.exe", "explorer.exe", "powershell.exe")) {
+            Split-Path $targetPath -Parent
+        } else { "" }
+        # Per-shortcut try/catch so one failed Save() can't skip the rest of the loop.
+        try {
+            [ShellLinkCreator]::Create($lnkPath, $targetPath, $s.Args, $s.Desc, $workDir, $s.IconLocation)
+            $createdCount++
+        } catch {
+            Write-Log "Failed to create shortcut '$($s.Name)': $($_.Exception.Message)" "ERROR"
         }
-        $shortcut.Save()
-        $createdCount++
     }
 
     Write-Log "Created $createdCount desktop shortcuts (alphabetical for screen reader first-letter navigation)" "SUCCESS"
