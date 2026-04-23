@@ -93,18 +93,8 @@ Magnifier and NVDA can run at the same time for students with some
 remaining vision who also benefit from speech output.
 
 
-SWITCHING LANGUAGE
-------------------
-Windows is set to Vietnamese by default. To switch to English:
-
-  1. Open the "Doi Ngon Ngu - Switch Language" shortcut on the desktop
-  2. A message will confirm the switch
-  3. Sign out and sign back in for the change to take effect
-
-This is useful for staff or volunteers who need English temporarily.
-The keyboard input method (UniKey/Telex) is separate and works in
-both languages.
-
+VIETNAMESE TYPING (UNIKEY)
+--------------------------
 Vietnamese typing is UniKey-only by design. UniKey's Ctrl+Shift
 toggles Vietnamese/English (tray: V = Vietnamese, E = English).
 The Windows built-in Vietnamese (Telex) keyboard is still installed
@@ -113,6 +103,10 @@ Ctrl+Shift) are disabled so they don't desync from UniKey during
 typing. If a staff member needs the Windows IME, reach it via
 Win+Space or Settings > Time & language > Typing > Advanced
 keyboard settings.
+
+Windows UI is set to Vietnamese permanently. If an admin needs
+English temporarily, change it via Settings > Time & language >
+Language & region, then sign out/in.
 
 
 QUICK HEALTH CHECK

@@ -124,7 +124,6 @@ Between jumps, press the next letter within about one second, or wait two second
 
 - Audacity - Audio editor
 - Calculator - Calculator
-- Doi Ngon Ngu - Switch Language - Switch Vietnamese/English
 - Excel - Spreadsheet
 - Firefox - Web browser
 - My USB - Open your USB drive

@@ -124,7 +124,6 @@ Giua cac lan nhay, nhan chu cai tiep theo trong vong khoang mot giay, hoac doi h
 
 - Audacity - Chinh sua am thanh
 - Calculator - May tinh bo tui
-- Doi Ngon Ngu - Switch Language - Chuyen tieng Viet/Anh
 - Excel - Bang tinh
 - Firefox - Trinh duyet web
 - My USB - Mo USB cua ban

@@ -95,17 +95,11 @@ Magnifier and NVDA can run at the same time for students with some remaining vis
 
 ---
 
-## Switching Language / Chuyển đổi ngôn ngữ
-
-Windows is set to **Vietnamese** by default. To switch between Vietnamese and English:
-
-1. Open the **"Đổi Ngôn Ngữ - Switch Language"** shortcut on the desktop
-2. A message will confirm the switch
-3. **Sign out and sign back in** for the change to take effect
-
-This is useful for staff or volunteers who need English temporarily. The keyboard input method (UniKey/Telex) is separate and works in both languages.
+## Vietnamese Typing (UniKey)
 
 **Vietnamese typing is UniKey-only by design.** UniKey's **Ctrl + Shift** toggles Vietnamese ↔ English (watch the tray: V = Vietnamese, E = English). The Windows built-in Vietnamese (Telex) keyboard is still installed as a fallback, but Windows' own language-switch hotkeys (Alt+Shift, Ctrl+Shift) are disabled so they don't desync from UniKey during typing. If a staff member ever needs the Windows IME, reach it via Win+Space or Settings → Time & language → Typing → Advanced keyboard settings.
+
+Windows UI is set to Vietnamese permanently. If an admin needs English temporarily, change it via **Settings → Time & language → Language & region**, then sign out/in.
 
 ---
 

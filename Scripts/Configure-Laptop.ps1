@@ -533,55 +533,9 @@ try {
 # both browsing and PDFs, ships with Windows, and never needs babysitting. Firefox
 # stays installed and on the Student desktop as a shortcut for students who want it.
 
-# Create a language toggle script and desktop shortcut
-Write-Log "Creating language toggle shortcut..." "INFO"
-
-try {
-    $labToolsDir2 = "C:\LabTools"
-    if (-not (Test-Path $labToolsDir2)) {
-        New-Item -Path $labToolsDir2 -ItemType Directory -Force | Out-Null
-    }
-
-    $toggleScript = @'
-# Toggle Windows display language between Vietnamese and English
-# Requires sign-out to take effect
-$current = (Get-WinUserLanguageList)[0].LanguageTag
-
-if ($current -like "vi*") {
-    $langList = New-WinUserLanguageList "en-US"
-    $langList.Add("vi-VN")
-    Set-WinUserLanguageList $langList -Force
-    $msg = "Ngôn ngữ đã chuyển sang Tiếng Anh. Đăng xuất để áp dụng.`nLanguage switched to English. Sign out to apply."
-} else {
-    $langList = New-WinUserLanguageList "vi-VN"
-    $langList.Add("en-US")
-    Set-WinUserLanguageList $langList -Force
-    $msg = "Language switched to Vietnamese. Sign out to apply.`nNgôn ngữ đã chuyển sang Tiếng Việt. Đăng xuất để áp dụng."
-}
-
-# Re-assert English-default keyboard input after New-WinUserLanguageList rewrites Preload.
-# Without this, toggling display language back to Vietnamese would re-introduce VI-first at
-# logon (Preload\1 gets reset to 0000042a). Keep Preload\1 as English regardless of UI lang.
-Set-ItemProperty -Path "HKCU:\Control Panel\International\User Profile" -Name "InputMethodOverride" -Value "0409:00000409" -Force -ErrorAction SilentlyContinue
-$preloadPath = "HKCU:\Keyboard Layout\Preload"
-if (-not (Test-Path $preloadPath)) { New-Item -Path $preloadPath -Force -ErrorAction SilentlyContinue | Out-Null }
-Set-ItemProperty -Path $preloadPath -Name "1" -Value "00000409" -Force -ErrorAction SilentlyContinue
-Set-ItemProperty -Path $preloadPath -Name "2" -Value "0000042a" -Force -ErrorAction SilentlyContinue
-
-Add-Type -AssemblyName PresentationFramework
-[System.Windows.MessageBox]::Show($msg, "Language / Ngôn ngữ", "OK", "Information")
-'@
-
-    $toggleScriptPath = Join-Path $labToolsDir2 "toggle-language.ps1"
-    Set-Content -Path $toggleScriptPath -Value $toggleScript -Force
-
-    # Desktop shortcut is created in Step 6 (standardized desktop shortcuts)
-    Write-Log "Language toggle script created (shortcut added in Step 6)" "SUCCESS"
-    $successCount++
-} catch {
-    Write-Log "Could not create language toggle: $($_.Exception.Message)" "ERROR"
-    $failCount++
-}
+# Language toggle shortcut removed. Student UI is Vietnamese-only by design so NVDA's
+# Vietnamese synth reads everything correctly; admins who need to change language can
+# do it via Settings > Time & language directly.
 
 # Step 5: Configure Windows Magnifier for low-vision users
 Write-Log "Step 5: Configuring Windows Magnifier for low-vision users..." "INFO"
@@ -719,7 +673,6 @@ try {
     $shortcuts = @(
         @{ Name = "Audacity"; Target = "C:\Program Files\Audacity\Audacity.exe"; AltTarget = "C:\Program Files (x86)\Audacity\Audacity.exe"; IconLocation = "C:\Program Files\Audacity\Audacity.exe,0"; Desc = "Audacity Audio Editor" },
         @{ Name = "Calculator"; Target = "calc.exe"; IconLocation = "%SystemRoot%\System32\imageres.dll,76"; Desc = "Windows Calculator" },
-        @{ Name = "Doi Ngon Ngu - Switch Language"; Target = "powershell.exe"; Args = "-NoProfile -ExecutionPolicy Bypass -File `"C:\LabTools\toggle-language.ps1`""; Desc = "Toggle Vietnamese/English" },
         @{ Name = "Excel"; Target = "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE"; Desc = "Microsoft Excel" },
         @{ Name = "Firefox"; Target = "C:\Program Files\Mozilla Firefox\firefox.exe"; AltTarget = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"; Desc = "Firefox Web Browser" },
         @{ Name = "My USB"; Target = "explorer.exe"; Args = "shell:MyComputerFolder"; IconLocation = "%SystemRoot%\System32\imageres.dll,109"; Desc = "Open This PC to access your USB drive" },
@@ -727,6 +680,7 @@ try {
         @{ Name = "PowerPoint"; Target = "C:\Program Files\Microsoft Office\root\Office16\POWERPNT.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\POWERPNT.EXE"; IconLocation = "C:\Program Files\Microsoft Office\root\Office16\POWERPNT.EXE,0"; Desc = "Microsoft PowerPoint" },
         @{ Name = "Readmate"; Target = "C:\Program Files\SaoMai\sm_readmate\sm_readmate.exe"; AltTarget = "C:\Program Files (x86)\SaoMai\sm_readmate\sm_readmate.exe"; Desc = "Sao Mai Readmate Accessible Reader" },
         @{ Name = "Sao Mai Typing Tutor"; Target = "C:\Program Files (x86)\SaoMai\SMTT\SMTT.exe"; AltTarget = "C:\Program Files\SaoMai\SMTT\SMTT.exe"; IconLocation = "%SystemRoot%\System32\imageres.dll,116"; Desc = "Sao Mai Vietnamese Typing Tutor" },
+        @{ Name = "Thung Rac"; Target = "explorer.exe"; Args = "shell:RecycleBinFolder"; IconLocation = "%SystemRoot%\System32\imageres.dll,54"; Desc = "Thung rac - khoi phuc tap tin da xoa" },
         @{ Name = "Tu Dien - Dictionary"; Target = "C:\Program Files\GoldenDict\GoldenDict.exe"; AltTarget = "C:\Program Files (x86)\GoldenDict\GoldenDict.exe"; Desc = "GoldenDict - Offline Dictionary" },
         @{ Name = "VLC media player"; Target = "C:\Program Files\VideoLAN\VLC\vlc.exe"; AltTarget = "C:\Program Files (x86)\VideoLAN\VLC\vlc.exe"; Desc = "VLC Media Player" },
         @{ Name = "Wikipedia (Offline)"; Target = "C:\Program Files\Kiwix\kiwix-desktop.exe"; Desc = "Kiwix - Offline Vietnamese Wikipedia" },

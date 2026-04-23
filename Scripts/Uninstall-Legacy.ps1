@@ -22,6 +22,7 @@ foreach ($legacy in @(
     "$labToolsDir\start-unikey.vbs",
     "$labToolsDir\welcome-audio.ps1",
     "$labToolsDir\nvdaControllerClient64.dll",
+    "$labToolsDir\toggle-language.ps1",
     "C:\Games\LEAP"
 )) {
     if (Test-Path $legacy) {
