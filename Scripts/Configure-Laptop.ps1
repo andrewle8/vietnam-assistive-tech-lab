@@ -808,9 +808,26 @@ public class ShellLinkCreator {
         $workDir = if ($targetPath -notin @("calc.exe", "explorer.exe", "powershell.exe")) {
             Split-Path $targetPath -Parent
         } else { "" }
+
+        # Make IconLocation explicit: if no system-DLL icon was specified in the array
+        # entry, point it at the resolved target exe. Empty IconLocation makes Windows
+        # implicitly fall back to the target for icon extraction, but for Unicode-named
+        # .lnk files (Từ Điển) some laptops' icon cache fails to refresh when the shortcut
+        # is overwritten with the same filename — icon appears blank. Setting IconLocation
+        # explicitly gives Windows a concrete path to resolve, bypassing the stale cache key.
+        $iconLoc = $s.IconLocation
+        if (-not $iconLoc -and $targetPath -and $targetPath -like "*.exe") {
+            $iconLoc = "$targetPath,0"
+        }
+
+        # Delete any existing .lnk before writing a fresh one. This forces Windows to
+        # treat the result as a genuinely new file (new creation time) so the icon cache
+        # doesn't reuse a stale entry for the same filename.
+        if (Test-Path $lnkPath) { Remove-Item -Path $lnkPath -Force -ErrorAction SilentlyContinue }
+
         # Per-shortcut try/catch so one failed Save() can't skip the rest of the loop.
         try {
-            [ShellLinkCreator]::Create($lnkPath, $targetPath, $s.Args, $s.Desc, $workDir, $s.IconLocation)
+            [ShellLinkCreator]::Create($lnkPath, $targetPath, $s.Args, $s.Desc, $workDir, $iconLoc)
             $createdCount++
         } catch {
             Write-Log "Failed to create shortcut '$($s.Name)': $($_.Exception.Message)" "ERROR"
