@@ -1137,28 +1137,43 @@ try {
 Write-Log "Step 15: Configuring power settings..." "INFO"
 
 try {
-    # Set display timeout to 30 minutes on AC, 15 on battery
-    powercfg /change monitor-timeout-ac 30
-    powercfg /change monitor-timeout-dc 15
-    # Disable sleep when plugged in, 30 min on battery
-    powercfg /change standby-timeout-ac 0
-    powercfg /change standby-timeout-dc 30
-    # Disable hibernate entirely
+    # Target the Balanced scheme by GUID instead of SCHEME_CURRENT. Script runs as Admin, so
+    # SCHEME_CURRENT resolves to Admin's active scheme — if Student's active scheme ever
+    # differs (OEM preload, manual change), edits would miss Student entirely. Writing to
+    # Balanced's GUID guarantees values land in the scheme both accounts use on fresh Windows.
+    $balanced = "381b4222-f694-41f0-9685-ff5bb260df2e"
+
+    # Display timeout: 30 min AC (1800s) / 15 min battery (900s)
+    powercfg /setacvalueindex $balanced SUB_VIDEO VIDEOIDLE 1800
+    powercfg /setdcvalueindex $balanced SUB_VIDEO VIDEOIDLE 900
+    # Sleep: never on AC (0) / 30 min on battery (1800s)
+    powercfg /setacvalueindex $balanced SUB_SLEEP STANDBYIDLE 0
+    powercfg /setdcvalueindex $balanced SUB_SLEEP STANDBYIDLE 1800
+    # Disable hibernate entirely (frees ~8GB pagefile, avoids wake bugs)
     powercfg /hibernate off
     # Lid close → sleep on AC and battery. Students check laptops out to take home/school;
     # a closed lid with the system awake in a backpack cooks the battery and throttles the
     # CPU from restricted airflow. Sleep protects hardware during transport.
-    powercfg /setacvalueindex SCHEME_CURRENT SUB_BUTTONS LIDACTION 1
-    powercfg /setdcvalueindex SCHEME_CURRENT SUB_BUTTONS LIDACTION 1
+    powercfg /setacvalueindex $balanced SUB_BUTTONS LIDACTION 1
+    powercfg /setdcvalueindex $balanced SUB_BUTTONS LIDACTION 1
+    # Disable wake timers — scheduled tasks and Windows Update can wake a sleeping laptop
+    # inside a closed backpack, then potentially fail to re-sleep. That's the exact thermal
+    # scenario the lid-close rule is meant to prevent.
+    powercfg /setacvalueindex $balanced SUB_SLEEP RTCWAKE 0
+    powercfg /setdcvalueindex $balanced SUB_SLEEP RTCWAKE 0
+    # Critical battery action = shutdown (2). Hibernate is off so Windows would fall back
+    # anyway, but explicit avoids relying on implicit fallback behavior.
+    powercfg /setdcvalueindex $balanced SUB_BATTERY BATACTIONCRIT 2
     # Skip the lock screen on wake — go straight back to Student's session. Student has no
     # password anyway (Step 21), so the lock screen is a redundant Enter-press that a blind
     # student can't see. With CONSOLELOCK 0, opening the lid resumes NVDA mid-sentence and
     # the desktop is immediately available again.
-    powercfg /setacvalueindex SCHEME_CURRENT SUB_NONE CONSOLELOCK 0
-    powercfg /setdcvalueindex SCHEME_CURRENT SUB_NONE CONSOLELOCK 0
-    powercfg /setactive SCHEME_CURRENT
+    powercfg /setacvalueindex $balanced SUB_NONE CONSOLELOCK 0
+    powercfg /setdcvalueindex $balanced SUB_NONE CONSOLELOCK 0
+    # Make Balanced active so the values we just wrote take effect immediately.
+    powercfg /setactive $balanced
 
-    Write-Log "Power settings configured (sleep on lid close, no lock screen on wake, no hibernate)" "SUCCESS"
+    Write-Log "Power settings configured (Balanced scheme: sleep on lid close, no wake timers, no lock screen on wake, no hibernate)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not configure power settings: $($_.Exception.Message)" "ERROR"
