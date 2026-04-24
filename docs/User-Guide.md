@@ -126,12 +126,13 @@ Between jumps, press the next letter within about one second, or wait two second
 - Calculator - Calculator
 - Excel - Spreadsheet
 - Firefox - Web browser
-- USB - Open your USB drive
 - NVDA - Screen reader
 - PowerPoint - Presentations
-- Sao Mai Typing Tutor - Vietnamese typing tutor
 - Readmate - Vietnamese textbook reader (103 books pre-loaded)
+- Sao Mai Typing Tutor - Vietnamese typing tutor
+- Thùng Rác - Recycle Bin (restore deleted files)
 - Từ Điển - English-Vietnamese dictionary
+- USB - Opens "This PC" so you can pick your USB drive
 - VLC media player - Media player
 - Wikipedia - Offline encyclopedia
 - Word - Word processor
@@ -253,7 +254,7 @@ Once a book is open:
 | Ctrl + F | Search text in book |
 | Ctrl + N | Add a note at current position |
 | Ctrl + Shift + N | View all notes |
-| Ctrl + H | Table of contents |
+| Ctrl + H | Heading list (book's table of contents) |
 | Ctrl + G | Page list |
 | Ctrl + W | Close book, return to Bookshelf |
 | Esc | Back to previous screen |
@@ -264,7 +265,7 @@ Once a book is open:
 - **Tab**: move within a single pane (e.g. from search field to book list)
 - **Ctrl + B**: jump directly to Bookshelf
 - **Ctrl + S**: Settings
-- **Ctrl + H**: Full Sao Mai user guide (inside the app)
+- **Ctrl + H** (from main screen, not while reading a book): Sao Mai user guide tab
 
 If NVDA goes silent after switching to another program and back to Readmate, press **Alt** then **Esc** to re-engage.
 
@@ -365,7 +366,7 @@ When you open a PDF (e.g., homework from a teacher), the laptop opens it with Mi
 1. Open the PDF file (press Enter on it, or open from Word).
 2. NVDA automatically switches to Browse Mode.
 3. Use **H** to jump by heading, **down arrow** to read line by line.
-4. Or press **Ctrl + Shift + U** in Edge to enable "Read Aloud" — Edge will read the document aloud using Vi-Vu voice.
+4. Or press **Ctrl + Shift + U** in Edge to enable "Read Aloud" — Edge will read the document aloud using a Vietnamese voice.
 5. **Ctrl + F** to find text in the PDF.
 
 Note: scanned PDFs (image-only, no text) cannot be read by NVDA. Ask your teacher for a text-based PDF.
@@ -397,11 +398,11 @@ Example: type `25 + 17` then press Enter → NVDA says "42".
 
 Vietnamese tone marks (á, à, ả, ã, ạ) can sound similar when NVDA reads fast.
 
-To spell a word character-by-character with tone mark names: **put the cursor on the word → press NVDA + Shift + period (.) twice quickly**.
+To hear the tone mark on a single character: move the cursor to the letter → press **NVDA + period (.) twice quickly**. NVDA says the character phonetically and names the tone mark.
 
-NVDA will spell each letter and name each tone mark.
+Example: cursor on "à" → NVDA says "a with grave accent".
 
-Example: the word "chào" → spelled as "c, h, a, with grave accent, o".
+To spell a whole word, walk through it letter by letter with the arrow keys, pressing NVDA + period (.) twice at each character.
 
 ---
 
@@ -412,7 +413,7 @@ Example: the word "chào" → spelled as "c, h, a, with grave accent, o".
 | Ctrl | Stop speech immediately |
 | NVDA + A or NVDA + Down Arrow | Read continuously (Say All) |
 | NVDA + L | Re-read current line |
-| NVDA + Shift + period (.) twice | Spell current word (for Vietnamese tone marks) |
+| NVDA + period (.) twice | Say current character phonetically (names tone marks) |
 | NVDA + T | Read window title |
 | NVDA + Ctrl + Up / Down Arrow | Increase / decrease speech rate |
 | NVDA + S | Toggle speech on / off (useful for exams) |
@@ -487,4 +488,4 @@ If NVDA stops talking or speaks incorrectly:
 
 ---
 
-*Last updated: 2026-04-01*
+*Last updated: 2026-04-25*

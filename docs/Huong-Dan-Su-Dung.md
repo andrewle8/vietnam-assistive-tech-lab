@@ -126,12 +126,13 @@ Giua cac lan nhay, nhan chu cai tiep theo trong vong khoang mot giay, hoac doi h
 - Calculator - May tinh bo tui
 - Excel - Bang tinh
 - Firefox - Trinh duyet web
-- USB - Mo USB cua ban
 - NVDA - Trinh doc man hinh
 - PowerPoint - Trinh chieu
-- Sao Mai Typing Tutor - Luyen go phim tieng Viet
 - Readmate - Doc sach giao khoa (103 sach da duoc cai san)
+- Sao Mai Typing Tutor - Luyen go phim tieng Viet
+- Thùng Rác - Thung rac (khoi phuc tap tin da xoa)
 - Từ Điển - Tu dien Anh-Viet
+- USB - Mo cua so "This PC" de chon USB cua ban
 - VLC media player - Nghe nhac, xem video
 - Wikipedia - Bach khoa toan thu offline
 - Word - Soan thao van ban
@@ -253,7 +254,7 @@ Khi sach da mo, dung cac phim sau:
 | Ctrl + F | Tim chu trong sach |
 | Ctrl + N | Them ghi chu tai vi tri hien tai |
 | Ctrl + Shift + N | Xem danh sach ghi chu |
-| Ctrl + H | Muc luc sach |
+| Ctrl + H | Danh sach tieu de (muc luc sach) |
 | Ctrl + G | Danh sach trang |
 | Ctrl + W | Dong sach va quay lai Ke sach |
 | Esc | Quay lai mang hinh truoc |
@@ -264,7 +265,7 @@ Khi sach da mo, dung cac phim sau:
 - **Tab**: di chuyen trong mot khung (vi du: tu thanh tim kiem den danh sach sach)
 - **Ctrl + B**: nhay thang den Ke sach
 - **Ctrl + S**: Cai dat
-- **Ctrl + H**: Huong dan day du cua Sao Mai (trong ung dung)
+- **Ctrl + H** (o mang hinh chinh, khong phai khi dang doc sach): Tab Huong dan cua Sao Mai
 
 Neu NVDA im lang sau khi chuyen qua chuong trinh khac roi quay lai Readmate: nhan **Alt** roi **Esc** de kich hoat lai.
 
@@ -365,7 +366,7 @@ Khi ban mo file PDF (vi du: bai tap cua giao vien), may tinh se mo bang Microsof
 1. Mo file PDF (bam Enter tren file, hoac mo tu Word).
 2. NVDA se chuyen sang che do duyet tu dong.
 3. Dung **H** de nhay qua tieu de, **mui ten xuong** de doc dong theo dong.
-4. Hoac nhan **Ctrl + Shift + U** trong Edge de bat "Doc To" (Read Aloud) — Edge se tu doc bai cho ban voi giong Vi-Vu.
+4. Hoac nhan **Ctrl + Shift + U** trong Edge de bat "Doc To" (Read Aloud) — Edge se tu doc bai cho ban voi giong tieng Viet.
 5. **Ctrl + F** de tim chu trong PDF.
 
 Luu y: neu gap PDF duoc "quet hinh" (PDF hinh anh khong co chu) → NVDA se khong doc duoc. Phai nho giao vien cho ban file co chu.
@@ -397,11 +398,11 @@ Vi du: go `25 + 17` roi nhan Enter → NVDA doc "42".
 
 Cac dau thanh trong tieng Viet (á, à, ả, ã, ạ) nghe kha giong nhau khi NVDA doc voi toc do nhanh.
 
-De danh van mot tu de phan biet chinh xac cac dau: **Dat con tro tren tu → nhan NVDA + Shift + dau cham (.) 2 lan nhanh**.
+De nghe ro dau thanh tren mot ky tu: dat con tro len chu cai → nhan **NVDA + dau cham (.) 2 lan nhanh**. NVDA se doc ky tu theo phien am va neu ten dau thanh.
 
-NVDA se danh van tung chu va neu ten tung dau thanh.
+Vi du: con tro tren "à" → NVDA doc "a co dau huyen".
 
-Vi du: tu "chào" → danh van se doc "c, h, a, co dau huyen, o".
+De danh van ca mot tu: di chuyen qua tung chu bang phim mui ten, tai moi chu nhan NVDA + dau cham (.) 2 lan.
 
 ---
 
@@ -412,7 +413,7 @@ Vi du: tu "chào" → danh van se doc "c, h, a, co dau huyen, o".
 | Ctrl | Dung noi ngay (khong lam gi khac) |
 | NVDA + A hoac NVDA + Mui ten Xuong | Doc lien tuc tu day (Say All) |
 | NVDA + L | Doc lai dong hien tai |
-| NVDA + Shift + dau cham (.) 2 lan | Danh van tu hien tai (cho dau tieng Viet) |
+| NVDA + dau cham (.) 2 lan | Doc ky tu hien tai theo phien am (neu ten dau thanh) |
 | NVDA + T | Doc tieu de cua so |
 | NVDA + Ctrl + Mui ten Len / Xuong | Tang / giam toc do noi |
 | NVDA + S | Bat / tat NVDA noi (phuc vu khi lam bai kiem tra) |
@@ -487,4 +488,4 @@ Neu NVDA khong noi hoac noi sai:
 
 ---
 
-*Cap nhat lan cuoi: 2026-04-01*
+*Cap nhat lan cuoi: 2026-04-25*

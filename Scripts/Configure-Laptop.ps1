@@ -514,8 +514,8 @@ try {
 
 # Step 4c: Apply Microsoft Edge policies for the PDF reader experience.
 # Edge's built-in PDF reader supports tagged-PDF navigation (H/K/T) with NVDA, exposes
-# SAPI5 voices (including Vi-Vu) via its Read Aloud feature (Ctrl+Shift+U), ships with
-# Windows, and needs no separate installer. SumatraPDF was removed because it exposes
+# SAPI5 voices via its Read Aloud feature (Ctrl+Shift+U), ships with Windows, and needs
+# no separate installer. SumatraPDF was removed because it exposes
 # no page-body text to screen readers (sumatrapdfreader#321). Adobe Reader DC has 2025
 # NVDA regressions (#18800) and aggressive cloud-sign-in nags — skip it.
 Write-Log "Applying Microsoft Edge policies for NVDA-accessible PDF reading..." "INFO"
