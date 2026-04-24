@@ -1,8 +1,8 @@
 ﻿# Vietnam Lab Deployment - Machine Audit Script
-# Version: 1.0
+# Version: 1.1
 # Compares a machine's state against the manifest.json and reports drift.
 # Run on any lab PC to check if it matches the expected configuration.
-# Last Updated: February 2026
+# Last Updated: April 2026
 
 param(
     [string]$ManifestPath,
@@ -204,6 +204,30 @@ if ($nvdaProc) {
     Add-Result "NVDA" "Running" "Yes" "Not running" "WARN"
 }
 
+# Check NVDA addons against manifest. Installed addon directories may have version
+# suffixes ("-2.0.19") OR be bare ("clipspeak"). Match by name prefix; ignore version.
+$addonsDir = "C:\Users\Student\AppData\Roaming\nvda\addons"
+if (Test-Path $addonsDir) {
+    $installedAddons = Get-ChildItem $addonsDir -Directory -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name
+    foreach ($expected in $manifest.nvda_addons.PSObject.Properties) {
+        $aname = $expected.Name
+        $aver  = $expected.Value
+        # Match either "<name>" or "<name>-<anything>" (case-insensitive)
+        $found = $installedAddons | Where-Object { $_ -ieq $aname -or $_ -ilike "$aname-*" }
+        if ($found) {
+            Add-Result "NVDA" "Addon: $aname" $aver "Installed" "PASS"
+        } else {
+            Add-Result "NVDA" "Addon: $aname" $aver "Missing" "WARN"
+        }
+    }
+} else {
+    Add-Result "NVDA" "Addons Directory" "Present" "Missing" "FAIL"
+}
+
+# NVDA auto-start is now the LabNVDAStart scheduled task (audited in Section 6 below);
+# legacy NVDA.lnk + StartupApproved checks removed because Win11 deferred those by ~2 min
+# on battery cold boot.
+
 # -----------------------------------------------
 # Section 4: System Configuration
 # -----------------------------------------------
@@ -248,17 +272,32 @@ if (Test-Path $batteryReport) {
     Add-Result "System" "Battery Report" "Generated" "Failed" "WARN"
 }
 
-# Check battery health from WMI
+# Check battery health from WMI. On some Windows builds Get-CimInstance against
+# root\wmi\BatteryStaticData throws "Generic failure" while the legacy Get-WmiObject
+# call succeeds returning the same data. Try CIM first, fall back to WMI before
+# giving up. FullChargedCapacity reads reliably via CIM on the same systems.
+$designCap = $null
+$fullChargeCap = $null
 try {
-    $designCap = (Get-CimInstance -Namespace root\wmi -ClassName BatteryStaticData -ErrorAction Stop).DesignedCapacity
-    $fullChargeCap = (Get-CimInstance -Namespace root\wmi -ClassName BatteryFullChargedCapacity -ErrorAction Stop).FullChargedCapacity
-    if ($designCap -gt 0) {
-        $healthPct = [math]::Round(($fullChargeCap / $designCap) * 100, 0)
-        $status = if ($healthPct -ge 60) { "PASS" } elseif ($healthPct -ge 40) { "WARN" } else { "FAIL" }
-        Add-Result "System" "Battery Health" ">= 60%" "${healthPct}%" $status
-    }
+    $designCap = (Get-CimInstance -Namespace root\wmi -ClassName BatteryStaticData -ErrorAction Stop | Select-Object -First 1).DesignedCapacity
 } catch {
-    Add-Result "System" "Battery Health" "Readable" "Could not read" "WARN"
+    try {
+        $designCap = (Get-WmiObject -Namespace root\wmi -Class BatteryStaticData -ErrorAction Stop | Select-Object -First 1).DesignedCapacity
+    } catch { $designCap = $null }
+}
+try {
+    $fullChargeCap = (Get-CimInstance -Namespace root\wmi -ClassName BatteryFullChargedCapacity -ErrorAction Stop | Select-Object -First 1).FullChargedCapacity
+} catch {
+    try {
+        $fullChargeCap = (Get-WmiObject -Namespace root\wmi -Class BatteryFullChargedCapacity -ErrorAction Stop | Select-Object -First 1).FullChargedCapacity
+    } catch { $fullChargeCap = $null }
+}
+if ($designCap -and $designCap -gt 0 -and $fullChargeCap) {
+    $healthPct = [math]::Round(($fullChargeCap / $designCap) * 100, 0)
+    $status = if ($healthPct -ge 60) { "PASS" } elseif ($healthPct -ge 40) { "WARN" } else { "FAIL" }
+    Add-Result "System" "Battery Health" ">= 60%" "${healthPct}%" $status
+} else {
+    Add-Result "System" "Battery Health" "Readable" "Could not read (WMI unavailable)" "WARN"
 }
 
 # Default browser is intentionally left as Edge on Win11 24H2 (see Configure-Laptop
@@ -284,6 +323,95 @@ if (Test-Path "C:\LabTools\nvda-backup\nvda.ini") {
     Add-Result "System" "NVDA Config Backup" "Present" "Present" "PASS"
 } else {
     Add-Result "System" "NVDA Config Backup" "Present" "Missing" "WARN"
+}
+
+# Office default-save location to D:\ (the student USB). Word uses the legacy "DOC-PATH"
+# value name; Excel and PowerPoint use "DefaultPath". All three are set in Configure-Laptop
+# Step 4 across the Student SID hive. If D: is unmounted, Office falls back gracefully
+# but the registry value should still be D:\.
+try {
+    $studentSid = (New-Object System.Security.Principal.NTAccount("Student")).Translate(
+        [System.Security.Principal.SecurityIdentifier]).Value
+    $studentHive = "Registry::HKEY_USERS\$studentSid"
+
+    $officeChecks = @(
+        @{ App = "Word";       Path = "$studentHive\Software\Microsoft\Office\16.0\Word\Options";       Name = "DOC-PATH" },
+        @{ App = "Excel";      Path = "$studentHive\Software\Microsoft\Office\16.0\Excel\Options";      Name = "DefaultPath" },
+        @{ App = "PowerPoint"; Path = "$studentHive\Software\Microsoft\Office\16.0\PowerPoint\Options"; Name = "DefaultPath" }
+    )
+    foreach ($oc in $officeChecks) {
+        $val = (Get-ItemProperty -Path $oc.Path -Name $oc.Name -ErrorAction SilentlyContinue).$($oc.Name)
+        if ($val -eq "D:\") {
+            Add-Result "System" "Office Default Save ($($oc.App))" "D:\" $val "PASS"
+        } else {
+            $shown = if ($val) { $val } else { "(not set)" }
+            Add-Result "System" "Office Default Save ($($oc.App))" "D:\" $shown "FAIL"
+        }
+    }
+} catch {
+    Add-Result "System" "Office Default Save" "Readable" "Could not resolve Student SID" "WARN"
+}
+
+# Audacity Vietnamese GUI language pin. Audacity rewrites audacity.cfg on every clean
+# exit so the deployment script kills audacity.exe first; if Language ever drifts off
+# vi the menus revert to English and screen-reader hotkeys (taught in Vietnamese) miss.
+$audacityCfg = "C:\Users\Student\AppData\Roaming\audacity\audacity.cfg"
+if (Test-Path $audacityCfg) {
+    $cfgRaw = Get-Content $audacityCfg -Raw
+    # Find Language= within the [Locale] section. Allow whitespace, accept just "vi"
+    # (also "vi_VN" if a future Audacity build uses regional variants).
+    if ($cfgRaw -match '(?ms)^\[Locale\][^\[]*?^Language\s*=\s*(\S+)') {
+        $lang = $Matches[1].Trim()
+        if ($lang -ieq "vi" -or $lang -like "vi_*") {
+            Add-Result "System" "Audacity Language" "vi" $lang "PASS"
+        } else {
+            Add-Result "System" "Audacity Language" "vi" $lang "FAIL"
+        }
+    } else {
+        Add-Result "System" "Audacity Language" "vi" "(no [Locale] section)" "WARN"
+    }
+} else {
+    Add-Result "System" "Audacity Language" "vi" "audacity.cfg not yet created" "WARN"
+}
+
+# Firefox policies.json — locks the default-browser-popup off, sets Vietnamese locale,
+# and pins download dir to D:\. Without it students get the "Make Firefox default?"
+# nag on every startup, which a blind student can't dismiss without tab navigation.
+$ffPolicies = "C:\Program Files\Mozilla Firefox\distribution\policies.json"
+if (Test-Path $ffPolicies) {
+    try {
+        $pol = Get-Content $ffPolicies -Raw | ConvertFrom-Json
+        if ($pol.policies.DontCheckDefaultBrowser -eq $true) {
+            Add-Result "System" "Firefox Default-Browser Nag" "Suppressed" "Suppressed" "PASS"
+        } else {
+            Add-Result "System" "Firefox Default-Browser Nag" "Suppressed" "Not suppressed" "FAIL"
+        }
+    } catch {
+        Add-Result "System" "Firefox policies.json" "Valid JSON" "Parse error" "WARN"
+    }
+} else {
+    Add-Result "System" "Firefox policies.json" "Present" "Missing" "FAIL"
+}
+
+# SM Readmate ebook population. Configure-Laptop Step 17b copies EPUBs from the USB
+# into Readmate's data folder and inserts tb_books rows so the library shows up on
+# first launch. Empty library = students see "No books" and can't access the textbooks.
+$readmateDb  = "C:\Users\Student\AppData\Roaming\SaoMai\SM Readmate\databases\app_database.db"
+$readmateDir = "C:\Users\Student\AppData\Roaming\SaoMai\SM Readmate\file"
+if (Test-Path $readmateDb) {
+    Add-Result "System" "Readmate Database" "Present" "Present" "PASS"
+} else {
+    Add-Result "System" "Readmate Database" "Present" "Missing" "WARN"
+}
+if (Test-Path $readmateDir) {
+    $epubCount = @(Get-ChildItem $readmateDir -Filter *.epub -Recurse -ErrorAction SilentlyContinue).Count
+    if ($epubCount -gt 0) {
+        Add-Result "System" "Readmate Ebooks" ">= 1 EPUB" "$epubCount EPUBs" "PASS"
+    } else {
+        Add-Result "System" "Readmate Ebooks" ">= 1 EPUB" "0 EPUBs" "WARN"
+    }
+} else {
+    Add-Result "System" "Readmate Ebooks" "Populated" "file folder missing" "WARN"
 }
 
 # -----------------------------------------------
@@ -323,6 +451,105 @@ try {
     $uptimeDays = [math]::Round(((Get-Date) - $lastBoot).TotalDays, 1)
     Add-Result "Remote" "Uptime" "N/A" "$uptimeDays days" "PASS"
 } catch {}
+
+# -----------------------------------------------
+# Section 6: Deployment Tasks & Startup
+# -----------------------------------------------
+Write-Host "`n--- Deployment Tasks ---" -ForegroundColor White
+Write-Host ""
+
+# Scheduled tasks created by Configure-Laptop:
+#   LabReassignStudentUSB pins any STU-### labeled USB to drive D: (boot/logon/1-min poll).
+#   LabUpdateAgent is the GitHub-pull update agent (daily at 18:00).
+#   LabNVDAStart auto-launches NVDA at logon (replaces legacy Startup-folder .lnk that
+#     Windows deferred ~2 min on battery cold boot).
+#   LabVolumeReset / LabBrightnessReset clamp speakers to 50% (hearing safety) and
+#     brightness to 50% (battery + comfort) at every logon.
+$expectedTasks = @("LabReassignStudentUSB", "LabUpdateAgent", "LabNVDAStart", "LabVolumeReset", "LabBrightnessReset")
+foreach ($taskName in $expectedTasks) {
+    $task = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
+    if ($task) {
+        Add-Result "Tasks" "Scheduled: $taskName" "Ready" $task.State.ToString() $(if($task.State -eq "Ready" -or $task.State -eq "Running") {"PASS"} else {"WARN"})
+    } else {
+        Add-Result "Tasks" "Scheduled: $taskName" "Present" "Missing" "FAIL"
+    }
+}
+
+# LabTools support files. Each is referenced by either a scheduled task or a startup
+# shortcut, so a missing file means the corresponding automation is broken.
+$labToolsFiles = @(
+    "C:\LabTools\reset-volume.ps1",
+    "C:\LabTools\reset-brightness.ps1",
+    "C:\LabTools\Reassign-StudentUSB.ps1",
+    "C:\LabTools\update-agent\Update-Agent.ps1"
+)
+foreach ($lf in $labToolsFiles) {
+    $name = Split-Path $lf -Leaf
+    if (Test-Path $lf) {
+        Add-Result "Tasks" "LabTools: $name" "Present" "Present" "PASS"
+    } else {
+        Add-Result "Tasks" "LabTools: $name" "Present" "Missing" "FAIL"
+    }
+}
+
+# Public desktop shortcuts. Configure-Laptop Step 6 maintains a fixed alphabetized set
+# for first-letter screen-reader navigation. Vietnamese filenames (Từ Điển, Thùng Rác)
+# require IShellLink Unicode save — WScript.Shell silently corrupts them via CP-1252.
+# NVDA.lnk is intentionally NOT on the public desktop: Step 14 removes it there and
+# places it on the Student user desktop (so the Win+Ctrl+N hotkey registers per-user).
+$publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
+$expectedShortcuts = @(
+    "Audacity.lnk", "Calculator.lnk", "Excel.lnk", "Firefox.lnk",
+    "PowerPoint.lnk", "Readmate.lnk", "Sao Mai Typing Tutor.lnk",
+    "Thùng Rác.lnk", "Từ Điển.lnk", "USB.lnk", "VLC media player.lnk",
+    "Wikipedia.lnk", "Word.lnk"
+)
+$presentShortcuts = Get-ChildItem $publicDesktop -Filter *.lnk -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name
+$missingShortcuts = $expectedShortcuts | Where-Object { $_ -notin $presentShortcuts }
+if ($missingShortcuts.Count -eq 0) {
+    Add-Result "Tasks" "Public Desktop Shortcuts" "$($expectedShortcuts.Count) present" "$($expectedShortcuts.Count) present" "PASS"
+} else {
+    Add-Result "Tasks" "Public Desktop Shortcuts" "$($expectedShortcuts.Count) present" "Missing: $($missingShortcuts -join ', ')" "FAIL"
+}
+
+# Student user desktop must have NVDA.lnk (Win+Ctrl+N hotkey registration).
+$studentDesktopNvda = "C:\Users\Student\Desktop\NVDA.lnk"
+if (Test-Path $studentDesktopNvda) {
+    Add-Result "Tasks" "Student Desktop NVDA Shortcut" "Present" "Present" "PASS"
+} else {
+    Add-Result "Tasks" "Student Desktop NVDA Shortcut" "Present" "Missing" "FAIL"
+}
+
+# -----------------------------------------------
+# Section 7: Accounts & Localization
+# -----------------------------------------------
+Write-Host "`n--- Accounts ---" -ForegroundColor White
+Write-Host ""
+
+# Student is the target account; LabAdmin is the maintenance/recovery account created
+# by Configure-Laptop Step 20. If either is missing, the deployment did not complete.
+foreach ($acct in @("Student", "LabAdmin")) {
+    $u = Get-LocalUser -Name $acct -ErrorAction SilentlyContinue
+    if ($u -and $u.Enabled) {
+        Add-Result "Accounts" "Local user: $acct" "Enabled" "Enabled" "PASS"
+    } elseif ($u) {
+        Add-Result "Accounts" "Local user: $acct" "Enabled" "Disabled" "FAIL"
+    } else {
+        Add-Result "Accounts" "Local user: $acct" "Present" "Missing" "FAIL"
+    }
+}
+
+# Vietnamese Language Experience Pack (LXP). Win11 modern UI surfaces (Settings, File
+# Explorer ribbon, lock screen) only render Vietnamese when the Store-delivered LXP
+# is installed; the LIP cab + FoDs alone leave parts of the shell in English. Known
+# deployment gap: bootstrap installs the LIP/FoDs but LXP requires Store access.
+# Repair tool: Fix-Vietnamese.ps1 on the DEPLOY_ USB.
+$lxp = Get-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Where-Object { $_.Name -like "Microsoft.LanguageExperiencePack*vi*" } | Select-Object -First 1
+if ($lxp) {
+    Add-Result "Accounts" "Vietnamese LXP" "Installed" $lxp.Version "PASS"
+} else {
+    Add-Result "Accounts" "Vietnamese LXP" "Installed" "Missing (run Fix-Vietnamese.ps1)" "WARN"
+}
 
 # -----------------------------------------------
 # Summary

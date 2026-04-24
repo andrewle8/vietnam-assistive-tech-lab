@@ -199,7 +199,11 @@ if (Test-Path $kiwixSourceDir) {
     Write-Log "Kiwix directory not found at $kiwixSourceDir (optional)" "INFO"
 }
 
-# Create GoldenDict desktop shortcut (installed via $installations array above)
+# Locate GoldenDict.exe for dictionary content installation below.
+# Desktop shortcut creation is owned by Configure-Laptop.ps1 Step 6 — it uses
+# direct IShellLink/IPersistFile which handles the Unicode "Từ Điển" filename
+# cleanly. WScript.Shell here would always throw on CP-1252 systems and produce
+# a misleading WARNING in the log.
 $goldenDictExe = if (Test-Path "C:\Program Files\GoldenDict\GoldenDict.exe") {
     "C:\Program Files\GoldenDict\GoldenDict.exe"
 } elseif (Test-Path "C:\Program Files (x86)\GoldenDict\GoldenDict.exe") {
@@ -207,19 +211,6 @@ $goldenDictExe = if (Test-Path "C:\Program Files\GoldenDict\GoldenDict.exe") {
 } else { $null }
 
 if ($goldenDictExe) {
-    try {
-        $WshShell = New-Object -ComObject WScript.Shell
-        $shortcutPath = Join-Path $publicDesktop "Từ Điển.lnk"
-        $shortcut = $WshShell.CreateShortcut($shortcutPath)
-        $shortcut.TargetPath = $goldenDictExe
-        $shortcut.WorkingDirectory = Split-Path $goldenDictExe
-        $shortcut.Description = "GoldenDict - Offline Dictionary"
-        $shortcut.Save()
-        Write-Log "Created desktop shortcut: Từ Điển" "SUCCESS"
-    } catch {
-        Write-Log "Could not create GoldenDict shortcut: $($_.Exception.Message)" "WARNING"
-    }
-
     # Install Vietnamese StarDict dictionaries into GoldenDict's content folder
     Write-Log "Installing Vietnamese dictionaries for GoldenDict..." "INFO"
     $dictSourceDir = Join-Path $usbRoot "Installers\Dictionaries"

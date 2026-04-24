@@ -52,32 +52,9 @@ if (Test-Path $sourceConfig) {
 }
 
 # Step 3: Set NVDA to auto-start on login
-Write-Log "Configuring NVDA to auto-start on Windows login..." "INFO"
-
-$startupPath = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup"
-$nvdaExePath = "C:\Program Files\NVDA\nvda.exe"
-
-if (-not (Test-Path $nvdaExePath)) {
-    $nvdaExePath = "C:\Program Files (x86)\NVDA\nvda.exe"
-}
-
-if (Test-Path $nvdaExePath) {
-    try {
-        $WshShell = New-Object -ComObject WScript.Shell
-        $ShortcutPath = Join-Path $startupPath "NVDA.lnk"
-        $Shortcut = $WshShell.CreateShortcut($ShortcutPath)
-        $Shortcut.TargetPath = $nvdaExePath
-        $Shortcut.WorkingDirectory = Split-Path $nvdaExePath
-        $Shortcut.Description = "NVDA Screen Reader - Auto-start"
-        $Shortcut.Save()
-
-        Write-Log "NVDA auto-start shortcut created successfully" "SUCCESS"
-    } catch {
-        Write-Log "ERROR creating auto-start shortcut: $($_.Exception.Message)" "ERROR"
-    }
-} else {
-    Write-Log "ERROR: NVDA executable not found. Cannot create auto-start shortcut." "ERROR"
-}
+# NVDA auto-start is handled by Configure-Laptop.ps1 Step 16 via the LabNVDAStart
+# scheduled task (AtLogOn, battery-safe, Priority 4). The legacy Startup-folder .lnk
+# was deferred ~2 minutes on battery cold boot, leaving blind students without speech.
 
 # Step 4: Install NVDA add-ons
 Write-Log "Installing NVDA add-ons..." "INFO"

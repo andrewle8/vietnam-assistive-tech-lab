@@ -55,6 +55,8 @@ try {
         "Microsoft.GetHelp"
         "Microsoft.Getstarted"
         "Microsoft.MicrosoftOfficeHub"
+        "Microsoft.Office.OneNote"
+        "Microsoft.Office.OneNoteVirtualPrinter"
         "Microsoft.MicrosoftSolitaireCollection"
         "Microsoft.People"
         "Microsoft.Todos"

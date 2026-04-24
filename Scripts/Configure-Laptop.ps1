@@ -741,6 +741,48 @@ public class ShellLinkCreator {
 '@
     }
 
+    # Deploy a standalone GoldenDict .ico to C:\LabTools\icons\goldendict.ico so
+    # the Từ Điển shortcut can point IconLocation at a concrete external file.
+    # Problem: setting IconLocation to "GoldenDict.exe,0" (same path as target,
+    # index 0) triggers Windows' SetIconLocation optimization — the shell stores
+    # no icon path and leaves HasLinkFlags.HasIconLocation = false. Explorer then
+    # extracts the icon dynamically from the target exe each render. That indirect
+    # path appears to fail on some Win11 builds specifically for Unicode-named
+    # .lnk files (observed on PC-10, PC-14, PC-15: Từ Điển renders blank even
+    # though the .lnk target resolves and the exe has valid icon resources).
+    # Pointing IconLocation at an external .ico forces HasIconLocation=true and
+    # decouples rendering from exe-resource extraction entirely.
+    $goldenDictIcoPath = $null
+    try {
+        $icoDir = "C:\LabTools\icons"
+        if (-not (Test-Path $icoDir)) { New-Item -Path $icoDir -ItemType Directory -Force | Out-Null }
+        $icoTarget = Join-Path $icoDir "goldendict.ico"
+        $deployed = $false
+
+        # Copy the bundled .ico. We pre-extract it on the test bench by reading the
+        # PE RT_GROUP_ICON + RT_ICON resources directly (preserves all sizes and the
+        # alpha channel). Earlier attempts used PrivateExtractIcons → Icon.FromHandle
+        # → Icon.Save, but that pipeline goes through GDI+ which drops the alpha on
+        # 32bpp icons — the exported .ico showed a white background and looked
+        # pixelated after Windows scaled the single size. The bundled .ico has 13
+        # embedded sizes (16, 24, 32, 48, 64, 96, 128, 256 across 4/8/32-bpp) so
+        # Windows can pick the exact match for whatever desktop IconSize setting.
+        $bundled = Join-Path $usbRoot "Config\icons\goldendict.ico"
+        if (Test-Path $bundled) {
+            Copy-Item -Path $bundled -Destination $icoTarget -Force -ErrorAction Stop
+            if ((Test-Path $icoTarget) -and (Get-Item $icoTarget).Length -gt 0) { $deployed = $true }
+        }
+
+        if ($deployed) {
+            $goldenDictIcoPath = $icoTarget
+            Write-Log "GoldenDict icon deployed to $icoTarget ($((Get-Item $icoTarget).Length) bytes)" "INFO"
+        } else {
+            Write-Log "GoldenDict icon not deployed (bundled .ico missing at $bundled) - Từ Điển will fall back to exe,0" "WARNING"
+        }
+    } catch {
+        Write-Log "Could not deploy GoldenDict icon: $($_.Exception.Message)" "WARNING"
+    }
+
     # Alphabetical by display name so creation order matches visual order on a fresh Windows desktop
     # (Windows places new icons in grid top-to-bottom, left-to-right based on creation sequence).
     # IconLocation is set only for shortcuts whose target .exe lacks a usable embedded icon.
@@ -754,7 +796,7 @@ public class ShellLinkCreator {
         @{ Name = "Readmate"; Target = "C:\Program Files\SaoMai\sm_readmate\sm_readmate.exe"; AltTarget = "C:\Program Files (x86)\SaoMai\sm_readmate\sm_readmate.exe"; Desc = "Sao Mai Readmate Accessible Reader" },
         @{ Name = "Sao Mai Typing Tutor"; Target = "C:\Program Files (x86)\SaoMai\SMTT\SMTT.exe"; AltTarget = "C:\Program Files\SaoMai\SMTT\SMTT.exe"; IconLocation = "%SystemRoot%\System32\imageres.dll,116"; Desc = "Sao Mai Vietnamese Typing Tutor" },
         @{ Name = "Thùng Rác"; Target = "explorer.exe"; Args = "shell:RecycleBinFolder"; IconLocation = "%SystemRoot%\System32\shell32.dll,31"; Desc = "Thùng rác - khôi phục tập tin đã xóa" },
-        @{ Name = "Từ Điển"; Target = "C:\Program Files\GoldenDict\GoldenDict.exe"; AltTarget = "C:\Program Files (x86)\GoldenDict\GoldenDict.exe"; Desc = "GoldenDict - Offline Dictionary" },
+        @{ Name = "Từ Điển"; Target = "C:\Program Files\GoldenDict\GoldenDict.exe"; AltTarget = "C:\Program Files (x86)\GoldenDict\GoldenDict.exe"; IconLocation = $goldenDictIcoPath; Desc = "GoldenDict - Offline Dictionary" },
         @{ Name = "USB"; Target = "explorer.exe"; Args = "shell:MyComputerFolder"; IconLocation = "%SystemRoot%\System32\imageres.dll,109"; Desc = "Open This PC to access your USB drive" },
         @{ Name = "VLC media player"; Target = "C:\Program Files\VideoLAN\VLC\vlc.exe"; AltTarget = "C:\Program Files (x86)\VideoLAN\VLC\vlc.exe"; Desc = "VLC Media Player" },
         @{ Name = "Wikipedia"; Target = "C:\Program Files\Kiwix\kiwix-desktop.exe"; Desc = "Kiwix - Offline Vietnamese Wikipedia" },
@@ -853,6 +895,69 @@ public class ShellLinkCreator {
     $failCount++
 }
 
+# Step 6b: Force Student's icon cache to refresh. When a .lnk was previously rendered
+# with "no icon" (target-not-found during an earlier partial deploy, or Install's
+# WScript.Shell Save failed and left a 0-byte file), Explorer caches the null result
+# keyed by the .lnk path. Re-writing the .lnk at the same path does NOT invalidate
+# that cache — observed specifically on Unicode-named shortcuts (Từ Điển) across
+# PC-10 and PC-15. Two-pronged:
+#   1. SHChangeNotify(SHCNE_ASSOCCHANGED) — tells any live Explorer to flush now.
+#   2. MoveFileEx(DELAY_UNTIL_REBOOT) on Student's iconcache_*.db / thumbcache_*.db —
+#      Explorer holds them open, but this queues a guaranteed delete for next boot,
+#      after which Windows rebuilds from scratch.
+try {
+    # Prior buggy version split this into two classes Win32.MoveFileEx and
+    # Win32.SHChange. C# rejects a class named MoveFileEx that declares a method
+    # named MoveFileEx (it treats the method as a would-be constructor, and extern
+    # constructors aren't legal), so Add-Type failed and neither pathway ran.
+    # Single class Win32.Native holds both P/Invokes — names don't collide.
+    if (-not ('Win32.Native' -as [type])) {
+        Add-Type -Namespace Win32 -Name Native -MemberDefinition @'
+[System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError=true, CharSet=System.Runtime.InteropServices.CharSet.Unicode)]
+public static extern bool MoveFileEx(string lpExistingFileName, string lpNewFileName, int dwFlags);
+
+[System.Runtime.InteropServices.DllImport("shell32.dll")]
+public static extern void SHChangeNotify(int wEventId, uint uFlags, System.IntPtr dwItem1, System.IntPtr dwItem2);
+'@
+    }
+
+    # MOVEFILE_DELAY_UNTIL_REBOOT = 0x4. Files remain usable this session; the OS
+    # records the pending delete in HKLM\...\Session Manager\PendingFileRenameOperations
+    # and honors it on the next boot. Also try a best-effort immediate delete — if
+    # Explorer isn't holding the file (unlikely but possible on a fresh deploy before
+    # Student login), it succeeds and no reboot is needed.
+    $cacheDir = "C:\Users\Student\AppData\Local\Microsoft\Windows\Explorer"
+    $cacheDirExists = Test-Path $cacheDir
+    $found = 0; $queued = 0; $deleted = 0
+    if ($cacheDirExists) {
+        foreach ($pat in @('iconcache_*.db','thumbcache_*.db')) {
+            Get-ChildItem $cacheDir -Filter $pat -Force -ErrorAction SilentlyContinue | ForEach-Object {
+                $found++
+                try {
+                    Remove-Item -Path $_.FullName -Force -ErrorAction Stop
+                    $deleted++
+                } catch {
+                    if ([Win32.Native]::MoveFileEx($_.FullName, $null, 4)) { $queued++ }
+                }
+            }
+        }
+    }
+    $legacyIconDb = "C:\Users\Student\AppData\Local\IconCache.db"
+    if (Test-Path $legacyIconDb) {
+        $found++
+        try { Remove-Item -Path $legacyIconDb -Force -ErrorAction Stop; $deleted++ }
+        catch { if ([Win32.Native]::MoveFileEx($legacyIconDb, $null, 4)) { $queued++ } }
+    }
+
+    # SHCNE_ASSOCCHANGED = 0x08000000; SHCNF_IDLIST = 0. Broadcasts to every Explorer
+    # instance in the session to flush assoc/icon cache. Fast, non-disruptive.
+    [Win32.Native]::SHChangeNotify(0x08000000, 0, [IntPtr]::Zero, [IntPtr]::Zero)
+
+    Write-Log "Icon cache: dir-exists=$cacheDirExists found=$found deleted-now=$deleted queued-for-reboot=$queued; Explorer notified via SHChangeNotify" "INFO"
+} catch {
+    Write-Log "Icon cache refresh failed: $($_.Exception.Message)" "WARNING"
+}
+
 # Step 7: Welcome audio — REMOVED. NVDA's own "NVDA has started" announcement at login
 # serves the same purpose without the race condition or the bundled controller DLL dependency.
 # Clean up leftovers from any prior deploy that installed the welcome audio.
@@ -928,6 +1033,7 @@ public static class Helper {
 }
 "@
     [LabVol.Helper]::ResetToDefault(0.50)
+    "$([DateTime]::Now.ToString('s')) OK level=50%" | Out-File -FilePath $logPath -Append -Encoding ASCII
 } catch {
     "$([DateTime]::Now.ToString('s')) FAILED: $($_.Exception.Message)" | Out-File -FilePath $logPath -Append -Encoding ASCII
 }
@@ -949,6 +1055,7 @@ $logPath = 'C:\LabTools\reset-brightness.log'
 try {
     $br = Get-CimInstance -Namespace root/wmi -ClassName WmiMonitorBrightnessMethods -ErrorAction Stop
     Invoke-CimMethod -InputObject $br -MethodName WmiSetBrightness -Arguments @{ Timeout = [uint32]0; Brightness = [byte]50 } | Out-Null
+    "$([DateTime]::Now.ToString('s')) OK level=50%" | Out-File -FilePath $logPath -Append -Encoding ASCII
 } catch {
     "$([DateTime]::Now.ToString('s')) FAILED: $($_.Exception.Message)" | Out-File -FilePath $logPath -Append -Encoding ASCII
 }
@@ -957,27 +1064,48 @@ try {
     $brightnessScriptPath = Join-Path "C:\LabTools" "reset-brightness.ps1"
     Set-Content -Path $brightnessScriptPath -Value $brightnessScript -Force
 
-    # --- All Users startup shortcuts -----------------------------------------------
+    # --- Scheduled tasks (replaces legacy All Users Startup .lnks) -----------------
+    # Win11 defers Startup-folder .lnk launches by ~2 minutes on DC power (Power Throttling
+    # + Explorer startup deferment), so a battery cold boot left the laptop at full volume
+    # / wrong brightness for the first few minutes of class. Scheduled tasks fire directly
+    # on the AtLogOn trigger with explicit AllowStartIfOnBatteries and Priority 4, so they
+    # run promptly on AC and DC alike. Pattern matches UniKey-Startup-Vietnamese below.
+    # BUILTIN\Users + Limited principal: COM endpoints (CoreAudio, WMI brightness) are
+    # session-scoped, so the task must run inside the logging-on user's interactive session.
     $allUsersStartup = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup"
-    $WshShell = New-Object -ComObject WScript.Shell
+    $approvedFolder  = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\StartupFolder"
+    foreach ($staleLnk in @('LabVolumeReset.lnk','LabBrightnessReset.lnk')) {
+        Remove-Item (Join-Path $allUsersStartup $staleLnk) -Force -ErrorAction SilentlyContinue
+        if (Test-Path $approvedFolder) {
+            Remove-ItemProperty -Path $approvedFolder -Name $staleLnk -Force -ErrorAction SilentlyContinue
+        }
+    }
 
-    $volShortcutPath = Join-Path $allUsersStartup "LabVolumeReset.lnk"
-    $volShortcut = $WshShell.CreateShortcut($volShortcutPath)
-    $volShortcut.TargetPath = "powershell.exe"
-    $volShortcut.Arguments = "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$volumeScriptPath`""
-    $volShortcut.Description = "Reset volume to safe level"
-    $volShortcut.WindowStyle = 7
-    $volShortcut.Save()
+    $resetTaskTrigger   = New-ScheduledTaskTrigger -AtLogOn
+    $resetTaskSettings  = New-ScheduledTaskSettingsSet `
+        -AllowStartIfOnBatteries `
+        -DontStopIfGoingOnBatteries `
+        -StartWhenAvailable `
+        -Priority 4 `
+        -ExecutionTimeLimit (New-TimeSpan -Minutes 2) `
+        -MultipleInstances IgnoreNew
+    $resetTaskPrincipal = New-ScheduledTaskPrincipal -GroupId 'S-1-5-32-545' -RunLevel Limited  # BUILTIN\Users
 
-    $brShortcutPath = Join-Path $allUsersStartup "LabBrightnessReset.lnk"
-    $brShortcut = $WshShell.CreateShortcut($brShortcutPath)
-    $brShortcut.TargetPath = "powershell.exe"
-    $brShortcut.Arguments = "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$brightnessScriptPath`""
-    $brShortcut.Description = "Reset display brightness to default"
-    $brShortcut.WindowStyle = 7
-    $brShortcut.Save()
+    $volTaskAction = New-ScheduledTaskAction -Execute 'powershell.exe' `
+        -Argument "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$volumeScriptPath`""
+    Register-ScheduledTask -TaskName 'LabVolumeReset' `
+        -Description 'Reset system volume to 50% on each login (hearing protection).' `
+        -Action $volTaskAction -Trigger $resetTaskTrigger `
+        -Settings $resetTaskSettings -Principal $resetTaskPrincipal -Force | Out-Null
 
-    Write-Log "Login-reset defaults set (volume 50%, brightness 50%)" "SUCCESS"
+    $brTaskAction = New-ScheduledTaskAction -Execute 'powershell.exe' `
+        -Argument "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$brightnessScriptPath`""
+    Register-ScheduledTask -TaskName 'LabBrightnessReset' `
+        -Description 'Reset display brightness to 50% on each login.' `
+        -Action $brTaskAction -Trigger $resetTaskTrigger `
+        -Settings $resetTaskSettings -Principal $resetTaskPrincipal -Force | Out-Null
+
+    Write-Log "Login-reset tasks registered (LabVolumeReset, LabBrightnessReset; AtLogOn, battery-safe, Priority 4)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not set login-reset defaults: $($_.Exception.Message)" "ERROR"
@@ -1337,26 +1465,27 @@ try {
             & icacls.exe $lnk /grant "Student:F" /C 2>&1 | Out-Null
         }
 
-        # Machine-wide Startup shortcut (auto-launch on login). Idempotent — safe to re-create.
-        $startupLnk = Join-Path $sysStartup "NVDA.lnk"
-        $sc = $WshShell.CreateShortcut($startupLnk)
-        $sc.TargetPath       = $nvdaExe
-        $sc.WorkingDirectory = $nvdaDir
-        if (Test-Path $nvdaIco) { $sc.IconLocation = $nvdaIco }
-        $sc.Description      = "NVDA Screen Reader - Auto-start"
-        $sc.Save()
-
-        # Force-enable NVDA.lnk in StartupApproved. Windows reads this registry key to
-        # decide whether each Startup-folder .lnk actually runs on login. If NVDA was ever
-        # toggled off in Task Manager's Startup tab, or a Windows backup/restore or OEM
-        # image left a disabled value, Windows silently ignores the .lnk even though it's
-        # present. Writing 12 zero bytes (byte[0]=0x02, "enabled default") overwrites any
-        # prior 0x03 (disabled) state. HKCU takes precedence over HKLM, so we clear any
-        # per-user override in Admin/Student/Default hives to guarantee the HKLM state sticks.
-        $saBytes = [byte[]](2,0,0,0,0,0,0,0,0,0,0,0)
+        # Auto-launch via scheduled task (replaces the legacy system-Startup NVDA.lnk).
+        # The task fires AtLogOn with battery-safe settings so NVDA starts promptly once the
+        # user session is up.
+        #
+        # CRITICAL — must invoke nvda.exe via `cmd /c start` (ShellExecute), NOT directly:
+        # nvda.exe ships with manifest `level="asInvoker" uiAccess="True"` so it can speak
+        # on the secure desktop (sign-in / UAC). Task Scheduler launches actions via
+        # CreateProcess, which refuses any UIAccess binary launched from a non-admin
+        # principal and returns 0x800702E4 (ERROR_ELEVATION_REQUIRED). Wrapping with
+        # `cmd /c start` routes the launch through ShellExecute, which is the only API
+        # that brokers UIAccess elevation for non-admin callers (this is also why the
+        # legacy Startup-folder .lnk worked — Explorer launches startup shortcuts via
+        # ShellExecute).
+        #
+        # ExecutionTimeLimit MUST be zero — NVDA is a long-running session app; any
+        # non-zero limit causes Task Scheduler to reap it when the limit expires.
+        Remove-Item (Join-Path $sysStartup "NVDA.lnk") -Force -ErrorAction SilentlyContinue
         $saFolder = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\StartupFolder"
-        if (-not (Test-Path $saFolder)) { New-Item -Path $saFolder -Force -ErrorAction SilentlyContinue | Out-Null }
-        Set-ItemProperty -Path $saFolder -Name "NVDA.lnk" -Value $saBytes -Type Binary -Force -ErrorAction SilentlyContinue
+        if (Test-Path $saFolder) {
+            Remove-ItemProperty -Path $saFolder -Name "NVDA.lnk" -Force -ErrorAction SilentlyContinue
+        }
         foreach ($hive in $hkuPaths) {
             $hkuSA = "$hive\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\StartupFolder"
             if (Test-Path $hkuSA) {
@@ -1364,12 +1493,29 @@ try {
             }
         }
 
+        $nvdaTaskAction    = New-ScheduledTaskAction -Execute 'cmd.exe' `
+            -Argument "/c start `"`" `"$nvdaExe`""
+        $nvdaTaskTrigger   = New-ScheduledTaskTrigger -AtLogOn
+        $nvdaTaskSettings  = New-ScheduledTaskSettingsSet `
+            -AllowStartIfOnBatteries `
+            -DontStopIfGoingOnBatteries `
+            -StartWhenAvailable `
+            -Priority 4 `
+            -ExecutionTimeLimit ([TimeSpan]::Zero) `
+            -MultipleInstances IgnoreNew
+        $nvdaTaskPrincipal = New-ScheduledTaskPrincipal -GroupId 'S-1-5-32-545' -RunLevel Limited  # BUILTIN\Users
+
+        Register-ScheduledTask -TaskName 'LabNVDAStart' `
+            -Description 'Auto-start NVDA in the logging-on user session (cmd /c start brokers UIAccess elevation that CreateProcess refuses).' `
+            -Action $nvdaTaskAction -Trigger $nvdaTaskTrigger `
+            -Settings $nvdaTaskSettings -Principal $nvdaTaskPrincipal -Force | Out-Null
+
         # Delete installer-created duplicates (these don't register hotkeys on Win11 22H2+
         # and just show up as duplicate icons).
         Remove-Item "C:\Users\Public\Desktop\NVDA.lnk" -Force -ErrorAction SilentlyContinue
         Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\NVDA\NVDA.lnk" -Force -ErrorAction SilentlyContinue
 
-        Write-Log "NVDA shortcuts deployed (Student Desktop/StartMenu + system Startup); StartupApproved enabled; duplicates removed" "SUCCESS"
+        Write-Log "NVDA hotkey shortcuts deployed (Student Desktop + StartMenu, Ctrl+Alt+N); LabNVDAStart task registered; duplicates removed" "SUCCESS"
     } catch {
         Write-Log "Could not configure NVDA shortcuts: $($_.Exception.Message)" "WARNING"
     }
@@ -1788,7 +1934,19 @@ try {
     Set-ItemProperty -Path $winlogonPath -Name "DefaultUserName" -Value "Student" -Force
     Set-ItemProperty -Path $winlogonPath -Name "DefaultPassword" -Value "" -Force
 
-    Write-Log "Auto-login configured for Student account" "SUCCESS"
+    # Allow blank-password logon via the AutoAdminLogon code path.
+    # Default LimitBlankPasswordUse=1 blocks blank-password logons that LSA classifies
+    # as non-console (Network/Service/Batch). On a slow boot — especially battery cold
+    # boot on a Modern Standby laptop — Winlogon fires AutoAdminLogon before the console
+    # session is fully ready, LSA classifies the call as non-console, returns 1326
+    # (ERROR_LOGON_FAILURE), and Winlogon backs off ~100 sec before retrying. Setting
+    # this to 0 makes the first attempt succeed and eliminates the back-off.
+    # Safety: SSH is disabled (Step 22), no SMB shares are exposed, no RDP. Risk of
+    # remote blank-password abuse is zero on this offline lab laptop.
+    $lsaPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa"
+    Set-ItemProperty -Path $lsaPath -Name "LimitBlankPasswordUse" -Value 0 -Type DWord -Force
+
+    Write-Log "Auto-login configured for Student account (LimitBlankPasswordUse=0 to skip ~100s blank-password back-off on cold boot)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not create Student account: $($_.Exception.Message)" "ERROR"
