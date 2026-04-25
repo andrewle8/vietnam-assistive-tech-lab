@@ -161,6 +161,15 @@ In this mode, all keys you press go directly to the application (including Backs
 
 Press Insert + Space again to return to browse mode.
 
+NVDA Customizations on This Laptop
+
+NVDA has been pre-tuned for Vietnamese blind students:
+
+- CapsLock is the primary NVDA key. To toggle actual Caps Lock state (for typing CAPITAL letters), press CapsLock twice quickly.
+- Vi-Vu voice handles both Vietnamese and English in the same text. NVDA does not switch voices for English words, keeping a single familiar voice throughout.
+- NVDA auto-ducks other audio (Readmate, VLC, Firefox) when speaking. You do not have to manually lower volumes to hear NVDA cut through.
+- Progress bars are spoken as percentages (e.g. "50 percent") instead of beeps.
+
 Typing Vietnamese
 
 UniKey starts automatically when the laptop turns on.

@@ -148,7 +148,7 @@
   },
 
   "nvda_addons": {
-    "RHVoice": "2.0.19",
+    "RHVoice": "1.16.2",
     "RHVoice-voice-Vietnamese-Vi-Vu": "4.7.1008.11",
     "unmute": "1.6.0",
     "clipspeak": "2025.06.13",
@@ -158,7 +158,8 @@
     "focusHighlight": "6.6",
     "audacityAccessEnhancement": "3.3.2",
     "clock": "20250714",
-    "trainingKeyboardCommands": "3.2.6"
+    "trainingKeyboardCommands": "3.2.6",
+    "remote": "2.6.4"
   },
 
   "kiwix_content": {

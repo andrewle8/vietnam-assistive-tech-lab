@@ -1418,6 +1418,17 @@ try {
         Write-Log "Deployed NVDA config template (laptop layout, Vietnamese Thanh Vi, rate 35) to Student profile" "SUCCESS"
     }
 
+    # Deploy NVDA Remote addon config (auto-connect to relay channel as
+    # controlled, so fleet support / classroom demo broadcast works without
+    # any per-laptop setup). NVDA Remote 2.6.4 stores its config in remote.ini
+    # alongside nvda.ini, NOT inside nvda.ini's [remote] section -- that empty
+    # section is for the future integrated NVDA Remote in newer NVDA versions.
+    $remoteTemplate = Join-Path (Split-Path -Parent $PSScriptRoot) "Config\nvda-config\remote.ini"
+    if (Test-Path $remoteTemplate) {
+        Copy-Item -Path $remoteTemplate -Destination "$nvdaConfigDir\remote.ini" -Force
+        Write-Log "Deployed NVDA Remote config (auto-connect as controlled to channel monarch-vn-lab)" "SUCCESS"
+    }
+
     # NVDA shortcuts: machine-wide Startup for auto-launch + per-user for Ctrl+Alt+N hotkey.
     # Windows 11 22H2+ only registers .lnk HotKey from the current user's own profile.
     # Also delete installer-created duplicates (Public Desktop + ProgramData NVDA folder)

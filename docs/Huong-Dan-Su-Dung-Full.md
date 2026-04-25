@@ -174,6 +174,15 @@ Nhấn Insert + Space để chuyển sang "Chế độ tập trung".
 
 Nhấn Insert + Space lần nữa để quay lại chế độ duyệt.
 
+### Cài Đặt Đặc Biệt Của NVDA Trên Máy Này
+
+NVDA đã được tinh chỉnh sẵn cho học sinh khiếm thị Việt Nam:
+
+- **CapsLock là phím NVDA chính.** Để bật/tắt Caps Lock thực sự (gõ chữ HOA), nhấn **CapsLock 2 lần nhanh** liên tục.
+- **Giọng Vi-Vu đọc cả tiếng Việt và tiếng Anh** trong cùng một văn bản — NVDA không tự đổi giọng, vẫn dùng cùng một giọng quen thuộc.
+- **NVDA tự động giảm âm lượng** Readmate, VLC, Firefox khi NVDA nói — bạn nghe rõ NVDA mà không phải tự chỉnh âm lượng.
+- **Thanh tiến trình** đọc theo phần trăm (ví dụ "50 phần trăm") — không có tiếng beep.
+
 ---
 
 ## Gõ Tiếng Việt

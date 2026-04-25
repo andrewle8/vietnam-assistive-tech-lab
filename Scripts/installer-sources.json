@@ -156,6 +156,12 @@
     "url_template": "https://github.com/ruifontes/clipspeak/releases/download/{version}/clipspeak-{version}.nvda-addon",
     "destination": "NVDA/addons/clipspeak-{version}.nvda-addon"
   },
+  "nvda_addon_remote": {
+    "source": "vendor",
+    "version": "2.6.4",
+    "url_template": "https://github.com/NVDARemote/NVDARemote/releases/download/v{version}/remote-{version}.nvda-addon",
+    "destination": "NVDA/addons/remote-{version}.nvda-addon"
+  },
   "saomai_vivu_sapi5": {
     "source": "vendor",
     "version": "4.8.1009.21",
