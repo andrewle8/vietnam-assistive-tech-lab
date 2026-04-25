@@ -133,9 +133,10 @@
   },
   "nvda_addon_rhvoice_core": {
     "source": "vendor",
-    "version": "2.0.19",
-    "url_template": "https://downloads.rhvoice.com/files/nvda/RHVoice-{version}.nvda-addon",
-    "destination": "NVDA/addons/RHVoice-{version}.nvda-addon"
+    "version": "1.16.2",
+    "url_template": "https://louderpages.org/dl/RHVoice-{version}.nvda-addon",
+    "destination": "NVDA/addons/RHVoice-{version}.nvda-addon",
+    "_note": "Use the LouderPages build (official RHVoice 1.16.x), not the NonRoutine 2.x fork at downloads.rhvoice.com. The NonRoutine DLL silently rejects voice format=4 from the LouderPages-built Vi-Vu, even though everything else looks fine."
   },
   "nvda_addon_rhvoice_vivu_voice": {
     "source": "vendor",

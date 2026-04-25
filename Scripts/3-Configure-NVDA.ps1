@@ -75,22 +75,36 @@ if (Test-Path $addonsSourceDir) {
         foreach ($addon in $addonFiles) {
             Write-Log "Installing add-on: $($addon.Name)..." "INFO"
             try {
-                # NVDA add-ons are ZIP files - extract to addons folder
-                $addonName = [System.IO.Path]::GetFileNameWithoutExtension($addon.Name)
-                $targetPath = Join-Path $addonsDestDir $addonName
+                # NVDA 2024+ matches addons by the 'name' field in manifest.ini, NOT by folder
+                # name. If we extract clipspeak-2025.06.13.nvda-addon to a folder of the same
+                # name, NVDA's loader skips it because the folder doesn't match the manifest's
+                # `name = clipspeak`. Result: addon is invisible (no synth in NVDA+Ctrl+S, no
+                # commands, etc.) -- and silent, because there's no error in the log either.
+                # Fix: extract to temp, read the real name from manifest.ini, then move.
+                $fileStem = [System.IO.Path]::GetFileNameWithoutExtension($addon.Name)
+                $tempZip = Join-Path $env:TEMP "$fileStem.zip"
+                $tempExtract = Join-Path $env:TEMP "addon-extract-$fileStem"
+                if (Test-Path $tempExtract) { Remove-Item $tempExtract -Recurse -Force }
+                Copy-Item -Path $addon.FullName -Destination $tempZip -Force
+                Expand-Archive -Path $tempZip -DestinationPath $tempExtract -Force
+                Remove-Item -Path $tempZip -Force -ErrorAction SilentlyContinue
 
-                # Remove existing version if present
-                if (Test-Path $targetPath) {
-                    Remove-Item -Path $targetPath -Recurse -Force
+                $manifestPath = Join-Path $tempExtract 'manifest.ini'
+                $manifestName = $null
+                if (Test-Path $manifestPath) {
+                    # Manifest values may be quoted ("clipspeak") or bare (clipspeak); strip both.
+                    $line = Get-Content $manifestPath | Where-Object { $_ -match '^\s*name\s*=' } | Select-Object -First 1
+                    if ($line -match '^\s*name\s*=\s*"?([^"\r\n]+?)"?\s*$') { $manifestName = $Matches[1].Trim() }
+                }
+                if (-not $manifestName) {
+                    Write-Log "Manifest name missing in $($addon.Name); falling back to filename '$fileStem'" "WARNING"
+                    $manifestName = $fileStem
                 }
 
-                # Extract add-on (it's a ZIP file with .nvda-addon extension)
-                # Expand-Archive only recognizes .zip — copy to temp .zip first
-                $tempZip = Join-Path $env:TEMP "$addonName.zip"
-                Copy-Item -Path $addon.FullName -Destination $tempZip -Force
-                Expand-Archive -Path $tempZip -DestinationPath $targetPath -Force
-                Remove-Item -Path $tempZip -Force -ErrorAction SilentlyContinue
-                Write-Log "Add-on '$($addon.Name)' installed successfully" "SUCCESS"
+                $targetPath = Join-Path $addonsDestDir $manifestName
+                if (Test-Path $targetPath) { Remove-Item -Path $targetPath -Recurse -Force }
+                Move-Item -Path $tempExtract -Destination $targetPath -Force
+                Write-Log "Add-on '$($addon.Name)' installed as '$manifestName'" "SUCCESS"
             } catch {
                 Write-Log "ERROR installing add-on $($addon.Name): $($_.Exception.Message)" "ERROR"
             }
@@ -101,6 +115,68 @@ if (Test-Path $addonsSourceDir) {
 } else {
     Write-Log "NVDA add-ons directory not found at $addonsSourceDir" "INFO"
     Write-Log "To add VLC accessibility: download VLC.nvda-addon and place in Installers\NVDA\addons\" "INFO"
+}
+
+# Step 4b: Bump lastTestedNVDAVersion in addon manifests to bypass NVDA's compat block.
+# Some bundled addons (notably RHVoice 2.0.19) ship with lastTestedNVDAVersion = 2024.1.0.
+# NVDA 2025.x silently blocks them with "ModuleNotFoundError: No module named 'synthDrivers.<x>'"
+# and falls back to the next synth -- on this build that's oneCore + Microsoft An, which is what
+# we want as the default anyway. But the user can never SELECT RHVoice (or any other blocked
+# addon) from the synth dropdown, because NVDA never registers it. Patching the manifest after
+# extraction makes the addon load and become selectable, without needing pickle edits to
+# addonsState. We do this for the local copy only -- the .nvda-addon archives on the USB stay
+# untouched as binary source-of-truth.
+$bumpFloor = '9999.1.0'  # any value the addon ships with will be lower
+$bumpedCount = 0
+Get-ChildItem -Path $addonsDestDir -Directory -ErrorAction SilentlyContinue | ForEach-Object {
+    $manifest = Join-Path $_.FullName 'manifest.ini'
+    if (-not (Test-Path $manifest)) { return }
+    $content = Get-Content $manifest -Raw
+    if ($content -match '(?m)^\s*lastTestedNVDAVersion\s*=\s*(\S+)') {
+        $current = $Matches[1]
+        if ($current -ne $bumpFloor) {
+            $patched = $content -replace '(?m)^(\s*lastTestedNVDAVersion\s*=\s*)\S+', "`${1}$bumpFloor"
+            Set-Content -Path $manifest -Value $patched -NoNewline -Encoding UTF8
+            Write-Log "Bumped lastTestedNVDAVersion in $($_.Name) (was $current)" "SUCCESS"
+            $bumpedCount++
+        }
+    }
+}
+Write-Log "Manifest compat bump: $bumpedCount addon(s) updated" "INFO"
+
+# Step 4c: Patch RHVoice 1.16.2 driver for NVDA 2025+ audio config layout.
+# The driver constructs nvwave.WavePlayer with outputDevice=config.conf["speech"]["outputDevice"].
+# NVDA 2025 removed that key (audio routing is now global in the [audio] section), so the
+# WavePlayer construction throws KeyError on every attempt to speak -- the synth loads, the
+# voice gets selected, but no audio ever plays. Patch makes the lookup defensive: try the old
+# location, then the new [audio] location, then fall back to no-arg (system default device).
+# Idempotent: the regex matches the unpatched line and rewrites only the first time.
+$rhvoiceInit = Join-Path $addonsDestDir 'RHVoice\synthDrivers\RHVoice\__init__.py'
+if (Test-Path $rhvoiceInit) {
+    $rhvoiceSrc = Get-Content $rhvoiceInit -Raw
+    $unpatched = 'player = nvwave.WavePlayer(channels=1, samplesPerSec=self.__sample_rate, bitsPerSample=16, outputDevice=config.conf["speech"]["outputDevice"])'
+    $patched = @'
+_wp_kwargs = {"channels": 1, "samplesPerSec": self.__sample_rate, "bitsPerSample": 16}
+            try:
+                _wp_kwargs["outputDevice"] = config.conf["speech"]["outputDevice"]
+            except KeyError:
+                try:
+                    _wp_kwargs["outputDevice"] = config.conf["audio"]["outputDevice"]
+                except KeyError:
+                    pass  # let WavePlayer pick the system default
+            player = nvwave.WavePlayer(**_wp_kwargs)
+'@
+    if ($rhvoiceSrc.Contains($unpatched)) {
+        $rhvoiceSrc = $rhvoiceSrc.Replace($unpatched, $patched.TrimEnd())
+        Set-Content -Path $rhvoiceInit -Value $rhvoiceSrc -NoNewline -Encoding UTF8
+        $pyc = Join-Path (Split-Path $rhvoiceInit -Parent) '__pycache__'
+        if (Test-Path $pyc) { Remove-Item $pyc -Recurse -Force -ErrorAction SilentlyContinue }
+        Write-Log "Patched RHVoice driver for NVDA 2025+ outputDevice config" "SUCCESS"
+    } elseif ($rhvoiceSrc -match '_wp_kwargs') {
+        Write-Log "RHVoice driver already patched for outputDevice" "INFO"
+    } else {
+        Write-Log "RHVoice driver WavePlayer line unrecognized; outputDevice patch skipped" "WARNING"
+    }
 }
 
 # Step 5: Mirror VNVoice SAPI5 voices from 32-bit to 64-bit registry
@@ -278,7 +354,7 @@ Write-Host "  - NVDA profile configured for Vietnamese" -ForegroundColor White
 Write-Host "  - NVDA add-ons installed (if present in Installers\NVDA\addons\)" -ForegroundColor White
 Write-Host "  - Auto-start on Windows login enabled" -ForegroundColor White
 Write-Host "  - UniKey Vietnamese keyboard installed and auto-starting" -ForegroundColor White
-Write-Host "  - Speech synthesizer set to Microsoft An (Vietnamese neural, bilingual)" -ForegroundColor White
+Write-Host "  - Speech synthesizer set to RHVoice Vi-Vu (Vietnamese, portable)" -ForegroundColor White
 Write-Host ""
 
 Write-Host "Next Steps:" -ForegroundColor Yellow

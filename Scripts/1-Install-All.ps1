@@ -60,6 +60,17 @@ $installations = @(
         Path = ".\Installers\SaoMai\SMReadmate1.1.0-setup.exe"
         Args = @("/S")
         WaitTime = 30
+    },
+    @{
+        # SAPI5 build of RHVoice + Vi-Vu (LouderPages bundle: x86/x64 engine, English &
+        # Vietnamese language packs, Vi-Vu voice). Registers Vi-Vu via a SAPI5 TokenEnum
+        # under HKLM\SOFTWARE\Microsoft\Speech\Voices\TokenEnums\RHVoice -- so it shows up
+        # to any SAPI5-aware app (Readmate, SMTT, NVDA's SAPI5 driver). Inno bundle, takes
+        # /VERYSILENT cleanly. /SILENT shows a progress bar; /VERYSILENT is fully invisible.
+        Name = "RHVoice Vi-Vu (SAPI5)"
+        Path = ".\Installers\SaoMai\RHVoice-voice-Vietnamese-Vi-Vu-v4.8.1009.21-setup.exe"
+        Args = @("/VERYSILENT", "/NORESTART", "/SUPPRESSMSGBOXES")
+        WaitTime = 45
     }
 )
 
