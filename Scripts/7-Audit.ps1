@@ -192,8 +192,70 @@ if (Test-Path $nvdaConfigPath) {
             Add-Result "NVDA" "Speech Rate" $expected $nvdaRate "WARN"
         }
     }
+
+    # Lab-tuned NVDA settings beyond language/voice/rate. These are written by
+    # Configure-Laptop.ps1 deploying Config/nvda-config/nvda.ini to the Student
+    # profile. Drift here means students hear English-fallback-not-supported
+    # words (autoLanguageSwitching), background audio duck failures (audio
+    # ducking), distracting mouse-position spoken on every desktop click
+    # (mouse tracking), or progress bars announced as click-clack beeps
+    # instead of the spoken percentage.
+    $nvdaIniChecks = @(
+        @{ Key = "autoLanguageSwitching";        Expected = "False"; Status = "FAIL" },  # else Vi-Vu tries to switch to en-US
+        @{ Key = "trustVoiceLanguage";           Expected = "False"; Status = "FAIL" },  # paired with autoLanguageSwitching
+        @{ Key = "audioDuckingMode";             Expected = "1";     Status = "WARN" },  # 1 = duck on speech
+        @{ Key = "enableMouseTracking";          Expected = "False"; Status = "WARN" },  # screen-reader users don't navigate by mouse
+        @{ Key = "NVDAModifierKeys";             Expected = "7";     Status = "WARN" },  # bitmask: 1+2+4 = NumPad+Insert+CapsLock
+        @{ Key = "handleInjectedKeys";           Expected = "False"; Status = "FAIL" },  # required for UniKey Telex on macros
+        @{ Key = "reportObjectPositionInformation"; Expected = "False"; Status = "WARN" },  # less chatter
+        @{ Key = "progressBarOutputMode";        Expected = "speak"; Status = "WARN" }   # speak percent vs beep
+    )
+    foreach ($c in $nvdaIniChecks) {
+        # ConfigObj writes "key = value"; allow optional whitespace and tabs.
+        if ($nvdaConfig -match "(?m)^\s*$([regex]::Escape($c.Key))\s*=\s*(\S+)") {
+            $actual = $Matches[1].Trim()
+            if ($actual -eq $c.Expected) {
+                Add-Result "NVDA" "ini: $($c.Key)" $c.Expected $actual "PASS"
+            } else {
+                Add-Result "NVDA" "ini: $($c.Key)" $c.Expected $actual $c.Status
+            }
+        } else {
+            # Missing key means NVDA is using its built-in default (which differs
+            # from our intent for every key in this list), so flag it.
+            Add-Result "NVDA" "ini: $($c.Key)" $c.Expected "(not set, using NVDA default)" $c.Status
+        }
+    }
 } else {
     Add-Result "NVDA" "Config File" "Present" "Missing" "FAIL"
+}
+
+# NVDA Remote auto-connect. Configure-Laptop.ps1 deploys remote.ini next to
+# nvda.ini so each laptop joins relay channel 'monarch-vn-lab' as a controlled
+# slave on NVDA start. The auto-connect lives in remote.ini, NOT in nvda.ini's
+# [remote] section -- that section is reserved for a future integrated NVDA
+# Remote in newer NVDA versions and stays empty under 2.6.4.
+$remoteIniPath = "C:\Users\Student\AppData\Roaming\nvda\remote.ini"
+if (Test-Path $remoteIniPath) {
+    $remoteIni = Get-Content $remoteIniPath -Raw
+    $remoteChecks = @(
+        @{ Key = "autoconnect"; Expected = "True" },
+        @{ Key = "host";        Expected = "nvdaremote.com" },
+        @{ Key = "key";         Expected = "monarch-vn-lab" }
+    )
+    foreach ($c in $remoteChecks) {
+        if ($remoteIni -match "(?m)^\s*$([regex]::Escape($c.Key))\s*=\s*(\S+)") {
+            $actual = $Matches[1].Trim()
+            if ($actual -eq $c.Expected) {
+                Add-Result "NVDA" "remote.ini: $($c.Key)" $c.Expected $actual "PASS"
+            } else {
+                Add-Result "NVDA" "remote.ini: $($c.Key)" $c.Expected $actual "FAIL"
+            }
+        } else {
+            Add-Result "NVDA" "remote.ini: $($c.Key)" $c.Expected "(not set)" "FAIL"
+        }
+    }
+} else {
+    Add-Result "NVDA" "remote.ini" "Present" "Missing" "FAIL"
 }
 
 # Check NVDA is running
@@ -481,7 +543,8 @@ foreach ($taskName in $expectedTasks) {
 $labToolsFiles = @(
     "C:\LabTools\reset-volume.ps1",
     "C:\LabTools\Reassign-StudentUSB.ps1",
-    "C:\LabTools\update-agent\Update-Agent.ps1"
+    "C:\LabTools\update-agent\Update-Agent.ps1",
+    "C:\LabTools\update-agent\Apply-BIOS-Settings.ps1"
 )
 foreach ($lf in $labToolsFiles) {
     $name = Split-Path $lf -Leaf

@@ -37,11 +37,17 @@ function Get-CandidateDrives {
     }
 }
 
-# Find the portable-golden NVDA source from a connected DEPLOY_ USB. We need
-# this because the 285 MB portable can't live in git -- it only exists on the
-# DEPLOY USBs. Returns the path to the NVDA folder (containing nvda.exe), or
-# $null if no DEPLOY USB has it.
+# Find the portable-golden NVDA source. Search order:
+#   1. Local repo: <repo>\Installers\NVDA\portable-golden\NVDA  (gitignored,
+#      lets the test bench prep STU-USBs with all 4 USB ports free for blanks)
+#   2. Any connected DEPLOY_ USB: <drive>\Installers\NVDA\portable-golden\NVDA
+# Returns path to the NVDA folder containing nvda.exe, or $null if not found.
 function Find-PortableGoldenSource {
+    $repoRoot   = Split-Path -Parent $PSScriptRoot
+    $localGolden = Join-Path $repoRoot "Installers\NVDA\portable-golden\NVDA"
+    if (Test-Path (Join-Path $localGolden "nvda.exe")) {
+        return $localGolden
+    }
     $deployDrives = Get-RemovableDrives | Where-Object { "$($_.VolumeName)" -match '^DEPLOY_' }
     foreach ($d in $deployDrives) {
         $candidate = Join-Path $d.DeviceID "Installers\NVDA\portable-golden\NVDA"
@@ -65,8 +71,10 @@ if ($StartStudent -lt 1 -or $StartStudent -gt 999) {
 # Source for NVDA portable. Resolved from a connected DEPLOY_ USB.
 $portableSource = Find-PortableGoldenSource
 if (-not $portableSource) {
-    Write-Log "No DEPLOY_ USB with Installers\NVDA\portable-golden\NVDA\nvda.exe found." "ERROR"
-    Write-Host "Plug in at least one DEPLOY_ USB (it is the source for the NVDA portable copy)." -ForegroundColor Yellow
+    Write-Log "Portable-golden NVDA source not found (checked local repo and DEPLOY_ USBs)." "ERROR"
+    Write-Host "Need either:" -ForegroundColor Yellow
+    Write-Host "  - <repo>\Installers\NVDA\portable-golden\NVDA\nvda.exe (local cache), OR" -ForegroundColor Yellow
+    Write-Host "  - a DEPLOY_ USB with Installers\NVDA\portable-golden\NVDA\nvda.exe" -ForegroundColor Yellow
     Write-Host "Detected removable drives:" -ForegroundColor Yellow
     Get-RemovableDrives | ForEach-Object {
         $lbl = if ($_.VolumeName) { $_.VolumeName } else { "(no label)" }

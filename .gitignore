@@ -21,6 +21,10 @@ Installers/Educational/TicTacToe/
 Installers/Educational/Tennis/
 Installers/Educational/Curve/
 
+# NVDA portable golden master (~285 MB, lives on DEPLOY USBs and optionally
+# on a local cache for STU-USB prep without a DEPLOY USB plugged in).
+Installers/NVDA/portable-golden/
+
 # Keep the directory structure but ignore large binaries
 !Installers/**/.gitkeep
 
