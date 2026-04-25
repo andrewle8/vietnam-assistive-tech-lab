@@ -136,7 +136,12 @@ Get-ChildItem -Path $addonsDestDir -Directory -ErrorAction SilentlyContinue | Fo
         $current = $Matches[1]
         if ($current -ne $bumpFloor) {
             $patched = $content -replace '(?m)^(\s*lastTestedNVDAVersion\s*=\s*)\S+', "`${1}$bumpFloor"
-            Set-Content -Path $manifest -Value $patched -NoNewline -Encoding UTF8
+            # PowerShell 5.1's "-Encoding UTF8" prepends a BOM. NVDA's manifest parser
+            # tolerates BOMs in some places but breaks subtly in others (the addon shows
+            # in the addons folder but its synthDrivers/ never gets added to sys.path,
+            # so setSynth fails with ModuleNotFoundError on the next start). Use
+            # WriteAllText(...UTF8Encoding($false)) to write WITHOUT the BOM.
+            [System.IO.File]::WriteAllText($manifest, $patched, (New-Object System.Text.UTF8Encoding $false))
             Write-Log "Bumped lastTestedNVDAVersion in $($_.Name) (was $current)" "SUCCESS"
             $bumpedCount++
         }
@@ -168,7 +173,8 @@ _wp_kwargs = {"channels": 1, "samplesPerSec": self.__sample_rate, "bitsPerSample
 '@
     if ($rhvoiceSrc.Contains($unpatched)) {
         $rhvoiceSrc = $rhvoiceSrc.Replace($unpatched, $patched.TrimEnd())
-        Set-Content -Path $rhvoiceInit -Value $rhvoiceSrc -NoNewline -Encoding UTF8
+        # Same BOM concern as the manifest patch above -- write without BOM.
+        [System.IO.File]::WriteAllText($rhvoiceInit, $rhvoiceSrc, (New-Object System.Text.UTF8Encoding $false))
         $pyc = Join-Path (Split-Path $rhvoiceInit -Parent) '__pycache__'
         if (Test-Path $pyc) { Remove-Item $pyc -Recurse -Force -ErrorAction SilentlyContinue }
         Write-Log "Patched RHVoice driver for NVDA 2025+ outputDevice config" "SUCCESS"
