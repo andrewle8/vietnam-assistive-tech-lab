@@ -453,7 +453,7 @@ Chuong trinh day go phim cua Sao Mai, da duoc cai san tren may:
 
 - **F** va **J** co not noi san — day la vi tri "hang chinh" (home row) cho 8 ngon tay.
 - **Delete** va **Mui ten Xuong** cung co not noi tu nha san xuat.
-- **CapsLock** hoac **Insert** deu co the dung lam phim NVDA. CapsLock nam ben trai ban phim, cach phim Shift trai hai hang phia tren. Insert nam ngay canh Delete — co not noi nho them vao.
+- **CapsLock** hoac **Insert** deu co the dung lam phim NVDA. CapsLock la phim ben trai nhat o hang chinh (hang A/S/D/F), ngay phia tren phim Shift trai. Insert nam ngay canh Delete o ben phai ban phim.
 - Tu F/J, dem ra cac phim khac: ben trai F la D → S → A; ben phai J la K → L → dau cham phay.
 
 ---

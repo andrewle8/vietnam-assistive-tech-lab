@@ -453,7 +453,7 @@ Pre-installed Vietnamese typing tutor from Sao Mai:
 
 - **F** and **J** have factory raised bumps — the "home row" where your 8 fingers rest.
 - **Delete** and **Down Arrow** also have factory bumps.
-- **CapsLock** or **Insert** can both be used as the NVDA key. CapsLock is on the left side of the keyboard, two rows above the left Shift. Insert sits right next to Delete — a small matching bump is added.
+- **CapsLock** or **Insert** can both be used as the NVDA key. CapsLock is the leftmost key on the home row (the A/S/D/F row), directly above the left Shift. Insert sits right next to Delete on the right side of the keyboard.
 - From F/J, count to other keys: left of F is D → S → A; right of J is K → L → semicolon.
 
 ---
