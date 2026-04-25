@@ -141,7 +141,7 @@ Between jumps, press the next letter within about one second, or wait two second
 
 ## Important NVDA Shortcuts
 
-This laptop uses the "Laptop" keyboard layout. The NVDA key is Insert (either the right-side Insert key or the numpad Insert).
+This laptop uses the "Laptop" keyboard layout. The NVDA key can be either CapsLock or Insert (the right-side Insert key or the numpad Insert) — all three work interchangeably.
 
 | Key | Function |
 |---|---|
@@ -453,7 +453,7 @@ Pre-installed Vietnamese typing tutor from Sao Mai:
 
 - **F** and **J** have factory raised bumps — the "home row" where your 8 fingers rest.
 - **Delete** and **Down Arrow** also have factory bumps.
-- **Insert** (the NVDA key) sits right next to Delete — a small matching bump is added.
+- **CapsLock** or **Insert** can both be used as the NVDA key. CapsLock is on the left side of the keyboard, two rows above the left Shift. Insert sits right next to Delete — a small matching bump is added.
 - From F/J, count to other keys: left of F is D → S → A; right of J is K → L → semicolon.
 
 ---

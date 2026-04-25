@@ -60,7 +60,7 @@ These features help beginners learn NVDA and are useful for training sessions:
 
 ## Essential NVDA Shortcuts
 
-> **Note:** "NVDA key" = Insert (laptop layout). Ctrl+Alt+N launches NVDA if it stops.
+> **Note:** "NVDA key" = CapsLock or Insert (laptop layout — either works). Ctrl+Alt+N launches NVDA if it stops.
 
 | Shortcut | What It Does |
 |----------|-------------|

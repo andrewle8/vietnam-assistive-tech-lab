@@ -141,7 +141,7 @@ Giua cac lan nhay, nhan chu cai tiep theo trong vong khoang mot giay, hoac doi h
 
 ## Phim Tat NVDA Quan Trong
 
-May tinh nay dung che do ban phim "Laptop". Phim NVDA la phim Insert (phim Insert ben phai hoac phim Insert tren bang so).
+May tinh nay dung che do ban phim "Laptop". Phim NVDA co the la CapsLock hoac Insert (phim Insert ben phai hoac phim Insert tren bang so) — ca ba phim deu dung duoc nhu nhau.
 
 | Phim | Chuc nang |
 |---|---|
@@ -453,7 +453,7 @@ Chuong trinh day go phim cua Sao Mai, da duoc cai san tren may:
 
 - **F** va **J** co not noi san — day la vi tri "hang chinh" (home row) cho 8 ngon tay.
 - **Delete** va **Mui ten Xuong** cung co not noi tu nha san xuat.
-- **Insert** (phim NVDA) nam ngay canh Delete — co not noi nho them vao.
+- **CapsLock** hoac **Insert** deu co the dung lam phim NVDA. CapsLock nam ben trai ban phim, cach phim Shift trai hai hang phia tren. Insert nam ngay canh Delete — co not noi nho them vao.
 - Tu F/J, dem ra cac phim khac: ben trai F la D → S → A; ben phai J la K → L → dau cham phay.
 
 ---

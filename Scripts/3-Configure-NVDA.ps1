@@ -148,6 +148,27 @@ if (Test-Path $src32) {
     Write-Log "32-bit SAPI5 registry path not found" "WARNING"
 }
 
+# Step 5b: DllSurrogate for VnTtsEng (32-bit COM, must be reachable by 64-bit NVDA).
+# Mirroring the voice tokens (Step 5) is not enough -- the engine CLSID resolves to a
+# 32-bit InprocServer32, which 64-bit processes cannot load directly. Registering an
+# empty DllSurrogate for the AppID makes COM host the DLL in dllhost.exe, and 64-bit
+# clients (NVDA, sm-Readmate, SAPI.SpVoice) can then enumerate and use the voices.
+$vnTtsClsid = '{7DDCD6E4-E60A-4C60-B7AA-C9A652FEEDF2}'
+$wow64Clsid = "HKLM:\SOFTWARE\Classes\WOW6432Node\CLSID\$vnTtsClsid"
+if (Test-Path $wow64Clsid) {
+    try {
+        $appIdPath = "HKLM:\SOFTWARE\Classes\AppID\$vnTtsClsid"
+        if (-not (Test-Path $appIdPath)) { New-Item -Path $appIdPath -Force | Out-Null }
+        New-ItemProperty -Path $appIdPath -Name 'DllSurrogate' -Value '' -PropertyType String -Force | Out-Null
+        New-ItemProperty -Path $wow64Clsid -Name 'AppID' -Value $vnTtsClsid -PropertyType String -Force | Out-Null
+        Write-Log "Registered DllSurrogate for VnTtsEng -- 64-bit NVDA can now use Sao Mai voices" "SUCCESS"
+    } catch {
+        Write-Log "Failed to register DllSurrogate for VnTtsEng: $_" "WARNING"
+    }
+} else {
+    Write-Log "VnTtsEng CLSID not found in 32-bit hive (VNVoice may not be installed)" "INFO"
+}
+
 # Step 6: Install UniKey (Vietnamese keyboard input)
 Write-Log "Installing UniKey Vietnamese keyboard..." "INFO"
 
