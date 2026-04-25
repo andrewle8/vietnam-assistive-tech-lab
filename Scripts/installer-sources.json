@@ -161,5 +161,12 @@
     "version": "4.8.1009.21",
     "url_template": "https://louderpages.org/dl/RHVoice-voice-Vietnamese-Vi-Vu-v{version}-setup.exe",
     "destination": "SaoMai/RHVoice-voice-Vietnamese-Vi-Vu-v{version}-setup.exe"
+  },
+  "dell_command_configure": {
+    "source": "manual",
+    "version": "5.2.2.292",
+    "destination": "Dell/Dell-Command-Configure-Application_F2V9N_WIN64_{version}_A00.EXE",
+    "fallback": "https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/download/installers-v1/Dell-Command-Configure-Application_F2V9N_WIN64_{version}_A00.EXE",
+    "_note": "Direct dl.dell.com URL (https://dl.dell.com/FOLDER14333137M/1/...) requires browser User-Agent + Referer headers and is not stable across versions, so we treat DCC as manual with a GitHub Releases fallback. Driver page: https://www.dell.com/support/home/en-us/drivers/driversdetails?driverid=f2v9n. SHA-256 (vendor-published): bac829a34b53eaa98afa10c033646932db9f9775d285799180d5bec30fe90225"
   }
 }

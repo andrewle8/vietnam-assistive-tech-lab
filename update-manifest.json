@@ -6,5 +6,6 @@
   "release_base": "https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/download/installers-v1",
   "notes": "Initial deployment — no updates yet. See docs/Remote-Updates.md for how to push updates.",
   "packages": [],
-  "scripts": []
+  "scripts": [],
+  "bios_settings": {}
 }

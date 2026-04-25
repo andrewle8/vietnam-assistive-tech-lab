@@ -119,9 +119,18 @@ if ($remoteManifest.min_local_version -and $localVersion -lt $remoteManifest.min
     exit 1
 }
 
-# Check if there are any packages to update
-if (-not $remoteManifest.packages -or $remoteManifest.packages.Count -eq 0) {
-    Write-AgentLog "Update manifest has no packages. Nothing to do."
+# Check if there's any work to do (packages, scripts, OR bios_settings).
+# Historically this only checked packages, which meant scripts-only or bios-only updates
+# never ran. Treat all three as work types.
+$hasPackages = $remoteManifest.packages -and $remoteManifest.packages.Count -gt 0
+$hasScripts  = $remoteManifest.scripts  -and $remoteManifest.scripts.Count  -gt 0
+$hasBios     = $remoteManifest.bios_settings -and (
+                  ($remoteManifest.bios_settings.PSObject.Properties |
+                   Where-Object { -not $_.Name.StartsWith("_") } |
+                   Measure-Object).Count -gt 0
+              )
+if (-not ($hasPackages -or $hasScripts -or $hasBios)) {
+    Write-AgentLog "Update manifest has no packages, scripts, or bios_settings. Nothing to do."
     exit 0
 }
 
@@ -308,12 +317,61 @@ try {
         }
     }
 
-    # ---- Step 8: Update local manifest version ----
+    # ---- Step 7b: Apply remote bios_settings (Dell BIOS safety-net push) ----
 
-    if ($allSuccess -and (Test-Path $LocalManifest)) {
-        $localData.manifest_version = $remoteVersion
-        $localData | ConvertTo-Json -Depth 5 | Out-File $LocalManifest -Encoding UTF8
-        Write-AgentLog "Local manifest updated to version $remoteVersion"
+    $biosResult = $null
+    if ($remoteManifest.bios_settings) {
+        $remoteBios = @{}
+        foreach ($prop in $remoteManifest.bios_settings.PSObject.Properties) {
+            if (-not $prop.Name.StartsWith("_")) { $remoteBios[$prop.Name] = "$($prop.Value)" }
+        }
+        if ($remoteBios.Count -gt 0) {
+            Write-AgentLog "Applying $($remoteBios.Count) BIOS settings from remote manifest..."
+            $applyBiosScript = Join-Path (Split-Path -Parent $PSCommandPath) "Apply-BIOS-Settings.ps1"
+            if (-not (Test-Path $applyBiosScript)) {
+                Write-AgentLog "Apply-BIOS-Settings.ps1 not found at $applyBiosScript - cannot apply remote BIOS settings" "ERROR"
+                $allSuccess = $false
+            } else {
+                try {
+                    $biosResult = & $applyBiosScript -Settings $remoteBios -LogFile $logFile
+                    Write-AgentLog "BIOS apply: $($biosResult.Status) (applied=$($biosResult.Applied) skipped=$($biosResult.Skipped) failed=$($biosResult.Failed))"
+
+                    # Sync local manifest.json bios_settings so future Configure-Laptop.ps1 runs
+                    # see the new fleet baseline. Skip sync only when the apply itself never
+                    # reached the BIOS (cctk missing or dump failed).
+                    if ($biosResult.Status -notin @("MISSING_CCTK","DUMP_FAILED")) {
+                        if ($null -eq $localData.PSObject.Properties["bios_settings"]) {
+                            Add-Member -InputObject $localData -NotePropertyName "bios_settings" -NotePropertyValue $remoteManifest.bios_settings -Force
+                        } else {
+                            $localData.bios_settings = $remoteManifest.bios_settings
+                        }
+                    }
+
+                    if ($biosResult.Failed -gt 0) { $allSuccess = $false }
+                } catch {
+                    Write-AgentLog "BIOS apply threw: $($_.Exception.Message)" "ERROR"
+                    $allSuccess = $false
+                }
+            }
+        }
+    }
+
+    # ---- Step 8: Update local manifest ----
+    # bios_settings sync persists to disk regardless of overall success so
+    # audits stay accurate when packages/scripts fail. Version bump still gates
+    # on full success so failed work retries next nightly run.
+
+    if (Test-Path $LocalManifest) {
+        $persistBios = $biosResult -and ($biosResult.Status -notin @("MISSING_CCTK","DUMP_FAILED"))
+        if ($allSuccess -or $persistBios) {
+            if ($allSuccess) { $localData.manifest_version = $remoteVersion }
+            $localData | ConvertTo-Json -Depth 5 | Out-File $LocalManifest -Encoding UTF8
+            if ($allSuccess) {
+                Write-AgentLog "Local manifest updated to version $remoteVersion"
+            } else {
+                Write-AgentLog "Local manifest bios_settings synced (version held at $localVersion - retry next run)"
+            }
+        }
     }
 
     # ---- Step 9: Report results ----
@@ -321,7 +379,7 @@ try {
     $overallStatus = if ($allSuccess) { "SUCCESS" } else { "PARTIAL_FAILURE" }
     Write-AgentLog "Update complete. Status: $overallStatus"
 
-    Write-Result @{
+    $resultPayload = @{
         computer = $env:COMPUTERNAME
         timestamp = (Get-Date -Format "yyyy-MM-ddTHH:mm:ss")
         status = $overallStatus
@@ -329,6 +387,16 @@ try {
         remote_version = $remoteVersion
         packages = $packageResults
     }
+    if ($biosResult) {
+        $resultPayload.bios = @{
+            status   = $biosResult.Status
+            applied  = $biosResult.Applied
+            skipped  = $biosResult.Skipped
+            failed   = $biosResult.Failed
+            settings = $biosResult.Settings
+        }
+    }
+    Write-Result $resultPayload
 
 } finally {
     # ---- Always release lock ----

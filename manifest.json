@@ -107,7 +107,44 @@
       "paths": [
         "C:\\Program Files\\UniKey\\UniKeyNT.exe"
       ]
+    },
+    "dell_command_configure": {
+      "version": "5.2.2.292",
+      "installer": "Dell-Command-Configure-Application_F2V9N_WIN64_5.2.2.292_A00.EXE",
+      "critical": false,
+      "paths": [
+        "C:\\Program Files (x86)\\Dell\\Command Configure\\X86_64\\cctk.exe"
+      ]
     }
+  },
+
+  "bios_settings": {
+    "_comment": "Dell BIOS settings applied by Configure-Laptop.ps1 (USB path) and Update-Agent.ps1 (remote safety net) via Apply-BIOS-Settings.ps1. Keys are cctk option names; values are exactly what cctk accepts. Latitude 5420 only (range/options vary by model).",
+    "TpmSecurity": "Enabled",
+    "SecureBoot": "Enabled",
+    "Camera": "Enabled",
+    "PrimaryBattChargeCfg": "Adaptive",
+    "BrightnessAc": "8",
+    "BrightnessBattery": "2",
+    "FingerprintReader": "Disabled",
+    "SignOfLifeByKbdBacklight": "Disabled",
+    "TelemetryAccessLvl": "Disabled",
+    "BIOSConnect": "Disabled",
+    "FOTA": "Disabled",
+    "AllowBiosDowngrade": "Disabled",
+    "WakeOnLan": "Disabled",
+    "AutoOn": "Disabled",
+    "FnLockMode": "EnableSecondary",
+    "PowerWarn": "Disabled",
+    "HttpsBoot": "Disabled",
+    "UefiNwStack": "Disabled",
+    "SupportAssistOSRecovery": "Disabled",
+    "WakeOnDock": "Disabled",
+    "Nfc": "Disabled",
+    "SmartErrors": "Enabled",
+    "EmbNic1": "Enabled",
+    "WarningsAndErr": "ContWrnErr",
+    "AutoOSRecoveryThreshold": "OFF"
   },
 
   "nvda_addons": {

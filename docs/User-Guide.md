@@ -58,7 +58,7 @@ The laptop uses Audio-Technica ATH-M40x headphones.
 - The cable is detachable. The small end (2.5mm) plugs into the headphones, the large end (3.5mm) plugs into the laptop.
 - Use the volume keys on the keyboard to increase or decrease volume.
 - Volume is set to 50% each time the laptop starts.
-- Screen brightness is set to 50% each time the laptop starts (saves power and is easier on the eyes).
+- Screen brightness is set in BIOS: ~50% on AC power, ~13% on battery (saves battery life).
 
 ---
 

@@ -99,6 +99,15 @@ $installations += @(
         Path = ".\Installers\Utilities\GoldenDict\GoldenDict-1.5.1-Install.exe"
         Args = @("/S")
         WaitTime = 30
+    },
+    @{
+        # Dell Command | Configure - provides cctk.exe for fleet BIOS management.
+        # Self-extracting Dell SDP wrapper; /s runs silent. Only required on Dell hardware
+        # (Latitude 5420 in our fleet); harmless to skip on non-Dell test bench.
+        Name = "Dell Command | Configure 5.2.2"
+        Path = ".\Installers\Dell\Dell-Command-Configure-Application_F2V9N_WIN64_5.2.2.292_A00.EXE"
+        Args = @("/s")
+        WaitTime = 120
     }
 )
 

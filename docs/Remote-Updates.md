@@ -10,17 +10,18 @@ Every laptop runs `C:\LabTools\update-agent\Update-Agent.ps1` as a scheduled tas
 2. Compares `update_version` (remote) against `manifest_version` (local copy at `C:\LabTools\manifest.json`)
 3. If remote is newer, downloads every file listed in `packages` from the URL in `release_base`, verifies SHA256, installs
 4. Runs every script listed in `scripts` (downloads + SHA256-verifies first)
-5. Reports results to `C:\LabTools\update-agent\results\update-YYYY-MM-DD.json`
-6. Bumps local `manifest_version` to match remote
+5. Applies any BIOS settings in `bios_settings` via Dell Command | Configure (`cctk.exe`) — see "Pushing BIOS settings" below
+6. Reports results to `C:\LabTools\update-agent\results\update-YYYY-MM-DD.json`
+7. Bumps local `manifest_version` to match remote
 
 Safety windows:
 - No updates 7 AM – 5 PM (school/homework hours)
 - No updates if no internet
 - Lock file prevents concurrent runs
 
-## Important: known agent quirk
+## Note about the early-exit quirk (historical)
 
-The deployed `Update-Agent.ps1` has an early-exit when `packages` is empty — it will NOT run the `scripts` array alone. **Any update that runs a script must include at least one entry in `packages` first.** For book pushes, just put the first EPUB of the batch in `packages` and the rest happen in the script. A non-`.exe`/`.msi` package logs a harmless "Unknown installer type" error but doesn't block the scripts array from running.
+The original `Update-Agent.ps1` had an early-exit when `packages` was empty — it would NOT run `scripts` alone. The agent shipped with the BIOS rollout (April 2026) treats `packages`, `scripts`, and `bios_settings` as three independent work types and runs whichever are non-empty. Once every laptop has been re-imaged via Configure-Laptop.ps1 from this rollout, the trigger-EPUB workaround documented in older book pushes is no longer required — but a stray harmless EPUB doesn't hurt.
 
 ## Pushing a book batch
 
@@ -150,13 +151,67 @@ Same pattern, but the package is the real installer (`.exe` or `.msi`):
 
 Same pattern as the book push (trigger EPUB/file in `packages`, script in `scripts`). The script runs as SYSTEM — it can touch registry, services, scheduled tasks, any user profile via absolute paths. Be careful.
 
+## Pushing BIOS settings remotely (Dell Command | Configure)
+
+Use this to change a Dell BIOS setting across the fleet without physical access. Settings are applied via `cctk.exe` (installed on every laptop by `Configure-Laptop.ps1` Step 18 + the DCC entry in `1-Install-All.ps1`).
+
+**1. Edit `update-manifest.json`** — bump `update_version` and populate `bios_settings`. Keys are exactly the cctk option names (case-sensitive); values are what cctk accepts. Example flipping AC brightness from 8 (≈53%) to 6 (40%):
+
+```json
+{
+  "schema_version": 1,
+  "update_version": "2026.06.10",
+  "min_local_version": "2026.04.01",
+  "release_tag": "installers-v1",
+  "release_base": "https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/download/installers-v1",
+  "notes": "Drop AC brightness from 50% to 40% (battery feedback from students)",
+  "packages": [],
+  "scripts": [],
+  "bios_settings": {
+    "BrightnessAc": "6"
+  }
+}
+```
+
+**2. Commit and push.** No GitHub Release uploads needed — `bios_settings` carries inline values, not files.
+
+```bash
+git add update-manifest.json
+git commit -m "update"
+git push
+```
+
+**3. Wait for the next 6 PM ICT window.** Each laptop pulls the manifest, runs `Apply-BIOS-Settings.ps1` against the new values, and writes per-setting results to `C:\LabTools\update-agent\results\update-YYYY-MM-DD.json` under a `bios` key.
+
+**4. After the push, sync the local file and reset.** The agent automatically syncs the local `C:\LabTools\manifest.json` `bios_settings` block to match what was applied — so re-running `Configure-Laptop.ps1` later will reapply the same values. Once the rollout has settled:
+
+```json
+"bios_settings": {}
+```
+
+Don't roll `update_version` backward.
+
+**Behavior notes:**
+- `Apply-BIOS-Settings.ps1` is idempotent: it dumps current BIOS state once, then writes only the keys whose values differ. Re-running on a laptop already at the desired state is a no-op.
+- Most Dell BIOS settings activate **on next reboot**. The agent does NOT force a reboot — students keep their session, and the new value takes effect whenever the laptop next restarts.
+- Settings whose names start with `_` (e.g., `_comment`) are ignored — safe to leave inline notes in the JSON.
+- Latitude 5420 only. Setting names and accepted values vary by hardware platform; pushing a value cctk doesn't recognize logs an ERROR for that setting and continues with the rest.
+
+**Common settings reference** (from `Configure-Laptop.ps1` Step 38 baseline; ranges/options vary by model):
+- `BrightnessAc` / `BrightnessBattery` — 0 to 15 (0=0%, 15=100%)
+- `WakeOnLan` — `Disabled` / `LanOnly` / `LanWithPxeBoot`
+- `AutoOn` — `Disabled` / `Everyday` / `Weekdays` / `SelectDays:Mon,Wed,...`
+- `AutoOnHr` / `AutoOnMn` — 0–23 / 0–59
+- `TelemetryAccessLvl` — `Disabled` / `Basic` / `Enhanced` / `Full`
+- For unknown settings: install DCC on the test bench (PC-01) and run `cctk -H --<SettingName>` to see accepted values.
+
 ## Safety notes
 
 - **Idempotence:** The book import script uses `SELECT file_path FROM tb_books WHERE is_deleted = 0` to skip books already in the database. Re-running the same batch does nothing.
 - **Transaction atomicity:** All DB inserts wrapped in a transaction. Partial failure rolls back — no corrupt library.
 - **Student profile pinned:** Script hardcodes `C:\Users\Student\AppData\Roaming\SaoMai\SM Readmate\`. It does NOT use `$env:APPDATA` (which resolves to the SYSTEM profile when run by the scheduled task).
 - **No EPUB is ever deleted:** Script only appends. Existing books on the laptop — including the 77 that shipped on the USB — stay untouched.
-- **Dormant by default:** When `update-manifest.json` has `packages: []` and `scripts: []`, the agent logs "Nothing to do" and exits. No side effects.
+- **Dormant by default:** When `update-manifest.json` has `packages: []`, `scripts: []`, AND `bios_settings: {}`, the agent logs "Nothing to do" and exits. No side effects.
 
 ## Limits to be aware of
 

@@ -52,7 +52,7 @@ Máy tính dùng tai nghe Audio-Technica ATH-M40x.
 - Dây cáp có thể tháo rời. Đầu nhỏ (2.5mm) cắm vào tai nghe, đầu lớn (3.5mm) cắm vào máy tính.
 - Dùng phím âm lượng trên bàn phím để tăng hoặc giảm âm lượng.
 - Âm lượng được đặt ở 50% mỗi khi bật máy.
-- Độ sáng màn hình được đặt ở 50% mỗi khi bật máy (để tiết kiệm điện và dễ chịu cho mắt).
+- Độ sáng màn hình được đặt sẵn trong BIOS: khoảng 50% khi cắm sạc, khoảng 13% khi dùng pin (tiết kiệm pin).
 
 USB Của Bạn
 

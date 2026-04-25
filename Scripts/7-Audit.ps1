@@ -463,9 +463,10 @@ Write-Host ""
 #   LabUpdateAgent is the GitHub-pull update agent (daily at 18:00).
 #   LabNVDAStart auto-launches NVDA at logon (replaces legacy Startup-folder .lnk that
 #     Windows deferred ~2 min on battery cold boot).
-#   LabVolumeReset / LabBrightnessReset clamp speakers to 50% (hearing safety) and
-#     brightness to 50% (battery + comfort) at every logon.
-$expectedTasks = @("LabReassignStudentUSB", "LabUpdateAgent", "LabNVDAStart", "LabVolumeReset", "LabBrightnessReset")
+#   LabVolumeReset clamps speakers to 50% at every logon (hearing safety).
+#   (Brightness used to live here as LabBrightnessReset; brightness is now owned by
+#    BIOS via Configure-Laptop.ps1 Step 38 — see manifest.json bios_settings.)
+$expectedTasks = @("LabReassignStudentUSB", "LabUpdateAgent", "LabNVDAStart", "LabVolumeReset")
 foreach ($taskName in $expectedTasks) {
     $task = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
     if ($task) {
@@ -479,7 +480,6 @@ foreach ($taskName in $expectedTasks) {
 # shortcut, so a missing file means the corresponding automation is broken.
 $labToolsFiles = @(
     "C:\LabTools\reset-volume.ps1",
-    "C:\LabTools\reset-brightness.ps1",
     "C:\LabTools\Reassign-StudentUSB.ps1",
     "C:\LabTools\update-agent\Update-Agent.ps1"
 )
@@ -549,6 +549,81 @@ if ($lxp) {
     Add-Result "Accounts" "Vietnamese LXP" "Installed" $lxp.Version "PASS"
 } else {
     Add-Result "Accounts" "Vietnamese LXP" "Installed" "Missing (run Fix-Vietnamese.ps1)" "WARN"
+}
+
+# -----------------------------------------------
+# Section 8: BIOS Settings (Dell Command | Configure)
+# -----------------------------------------------
+# Verifies live BIOS values match manifest.json bios_settings using cctk -o.
+# Cost: one ~10-second dump per audit run (vs ~10s per setting if queried
+# individually). Keys whose names start with `_` are skipped (notes/comments).
+# WARN when DCC isn't installed or a setting isn't in cctk's dump (platform
+# may not expose it). FAIL when the live value differs from manifest.
+Write-Host "`n--- BIOS ---" -ForegroundColor White
+Write-Host ""
+
+if (-not $manifest.bios_settings) {
+    Write-Host "  manifest.json has no bios_settings block - skipping" -ForegroundColor DarkGray
+} else {
+    $expectedBios = @{}
+    foreach ($prop in $manifest.bios_settings.PSObject.Properties) {
+        if (-not $prop.Name.StartsWith("_")) { $expectedBios[$prop.Name] = "$($prop.Value)" }
+    }
+
+    if ($expectedBios.Count -eq 0) {
+        Write-Host "  bios_settings has no managed keys - skipping" -ForegroundColor DarkGray
+    } else {
+        $cctkCandidates = @(
+            "C:\Program Files (x86)\Dell\Command Configure\X86_64\cctk.exe",
+            "C:\Program Files\Dell\Command Configure\X86_64\cctk.exe",
+            "C:\Program Files (x86)\Dell\Command Configure\X86\cctk.exe"
+        )
+        $cctk = $cctkCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+
+        if (-not $cctk) {
+            Add-Result "BIOS" "Dell Command | Configure" "Installed (cctk.exe)" "Missing" "WARN"
+            Write-Host "  Cannot read BIOS - DCC not installed. Run 1-Install-All.ps1." -ForegroundColor DarkGray
+        } else {
+            Write-Host "  Reading BIOS state via cctk (~10s)..." -ForegroundColor DarkGray
+            $dumpFile = Join-Path $env:TEMP ("audit-bios-dump-{0}.txt" -f ([guid]::NewGuid().ToString("N")))
+            $dumpOk = $false
+            $dumpExit = $null
+            try {
+                & $cctk -o $dumpFile 2>&1 | Out-Null
+                $dumpExit = $LASTEXITCODE
+                $dumpOk = ($dumpExit -eq 0 -and (Test-Path $dumpFile))
+            } catch { $dumpOk = $false }
+
+            if (-not $dumpOk) {
+                $exitDesc = if ($null -ne $dumpExit) { "exit $dumpExit" } else { "exception" }
+                Add-Result "BIOS" "cctk dump" "Success" "Failed ($exitDesc)" "FAIL"
+            } else {
+                $current = @{}
+                foreach ($line in (Get-Content $dumpFile)) {
+                    if ($line -match "^([A-Za-z][A-Za-z0-9]*)=(.*)$") {
+                        # First occurrence wins (same as Apply-BIOS-Settings.ps1) so multi-
+                        # line settings like BootOrder don't poison single-value keys.
+                        if (-not $current.ContainsKey($Matches[1])) {
+                            $current[$Matches[1]] = $Matches[2].Trim()
+                        }
+                    }
+                }
+                Remove-Item $dumpFile -Force -ErrorAction SilentlyContinue
+
+                foreach ($key in ($expectedBios.Keys | Sort-Object)) {
+                    $expected = $expectedBios[$key]
+                    $actual = $current[$key]
+                    if ($null -eq $actual) {
+                        Add-Result "BIOS" $key $expected "(not in cctk dump)" "WARN"
+                    } elseif ($actual -eq $expected) {
+                        Add-Result "BIOS" $key $expected $actual "PASS"
+                    } else {
+                        Add-Result "BIOS" $key $expected $actual "FAIL"
+                    }
+                }
+            }
+        }
+    }
 }
 
 # -----------------------------------------------

@@ -969,11 +969,12 @@ try {
 
 # Step 8: (Moved to Step 6 — desktop shortcuts are now created in one pass)
 
-# Step 9: Login-reset defaults (volume + brightness)
-# Both run on every login via All Users Startup shortcuts. They guarantee a known-good
-# baseline so the previous session can't leave the laptop muted, deafening, blacked-out,
-# or blindingly bright. Each script logs failures next to itself for diagnosis.
-Write-Log "Step 9: Setting login-reset defaults (volume + brightness)..." "INFO"
+# Step 9: Login-reset volume defaults (hearing protection)
+# Caps system volume at 50% on each login so the previous session can't leave the
+# laptop muted or deafening. Brightness used to be reset here too; it's now governed
+# entirely by BIOS BrightnessAc / BrightnessBattery (manifest.json bios_settings,
+# applied in Step 38 via cctk). One source of truth, survives Windows reinstalls.
+Write-Log "Step 9: Setting login-reset volume default (50%)..." "INFO"
 
 try {
     # --- Volume reset script (50%) -------------------------------------------------
@@ -1042,36 +1043,22 @@ public static class Helper {
     $volumeScriptPath = Join-Path "C:\LabTools" "reset-volume.ps1"
     Set-Content -Path $volumeScriptPath -Value $volumeScript -Force
 
-    # --- Brightness reset script (50%) ---------------------------------------------
-    # Saves ~3-5W per laptop continuously, eases eye strain, and recovers from any
-    # session that left the panel fully bright or near-black. WMI may return no
-    # instance on hardware without a software-controllable backlight (e.g. desktops
-    # or some external monitors); failures land in the log file.
-    $brightnessScript = @'
-# Reset internal display brightness to 50% on each login.
-# Saves power (~3-5W per laptop), reduces eye strain, and protects against
-# the previous session leaving the panel uncomfortably bright or dim.
-$logPath = 'C:\LabTools\reset-brightness.log'
-try {
-    $br = Get-CimInstance -Namespace root/wmi -ClassName WmiMonitorBrightnessMethods -ErrorAction Stop
-    Invoke-CimMethod -InputObject $br -MethodName WmiSetBrightness -Arguments @{ Timeout = [uint32]0; Brightness = [byte]50 } | Out-Null
-    "$([DateTime]::Now.ToString('s')) OK level=50%" | Out-File -FilePath $logPath -Append -Encoding ASCII
-} catch {
-    "$([DateTime]::Now.ToString('s')) FAILED: $($_.Exception.Message)" | Out-File -FilePath $logPath -Append -Encoding ASCII
-}
-'@
+    # --- Legacy brightness-reset cleanup -------------------------------------------
+    # Earlier versions of this script reset Windows brightness to 50% on every login
+    # via LabBrightnessReset + C:\LabTools\reset-brightness.ps1. Brightness is now
+    # owned by BIOS (Step 38), so remove the old artifacts on machines that were
+    # configured under the previous regime. Best-effort; missing items are fine.
+    Get-ScheduledTask -TaskName 'LabBrightnessReset' -ErrorAction SilentlyContinue |
+        ForEach-Object { Unregister-ScheduledTask -TaskName 'LabBrightnessReset' -Confirm:$false }
+    Remove-Item 'C:\LabTools\reset-brightness.ps1' -Force -ErrorAction SilentlyContinue
+    Remove-Item 'C:\LabTools\reset-brightness.log' -Force -ErrorAction SilentlyContinue
 
-    $brightnessScriptPath = Join-Path "C:\LabTools" "reset-brightness.ps1"
-    Set-Content -Path $brightnessScriptPath -Value $brightnessScript -Force
-
-    # --- Scheduled tasks (replaces legacy All Users Startup .lnks) -----------------
-    # Win11 defers Startup-folder .lnk launches by ~2 minutes on DC power (Power Throttling
-    # + Explorer startup deferment), so a battery cold boot left the laptop at full volume
-    # / wrong brightness for the first few minutes of class. Scheduled tasks fire directly
-    # on the AtLogOn trigger with explicit AllowStartIfOnBatteries and Priority 4, so they
-    # run promptly on AC and DC alike. Pattern matches UniKey-Startup-Vietnamese below.
-    # BUILTIN\Users + Limited principal: COM endpoints (CoreAudio, WMI brightness) are
-    # session-scoped, so the task must run inside the logging-on user's interactive session.
+    # --- Scheduled task (replaces legacy All Users Startup .lnk) -------------------
+    # Win11 defers Startup-folder .lnk launches by ~2 minutes on DC power, so a battery
+    # cold boot left the laptop at full volume for the first few minutes of class.
+    # Scheduled task fires directly on AtLogOn with explicit AllowStartIfOnBatteries
+    # and Priority 4, running inside the logging-on user's interactive session
+    # (CoreAudio is session-scoped).
     $allUsersStartup = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup"
     $approvedFolder  = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\StartupFolder"
     foreach ($staleLnk in @('LabVolumeReset.lnk','LabBrightnessReset.lnk')) {
@@ -1098,14 +1085,7 @@ try {
         -Action $volTaskAction -Trigger $resetTaskTrigger `
         -Settings $resetTaskSettings -Principal $resetTaskPrincipal -Force | Out-Null
 
-    $brTaskAction = New-ScheduledTaskAction -Execute 'powershell.exe' `
-        -Argument "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$brightnessScriptPath`""
-    Register-ScheduledTask -TaskName 'LabBrightnessReset' `
-        -Description 'Reset display brightness to 50% on each login.' `
-        -Action $brTaskAction -Trigger $resetTaskTrigger `
-        -Settings $resetTaskSettings -Principal $resetTaskPrincipal -Force | Out-Null
-
-    Write-Log "Login-reset tasks registered (LabVolumeReset, LabBrightnessReset; AtLogOn, battery-safe, Priority 4)" "SUCCESS"
+    Write-Log "LabVolumeReset registered (AtLogOn, battery-safe). Brightness is BIOS-managed via Step 38." "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not set login-reset defaults: $($_.Exception.Message)" "ERROR"
@@ -1354,13 +1334,17 @@ try {
         if (-not (Test-Path $filterKeysPath)) { New-Item -Path $filterKeysPath -Force -ErrorAction SilentlyContinue | Out-Null }
         Set-ItemProperty -Path $filterKeysPath -Name "Flags" -Value "122" -Force -ErrorAction SilentlyContinue
 
-        # Enable Toggle Keys beep (useful audio feedback for blind users - Caps/Num/Scroll Lock)
+        # Disable Toggle Keys entirely. NVDA uses CapsLock as its modifier, so every NVDA
+        # keypress would otherwise fire the Toggle Keys beep — which on key-repeat becomes
+        # a continuous tone over speech. NVDA already announces caps-lock state via voice,
+        # so the beep is pure noise. Flags=58 clears TOGGLEKEYSON+HOTKEYACTIVE so the 5-sec
+        # NumLock hold can't accidentally re-enable it.
         $toggleKeysPath = "$hive\Control Panel\Accessibility\ToggleKeys"
         if (-not (Test-Path $toggleKeysPath)) { New-Item -Path $toggleKeysPath -Force -ErrorAction SilentlyContinue | Out-Null }
-        Set-ItemProperty -Path $toggleKeysPath -Name "Flags" -Value "63" -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $toggleKeysPath -Name "Flags" -Value "58" -Force -ErrorAction SilentlyContinue
     }
 
-    Write-Log "Sticky Keys popup disabled, Filter Keys popup disabled, Toggle Keys beep enabled" "SUCCESS"
+    Write-Log "Sticky Keys popup disabled, Filter Keys popup disabled, Toggle Keys disabled" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not configure accessibility key settings: $($_.Exception.Message)" "ERROR"
@@ -1776,6 +1760,14 @@ try {
     $auditSource = Join-Path $PSScriptRoot "7-Audit.ps1"
     if (Test-Path $auditSource) {
         Copy-Item -Path $auditSource -Destination "$updateAgentDir\7-Audit.ps1" -Force
+    }
+
+    # Copy BIOS applier so Update-Agent can apply remote bios_settings (safety-net path).
+    # Update-Agent.ps1 looks for Apply-BIOS-Settings.ps1 next to itself.
+    $applyBiosSource = Join-Path $PSScriptRoot "Apply-BIOS-Settings.ps1"
+    if (Test-Path $applyBiosSource) {
+        Copy-Item -Path $applyBiosSource -Destination "$updateAgentDir\Apply-BIOS-Settings.ps1" -Force
+        Write-Log "Copied Apply-BIOS-Settings.ps1 to $updateAgentDir" "SUCCESS"
     }
 
     # Copy local manifest for version tracking
@@ -2720,6 +2712,46 @@ try {
     $successCount++  # Non-critical
 }
 
+# Step 38: Apply Dell BIOS settings from manifest.json bios_settings via cctk.
+# Idempotent (Apply-BIOS-Settings.ps1 dumps current state, only writes diffs).
+# Non-blocking: missing cctk on non-Dell test bench is logged WARNING and continues.
+Write-Log "Step 38: Applying Dell BIOS settings..." "INFO"
+
+try {
+    $manifestPath = Join-Path (Split-Path -Parent $PSScriptRoot) "manifest.json"
+    $applyBios    = Join-Path $PSScriptRoot "Apply-BIOS-Settings.ps1"
+
+    if (-not (Test-Path $manifestPath)) {
+        Write-Log "manifest.json not found at $manifestPath — skipping BIOS settings" "WARNING"
+        $successCount++
+    } elseif (-not (Test-Path $applyBios)) {
+        Write-Log "Apply-BIOS-Settings.ps1 not found at $applyBios — skipping BIOS settings" "WARNING"
+        $successCount++
+    } else {
+        $manifestObj = Get-Content $manifestPath -Raw | ConvertFrom-Json
+        if (-not $manifestObj.bios_settings) {
+            Write-Log "manifest.json has no bios_settings block — skipping" "INFO"
+            $successCount++
+        } else {
+            $biosHash = @{}
+            foreach ($prop in $manifestObj.bios_settings.PSObject.Properties) {
+                if (-not $prop.Name.StartsWith("_")) { $biosHash[$prop.Name] = "$($prop.Value)" }
+            }
+            $biosResult = & $applyBios -Settings $biosHash -LogFile $LogPath
+            switch ($biosResult.Status) {
+                "SUCCESS"      { Write-Log "BIOS: $($biosResult.Applied) applied, $($biosResult.Skipped) already correct" "SUCCESS" }
+                "PARTIAL"      { Write-Log "BIOS partial: $($biosResult.Applied) applied, $($biosResult.Skipped) already correct, $($biosResult.Failed) failed" "WARNING" }
+                "MISSING_CCTK" { Write-Log "BIOS skipped: cctk.exe not found (Dell Command | Configure not installed)" "WARNING" }
+                default        { Write-Log "BIOS step result: $($biosResult.Status)" "WARNING" }
+            }
+            $successCount++
+        }
+    }
+} catch {
+    Write-Log "BIOS settings step error: $($_.Exception.Message)" "WARNING"
+    $successCount++  # Non-blocking
+}
+
 # Summary
 Write-Host "`n========================================" -ForegroundColor Green
 Write-Host "Loaner Laptop Configuration Complete!" -ForegroundColor Green
@@ -2752,9 +2784,9 @@ Write-Host "  Kiwix         130% zoom, reopen last tab" -ForegroundColor White
 Write-Host "  GoldenDict    150% zoom, 18px article font, UI Automation" -ForegroundColor White
 Write-Host "  Sticky Keys   Popup disabled (Shift x5)" -ForegroundColor White
 Write-Host "  Filter Keys   Popup disabled (hold key)" -ForegroundColor White
-Write-Host "  Toggle Keys   Beep enabled (Caps/Num/Scroll Lock)" -ForegroundColor White
+Write-Host "  Toggle Keys   Disabled (NVDA's CapsLock modifier no longer beeps)" -ForegroundColor White
 Write-Host "  Volume reset  50% on each login (hearing safety)" -ForegroundColor White
-Write-Host "  Brightness    50% on each login (power saving, eye comfort)" -ForegroundColor White
+Write-Host "  Brightness    Set in BIOS — AC ~53%, Battery ~13% (Step 38 via cctk)" -ForegroundColor White
 Write-Host "  Win Update    Disabled (offline)" -ForegroundColor White
 Write-Host "  Notifications Toast, Notification Center, tips/suggestions all disabled" -ForegroundColor White
 Write-Host "  Narrator      Shortcut disabled (NVDA only)" -ForegroundColor White
