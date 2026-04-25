@@ -1,4 +1,4 @@
-﻿param(
+param(
     [Parameter(Mandatory=$true)]
     [int]$StartStudent,
     [string]$LogPath = "$PSScriptRoot\usb-batch-preparation.log"
@@ -21,8 +21,35 @@ function Write-Log {
     Write-Host $logMessage -ForegroundColor $color
 }
 
+# All removable (USB) drives, regardless of label.
 function Get-RemovableDrives {
     Get-CimInstance -ClassName Win32_LogicalDisk | Where-Object { $_.DriveType -eq 2 }
+}
+
+# Removable drives that are candidates for STU- preparation: skip anything labeled
+# DEPLOY_* (deploy media — formatting one would destroy 60 GB of installers and
+# would have to be rebuilt from scratch) and skip already-prepared STU-### drives
+# (re-running the script on a labeled drive shouldn't blow it away).
+function Get-CandidateDrives {
+    Get-RemovableDrives | Where-Object {
+        $label = "$($_.VolumeName)"
+        ($label -notmatch '^DEPLOY_') -and ($label -notmatch '^STU-\d{3}$')
+    }
+}
+
+# Find the portable-golden NVDA source from a connected DEPLOY_ USB. We need
+# this because the 285 MB portable can't live in git -- it only exists on the
+# DEPLOY USBs. Returns the path to the NVDA folder (containing nvda.exe), or
+# $null if no DEPLOY USB has it.
+function Find-PortableGoldenSource {
+    $deployDrives = Get-RemovableDrives | Where-Object { "$($_.VolumeName)" -match '^DEPLOY_' }
+    foreach ($d in $deployDrives) {
+        $candidate = Join-Path $d.DeviceID "Installers\NVDA\portable-golden\NVDA"
+        if (Test-Path (Join-Path $candidate "nvda.exe")) {
+            return $candidate
+        }
+    }
+    return $null
 }
 
 Write-Host "`n========================================" -ForegroundColor Cyan
@@ -35,14 +62,30 @@ if ($StartStudent -lt 1 -or $StartStudent -gt 999) {
     exit 1
 }
 
-$drives = @(Get-RemovableDrives)
+# Source for NVDA portable. Resolved from a connected DEPLOY_ USB.
+$portableSource = Find-PortableGoldenSource
+if (-not $portableSource) {
+    Write-Log "No DEPLOY_ USB with Installers\NVDA\portable-golden\NVDA\nvda.exe found." "ERROR"
+    Write-Host "Plug in at least one DEPLOY_ USB (it is the source for the NVDA portable copy)." -ForegroundColor Yellow
+    Write-Host "Detected removable drives:" -ForegroundColor Yellow
+    Get-RemovableDrives | ForEach-Object {
+        $lbl = if ($_.VolumeName) { $_.VolumeName } else { "(no label)" }
+        Write-Host ("  {0}  {1}" -f $_.DeviceID, $lbl) -ForegroundColor Yellow
+    }
+    pause
+    exit 1
+}
+Write-Log "NVDA portable source: $portableSource" "INFO"
+
+$drives = @(Get-CandidateDrives)
 if ($drives.Count -eq 0) {
-    Write-Log "No removable drives found. Plug in USB drives and try again." "ERROR"
+    Write-Log "No candidate drives found (all DEPLOY_ or already STU- labeled)." "ERROR"
+    Write-Host "Plug in blank USBs (or USBs you want re-prepped without STU label)." -ForegroundColor Yellow
     pause
     exit 1
 }
 
-Write-Host "Removable drives detected ($($drives.Count)):" -ForegroundColor Yellow
+Write-Host "Removable drives detected ($($drives.Count) candidates):" -ForegroundColor Yellow
 $assignments = @()
 for ($i = 0; $i -lt $drives.Count; $i++) {
     $drive = $drives[$i]
@@ -60,8 +103,17 @@ for ($i = 0; $i -lt $drives.Count; $i++) {
     }
 }
 
+$skippedDeploy = @(Get-RemovableDrives | Where-Object { "$($_.VolumeName)" -match '^DEPLOY_' })
+if ($skippedDeploy.Count -gt 0) {
+    Write-Host ""
+    Write-Host "Skipped (DEPLOY_ — never touched):" -ForegroundColor DarkGray
+    foreach ($d in $skippedDeploy) {
+        Write-Host ("  {0}\  {1}" -f $d.DeviceID, $d.VolumeName) -ForegroundColor DarkGray
+    }
+}
+
 Write-Host ""
-Write-Host "ALL DATA on these drives will be erased if not already NTFS." -ForegroundColor Red
+Write-Host "ALL DATA on the candidate drives will be erased if not already NTFS." -ForegroundColor Red
 Write-Host "Confirm: start student IDs at $($assignments[0].StudentId), end at $($assignments[-1].StudentId)" -ForegroundColor Yellow
 $confirm = Read-Host "Continue? (Y/N)"
 if ($confirm -ne 'Y' -and $confirm -ne 'y') {
@@ -116,9 +168,74 @@ if ($failed.Count -gt 0) {
 }
 
 if ($succeeded.Count -eq 0) {
-    Write-Log "No drives were prepared successfully. Aborting labeling phase." "ERROR"
+    Write-Log "No drives were prepared successfully. Aborting." "ERROR"
     pause
     exit 1
+}
+
+# ----------------------------------------------------------------------------
+# NVDA portable copy. Each STU- USB gets a self-contained portable NVDA so the
+# student can run their screen reader on any Windows machine without admin
+# rights or installation. Layout per USB:
+#   <STU>:\NVDA\nvda.exe            <- the portable executable
+#   <STU>:\NVDA\userConfig\         <- baked Vi-Vu + 11 addons + lab settings
+#   <STU>:\Khởi động NVDA.lnk       <- one-click launcher at USB root
+#   <STU>:\Tài liệu\, Âm thanh\, Bài tập\
+#   <STU>:\.student-id (hidden)
+# ----------------------------------------------------------------------------
+Write-Host ""
+Write-Host "========================================" -ForegroundColor Green
+Write-Host "NVDA PORTABLE COPY PHASE" -ForegroundColor Green
+Write-Host "========================================" -ForegroundColor Green
+Write-Host "Source: $portableSource" -ForegroundColor Cyan
+Write-Host "Copying ~285 MB to each STU drive (sequential, robocopy /MT:8)..." -ForegroundColor Cyan
+Write-Host ""
+
+$copyResults = @()
+foreach ($r in $succeeded) {
+    $stuRoot = "$($r.Letter):\"
+    $stuNvda = Join-Path $stuRoot "NVDA"
+    Write-Host "  -> $($r.StudentId) ($stuNvda) ..." -ForegroundColor White -NoNewline
+
+    # robocopy: /E recurse incl. empty, /MT:8 multithread, /R:1 retry, /W:1 wait,
+    # /NFL/NDL/NJH/NJS/NP keep output quiet (we only care about exit code).
+    $rcArgs = @($portableSource, $stuNvda, "/E", "/MT:8", "/R:1", "/W:1",
+                "/NFL", "/NDL", "/NJH", "/NJS", "/NP")
+    & robocopy @rcArgs | Out-Null
+    $rcExit = $LASTEXITCODE
+
+    # robocopy exit codes: 0=no change, 1=copied OK, 2=extras, 3=copied+extras.
+    # 0-7 = success; 8+ = failure.
+    if ($rcExit -lt 8 -and (Test-Path (Join-Path $stuNvda "nvda.exe"))) {
+        # Create launcher .lnk at USB root pointing to NVDA\nvda.exe.
+        try {
+            $lnkPath = Join-Path $stuRoot "Khởi động NVDA.lnk"
+            $ws = New-Object -ComObject WScript.Shell
+            $sc = $ws.CreateShortcut($lnkPath)
+            $sc.TargetPath       = (Join-Path $stuNvda "nvda.exe")
+            $sc.WorkingDirectory = $stuNvda
+            $sc.IconLocation     = (Join-Path $stuNvda "nvda.exe") + ",0"
+            $sc.Description      = "Khởi động NVDA từ USB"
+            $sc.Save()
+            [System.Runtime.Interopservices.Marshal]::ReleaseComObject($ws) | Out-Null
+        } catch {
+            Write-Host " (lnk failed: $($_.Exception.Message))" -ForegroundColor Yellow
+        }
+
+        Write-Host " OK (robocopy exit $rcExit)" -ForegroundColor Green
+        Write-Log "$($r.Letter): NVDA portable + launcher deployed (rc=$rcExit)" "SUCCESS"
+        $copyResults += [PSCustomObject]@{ Letter = $r.Letter; StudentId = $r.StudentId; Success = $true }
+    } else {
+        Write-Host " FAILED (robocopy exit $rcExit)" -ForegroundColor Red
+        Write-Log "$($r.Letter): NVDA portable copy FAILED (rc=$rcExit)" "ERROR"
+        $copyResults += [PSCustomObject]@{ Letter = $r.Letter; StudentId = $r.StudentId; Success = $false }
+    }
+}
+
+$copyFailed = @($copyResults | Where-Object { -not $_.Success })
+if ($copyFailed.Count -gt 0) {
+    Write-Host ""
+    Write-Host "$($copyFailed.Count) drive(s) failed NVDA copy. They are formatted/labeled but missing NVDA — re-run script to retry." -ForegroundColor Red
 }
 
 Write-Host ""
