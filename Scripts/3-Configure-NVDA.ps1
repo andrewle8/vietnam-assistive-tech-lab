@@ -72,6 +72,11 @@ if (Test-Path $addonsSourceDir) {
     $addonFiles = Get-ChildItem -Path $addonsSourceDir -Filter "*.nvda-addon" -ErrorAction SilentlyContinue
 
     if ($addonFiles.Count -gt 0) {
+        # Track every manifest name we successfully extract so the post-loop cleanup
+        # can recognise stale duplicates (folders left over from prior script versions
+        # that named extraction folders by .nvda-addon filename instead of manifest name).
+        $extractedManifestNames = @{}
+
         foreach ($addon in $addonFiles) {
             Write-Log "Installing add-on: $($addon.Name)..." "INFO"
             try {
@@ -105,9 +110,49 @@ if (Test-Path $addonsSourceDir) {
                 if (Test-Path $targetPath) { Remove-Item -Path $targetPath -Recurse -Force }
                 Move-Item -Path $tempExtract -Destination $targetPath -Force
                 Write-Log "Add-on '$($addon.Name)' installed as '$manifestName'" "SUCCESS"
+                $extractedManifestNames[$manifestName] = $true
             } catch {
                 Write-Log "ERROR installing add-on $($addon.Name): $($_.Exception.Message)" "ERROR"
             }
+        }
+
+        # Cleanup duplicate addon folders left over from prior deploys.
+        # An older version of this script extracted .nvda-addon files into folders
+        # named after the file (e.g. addons/RHVoice-2.0.19/) instead of the manifest
+        # name (e.g. addons/RHVoice/). The current run extracts to the manifest-name
+        # folder but does NOT touch the legacy <filename> folder, so both end up on
+        # disk side-by-side. NVDA loads BOTH (same `name = RHVoice` manifest field),
+        # picks the higher version, and on this lab that means RHVoice 2.0.19 — which
+        # fails inside the native lib (RHVoice_new_tts_engine returns NULL because
+        # 2.0.19's voice resource layout doesn't match Vi-Vu's 1.x voice addon).
+        # NVDA falls back to oneCore + Microsoft An. The student hears the wrong
+        # Vietnamese voice and we get blamed for "vi-VN not defaulting".
+        # The duplicate is identified by: same manifest name as one we just (re-)
+        # extracted, but a different folder name. User-installed addons via the
+        # NVDA UI are protected because they always extract to <manifestName>/.
+        $cleanedCount = 0
+        Get-ChildItem -Path $addonsDestDir -Directory -ErrorAction SilentlyContinue | ForEach-Object {
+            $folderName = $_.Name
+            $manifest = Join-Path $_.FullName 'manifest.ini'
+            if (-not (Test-Path $manifest)) { return }
+            $line = Get-Content $manifest | Where-Object { $_ -match '^\s*name\s*=' } | Select-Object -First 1
+            if ($line -match '^\s*name\s*=\s*"?([^"\r\n]+?)"?\s*$') {
+                $folderManifestName = $Matches[1].Trim()
+                if ($extractedManifestNames.ContainsKey($folderManifestName) -and ($folderName -ne $folderManifestName)) {
+                    try {
+                        Remove-Item $_.FullName -Recurse -Force -ErrorAction Stop
+                        Write-Log "Removed stale duplicate addon folder '$folderName' (canonical='$folderManifestName')" "SUCCESS"
+                        $cleanedCount++
+                    } catch {
+                        Write-Log "Could not remove stale duplicate '$folderName': $($_.Exception.Message)" "WARNING"
+                    }
+                }
+            }
+        }
+        if ($cleanedCount -gt 0) {
+            Write-Log "Cleaned up $cleanedCount stale duplicate addon folder(s) from previous deploy(s)" "INFO"
+        } else {
+            Write-Log "No stale duplicate addon folders found" "INFO"
         }
     } else {
         Write-Log "No NVDA add-on files found in $addonsSourceDir" "INFO"
