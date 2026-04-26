@@ -1049,9 +1049,10 @@ try {
 
 # Step 9: Login-reset volume defaults (hearing protection)
 # Caps system volume at 50% on each login so the previous session can't leave the
-# laptop muted or deafening. Brightness used to be reset here too; it's now governed
-# entirely by BIOS BrightnessAc / BrightnessBattery (manifest.json bios_settings,
-# applied in Step 38 via cctk). One source of truth, survives Windows reinstalls.
+# laptop muted or deafening. Brightness used to be reset here too; it's now seeded
+# by BIOS at cold boot (BrightnessAc / BrightnessBattery in manifest.json bios_settings,
+# applied in Step 38 via cctk) and enforced at runtime by the Balanced scheme's AC/DC
+# brightness values (Step 15). The legacy LabBrightnessReset task is removed below.
 Write-Log "Step 9: Setting login-reset volume default (50%)..." "INFO"
 
 try {
@@ -1163,7 +1164,7 @@ public static class Helper {
         -Action $volTaskAction -Trigger $resetTaskTrigger `
         -Settings $resetTaskSettings -Principal $resetTaskPrincipal -Force | Out-Null
 
-    Write-Log "LabVolumeReset registered (AtLogOn, battery-safe). Brightness is BIOS-managed via Step 38." "SUCCESS"
+    Write-Log "LabVolumeReset registered (AtLogOn, battery-safe). Brightness is BIOS-seeded at boot (Step 38) and Windows-enforced at runtime (Step 15)." "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not set login-reset defaults: $($_.Exception.Message)" "ERROR"
@@ -1466,10 +1467,17 @@ try {
     # the desktop is immediately available again.
     powercfg /setacvalueindex $balanced SUB_NONE CONSOLELOCK 0
     powercfg /setdcvalueindex $balanced SUB_NONE CONSOLELOCK 0
+    # Display brightness. BIOS BrightnessAc=8 / BrightnessBattery=2 (Dell 0-15 scale)
+    # only seed brightness at cold boot — once Windows is running, the active power
+    # scheme owns runtime brightness, so unplugging the cord wouldn't dim without
+    # these. AC 50% / DC 13% match the BIOS intent (8/15 ≈ 53, 2/15 ≈ 13).
+    $brightSet = "aded5e82-b909-4619-9949-f5d71dac0bcb"
+    powercfg /setacvalueindex $balanced SUB_VIDEO $brightSet 50
+    powercfg /setdcvalueindex $balanced SUB_VIDEO $brightSet 13
     # Make Balanced active so the values we just wrote take effect immediately.
     powercfg /setactive $balanced
 
-    Write-Log "Power settings configured (Balanced scheme: sleep on lid close, no wake timers, no lock screen on wake, no hibernate)" "SUCCESS"
+    Write-Log "Power settings configured (Balanced scheme: brightness AC 50% / DC 13%, sleep on lid close, no wake timers, no lock screen on wake, no hibernate)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not configure power settings: $($_.Exception.Message)" "ERROR"
@@ -2915,7 +2923,7 @@ Write-Host "  Sticky Keys   Popup disabled (Shift x5)" -ForegroundColor White
 Write-Host "  Filter Keys   Popup disabled (hold key)" -ForegroundColor White
 Write-Host "  Toggle Keys   Disabled (NVDA's CapsLock modifier no longer beeps)" -ForegroundColor White
 Write-Host "  Volume reset  50% on each login (hearing safety)" -ForegroundColor White
-Write-Host "  Brightness    Set in BIOS — AC ~53%, Battery ~13% (Step 38 via cctk)" -ForegroundColor White
+Write-Host "  Brightness    AC 50% / Battery 13% (Windows power plan + BIOS, Steps 15/38)" -ForegroundColor White
 Write-Host "  Win Update    Disabled (offline)" -ForegroundColor White
 Write-Host "  Notifications Toast, Notification Center, tips/suggestions all disabled" -ForegroundColor White
 Write-Host "  Narrator      Shortcut disabled (NVDA only)" -ForegroundColor White
