@@ -374,5 +374,3 @@ Write-Host "`n========================================" -ForegroundColor Green
 Write-Host ""
 
 Write-Log "=== NVDA Configuration Complete ===" "INFO"
-
-if (-not $env:LAB_BOOTSTRAP) { pause }

@@ -32,7 +32,6 @@ if (-not $ManifestPath) {
 if (-not (Test-Path $ManifestPath)) {
     Write-Host "[ERROR] manifest.json not found at: $ManifestPath" -ForegroundColor Red
     Write-Host "        Place manifest.json in the repo root or specify -ManifestPath" -ForegroundColor Red
-    pause
     exit 1
 }
 
@@ -765,5 +764,3 @@ Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host ""
 
 Write-Log "=== Audit Complete ==="
-
-if (-not $env:LAB_BOOTSTRAP) { pause }

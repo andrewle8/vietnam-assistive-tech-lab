@@ -22,7 +22,6 @@ $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIde
 if (-not $isAdmin) {
     Write-Log "ERROR: This script must be run as Administrator!" "ERROR"
     Write-Host "`nPlease right-click and select 'Run as Administrator'" -ForegroundColor Red
-    pause
     exit 1
 }
 
@@ -280,5 +279,3 @@ Write-Host "Successful: $successCount | Failed: $failCount" -ForegroundColor $(i
 Write-Host "`nLog file: $LogPath" -ForegroundColor Cyan
 Write-Host "`nNext step: Run .\2-Verify-Installation.ps1" -ForegroundColor Yellow
 Write-Host "========================================" -ForegroundColor Green
-
-if (-not $env:LAB_BOOTSTRAP) { pause }

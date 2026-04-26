@@ -230,5 +230,3 @@ Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host ""
 
 Write-Log "=== Verification Complete ===" "INFO"
-
-if (-not $env:LAB_BOOTSTRAP) { pause }

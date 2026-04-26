@@ -24,11 +24,11 @@ Write-Host ""
 
 if (-not (Test-Path $SourcesFile)) {
     Write-Host "[ERROR] installer-sources.json not found at: $SourcesFile" -ForegroundColor Red
-    pause; exit 1
+    exit 1
 }
 if (-not (Test-Path $ManifestFile)) {
     Write-Host "[ERROR] manifest.json not found at: $ManifestFile" -ForegroundColor Red
-    pause; exit 1
+    exit 1
 }
 
 $sources = Get-Content $SourcesFile -Raw | ConvertFrom-Json
@@ -444,5 +444,3 @@ Write-Host "`nChecksums saved to: $ChecksumFile" -ForegroundColor DarkGray
 Write-Host "Next: Run .\Verify-Installers.ps1 to validate all files" -ForegroundColor Cyan
 Write-Host "`n========================================" -ForegroundColor Cyan
 Write-Host ""
-
-if (-not $env:LAB_BOOTSTRAP) { pause }

@@ -28,7 +28,6 @@ $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIde
 if (-not $isAdmin) {
     Write-Log "ERROR: This script must be run as Administrator!" "ERROR"
     Write-Host "`nPlease right-click and select 'Run as Administrator'" -ForegroundColor Red
-    pause
     exit 1
 }
 
@@ -2964,5 +2963,3 @@ if ($defaultLoaded) {
     reg unload "HKU\DefaultProfile" 2>$null | Out-Null
     Write-Log "Unloaded Default profile registry hive" "INFO"
 }
-
-if (-not $env:LAB_BOOTSTRAP) { pause }

@@ -37,7 +37,6 @@ $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIde
 if (-not $isAdmin) {
     Write-Host "ERROR: This script must be run as Administrator!" -ForegroundColor Red
     Write-Host "Right-click and select 'Run as Administrator'" -ForegroundColor Red
-    pause
     exit 1
 }
 
@@ -76,9 +75,6 @@ Write-Host "      Firewall + execution policy configured" -ForegroundColor Green
 
 Write-Host "`n--- Phase 2: Software Installation ---" -ForegroundColor White
 Write-Host ""
-
-# Signal sub-scripts not to pause (they pause when run standalone)
-$env:LAB_BOOTSTRAP = "1"
 
 if ($SkipInstall) {
     Write-Host "      Skipping installation (-SkipInstall flag set)" -ForegroundColor DarkGray
