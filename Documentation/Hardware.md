@@ -11,7 +11,8 @@
 | EASTBULL 16GB USB drives | 100 | $2.32 | $231.88 |
 | Reizen RL-350 braille labeler | 1 | $34.99 | $34.99 |
 | Reizen labeling tape (3 rolls) | 1 | $10.95 | $10.95 |
-| **All-in total** | | | **$8,176.72** |
+| 14.4" laptop bags | 20 | $4.66 | $93.20 |
+| **All-in total** | | | **$8,269.92** |
 
 **Per station (laptop + headphone): $404.51** (19 stations)
 
@@ -142,4 +143,16 @@ For labeling USB drives, equipment, and student materials in Braille.
 | Subtotal | $10.95 |
 | Tax (refunded) | ~~$0.85~~ |
 | **Grand Total** | **$10.95** |
+
+---
+
+## - Laptop Bags
+
+14.4" Computer Bag Protective Cover, Front Pocket — 20 units (8 blue, 7 black, 5 purple).
+
+| | |
+|---|---|
+| Total Units | 20 |
+| Avg Cost/Unit (incl tax) | $4.66 |
+| **Grand Total** | **$93.20** |
 
