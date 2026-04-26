@@ -630,16 +630,15 @@ foreach ($acct in @("Student", "LabAdmin")) {
     }
 }
 
-# Vietnamese Language Experience Pack (LXP). Win11 modern UI surfaces (Settings, File
-# Explorer ribbon, lock screen) only render Vietnamese when the Store-delivered LXP
-# is installed; the LIP cab + FoDs alone leave parts of the shell in English. Known
-# deployment gap: bootstrap installs the LIP/FoDs but LXP requires Store access.
-# Repair tool: Fix-Vietnamese.ps1 on the DEPLOY_ USB.
-$lxp = Get-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Where-Object { $_.Name -like "Microsoft.LanguageExperiencePack*vi*" } | Select-Object -First 1
-if ($lxp) {
-    Add-Result "Accounts" "Vietnamese LXP" "Installed" $lxp.Version "PASS"
+# Vietnamese language pack. vi-VN ships as an lp.cab on Win11 — there is no LXP
+# appx for Vietnamese (Microsoft's language imaging docs put it in the cab-only
+# bucket alongside ca-ES, eu-ES, gl-ES, id-ID). Configure-Laptop Step 4 DISMs the
+# cab; this check just confirms the OS now recognizes vi-VN as installed.
+$viPack = Get-InstalledLanguage -Language vi-VN -ErrorAction SilentlyContinue
+if ($viPack) {
+    Add-Result "Accounts" "Vietnamese Language Pack" "Installed" "Installed (lp.cab)" "PASS"
 } else {
-    Add-Result "Accounts" "Vietnamese LXP" "Installed" "Missing (run Fix-Vietnamese.ps1)" "WARN"
+    Add-Result "Accounts" "Vietnamese Language Pack" "Installed" "Missing - re-run Configure-Laptop" "FAIL"
 }
 
 # -----------------------------------------------
