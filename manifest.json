@@ -134,7 +134,7 @@
     "AllowBiosDowngrade": "Disabled",
     "WakeOnLan": "Disabled",
     "AutoOn": "Disabled",
-    "FnLockMode": "EnableSecondary",
+    "FnLockMode": "DisableStandard",
     "PowerWarn": "Disabled",
     "HttpsBoot": "Disabled",
     "UefiNwStack": "Disabled",
