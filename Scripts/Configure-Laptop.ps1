@@ -1633,12 +1633,11 @@ try {
             # Remove ANY existing firewall rule pointing at this exact program path
             # (catches old Block rules from a Cancel-click, plus any prior Allow
             # rules from previous runs of this block — keeps the rule set clean).
-            Get-NetFirewallRule -ErrorAction SilentlyContinue | ForEach-Object {
-                $appFilter = $_ | Get-NetFirewallApplicationFilter -ErrorAction SilentlyContinue
-                if ($appFilter -and ($appFilter.Program -ieq $progPath)) {
-                    Remove-NetFirewallRule -InputObject $_ -ErrorAction SilentlyContinue
-                }
-            }
+            # Filter via -Program server-side instead of enumerating every rule
+            # and roundtripping per-rule (~140s vs. ~150ms on a typical laptop).
+            Get-NetFirewallApplicationFilter -Program $progPath -ErrorAction SilentlyContinue |
+                Get-NetFirewallRule -ErrorAction SilentlyContinue |
+                Remove-NetFirewallRule -ErrorAction SilentlyContinue
             # Create the Inbound Allow rule on all profiles (Domain, Private, Public).
             New-NetFirewallRule -DisplayName "NVDA Remote ($exe)" -Direction Inbound `
                 -Program $progPath -Action Allow -Profile Any `
