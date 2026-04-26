@@ -21,9 +21,13 @@ function Write-Log {
     Write-Host $logMessage -ForegroundColor $color
 }
 
-# All removable (USB) drives, regardless of label.
+# All removable (USB) drives with media present. Size -gt 0 filters out empty
+# card-reader slots, which Windows still enumerates as DriveType 2 even when
+# nothing is inserted.
 function Get-RemovableDrives {
-    Get-CimInstance -ClassName Win32_LogicalDisk | Where-Object { $_.DriveType -eq 2 }
+    Get-CimInstance -ClassName Win32_LogicalDisk | Where-Object {
+        $_.DriveType -eq 2 -and $_.Size -gt 0
+    }
 }
 
 # Removable drives that are candidates for STU- preparation: skip anything labeled
