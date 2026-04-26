@@ -109,6 +109,35 @@ if ($primarySubtag -ieq $expectedSubtag) {
     Add-Result "Windows" "Primary Language" $expectedLang $primaryLang "FAIL"
 }
 
+# Check vi-VN's keyboard tip is en-US, not the built-in Vietnamese Telex IME.
+# Configure-Laptop.ps1 explicitly overrides this so a quality update can't reseed
+# Preload with the Vietnamese keyboard. Drift here = the override didn't stick.
+$primaryTips = @($langList[0].InputMethodTips)
+$telexTip = $primaryTips | Where-Object { $_ -match '^042[Aa]:' -or $_ -match '0000042[Aa]' }
+if (-not $telexTip) {
+    Add-Result "Windows" "Lang IME Tip (vi)" "en-US only" ($primaryTips -join ',') "PASS"
+} else {
+    Add-Result "Windows" "Lang IME Tip (vi)" "en-US only" ($primaryTips -join ',') "FAIL"
+}
+
+# Check Preload contains ONLY 00000409 (en-US). The Vietnamese Telex IME (0000042a)
+# is removed by design — UniKey is the sole Vietnamese input method. A second entry
+# means Windows re-added the layout (rare, but watch for it after feature updates).
+$preloadPath = "Registry::HKEY_CURRENT_USER\Keyboard Layout\Preload"
+if (Test-Path $preloadPath) {
+    $preloadItem = Get-Item $preloadPath
+    $klids = @($preloadItem.Property | ForEach-Object { $preloadItem.GetValue($_) })
+    $hasEnUs = $klids -contains "00000409"
+    $hasViTelex = ($klids | Where-Object { $_ -ieq "0000042a" }).Count -gt 0
+    if ($hasEnUs -and -not $hasViTelex) {
+        Add-Result "Windows" "Keyboard Layout" "00000409 only" ($klids -join ',') "PASS"
+    } else {
+        Add-Result "Windows" "Keyboard Layout" "00000409 only" ($klids -join ',') "FAIL"
+    }
+} else {
+    Add-Result "Windows" "Keyboard Layout" "00000409 only" "Preload key missing" "FAIL"
+}
+
 # Check Windows Update service
 $wuService = Get-Service -Name "wuauserv" -ErrorAction SilentlyContinue
 $wuStatus = if ($wuService) { $wuService.StartType.ToString() } else { "NotFound" }

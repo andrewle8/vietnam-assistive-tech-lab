@@ -270,11 +270,22 @@ try {
     Disable-ScheduledTask -TaskPath "\Microsoft\Windows\LanguageComponentsInstaller" -TaskName "Uninstallation" -ErrorAction SilentlyContinue
     reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Control Panel\International" /v "BlockCleanupOfUnusedPreinstalledLangPacks" /t REG_DWORD /d 1 /f 2>$null | Out-Null
 
-    # Set Vietnamese as the preferred display language (first in list)
+    # Set Vietnamese as the preferred display language (first in list).
+    # Override vi-VN's default InputMethodTips (which would otherwise be the built-in
+    # Vietnamese Telex IME, GUID {C2CB2CF0-...}{5FB02EC5-...}) so the OS-level Vietnamese
+    # keyboard never gets pulled into Preload during language sync. UniKey is the sole
+    # Vietnamese input method on this lab — its low-level keyboard hook does all
+    # composition independent of whichever keyboard layout is loaded. The Windows-built
+    # Telex IME is unused by Vietnamese users (UniKey predates it by 10+ years and
+    # supports VNI/VIQR/legacy encodings the OS IME doesn't), so removing it costs nothing.
     $langList = New-WinUserLanguageList "vi-VN"
+    $langList[0].InputMethodTips.Clear()
+    [void]$langList[0].InputMethodTips.Add("0409:00000409")
     $langList.Add("en-US")
+    $langList[1].InputMethodTips.Clear()
+    [void]$langList[1].InputMethodTips.Add("0409:00000409")
     Set-WinUserLanguageList $langList -Force
-    Write-Log "Windows display language set to Vietnamese (vi-VN), English (en-US) as secondary" "SUCCESS"
+    Write-Log "Windows display language set to Vietnamese (vi-VN), English (en-US) secondary; vi-VN keyboard tip overridden to en-US (UniKey-only)" "SUCCESS"
 
     # Set-WinUserLanguageList only affects the running user (Admin here). Propagate the
     # same preference list to every OTHER user hive we know about so Student (existing and
@@ -396,9 +407,10 @@ try {
 # Disable Windows language/layout hotkeys so UniKey's Ctrl+Shift is the only V/E toggle.
 # Windows defaults: Alt+Shift switches language, Ctrl+Shift switches layout. Both can desync
 # Windows IME state from UniKey state if hit accidentally during typing drills — invisible
-# to a blind student and hard to recover from. Vietnamese Telex IME stays installed
-# (reachable via Win+Space or Settings) as a deliberate fallback; only the accidental
-# hotkeys are neutralized. Values: "1"=Alt+Shift, "2"=Ctrl+Shift, "3"=disabled.
+# to a blind student and hard to recover from. The Windows-built Vietnamese Telex IME is
+# already removed entirely (only en-US keyboard remains, see "Pinning default keyboard"
+# block below), so these hotkey disables are belt-and-suspenders for any layout that might
+# get auto-added by Windows in the future. Values: "1"=Alt+Shift, "2"=Ctrl+Shift, "3"=disabled.
 # Reversal: delete the two values, or Settings → Time & language → Typing → Advanced
 # keyboard settings → Language bar options → Change Key Sequence.
 Write-Log "Disabling Windows language/layout hotkeys (UniKey remains the single V/E toggle)..." "INFO"
@@ -421,22 +433,35 @@ try {
     $failCount++
 }
 
-# Pin the default keyboard input method to US English on every login.
-# Without this, Windows picks the first language's default IME (= Vietnamese Telex, since
-# vi-VN is the primary display language) and the taskbar pill shows "VIE" on boot/unlock.
-# Students open the lid and see Vietnamese by default — confusing and not what we want.
-# Pinning to en-US here means the pill always reads "ENG" on login; UniKey handles Vietnamese
-# input when the student toggles it with Ctrl+Shift.
+# Pin the default keyboard input method to US English on every login AND remove the
+# OS-level Vietnamese Telex IME entirely. UniKey (low-level keyboard hook) is the sole
+# Vietnamese input method on this lab; the built-in Vietnamese Telex IME is unused.
+# Removing it eliminates:
+#   - The system tray "ENG/VIE" input-indicator pill (single input method = no indicator),
+#     which previously appeared in the taskbar tab order and could be triggered/switched
+#     accidentally by NVDA users navigating the system tray.
+#   - The Win+Space surprise (with one keyboard, the hotkey has nothing to switch to).
+# Vietnamese display strings, vi-VN locale (dd/MM/yyyy, ₫), NVDA Vietnamese voice
+# (Microsoft An), and Office Vietnamese editing language are unaffected — those depend
+# on the language pack, not the keyboard layout.
 #
-# TWO registry mechanisms are needed — InputMethodOverride alone is NOT sufficient:
-#   1. HKCU\Control Panel\International\User Profile\InputMethodOverride — modern (Win10+).
-#   2. HKCU\Keyboard Layout\Preload — legacy, read at logon. New-WinUserLanguageList populates
-#      this based on language-list order, so after making vi-VN the primary display language
-#      above, Preload\1 ends up as Vietnamese (0000042a). Windows loads Preload\1 FIRST at
-#      session start, overriding InputMethodOverride. We must explicitly swap it.
-#      00000409 = US English, 0000042a = Vietnamese.
+# THREE layers of defense so a quality update can't auto-restore the Vietnamese keyboard:
+#   1. HKCU\Control Panel\International\User Profile\InputMethodOverride pinned to en-US
+#      (modern Win10+ default-IME selector).
+#   2. HKCU\Control Panel\International\User Profile\<vi|vi-VN>\0409:00000409 = "1" (the
+#      per-language keyboard binding Windows reads when re-syncing Preload from the
+#      language list). Any 042A:* / 0000042a:* tips on this subkey are deleted.
+#   3. HKCU\Keyboard Layout\Preload\1 = 00000409, with indices 2-9 deleted for idempotency
+#      (Preload is the actual list of layouts loaded at logon).
+#   The Substitutes\0000042a -> 00000409 remap is also cleared (it was a remnant of the
+#   dual-keyboard era; obsolete now that 0000042a never enters Preload).
+# Set-WinUserLanguageList earlier in this script (Step 4) overrides vi-VN's default
+# InputMethodTips to en-US so future profile creation inherits this design too.
 # Writes to HKCU + Student SID + Default profile via $hkuPaths.
-Write-Log "Pinning default keyboard to US English on login..." "INFO"
+# Reverting (in Vietnam, no script needed): Settings → Time & Language → Language options
+# for Tiếng Việt → Add a keyboard → Vietnamese Telex. Or restore Preload\2 = 0000042a in
+# the registry. Either works in <1 minute.
+Write-Log "Pinning default keyboard to en-US; removing Vietnamese Telex IME from layout list..." "INFO"
 
 try {
     $imeHives = 0
@@ -447,19 +472,73 @@ try {
         }
         Set-ItemProperty -Path $profPath -Name "InputMethodOverride" -Value "0409:00000409" -Force -ErrorAction SilentlyContinue
 
+        # Layer 2: per-language keyboard binding. Windows canonicalises "vi-VN" to "vi" on
+        # some builds; create/clean both subkey forms so we cover whichever shape Windows
+        # picks. Removes any Telex IME tips (042A:* GUIDs or 0000042a:* klids) that may
+        # remain from prior runs, then pins the en-US tip.
+        foreach ($viTag in @("vi", "vi-VN")) {
+            $viPath = "$profPath\$viTag"
+            if (-not (Test-Path $viPath)) {
+                New-Item -Path $viPath -Force -ErrorAction SilentlyContinue | Out-Null
+            }
+            $existing = Get-Item $viPath -ErrorAction SilentlyContinue
+            if ($existing) {
+                $existing.Property | Where-Object { $_ -match '^042[Aa]:' -or $_ -match '0000042[Aa]' } | ForEach-Object {
+                    Remove-ItemProperty -Path $viPath -Name $_ -Force -ErrorAction SilentlyContinue
+                }
+            }
+            Set-ItemProperty -Path $viPath -Name "0409:00000409" -Value "1" -Force -ErrorAction SilentlyContinue
+        }
+
+        # Layer 3: Preload — the actual layouts loaded at logon. Pin index 1 to en-US,
+        # purge 2-9 to clear any prior Vietnamese (0000042a) entries.
         $preloadPath = "$hive\Keyboard Layout\Preload"
         if (-not (Test-Path $preloadPath)) {
             New-Item -Path $preloadPath -Force -ErrorAction SilentlyContinue | Out-Null
         }
         Set-ItemProperty -Path $preloadPath -Name "1" -Value "00000409" -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $preloadPath -Name "2" -Value "0000042a" -Force -ErrorAction SilentlyContinue
+        2..9 | ForEach-Object {
+            Remove-ItemProperty -Path $preloadPath -Name "$_" -Force -ErrorAction SilentlyContinue
+        }
+
+        # Clear the obsolete Vietnamese Substitutes mapping (no longer relevant when
+        # 0000042a is never in Preload).
+        $subPath = "$hive\Keyboard Layout\Substitutes"
+        if (Test-Path $subPath) {
+            Remove-ItemProperty -Path $subPath -Name "0000042a" -Force -ErrorAction SilentlyContinue
+            Remove-ItemProperty -Path $subPath -Name "0000042A" -Force -ErrorAction SilentlyContinue
+        }
+
+        # Layer 4 (critical for Win11 input indicator): CTF Text Input Processor (TIP)
+        # registrations. Preload alone isn't enough — Windows 11's input service also
+        # counts per-user enabled TIPs in CTF\Assemblies, and the input-pill in the
+        # system tray shows whenever there's >1 input method registered (Preload + TIPs
+        # combined). Removing the Vietnamese 0x0000042a CTF entries ensures the pill
+        # actually disappears (one keyboard, zero IMEs).
+        # Without this, Preload\2 deletion alone leaves the indicator pill visible
+        # because the Vietnamese Telex TIP is still per-user-enabled even if its
+        # keyboard layout is unloaded.
+        foreach ($lcid in @("0x0000042a","0x0000042A")) {
+            $ctfAssem = "$hive\Software\Microsoft\CTF\Assemblies\$lcid"
+            if (Test-Path $ctfAssem) {
+                Remove-Item -Path $ctfAssem -Recurse -Force -ErrorAction SilentlyContinue
+            }
+        }
+        # Per-user TIP override for Vietnamese (rare; gets created when user disables
+        # the IME via Settings UI or when policy locks specific TIPs). Strip any.
+        foreach ($tipGuid in @("{C2CB2CF0-AF47-413E-9780-8BC3A3C16068}")) {
+            $ctfTip = "$hive\Software\Microsoft\CTF\TIP\$tipGuid"
+            if (Test-Path $ctfTip) {
+                Remove-Item -Path $ctfTip -Recurse -Force -ErrorAction SilentlyContinue
+            }
+        }
 
         $imeHives++
     }
-    Write-Log "Default input pinned to en-US (InputMethodOverride + Preload\1) on $imeHives hive(s)" "SUCCESS"
+    Write-Log "Default input pinned to en-US; Vietnamese Telex IME removed from $imeHives hive(s)" "SUCCESS"
     $successCount++
 } catch {
-    Write-Log "Could not pin default input method: $($_.Exception.Message)" "ERROR"
+    Write-Log "Could not configure keyboard layout: $($_.Exception.Message)" "ERROR"
     $failCount++
 }
 
