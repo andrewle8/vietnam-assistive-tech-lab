@@ -1,64 +1,38 @@
 # Laptop User Guide
-
-This guide explains how to use the laptop with the NVDA screen reader.
-
 ---
-
-## Getting Started
-
-When the laptop turns on, NVDA starts automatically and says "NVDA is running".
-
-After that, you are on the Desktop.
-
----
-
 ## Ports and Connections
 
 The Dell Latitude 5420 has ports on both sides and the rear.
-
-Place the laptop in front of you with the screen open. The hinge side is away from you.
-
-### Left Side
-
-From rear to front (from hinge toward you):
-
-1. Small USB-C port (Thunderbolt) - for charging or external display
-2. Second small USB-C port (Thunderbolt)
-3. Full-size USB-A port (rectangular) - plug your USB drive here
-4. HDMI port (trapezoid shape) - for external display
-
-### Right Side
-
-From rear to front (from hinge toward you):
-
+### Left Side:
+From rear to front (from screen toward you):
+1. **Small USB-C port: for charger**
+2. Second Small USB-C port: for charging or USB Device
+### Right Side:
+From rear to front (from screen toward you)
 1. Security lock slot (small wedge-shaped slot)
-2. Second full-size USB-A port (rectangular) - also works for USB drives
-3. Headphone jack (small round hole) - plug your headphones here
-4. microSD card slot (thin slot)
-
-### Rear
-
-Near the hinge:
-
-1. RJ-45 Ethernet port (large square port) - for wired network
-
-### Quick Summary
-
+2. Ethernet port (for wired internet cable)
+3. HDMI port (connect to a monitor)
+4. **Full-size USB-A port (rectangular):** For your Student USB Drive or any USB-A
+5. Second full-size USB-A port (rectangular): For your Student USB Drive or any USB-A
+6. **Headphone jack (small round hole)**
+7. **microSD card slot (thin slot)**
+## Important Ports
 - Headphones: right side, round hole, near the middle of the edge
 - USB drive: large rectangular port, one on each side (left and right)
 - Charging: plug charger into USB-C port on left side (port closest to hinge)
-
 ---
-
 ## Headphones
-
 The laptop uses Audio-Technica ATH-M40x headphones.
 
-- Plug the headphone cable into the round jack on the right side of the laptop.
-- The cable is detachable. The small end (2.5mm) plugs into the headphones, the large end (3.5mm) plugs into the laptop.
-- Use the volume keys on the keyboard to increase or decrease volume.
+- Put the headphone on with cable on left side of ear. Adjust the fit by holding the top of headphone and pulling the left or right side down or up.
+- Plug the headphone cable into the small round jack on the right side of the laptop right after USB-A Port.
+- The cable is detachable. It is attached to the left side of the headphone.
 - Volume is set to 50% each time the laptop starts.
-- Screen brightness is set in BIOS: ~50% on AC power, ~13% on battery (saves battery life).
+
+### Cable replacement
+- To replace headphone cable, remove the cable by twisting it counter-clockwise. 
+- The small end (2.5mm) plugs into the headphones, the large end (3.5mm) plugs into the laptop.
+
 
 ---
 
@@ -70,9 +44,8 @@ Your USB drive has a Braille label tag attached.
 
 ### Plugging In
 
-1. Find a USB-A port (large rectangular shape) on the left or right side of the laptop.
-2. The USB plug only goes in one way. If it does not fit, flip it over.
-3. Push gently until you hear a click.
+1. Find a USB-A port (large rectangular shape) on the right side of the laptop close to headphones port.
+2. The USB plug only goes in one way. The braille label should be facing upward.
 
 ### Opening Your USB
 
@@ -83,6 +56,8 @@ Your USB drive has a Braille label tag attached.
 
 ### Saving Files to USB
 
+Save all your important documents to your student usb drive.
+
 In programs like Word:
 
 1. Press F12 to open the "Save As" dialog. It automatically points to your USB (drive D:).
@@ -92,17 +67,6 @@ In programs like Word:
 Tip: After the first save, Ctrl + S saves to the same location without asking.
 
 If the USB is not plugged in, Word saves to the Documents folder on the laptop instead. Plug in the USB and press F12 to re-save to the USB.
-
-### Safely Removing USB
-
-Always safely remove USB to avoid losing data.
-
-1. Press Windows + E to open File Explorer.
-2. Press Tab to the drive section, use arrow keys to find your USB.
-3. Press the Menu key (or Shift + F10) to open the right-click menu.
-4. Select "Eject" and press Enter.
-5. Wait until you hear the "Safe to Remove Hardware" notification.
-6. Pull the USB out.
 
 ---
 
@@ -116,10 +80,7 @@ Press Enter to open a program.
 
 Tip: Press the first letter of a program name to jump to it. For example, press "F" for Firefox, "W" for Word.
 
-If pressing a letter does nothing, keyboard focus has drifted off the desktop. Press Tab once — NVDA should announce "Desktop, list". Now first-letter jump works. If Tab lands on the taskbar or system tray instead, press Tab again to cycle into the desktop list. You can also press any arrow key to force focus onto the icon grid.
-
-Between jumps, press the next letter within about one second, or wait two seconds for the type-ahead buffer to reset. Pausing mid-word (for example, "F" then pause then "W") can make Windows interpret it as the prefix "FW" and jump to nothing.
-
+If pressing a letter does nothing, keyboard focus has drifted off the desktop. Press Tab once — NVDA should announce "Desktop". Now first-letter jump works. If Tab lands on the taskbar or system tray instead, press Tab again to cycle into the desktop list. You can also press any arrow key to force focus onto the icon grid.
 ### Program List
 
 - Audacity - Audio editor
@@ -141,47 +102,30 @@ Between jumps, press the next letter within about one second, or wait two second
 
 ## Important NVDA Shortcuts
 
-This laptop uses the "Laptop" keyboard layout. The NVDA key can be either CapsLock or Insert (the right-side Insert key or the numpad Insert) — all three work interchangeably.
-
-| Key | Function |
-|---|---|
-| NVDA + 1 | Input Help Mode - press any key to hear what it does |
-| NVDA + T | Read window title |
-| NVDA + A | Say All - read from current position |
-| NVDA + L | Read current line |
-| NVDA + F7 | Elements list (headings / links) |
-| NVDA + Space | Toggle browse/focus mode |
-| NVDA + N | Open NVDA menu |
-| NVDA + Q | Quit NVDA |
-| NVDA + S | Cycle speech modes (speech / beep / off) |
-| NVDA + Ctrl + Up Arrow | Increase speech rate |
-| NVDA + Ctrl + Down Arrow | Decrease speech rate |
-| NVDA + Ctrl + F | Find text in document |
-| Ctrl | Stop reading |
-| Tab | Move to next item |
-| Shift + Tab | Move to previous item |
-| Ctrl + Alt + N | Launch NVDA |
-| Alt + F4 | Close program |
-| Alt + Tab | Switch programs |
-
-### Focus Mode
-
-When using PowerShell, Command Prompt, or other apps where the keyboard does not work normally:
-
-Press Insert + Space to switch to "Focus Mode".
-
-In this mode, all keys you press go directly to the application (including Backspace, Delete, etc.).
-
-Press Insert + Space again to return to browse mode.
-
-### NVDA Customizations on This Laptop
-
-NVDA has been pre-tuned for Vietnamese blind students:
-
 - **CapsLock is the primary NVDA key.** To toggle actual Caps Lock state (for typing CAPITAL letters), press **CapsLock twice quickly**.
-- **Vi-Vu voice handles both Vietnamese and English** in the same text — NVDA does not switch voices for English words, keeping a single familiar voice throughout.
-- **NVDA auto-ducks other audio** (Readmate, VLC, Firefox) when speaking — you don't have to manually lower volumes to hear NVDA cut through.
-- **Progress bars are spoken as percentages** (e.g. "50 percent") instead of beeps.
+	- The NVDA key can be either CapsLock or Insert (left of delete key - third from the right - top row)
+
+| Key                      | Function                                             |
+| ------------------------ | ---------------------------------------------------- |
+| NVDA + 1                 | Input Help Mode - press any key to hear what it does |
+| NVDA + T                 | Read window title                                    |
+| NVDA + A                 | Say All - read from current position                 |
+| NVDA + L                 | Read current line                                    |
+| NVDA + F7                | Elements list (headings / links)                     |
+| NVDA + Space             | Toggle browse/focus mode                             |
+| NVDA + N                 | Open NVDA menu                                       |
+| NVDA + Q                 | Quit NVDA                                            |
+| NVDA + S                 | Cycle speech modes (speech / beep / off)             |
+| NVDA + Ctrl + Up Arrow   | Increase speech rate                                 |
+| NVDA + Ctrl + Down Arrow | Decrease speech rate                                 |
+| NVDA + Ctrl + F          | Find text in document                                |
+| NVDA + Shift + B         | Battery Percentage                                   |
+| Ctrl                     | Stop reading                                         |
+| Tab                      | Move to next item                                    |
+| Shift + Tab              | Move to previous item                                |
+| Ctrl + Alt + N           | Launch NVDA                                          |
+| Alt + F4                 | Close program                                        |
+| Alt + Tab                | Switch programs                                      |
 
 ---
 
@@ -201,24 +145,17 @@ Telex examples:
 - s = acute accent, f = grave accent, r = hook above, x = tilde, j = dot below
 - z = remove tone mark (e.g. "af" produces "à", then "z" strips back to "a")
 
-Switch Vietnamese/English: press Ctrl + Shift. Check the UniKey tray icon (V = Vietnamese, E = English).
+Switch Vietnamese/English: press Ctrl + Shift.
 
 ---
 
 ## Useful Windows Shortcuts
 
-| Key | Function |
-|---|---|
-| Windows + E | Open File Explorer |
-| Ctrl + C | Copy |
-| Ctrl + V | Paste |
-| Ctrl + X | Cut |
-| Ctrl + Z | Undo |
-| Ctrl + S | Save |
-| Ctrl + A | Select all |
-| F12 | Save As (opens dialog on USB drive D:) |
-| Windows + L | Lock laptop |
-| Ctrl + W | Close current tab or window |
+| Key         | Function                               |
+| ----------- | -------------------------------------- |
+| Windows + E | Open File Explorer                     |
+| F12         | Save As (opens dialog on USB drive D:) |
+| Ctrl + W    | Close current tab or window            |
 
 ---
 
@@ -327,9 +264,6 @@ Press **NVDA + Space** to manually toggle between them. NVDA auto-switches when 
 3. Press **NVDA + Down Arrow** → reads the whole article.
 4. If the page has too many ads → press **F9** for Reader Mode (article only, no clutter).
 5. Press **F9** again or **Alt + Left Arrow** to go back.
-
-English ads are automatically blocked thanks to uBlock Origin (pre-installed in Firefox). If ads still interrupt, press **D** repeatedly until NVDA says "main" (main content).
-
 ---
 
 ## Music and Audiobooks with VLC
@@ -370,15 +304,13 @@ The laptop has Vietnamese Wikipedia offline (no internet needed).
 
 ## Reading PDFs with Microsoft Edge
 
-When you open a PDF (e.g., homework from a teacher), the laptop opens it with Microsoft Edge. Edge reads PDFs well with NVDA.
+When you open a PDF the laptop opens it with Microsoft Edge. Edge reads PDFs well with NVDA.
 
 1. Open the PDF file (press Enter on it, or open from Word).
 2. NVDA automatically switches to Browse Mode.
 3. Use **H** to jump by heading, **down arrow** to read line by line.
 4. Or press **Ctrl + Shift + U** in Edge to enable "Read Aloud" — Edge will read the document aloud using a Vietnamese voice.
 5. **Ctrl + F** to find text in the PDF.
-
-Note: scanned PDFs (image-only, no text) cannot be read by NVDA. Ask your teacher for a text-based PDF.
 
 ---
 
@@ -404,8 +336,6 @@ Example: type `25 + 17` then press Enter → NVDA says "42".
 ---
 
 ## Spelling Vietnamese Diacritics
-
-Vietnamese tone marks (á, à, ả, ã, ạ) can sound similar when NVDA reads fast.
 
 To hear the tone mark on a single character: move the cursor to the letter → press **NVDA + period (.) twice quickly**. NVDA says the character phonetically and names the tone mark.
 
@@ -438,8 +368,6 @@ If your finger lands on a key and you're not sure what it does, there are two sa
 
 ### Option 1: NVDA Input Help Mode (NVDA + 1)
 
-Works any time, in any program:
-
 1. Press **NVDA + 1** to enable "Input Help mode". NVDA announces "Input help on".
 2. Now press any key → NVDA speaks the key's name and function, **without executing the key**. Completely safe.
 3. Explore the whole keyboard without breaking anything.
@@ -449,18 +377,18 @@ This is the fastest way to remind yourself of a key.
 
 ### Option 2: Sao Mai Typing Tutor (SMTT)
 
-Pre-installed Vietnamese typing tutor from Sao Mai:
+Vietnamese typing tutor from Sao Mai:
 
 1. On Desktop, press "S" to jump to "Sao Mai Typing Tutor" → Enter.
 2. Choose "Explore Keyboard" (Khám phá bàn phím).
 3. Press any key → SMTT speaks its name in Vietnamese.
 4. SMTT also has structured typing lessons for daily practice — especially useful for Vietnamese Telex.
 
-**Comparison**: NVDA+1 is best for quick key lookup anywhere; SMTT is best for structured learning.
+**Comparison**: NVDA+1 is best for quick key lookup anywhere; SMTT is best for learning.
 
 ### Keyboard Orientation (Dell Latitude 5420)
 
-- **F** and **J** have factory raised bumps — the "home row" where your 8 fingers rest.
+- **F** and **J** have factory raised bumps — the "home row" where your 8 fingers rest. Put index fingers on F and J.
 - **Delete** and **Down Arrow** also have factory bumps.
 - **CapsLock** or **Insert** can both be used as the NVDA key. CapsLock is the leftmost key on the home row (the A/S/D/F row), directly above the left Shift. Insert sits right next to Delete on the right side of the keyboard.
 - From F/J, count to other keys: left of F is D → S → A; right of J is K → L → semicolon.
@@ -469,10 +397,7 @@ Pre-installed Vietnamese typing tutor from Sao Mai:
 
 ## Hardware Care
 
-- Close the lid with two hands, gripping both outer corners to protect the hinges.
-- Orienting by touch: trackpad = front of laptop, hinge = back.
 - Plug the charger into the **back-left USB-C port, closest to the hinge**.
-- Don't eat or drink near the laptop. The keyboard is spill-resistant, not spill-proof.
 - Unplug headphones by gripping the connector, not the cable.
 - If NVDA goes silent unexpectedly, press **NVDA + Shift + B** to hear battery status — the battery may be low.
 - **Do not** enable BitLocker, change your password, or sign into a Microsoft Account — call your teacher first.
@@ -487,14 +412,3 @@ If NVDA stops talking or speaks incorrectly:
 2. If that does not help, ask your teacher
 
 ---
-
-## Notes
-
-- No password needed to log in
-- Save important files to your USB drive
-- If you need help, ask your teacher
-- Always safely eject USB before shutting down
-
----
-
-*Last updated: 2026-04-25*
