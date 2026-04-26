@@ -1,4 +1,4 @@
-# Install-Dell-DCC.ps1 - Standalone Dell Command | Configure installer.
+﻿# Install-Dell-DCC.ps1 - Standalone Dell Command | Configure installer.
 #
 # Use case: rolling out today's BIOS settings to laptops that already had the
 # rest of the stack installed by an earlier 1-Install-All.ps1 run. cctk.exe is
@@ -49,7 +49,7 @@ try {
     $manufacturer = (Get-CimInstance -ClassName Win32_ComputerSystem).Manufacturer
     Write-Log "System manufacturer: $manufacturer" "INFO"
     if ($manufacturer -notmatch 'Dell') {
-        Write-Log "Non-Dell hardware detected — DCC will install but cctk won't apply BIOS settings here." "WARNING"
+        Write-Log "Non-Dell hardware detected - DCC will install but cctk won't apply BIOS settings here." "WARNING"
     }
 } catch {
     Write-Log "Could not read manufacturer: $($_.Exception.Message)" "WARNING"
@@ -63,7 +63,7 @@ $cctkCandidates = @(
 )
 $existing = $cctkCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
 if ($existing) {
-    Write-Log "cctk already installed at: $existing — nothing to do." "SUCCESS"
+    Write-Log "cctk already installed at: $existing - nothing to do." "SUCCESS"
     Write-Host ""
     Write-Host "Next step: run Configure-Laptop.ps1 (admin), then reboot." -ForegroundColor Cyan
     exit 0
@@ -82,7 +82,7 @@ if (-not (Test-Path $installer)) {
 Write-Log "Installer: $installer" "INFO"
 
 # Self-extracting Dell SDP wrapper; /s runs silent. Some Dell SDP packages exit
-# 0 on success, others exit 2 with a "reboot recommended" flag — both are fine
+# 0 on success, others exit 2 with a "reboot recommended" flag - both are fine
 # for our purposes (we'll prompt for reboot at the end of Configure-Laptop).
 Write-Log "Running installer (silent, ~60-120s)..." "INFO"
 try {
@@ -111,7 +111,7 @@ Write-Host "Dell Command | Configure installed." -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor Cyan
-Write-Host "  1. Run Configure-Laptop.ps1 (admin) — applies today's NVDA + BIOS changes" -ForegroundColor White
+Write-Host "  1. Run Configure-Laptop.ps1 (admin) - applies today's NVDA + BIOS changes" -ForegroundColor White
 Write-Host "  2. Reboot when prompted" -ForegroundColor White
 Write-Host ""
 exit 0
