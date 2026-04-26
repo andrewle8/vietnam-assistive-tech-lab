@@ -1610,6 +1610,47 @@ try {
         Write-Log "Copied $addonCount NVDA addon(s) from Admin to Student profile (pruned first)" "SUCCESS"
     }
 
+    # NVDA Remote firewall pre-authorization. The Remote 2.6.4 addon binds a local
+    # listening port (for direct master-server mode and some local-network features),
+    # so the first time it tries to listen on a fresh laptop, Defender pops a
+    # "Allow networks to access NVDA?" prompt. Blind students cannot see or click
+    # that prompt — and Defender's default behavior on prompt timeout / Cancel is
+    # to auto-create permanent Block rules, which then leave the addon half-broken
+    # and impossible to recover from without sighted help. Pre-creating Allow rules
+    # here means the prompt never fires.
+    #
+    # The rules are scoped to the actual nvda.exe / nvda_uiAccess.exe program paths
+    # (not port-based), so a Defender ruleset reset still has the program-path
+    # exception. Re-running the script after a previous Cancel-click is self-healing:
+    # the cleanup loop removes any pre-existing rules pointing at the same .exe path
+    # (regardless of direction/action) before creating fresh Allow rules.
+    try {
+        $nvdaInstallDirFw = if (Test-Path "C:\Program Files\NVDA\nvda.exe") { "C:\Program Files\NVDA" } else { "C:\Program Files (x86)\NVDA" }
+        $fwAppliedCount = 0
+        foreach ($exe in @('nvda.exe','nvda_uiAccess.exe')) {
+            $progPath = Join-Path $nvdaInstallDirFw $exe
+            if (-not (Test-Path $progPath)) { continue }
+            # Remove ANY existing firewall rule pointing at this exact program path
+            # (catches old Block rules from a Cancel-click, plus any prior Allow
+            # rules from previous runs of this block — keeps the rule set clean).
+            Get-NetFirewallRule -ErrorAction SilentlyContinue | ForEach-Object {
+                $appFilter = $_ | Get-NetFirewallApplicationFilter -ErrorAction SilentlyContinue
+                if ($appFilter -and ($appFilter.Program -ieq $progPath)) {
+                    Remove-NetFirewallRule -InputObject $_ -ErrorAction SilentlyContinue
+                }
+            }
+            # Create the Inbound Allow rule on all profiles (Domain, Private, Public).
+            New-NetFirewallRule -DisplayName "NVDA Remote ($exe)" -Direction Inbound `
+                -Program $progPath -Action Allow -Profile Any `
+                -Description "NVDA Remote addon listener; pre-authorized to suppress Defender first-run prompt for blind students." `
+                -ErrorAction SilentlyContinue | Out-Null
+            $fwAppliedCount++
+        }
+        Write-Log "NVDA firewall pre-authorized: $fwAppliedCount Inbound Allow rule(s) created on all profiles (existing Block rules cleared)" "SUCCESS"
+    } catch {
+        Write-Log "Could not pre-authorize NVDA firewall rules: $($_.Exception.Message)" "WARNING"
+    }
+
     # Enable NVDA on Windows login screen / UAC / lock screen with Vi-Vu voice.
     #
     # Previously this block lived in 3-Configure-NVDA.ps1, but it ran before the
