@@ -556,7 +556,7 @@ Write-Host ""
 #   LabVolumeReset clamps speakers to 50% at every logon (hearing safety).
 #   (Brightness used to live here as LabBrightnessReset; brightness is now owned by
 #    BIOS via Configure-Laptop.ps1 Step 38 — see manifest.json bios_settings.)
-$expectedTasks = @("LabReassignStudentUSB", "LabUpdateAgent", "LabNVDAStart", "LabVolumeReset")
+$expectedTasks = @("LabReassignStudentUSB", "LabUpdateAgent", "LabNVDAStart", "LabVolumeReset", "LabBrightnessRefresh")
 foreach ($taskName in $expectedTasks) {
     $task = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
     if ($task) {

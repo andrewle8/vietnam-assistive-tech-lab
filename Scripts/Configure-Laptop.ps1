@@ -1051,8 +1051,9 @@ try {
 # Caps system volume at 50% on each login so the previous session can't leave the
 # laptop muted or deafening. Brightness used to be reset here too; it's now seeded
 # by BIOS at cold boot (BrightnessAc / BrightnessBattery in manifest.json bios_settings,
-# applied in Step 38 via cctk) and enforced at runtime by the Balanced scheme's AC/DC
-# brightness values (Step 15). The legacy LabBrightnessReset task is removed below.
+# applied in Step 38 via cctk) and enforced at runtime by LabBrightnessRefresh
+# (scheduled task registered in Step 15, fires on every power source change). The
+# legacy LabBrightnessReset task is removed below.
 Write-Log "Step 9: Setting login-reset volume default (50%)..." "INFO"
 
 try {
@@ -1467,17 +1468,56 @@ try {
     # the desktop is immediately available again.
     powercfg /setacvalueindex $balanced SUB_NONE CONSOLELOCK 0
     powercfg /setdcvalueindex $balanced SUB_NONE CONSOLELOCK 0
-    # Display brightness. BIOS BrightnessAc=8 / BrightnessBattery=2 (Dell 0-15 scale)
-    # only seed brightness at cold boot — once Windows is running, the active power
-    # scheme owns runtime brightness, so unplugging the cord wouldn't dim without
-    # these. AC 50% / DC 13% match the BIOS intent (8/15 ≈ 53, 2/15 ≈ 13).
-    $brightSet = "aded5e82-b909-4619-9949-f5d71dac0bcb"
-    powercfg /setacvalueindex $balanced SUB_VIDEO $brightSet 50
-    powercfg /setdcvalueindex $balanced SUB_VIDEO $brightSet 13
+    # Display brightness baseline. BIOS BrightnessAc=8 / BrightnessBattery=2 (Dell
+    # 0-15 scale) seed brightness at cold boot. We also write matching scheme values
+    # here defensively, but on Win11 22H2+ this hardware silently ignores scheme
+    # values during AC/DC transitions — and HKLM\SOFTWARE\Policies\Microsoft\Power
+    # is also ignored. The actual runtime enforcer is the LabBrightnessRefresh task
+    # registered below. Scheme values are kept for builds where Windows DOES honor
+    # them, and as a cosmetic record of intent.
+    powercfg /setacvalueindex $balanced SUB_VIDEO VIDEONORMALLEVEL 50
+    powercfg /setdcvalueindex $balanced SUB_VIDEO VIDEONORMALLEVEL 13
     # Make Balanced active so the values we just wrote take effect immediately.
     powercfg /setactive $balanced
 
-    Write-Log "Power settings configured (Balanced scheme: brightness AC 50% / DC 13%, sleep on lid close, no wake timers, no lock screen on wake, no hibernate)" "SUCCESS"
+    # LabBrightnessRefresh — the actual brightness enforcer. Triggered on every
+    # power source change (Microsoft-Windows-Kernel-Power Event ID 105), runs as
+    # SYSTEM, invokes a tiny script that uses WMI to force panel brightness based
+    # on current Win32_Battery state. Fail-silent (try/catch) so a missing battery
+    # or display driver hiccup never cascades or spams logs.
+    New-Item -Path 'C:\LabTools' -ItemType Directory -Force | Out-Null
+    $brightnessScript = @'
+# Lab brightness enforcer. Triggered on every power source change by the
+# LabBrightnessRefresh scheduled task. Forces panel brightness via WMI because
+# Win11 transitions on this hardware do not reliably apply scheme values.
+$AC_BRIGHTNESS = 50
+$DC_BRIGHTNESS = 13
+try {
+    $b = Get-CimInstance Win32_Battery -ErrorAction Stop
+    $target = if ($b.BatteryStatus -eq 1) { $DC_BRIGHTNESS } else { $AC_BRIGHTNESS }
+    $m = Get-CimInstance -Namespace root/wmi -ClassName WmiMonitorBrightnessMethods -ErrorAction Stop
+    $m | Invoke-CimMethod -MethodName WmiSetBrightness -Arguments @{Brightness=$target; Timeout=0} | Out-Null
+} catch { }
+'@
+    Set-Content -Path 'C:\LabTools\set-brightness.ps1' -Value $brightnessScript -Encoding UTF8 -Force
+
+    $brightTriggerXml = @'
+<QueryList>
+  <Query Id="0" Path="System">
+    <Select Path="System">*[System[Provider[@Name='Microsoft-Windows-Kernel-Power'] and EventID=105]]</Select>
+  </Query>
+</QueryList>
+'@
+    $brightCls = Get-CimClass -ClassName MSFT_TaskEventTrigger -Namespace Root/Microsoft/Windows/TaskScheduler
+    $brightTrig = New-CimInstance -CimClass $brightCls -ClientOnly
+    $brightTrig.Subscription = $brightTriggerXml
+    $brightTrig.Enabled = $true
+    $brightAction = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument '-ExecutionPolicy Bypass -WindowStyle Hidden -NonInteractive -File "C:\LabTools\set-brightness.ps1"'
+    $brightPrincipal = New-ScheduledTaskPrincipal -UserId 'SYSTEM' -RunLevel Highest -LogonType ServiceAccount
+    $brightSettings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -ExecutionTimeLimit (New-TimeSpan -Minutes 1)
+    Register-ScheduledTask -TaskName 'LabBrightnessRefresh' -Trigger $brightTrig -Action $brightAction -Principal $brightPrincipal -Settings $brightSettings -Force | Out-Null
+
+    Write-Log "Power settings configured (Balanced scheme + LabBrightnessRefresh: brightness AC 50% / DC 13%, sleep on lid close, no wake timers, no lock screen on wake, no hibernate)" "SUCCESS"
     $successCount++
 } catch {
     Write-Log "Could not configure power settings: $($_.Exception.Message)" "ERROR"
@@ -2923,7 +2963,7 @@ Write-Host "  Sticky Keys   Popup disabled (Shift x5)" -ForegroundColor White
 Write-Host "  Filter Keys   Popup disabled (hold key)" -ForegroundColor White
 Write-Host "  Toggle Keys   Disabled (NVDA's CapsLock modifier no longer beeps)" -ForegroundColor White
 Write-Host "  Volume reset  50% on each login (hearing safety)" -ForegroundColor White
-Write-Host "  Brightness    AC 50% / Battery 13% (Windows power plan + BIOS, Steps 15/38)" -ForegroundColor White
+Write-Host "  Brightness    AC 50% / Battery 13% (LabBrightnessRefresh task + BIOS, Steps 15/38)" -ForegroundColor White
 Write-Host "  Win Update    Disabled (offline)" -ForegroundColor White
 Write-Host "  Notifications Toast, Notification Center, tips/suggestions all disabled" -ForegroundColor White
 Write-Host "  Narrator      Shortcut disabled (NVDA only)" -ForegroundColor White
