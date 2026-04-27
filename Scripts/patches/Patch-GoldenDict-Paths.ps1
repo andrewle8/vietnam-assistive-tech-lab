@@ -1,25 +1,38 @@
 # Patch-GoldenDict-Paths.ps1
-# One-shot patch: makes GoldenDict actually load the bundled Vietnamese
-# dictionaries (star_anhviet en-vi + star_vietanh vi-en) by adding a
-# <path recursive="1">...</path> entry under <paths> in the Student profile's
-# GoldenDict config. Without that entry GoldenDict starts with no dictionaries
-# loaded and every lookup returns:
-#   "Khong co dich nghia cho '<word>' duoc tim thay trong nhom 'Tat ca'"
-# (No translation found in group All).
+# Surgical patch for the Student profile's GoldenDict config. Two fixes,
+# both needed by already-deployed laptops where Configure-Laptop.ps1's
+# Step 35 ran an older repo stub:
+#
+# 1. <paths>: ensures the dictionary content directory is registered, so
+#    bundled Vietnamese dictionaries (star_anhviet, star_vietanh) load
+#    instead of every lookup returning
+#      "Khong co dich nghia cho '<word>' duoc tim thay trong nhom 'Tat ca'"
+#    (No translation found in group All).
+#
+# 2. <mainWindowState>: ensures the History, Favorites, and Dictionaries
+#    side panes are hidden on launch. NVDA cannot announce GoldenDict's
+#    QtWebEngine article view (NVDA issue #10838: it doesn't recognize
+#    QtWebEngine as web content), so the documented student workflow is
+#    Tab-from-search-box into article view, then Ctrl+A / Ctrl+C / NVDA+C.
+#    Hiding the three side panes makes that Tab cycle deterministic
+#    (one Tab from search box reaches the article view).
+#
+# Both targets are read from the repo stub (Config/goldendict-config/config)
+# so the patch and stub stay in sync — there is one source of truth.
 #
 # Background: 1-Install-All.ps1 copies the .ifo/.idx/.dict.dz files into
-# C:\Program Files (x86)\GoldenDict\content\ but the stub config that
-# Configure-Laptop.ps1 Step 35 deployed only contained <preferences>; on
-# first launch GoldenDict expanded missing elements to defaults (paths
-# empty), so it never scanned the content folder. The repo stub is now
-# fixed (Config/goldendict-config/config) and fresh deploys are correct;
-# this script is the surgical equivalent for already-deployed laptops.
+# C:\Program Files (x86)\GoldenDict\content\ but earlier versions of the
+# stub config only contained <preferences>; on first launch GoldenDict
+# expanded missing elements to defaults (paths empty, panes visible), so
+# it never scanned the content folder and side panes cluttered Tab order.
+# The repo stub is now correct and fresh deploys are correct; this script
+# is the surgical equivalent for already-deployed laptops.
 #
 # Run from any plugged DEPLOY_ USB or from a local clone of the repo:
 #   <USB>:\Scripts\patches\Patch-GoldenDict-Paths.ps1
 #
-# Idempotent: re-running on a laptop already pointing at the content dir
-# is a no-op and exits 0.
+# Idempotent: re-running on a laptop where both elements already match the
+# golden values is a no-op and exits 0.
 #
 # Run as Administrator. Stops GoldenDict.exe if running so the in-memory
 # config snapshot cannot flush back over our edit.
@@ -83,8 +96,26 @@ if (-not (Test-Path $gdConfig)) {
     }
 }
 
-# Idempotency: parse the XML and check whether the path is already there.
+# Read the golden <mainWindowState> from the repo stub. Single source of
+# truth: whatever is in the stub is what we patch deployed laptops to match.
+# Stub path differs depending on whether we're running from a USB
+# (Scripts/patches/...) or a local repo clone — both have the same layout.
+$repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+$stubPath = Join-Path $repoRoot "Config\goldendict-config\config"
+if (-not (Test-Path $stubPath)) {
+    Write-Host "Patch-GoldenDict-Paths: repo stub missing at $stubPath - aborting." -ForegroundColor Red
+    exit 1
+}
+[xml]$stubXml = Get-Content -Path $stubPath -Raw -Encoding UTF8
+$goldenStateNode = $stubXml.SelectSingleNode("/config/mainWindowState")
+$goldenMainWindowState = if ($goldenStateNode) { $goldenStateNode.InnerText } else { $null }
+if (-not $goldenMainWindowState) {
+    Write-Host "Patch-GoldenDict-Paths: repo stub has no <mainWindowState>; pane-state patch will be skipped." -ForegroundColor Yellow
+}
+
+# Idempotency: parse the live config and decide whether either fix is needed.
 [xml]$xml = Get-Content -Path $gdConfig -Raw -Encoding UTF8
+
 $alreadyHasPath = $false
 $paths = $xml.SelectSingleNode("/config/paths")
 if ($paths) {
@@ -96,8 +127,19 @@ if ($paths) {
     }
 }
 
-if ($alreadyHasPath) {
-    Write-Host "Patch-GoldenDict-Paths: $ContentDir already in <paths>. Nothing to do." -ForegroundColor Green
+$alreadyHasGoldenState = $false
+if ($goldenMainWindowState) {
+    $liveStateNode = $xml.SelectSingleNode("/config/mainWindowState")
+    if ($liveStateNode -and $liveStateNode.InnerText -eq $goldenMainWindowState) {
+        $alreadyHasGoldenState = $true
+    }
+} else {
+    # No golden value to enforce; treat as already satisfied so we don't loop.
+    $alreadyHasGoldenState = $true
+}
+
+if ($alreadyHasPath -and $alreadyHasGoldenState) {
+    Write-Host "Patch-GoldenDict-Paths: <paths> and <mainWindowState> already match. Nothing to do." -ForegroundColor Green
     exit 0
 }
 
@@ -113,28 +155,45 @@ if ($proc) {
     [xml]$xml = Get-Content -Path $gdConfig -Raw -Encoding UTF8
 }
 
-# Ensure /config/paths exists.
 $rootNode = $xml.SelectSingleNode("/config")
 if (-not $rootNode) {
     Write-Host "Patch-GoldenDict-Paths: <config> root missing in $gdConfig - file appears corrupt; aborting." -ForegroundColor Red
     exit 1
 }
-$paths = $rootNode.SelectSingleNode("paths")
-if (-not $paths) {
-    $paths = $xml.CreateElement("paths")
-    # Match GoldenDict's own write order: <paths> is the first child of <config>.
-    if ($rootNode.HasChildNodes) {
-        $rootNode.InsertBefore($paths, $rootNode.FirstChild) | Out-Null
-    } else {
-        $rootNode.AppendChild($paths) | Out-Null
+
+# Patch 1: ensure <paths> contains $ContentDir.
+$pathPatched = $false
+if (-not $alreadyHasPath) {
+    $paths = $rootNode.SelectSingleNode("paths")
+    if (-not $paths) {
+        $paths = $xml.CreateElement("paths")
+        # Match GoldenDict's own write order: <paths> is the first child of <config>.
+        if ($rootNode.HasChildNodes) {
+            $rootNode.InsertBefore($paths, $rootNode.FirstChild) | Out-Null
+        } else {
+            $rootNode.AppendChild($paths) | Out-Null
+        }
     }
+    $pathElem = $xml.CreateElement("path")
+    $pathElem.SetAttribute("recursive", "1")
+    $pathElem.InnerText = $ContentDir
+    $paths.AppendChild($pathElem) | Out-Null
+    $pathPatched = $true
 }
 
-# Append the new <path recursive="1">$ContentDir</path>.
-$pathElem = $xml.CreateElement("path")
-$pathElem.SetAttribute("recursive", "1")
-$pathElem.InnerText = $ContentDir
-$paths.AppendChild($pathElem) | Out-Null
+# Patch 2: ensure <mainWindowState> matches golden (panes hidden).
+$statePatched = $false
+if ($goldenMainWindowState -and -not $alreadyHasGoldenState) {
+    $liveStateNode = $rootNode.SelectSingleNode("mainWindowState")
+    if ($liveStateNode) {
+        $liveStateNode.InnerText = $goldenMainWindowState
+    } else {
+        $newStateNode = $xml.CreateElement("mainWindowState")
+        $newStateNode.InnerText = $goldenMainWindowState
+        $rootNode.AppendChild($newStateNode) | Out-Null
+    }
+    $statePatched = $true
+}
 
 # Write back. Encoding UTF-8 with declaration matches GoldenDict's own writes.
 $xml.Save($gdConfig)
@@ -142,19 +201,31 @@ $xml.Save($gdConfig)
 # Wipe the stale index dir so GoldenDict rebuilds dictionary indexes on next
 # launch. Without this, an empty index from the prior run can mask the newly
 # scanned dictionaries until the user clicks Edit > Dictionaries > Rescan.
-$indexDir = Join-Path $gdConfigDir "index"
-if (Test-Path $indexDir) {
-    Get-ChildItem -Path $indexDir -Recurse -Force -ErrorAction SilentlyContinue |
-        Remove-Item -Force -Recurse -ErrorAction SilentlyContinue
+# Only relevant when paths changed — pane-state alone doesn't need reindex.
+$indexCleared = $false
+if ($pathPatched) {
+    $indexDir = Join-Path $gdConfigDir "index"
+    if (Test-Path $indexDir) {
+        Get-ChildItem -Path $indexDir -Recurse -Force -ErrorAction SilentlyContinue |
+            Remove-Item -Force -Recurse -ErrorAction SilentlyContinue
+        $indexCleared = $true
+    }
 }
 
 # Restore Student modify access (script runs as Admin and any new dir/file
 # would otherwise inherit Admin-only ACLs).
 icacls $gdConfigDir /grant "Student:(OI)(CI)M" /T /Q 2>$null | Out-Null
 
-Write-Host "Patch-GoldenDict-Paths: added <path recursive=`"1`">$ContentDir</path>" -ForegroundColor Green
-Write-Host "Patch-GoldenDict-Paths: $($ifoFiles.Count) dictionary file(s) detected:" -ForegroundColor Green
-$ifoFiles | ForEach-Object { Write-Host "  - $($_.Name)" -ForegroundColor Green }
-Write-Host "Patch-GoldenDict-Paths: cleared $indexDir; dictionaries reindex on next launch." -ForegroundColor Green
+if ($pathPatched) {
+    Write-Host "Patch-GoldenDict-Paths: added <path recursive=`"1`">$ContentDir</path>" -ForegroundColor Green
+    Write-Host "Patch-GoldenDict-Paths: $($ifoFiles.Count) dictionary file(s) detected:" -ForegroundColor Green
+    $ifoFiles | ForEach-Object { Write-Host "  - $($_.Name)" -ForegroundColor Green }
+}
+if ($statePatched) {
+    Write-Host "Patch-GoldenDict-Paths: updated <mainWindowState> (History/Favorites/Dictionaries panes hidden)." -ForegroundColor Green
+}
+if ($indexCleared) {
+    Write-Host "Patch-GoldenDict-Paths: cleared $indexDir; dictionaries reindex on next launch." -ForegroundColor Green
+}
 Write-Host "Patch-GoldenDict-Paths: done." -ForegroundColor Green
 exit 0
