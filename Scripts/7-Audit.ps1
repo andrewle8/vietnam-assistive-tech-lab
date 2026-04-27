@@ -541,6 +541,38 @@ if (Test-Path $readmatePrefs) {
     Add-Result "System" "Readmate prefs.json" "Present" "Missing" "FAIL"
 }
 
+# Kiwix library.xml. Configure-Laptop.ps1 Step 34 + Scripts/patches/Fix-Kiwix-Library.ps1
+# deploy this file with full book metadata so Wikipedia + Wiktionary appear in Kiwix-
+# desktop's "Local files" tab with correct sizes. The pre-patch version (id/path/
+# title/articleCount/mediaCount only) caused Kiwix 2.5.1 to display 0 bytes or hide
+# the entries entirely. The fix adds size= (KB), description, creator, publisher,
+# date, flavour. Audit the patched state via the size attribute on both books.
+$kiwixLibrary = "C:\Users\Student\AppData\Roaming\kiwix-desktop\library.xml"
+if (Test-Path $kiwixLibrary) {
+    Add-Result "System" "Kiwix library.xml" "Present" "Present" "PASS"
+    try {
+        [xml]$libXml = Get-Content $kiwixLibrary -Raw
+        $wikiBook = $libXml.library.book | Where-Object { $_.name -eq "wikipedia_vi_all_mini" }
+        $wiktBook = $libXml.library.book | Where-Object { $_.name -eq "wiktionary_vi_all_nopic" }
+        $wikiSize = if ($wikiBook -and $wikiBook.size) { [int]$wikiBook.size } else { 0 }
+        $wiktSize = if ($wiktBook -and $wiktBook.size) { [int]$wiktBook.size } else { 0 }
+        if ($wikiSize -gt 0) {
+            Add-Result "System" "Kiwix lib: Wikipedia size" "size > 0 KB" "$wikiSize KB" "PASS"
+        } else {
+            Add-Result "System" "Kiwix lib: Wikipedia size" "size > 0 KB" "missing/zero (run Fix-Kiwix-Library.ps1)" "FAIL"
+        }
+        if ($wiktSize -gt 0) {
+            Add-Result "System" "Kiwix lib: Wiktionary size" "size > 0 KB" "$wiktSize KB" "PASS"
+        } else {
+            Add-Result "System" "Kiwix lib: Wiktionary size" "size > 0 KB" "missing/zero (run Fix-Kiwix-Library.ps1)" "FAIL"
+        }
+    } catch {
+        Add-Result "System" "Kiwix library.xml" "Valid XML" "Parse error" "FAIL"
+    }
+} else {
+    Add-Result "System" "Kiwix library.xml" "Present" "Missing" "FAIL"
+}
+
 # -----------------------------------------------
 # Section 5: Remote Management
 # -----------------------------------------------
