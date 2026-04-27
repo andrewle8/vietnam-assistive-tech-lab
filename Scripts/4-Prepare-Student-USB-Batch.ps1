@@ -4,9 +4,10 @@
     [string]$LogPath = "$PSScriptRoot\usb-batch-preparation.log",
     # Throttled parallel copy. Cheap USB sticks bottleneck on per-file fsync,
     # not bandwidth, so multiple drives can write concurrently without bus
-    # contention. Cap at 3 by default for unpowered hubs (sustained writes
-    # draw enough current that 10-wide can brown out a shared port).
-    [int]$MaxConcurrent = 3
+    # contention. 5 is the sweet spot on a powered USB 3.0 hub: ~halves wall
+    # time vs sequential without hitting current draw limits. Drop to 3 for
+    # unpowered hubs (10-wide can brown out a shared port).
+    [int]$MaxConcurrent = 5
 )
 
 chcp 65001 | Out-Null
