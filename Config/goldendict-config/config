@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
+  <paths>
+    <path recursive="1">C:\Program Files (x86)\GoldenDict\content</path>
+    <path recursive="1">C:\Program Files\GoldenDict\content</path>
+  </paths>
   <preferences>
     <zoomFactor>1.5</zoomFactor>
     <helpZoomFactor>1.5</helpZoomFactor>
