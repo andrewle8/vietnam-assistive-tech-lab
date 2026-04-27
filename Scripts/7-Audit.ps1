@@ -504,6 +504,43 @@ if (Test-Path $readmateDir) {
     Add-Result "System" "Readmate Ebooks" "Populated" "file folder missing" "WARN"
 }
 
+# SM Readmate prefs (Config/sm-readmate-config/shared_preferences.json deployed
+# by Configure-Laptop.ps1 Step 17d). The 5 keys below were tuned to stop the
+# "NVDA reads the book while Readmate also reads it" double-read:
+#   - readAutoStart=false avoids the focus thrash that triggered NVDA reads
+#   - ttsType=system + Microsoft An keeps playback on OneCore (Vi-Vu via SAPI5
+#     was where the double-read manifested)
+#   - rates 0.35/0.65 are comfortable; Readmate's defaults are uncomfortably fast
+$readmatePrefs = "C:\Users\Student\AppData\Roaming\SaoMai\SM Readmate\shared_preferences.json"
+if (Test-Path $readmatePrefs) {
+    try {
+        $prefs = Get-Content $readmatePrefs -Raw | ConvertFrom-Json
+        $readmateChecks = @(
+            @{ Key = "flutter.readAutoStart";              Expected = $false;                Display = "false";                Status = "FAIL"; Label = "prefs: readAutoStart" },
+            @{ Key = "flutter.ttsType";                    Expected = "system";              Display = "system";               Status = "FAIL"; Label = "prefs: ttsType" },
+            @{ Key = "flutter.systemTtsVoiceModelForText"; Expected = "Microsoft An#vi-VN#"; Display = "Microsoft An#vi-VN#";  Status = "FAIL"; Label = "prefs: voice model" },
+            @{ Key = "flutter.systemTtsRate";              Expected = 0.35;                  Display = "0.35";                 Status = "WARN"; Label = "prefs: systemTtsRate" },
+            @{ Key = "flutter.audioRate";                  Expected = 0.65;                  Display = "0.65";                 Status = "WARN"; Label = "prefs: audioRate" }
+        )
+        foreach ($c in $readmateChecks) {
+            if ($prefs.PSObject.Properties.Name -contains $c.Key) {
+                $actual = $prefs.($c.Key)
+                if ($actual -eq $c.Expected) {
+                    Add-Result "System" "Readmate $($c.Label)" $c.Display "$actual" "PASS"
+                } else {
+                    Add-Result "System" "Readmate $($c.Label)" $c.Display "$actual" $c.Status
+                }
+            } else {
+                Add-Result "System" "Readmate $($c.Label)" $c.Display "(not set)" $c.Status
+            }
+        }
+    } catch {
+        Add-Result "System" "Readmate prefs.json" "Valid JSON" "Parse error" "FAIL"
+    }
+} else {
+    Add-Result "System" "Readmate prefs.json" "Present" "Missing" "FAIL"
+}
+
 # -----------------------------------------------
 # Section 5: Remote Management
 # -----------------------------------------------
