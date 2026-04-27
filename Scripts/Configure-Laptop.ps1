@@ -3000,16 +3000,14 @@ Write-Host "Log file: $LogPath" -ForegroundColor Cyan
 Write-Host "`n========================================" -ForegroundColor Green
 Write-Host ""
 
-# STU- prefix resolver patch (2026-04-27-stu-resolver). Runs LAST so it supersedes
-# Step 19's 3-trigger LabReassignStudentUSB registration with the 4-trigger version
-# (boot/logon/1-min poll/Microsoft-Windows-Ntfs/Operational EventID 4), creates the
-# C:\StudentUSB mount point, and reasserts Office/Firefox/Audacity defaults at
-# C:\StudentUSB\. Idempotent. See Scripts\patches\2026-04-27-stu-resolver\
-# Patch-StudentUSBResolver.ps1 and docs\superpowers\specs\2026-04-27-stu-prefix-
-# resolver-design.md.
-$patchHelper = Join-Path $PSScriptRoot "patches\2026-04-27-stu-resolver\Patch-StudentUSBResolver.ps1"
+# STU- prefix resolver patch. Runs LAST so it supersedes Step 19's 3-trigger
+# LabReassignStudentUSB registration with the 4-trigger version (boot/logon/1-min
+# poll/Microsoft-Windows-Ntfs/Operational EventID 4), creates the C:\StudentUSB
+# mount point, and reasserts Office/Firefox/Audacity defaults at C:\StudentUSB\.
+# Idempotent. See Scripts\patches\stu-resolver\Patch-StudentUSBResolver.ps1.
+$patchHelper = Join-Path $PSScriptRoot "patches\stu-resolver\Patch-StudentUSBResolver.ps1"
 if (Test-Path $patchHelper) {
-    Write-Log "Applying STU- resolver patch (2026-04-27-stu-resolver)..." "INFO"
+    Write-Log "Applying STU- resolver patch..." "INFO"
     try {
         & $patchHelper
         Write-Log "STU- resolver patch applied" "SUCCESS"

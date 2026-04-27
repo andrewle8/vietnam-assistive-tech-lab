@@ -1,9 +1,9 @@
 # Patch-StudentUSBResolver.ps1
-# Patch ID: 2026-04-27-stu-resolver
+# Patch ID: stu-resolver
 #
 # Idempotent setup helper for the STU- prefix resolver patch. Called by:
-#   - Scripts\patches\2026-04-27-stu-resolver\Apply-Patch.ps1  (in-field, already-shipped fleet)
-#   - Scripts\Configure-Laptop.ps1                              (fresh-image deploys, future)
+#   - Scripts\patches\stu-resolver\Apply-Patch.ps1  (in-field, already-shipped fleet)
+#   - Scripts\Configure-Laptop.ps1                  (fresh-image deploys)
 #
 # Steps:
 #   1. Resolve resolver source from $PSScriptRoot\..\..\Reassign-StudentUSB.ps1
@@ -23,7 +23,7 @@ param()
 $ErrorActionPreference = 'Stop'
 $ProgressPreference    = 'SilentlyContinue'
 
-$patchVersion  = '2026-04-27-stu-resolver'
+$patchVersion  = 'stu-resolver'
 $labTools      = 'C:\LabTools'
 $resolverDest  = Join-Path $labTools 'Reassign-StudentUSB.ps1'
 $taskName      = 'LabReassignStudentUSB'

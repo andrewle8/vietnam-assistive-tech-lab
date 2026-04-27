@@ -74,12 +74,12 @@ function Add-Result {
 # -----------------------------------------------
 # Patch state detection (drives expected values throughout)
 # -----------------------------------------------
-# When the STU- prefix resolver patch (2026-04-27-stu-resolver) is applied, the
-# default save path moves from D:\ to C:\StudentUSB\ across Office, Firefox,
-# Audacity, and the USB.lnk shortcut. Detect that state once via the registry
-# stamp the patch writes; downstream checks use $expectedSavePath instead of
-# hard-coding "D:\". Pre-patch laptops still pass with "D:\" as before.
-$patchVersion = '2026-04-27-stu-resolver'
+# When the STU- prefix resolver patch (stu-resolver) is applied, the default
+# save path moves from D:\ to C:\StudentUSB\ across Office, Firefox, Audacity,
+# and the USB.lnk shortcut. Detect that state once via the registry stamp the
+# patch writes; downstream checks use $expectedSavePath instead of hard-coding
+# "D:\". Pre-patch laptops still pass with "D:\" as before.
+$patchVersion = 'stu-resolver'
 $isPatched = ((Get-ItemProperty 'HKLM:\SOFTWARE\LabConfig' -Name 'PatchVersion' -ErrorAction SilentlyContinue).PatchVersion) -eq $patchVersion
 $expectedSavePath    = if ($isPatched) { 'C:\StudentUSB\' }   else { 'D:\' }
 $expectedSavePathAud = if ($isPatched) { 'C:\\StudentUSB\\' } else { 'D:\\' }
@@ -430,7 +430,7 @@ if (Test-Path "C:\LabTools\nvda-backup\nvda.ini") {
 
 # Office default-save location. Pre-patch this is D:\; post-patch it is C:\StudentUSB\
 # (mount-point reparse pinned to whatever drive letter the STU- USB was assigned --
-# see Scripts\Reassign-StudentUSB.ps1 + the 2026-04-27-stu-resolver patch). Word reads
+# see Scripts\Reassign-StudentUSB.ps1 + the stu-resolver patch). Word reads
 # the legacy "DOC-PATH" value; Excel and PowerPoint read "DefaultPath". All three are
 # set in the Student SID hive (resolver runs as SYSTEM, so HKCU is irrelevant).
 try {
@@ -747,7 +747,7 @@ if ($viPack) {
 }
 
 # -----------------------------------------------
-# Section 7b: STU Resolver Patch (2026-04-27-stu-resolver)
+# Section 7b: STU Resolver Patch (stu-resolver)
 # -----------------------------------------------
 # These checks audit the patch state. When a laptop has not been patched yet they
 # all WARN (informational) so audit output stays clean. When patched, they verify

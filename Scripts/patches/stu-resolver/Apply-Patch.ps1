@@ -1,13 +1,13 @@
 # Apply-Patch.ps1
-# Patch ID: 2026-04-27-stu-resolver
+# Patch ID: stu-resolver
 #
 # Field entry point for the STU- prefix resolver patch. Run as Administrator.
 #
 # Apply (default):
-#   PS> & "<DEPLOY-drive>:\Scripts\patches\2026-04-27-stu-resolver\Apply-Patch.ps1"
+#   PS> & "<DEPLOY-drive>:\Scripts\patches\stu-resolver\Apply-Patch.ps1"
 #
 # Undo:
-#   PS> & "<DEPLOY-drive>:\Scripts\patches\2026-04-27-stu-resolver\Apply-Patch.ps1" -Undo
+#   PS> & "<DEPLOY-drive>:\Scripts\patches\stu-resolver\Apply-Patch.ps1" -Undo
 #
 # Idempotent. Safe to re-run. Logs to C:\LabTools\stu-patch.log.
 
@@ -19,7 +19,7 @@ param(
 $ErrorActionPreference = 'Continue'
 $ProgressPreference    = 'SilentlyContinue'
 
-$patchVersion   = '2026-04-27-stu-resolver'
+$patchVersion   = 'stu-resolver'
 $labTools       = 'C:\LabTools'
 $mountPoint     = 'C:\StudentUSB'
 $resolverDest   = Join-Path $labTools 'Reassign-StudentUSB.ps1'

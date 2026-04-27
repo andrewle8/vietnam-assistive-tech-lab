@@ -1,5 +1,5 @@
 # Reassign-StudentUSB.ps1
-# Version: 2026-04-27-stu-resolver
+# Version: stu-resolver
 #
 # Resolves any volume labeled with the STU- prefix to a stable, drive-letter-
 # independent path: C:\StudentUSB\ (a mount-point reparse point). All apps
