@@ -1,7 +1,12 @@
 ﻿param(
     [Parameter(Mandatory=$true)]
     [int]$StartStudent,
-    [string]$LogPath = "$PSScriptRoot\usb-batch-preparation.log"
+    [string]$LogPath = "$PSScriptRoot\usb-batch-preparation.log",
+    # Throttled parallel copy. Cheap USB sticks bottleneck on per-file fsync,
+    # not bandwidth, so multiple drives can write concurrently without bus
+    # contention. Cap at 3 by default for unpowered hubs (sustained writes
+    # draw enough current that 10-wide can brown out a shared port).
+    [int]$MaxConcurrent = 3
 )
 
 chcp 65001 | Out-Null
@@ -191,7 +196,7 @@ if ($succeeded.Count -eq 0) {
 # rights or installation. Layout per USB:
 #   <STU>:\NVDA\nvda.exe            <- the portable executable
 #   <STU>:\NVDA\userConfig\         <- baked Vi-Vu + 11 addons + lab settings
-#   <STU>:\Khởi động NVDA.lnk       <- one-click launcher at USB root
+#   <STU>:\NVDA.lnk                 <- one-click launcher at USB root
 #   <STU>:\Tài liệu\, Âm thanh\, Bài tập\
 #   <STU>:\.student-id (hidden)
 # ----------------------------------------------------------------------------
@@ -200,47 +205,72 @@ Write-Host "========================================" -ForegroundColor Green
 Write-Host "NVDA PORTABLE COPY PHASE" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Green
 Write-Host "Source: $portableSource" -ForegroundColor Cyan
-Write-Host "Copying ~285 MB to each STU drive (sequential, robocopy /MT:8)..." -ForegroundColor Cyan
+Write-Host "Copying ~285 MB to each STU drive (max $MaxConcurrent concurrent, robocopy /MT:8)..." -ForegroundColor Cyan
 Write-Host ""
 
+# Throttled parallel copy. Each robocopy runs in its own job; we keep at most
+# $MaxConcurrent jobs alive at once so unpowered hubs don't brown out under
+# sustained writes from too many drives at the same time.
 $copyResults = @()
-foreach ($r in $succeeded) {
-    $stuRoot = "$($r.Letter):\"
-    $stuNvda = Join-Path $stuRoot "NVDA"
-    Write-Host "  -> $($r.StudentId) ($stuNvda) ..." -ForegroundColor White -NoNewline
+$queue = [System.Collections.Generic.Queue[object]]::new()
+foreach ($r in $succeeded) { $queue.Enqueue($r) }
 
-    # robocopy: /E recurse incl. empty, /MT:8 multithread, /R:1 retry, /W:1 wait,
-    # /NFL/NDL/NJH/NJS/NP keep output quiet (we only care about exit code).
-    $rcArgs = @($portableSource, $stuNvda, "/E", "/MT:8", "/R:1", "/W:1",
-                "/NFL", "/NDL", "/NJH", "/NJS", "/NP")
-    & robocopy @rcArgs | Out-Null
-    $rcExit = $LASTEXITCODE
-
-    # robocopy exit codes: 0=no change, 1=copied OK, 2=extras, 3=copied+extras.
-    # 0-7 = success; 8+ = failure.
-    if ($rcExit -lt 8 -and (Test-Path (Join-Path $stuNvda "nvda.exe"))) {
-        # Create launcher .lnk at USB root pointing to NVDA\nvda.exe.
-        try {
-            $lnkPath = Join-Path $stuRoot "Khởi động NVDA.lnk"
-            $ws = New-Object -ComObject WScript.Shell
-            $sc = $ws.CreateShortcut($lnkPath)
-            $sc.TargetPath       = (Join-Path $stuNvda "nvda.exe")
-            $sc.WorkingDirectory = $stuNvda
-            $sc.IconLocation     = (Join-Path $stuNvda "nvda.exe") + ",0"
-            $sc.Description      = "Khởi động NVDA từ USB"
-            $sc.Save()
-            [System.Runtime.Interopservices.Marshal]::ReleaseComObject($ws) | Out-Null
-        } catch {
-            Write-Host " (lnk failed: $($_.Exception.Message))" -ForegroundColor Yellow
+$running = @{}
+while ($queue.Count -gt 0 -or $running.Count -gt 0) {
+    while ($queue.Count -gt 0 -and $running.Count -lt $MaxConcurrent) {
+        $r = $queue.Dequeue()
+        $stuNvda = Join-Path "$($r.Letter):\" "NVDA"
+        $job = Start-Job -ArgumentList $portableSource, $stuNvda -ScriptBlock {
+            param($s, $dst)
+            $rcArgs = @($s, $dst, "/E", "/MT:8", "/R:1", "/W:1",
+                        "/NFL", "/NDL", "/NJH", "/NJS", "/NP")
+            & robocopy @rcArgs | Out-Null
+            return @{ ExitCode = $LASTEXITCODE; Dst = $dst }
         }
+        $running[$job.Id] = @{ Job = $job; Result = $r; StuNvda = $stuNvda; StartedAt = Get-Date }
+        Write-Host "[$(Get-Date -Format HH:mm:ss)] START $($r.StudentId) ($($r.Letter):)" -ForegroundColor Cyan
+    }
 
-        Write-Host " OK (robocopy exit $rcExit)" -ForegroundColor Green
-        Write-Log "$($r.Letter): NVDA portable + launcher deployed (rc=$rcExit)" "SUCCESS"
-        $copyResults += [PSCustomObject]@{ Letter = $r.Letter; StudentId = $r.StudentId; Success = $true }
-    } else {
-        Write-Host " FAILED (robocopy exit $rcExit)" -ForegroundColor Red
-        Write-Log "$($r.Letter): NVDA portable copy FAILED (rc=$rcExit)" "ERROR"
-        $copyResults += [PSCustomObject]@{ Letter = $r.Letter; StudentId = $r.StudentId; Success = $false }
+    Start-Sleep -Seconds 2
+
+    $finishedIds = @($running.Keys | Where-Object { $running[$_].Job.State -ne 'Running' })
+    foreach ($id in $finishedIds) {
+        $entry  = $running[$id]
+        $r      = $entry.Result
+        $stuNvda = $entry.StuNvda
+        $stuRoot = "$($r.Letter):\"
+        $copyOut = Receive-Job -Job $entry.Job
+        Remove-Job -Job $entry.Job
+        $running.Remove($id)
+        $rcExit  = $copyOut.ExitCode
+        $elapsed = [int]((Get-Date) - $entry.StartedAt).TotalSeconds
+
+        # robocopy exit codes: 0=no change, 1=copied OK, 2=extras, 3=copied+extras.
+        # 0-7 = success; 8+ = failure.
+        if ($rcExit -lt 8 -and (Test-Path (Join-Path $stuNvda "nvda.exe"))) {
+            # Create launcher .lnk at USB root pointing to NVDA\nvda.exe.
+            try {
+                $lnkPath = Join-Path $stuRoot "NVDA.lnk"
+                $ws = New-Object -ComObject WScript.Shell
+                $sc = $ws.CreateShortcut($lnkPath)
+                $sc.TargetPath       = (Join-Path $stuNvda "nvda.exe")
+                $sc.WorkingDirectory = $stuNvda
+                $sc.IconLocation     = (Join-Path $stuNvda "nvda.exe") + ",0"
+                $sc.Description      = "NVDA"
+                $sc.Save()
+                [System.Runtime.Interopservices.Marshal]::ReleaseComObject($ws) | Out-Null
+            } catch {
+                Write-Host "[$(Get-Date -Format HH:mm:ss)] WARN  $($r.StudentId) lnk failed: $($_.Exception.Message)" -ForegroundColor Yellow
+            }
+
+            Write-Host "[$(Get-Date -Format HH:mm:ss)] DONE  $($r.StudentId) ($($r.Letter):) rc=$rcExit elapsed=${elapsed}s" -ForegroundColor Green
+            Write-Log "$($r.Letter): NVDA portable + launcher deployed (rc=$rcExit, ${elapsed}s)" "SUCCESS"
+            $copyResults += [PSCustomObject]@{ Letter = $r.Letter; StudentId = $r.StudentId; Success = $true }
+        } else {
+            Write-Host "[$(Get-Date -Format HH:mm:ss)] FAIL  $($r.StudentId) ($($r.Letter):) rc=$rcExit elapsed=${elapsed}s" -ForegroundColor Red
+            Write-Log "$($r.Letter): NVDA portable copy FAILED (rc=$rcExit, ${elapsed}s)" "ERROR"
+            $copyResults += [PSCustomObject]@{ Letter = $r.Letter; StudentId = $r.StudentId; Success = $false }
+        }
     }
 }
 

@@ -875,7 +875,7 @@ public class ShellLinkCreator {
         @{ Name = "Sao Mai Typing Tutor"; Target = "C:\Program Files (x86)\SaoMai\SMTT\SMTT.exe"; AltTarget = "C:\Program Files\SaoMai\SMTT\SMTT.exe"; IconLocation = "%SystemRoot%\System32\imageres.dll,116"; Desc = "Sao Mai Vietnamese Typing Tutor" },
         @{ Name = "Thùng Rác"; Target = "explorer.exe"; Args = "shell:RecycleBinFolder"; IconLocation = "%SystemRoot%\System32\shell32.dll,31"; Desc = "Thùng rác - khôi phục tập tin đã xóa" },
         @{ Name = "Từ Điển"; Target = "C:\Program Files\GoldenDict\GoldenDict.exe"; AltTarget = "C:\Program Files (x86)\GoldenDict\GoldenDict.exe"; IconLocation = $goldenDictIcoPath; Desc = "GoldenDict - Offline Dictionary" },
-        @{ Name = "USB"; Target = "explorer.exe"; Args = "shell:MyComputerFolder"; IconLocation = "%SystemRoot%\System32\imageres.dll,109"; Desc = "Open This PC to access your USB drive" },
+        @{ Name = "USB"; Target = "explorer.exe"; Args = "C:\StudentUSB"; IconLocation = "%SystemRoot%\System32\imageres.dll,109"; Desc = "Open student USB folder" },
         @{ Name = "VLC media player"; Target = "C:\Program Files\VideoLAN\VLC\vlc.exe"; AltTarget = "C:\Program Files (x86)\VideoLAN\VLC\vlc.exe"; Desc = "VLC Media Player" },
         @{ Name = "Wikipedia"; Target = "C:\Program Files\Kiwix\kiwix-desktop.exe"; Desc = "Kiwix - Offline Vietnamese Wikipedia" },
         @{ Name = "Word"; Target = "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE"; Desc = "Microsoft Word" }
@@ -2999,6 +2999,28 @@ Write-Host ""
 Write-Host "Log file: $LogPath" -ForegroundColor Cyan
 Write-Host "`n========================================" -ForegroundColor Green
 Write-Host ""
+
+# STU- prefix resolver patch (2026-04-27-stu-resolver). Runs LAST so it supersedes
+# Step 19's 3-trigger LabReassignStudentUSB registration with the 4-trigger version
+# (boot/logon/1-min poll/Microsoft-Windows-Ntfs/Operational EventID 4), creates the
+# C:\StudentUSB mount point, and reasserts Office/Firefox/Audacity defaults at
+# C:\StudentUSB\. Idempotent. See Scripts\patches\2026-04-27-stu-resolver\
+# Patch-StudentUSBResolver.ps1 and docs\superpowers\specs\2026-04-27-stu-prefix-
+# resolver-design.md.
+$patchHelper = Join-Path $PSScriptRoot "patches\2026-04-27-stu-resolver\Patch-StudentUSBResolver.ps1"
+if (Test-Path $patchHelper) {
+    Write-Log "Applying STU- resolver patch (2026-04-27-stu-resolver)..." "INFO"
+    try {
+        & $patchHelper
+        Write-Log "STU- resolver patch applied" "SUCCESS"
+        $successCount++
+    } catch {
+        Write-Log "STU- resolver patch failed: $($_.Exception.Message)" "ERROR"
+        $failCount++
+    }
+} else {
+    Write-Log "STU- resolver patch helper not found at $patchHelper -- skipped" "WARN"
+}
 
 # Unload registry hives if we loaded them
 if ($studentHiveLoaded) {

@@ -72,6 +72,19 @@ function Add-Result {
 }
 
 # -----------------------------------------------
+# Patch state detection (drives expected values throughout)
+# -----------------------------------------------
+# When the STU- prefix resolver patch (2026-04-27-stu-resolver) is applied, the
+# default save path moves from D:\ to C:\StudentUSB\ across Office, Firefox,
+# Audacity, and the USB.lnk shortcut. Detect that state once via the registry
+# stamp the patch writes; downstream checks use $expectedSavePath instead of
+# hard-coding "D:\". Pre-patch laptops still pass with "D:\" as before.
+$patchVersion = '2026-04-27-stu-resolver'
+$isPatched = ((Get-ItemProperty 'HKLM:\SOFTWARE\LabConfig' -Name 'PatchVersion' -ErrorAction SilentlyContinue).PatchVersion) -eq $patchVersion
+$expectedSavePath    = if ($isPatched) { 'C:\StudentUSB\' }   else { 'D:\' }
+$expectedSavePathAud = if ($isPatched) { 'C:\\StudentUSB\\' } else { 'D:\\' }
+
+# -----------------------------------------------
 # Section 1: Windows Version
 # -----------------------------------------------
 Write-Host "`n--- Windows ---" -ForegroundColor White
@@ -415,10 +428,11 @@ if (Test-Path "C:\LabTools\nvda-backup\nvda.ini") {
     Add-Result "System" "NVDA Config Backup" "Present" "Missing" "WARN"
 }
 
-# Office default-save location to D:\ (the student USB). Word uses the legacy "DOC-PATH"
-# value name; Excel and PowerPoint use "DefaultPath". All three are set in Configure-Laptop
-# Step 4 across the Student SID hive. If D: is unmounted, Office falls back gracefully
-# but the registry value should still be D:\.
+# Office default-save location. Pre-patch this is D:\; post-patch it is C:\StudentUSB\
+# (mount-point reparse pinned to whatever drive letter the STU- USB was assigned --
+# see Scripts\Reassign-StudentUSB.ps1 + the 2026-04-27-stu-resolver patch). Word reads
+# the legacy "DOC-PATH" value; Excel and PowerPoint read "DefaultPath". All three are
+# set in the Student SID hive (resolver runs as SYSTEM, so HKCU is irrelevant).
 try {
     $studentSid = (New-Object System.Security.Principal.NTAccount("Student")).Translate(
         [System.Security.Principal.SecurityIdentifier]).Value
@@ -431,11 +445,11 @@ try {
     )
     foreach ($oc in $officeChecks) {
         $val = (Get-ItemProperty -Path $oc.Path -Name $oc.Name -ErrorAction SilentlyContinue).$($oc.Name)
-        if ($val -eq "D:\") {
-            Add-Result "System" "Office Default Save ($($oc.App))" "D:\" $val "PASS"
+        if ($val -eq $expectedSavePath) {
+            Add-Result "System" "Office Default Save ($($oc.App))" $expectedSavePath $val "PASS"
         } else {
             $shown = if ($val) { $val } else { "(not set)" }
-            Add-Result "System" "Office Default Save ($($oc.App))" "D:\" $shown "FAIL"
+            Add-Result "System" "Office Default Save ($($oc.App))" $expectedSavePath $shown "FAIL"
         }
     }
 } catch {
@@ -460,6 +474,19 @@ if (Test-Path $audacityCfg) {
     } else {
         Add-Result "System" "Audacity Language" "vi" "(no [Locale] section)" "WARN"
     }
+
+    # [Directories/Save] Default -- the Save Project As dialog's initial folder.
+    # Pre-patch: D:\\, post-patch: C:\\StudentUSB\\. (Audacity escapes backslashes.)
+    if ($cfgRaw -match '(?ms)^\[Directories/Save\][^\[]*?^Default\s*=\s*(\S+)') {
+        $audSave = $Matches[1].Trim()
+        if ($audSave -eq $expectedSavePathAud) {
+            Add-Result "System" "Audacity Default Save" $expectedSavePathAud $audSave "PASS"
+        } else {
+            Add-Result "System" "Audacity Default Save" $expectedSavePathAud $audSave "FAIL"
+        }
+    } else {
+        Add-Result "System" "Audacity Default Save" $expectedSavePathAud "(no [Directories/Save])" "WARN"
+    }
 } else {
     Add-Result "System" "Audacity Language" "vi" "audacity.cfg not yet created" "WARN"
 }
@@ -475,6 +502,15 @@ if (Test-Path $ffPolicies) {
             Add-Result "System" "Firefox Default-Browser Nag" "Suppressed" "Suppressed" "PASS"
         } else {
             Add-Result "System" "Firefox Default-Browser Nag" "Suppressed" "Not suppressed" "FAIL"
+        }
+
+        # browser.download.dir.Value -- pre-patch D:\, post-patch C:\StudentUSB\.
+        $ffDir = $pol.policies.Preferences.'browser.download.dir'.Value
+        if ($ffDir -eq $expectedSavePath) {
+            Add-Result "System" "Firefox Download Dir" $expectedSavePath $ffDir "PASS"
+        } else {
+            $shown = if ($ffDir) { $ffDir } else { "(not set)" }
+            Add-Result "System" "Firefox Download Dir" $expectedSavePath $shown "FAIL"
         }
     } catch {
         Add-Result "System" "Firefox policies.json" "Valid JSON" "Parse error" "WARN"
@@ -708,6 +744,105 @@ if ($viPack) {
     Add-Result "Accounts" "Vietnamese Language Pack" "Installed" "Installed (lp.cab)" "PASS"
 } else {
     Add-Result "Accounts" "Vietnamese Language Pack" "Installed" "Missing - re-run Configure-Laptop" "FAIL"
+}
+
+# -----------------------------------------------
+# Section 7b: STU Resolver Patch (2026-04-27-stu-resolver)
+# -----------------------------------------------
+# These checks audit the patch state. When a laptop has not been patched yet they
+# all WARN (informational) so audit output stays clean. When patched, they verify
+# the four post-patch invariants that the resolver enforces.
+Write-Host "`n--- STU Resolver Patch ---" -ForegroundColor White
+Write-Host ""
+
+if (-not $isPatched) {
+    Add-Result "Patch" "STU resolver applied" $patchVersion "(not applied)" "WARN"
+} else {
+    Add-Result "Patch" "Registry stamp" $patchVersion $patchVersion "PASS"
+
+    # Mount point must exist as a reparse point. Without a STU- USB plugged in we
+    # expect it gone (the resolver removes it -- loud-failure mode). With one
+    # plugged in we expect a reparse point referencing the STU- volume's GUID.
+    $mp = 'C:\StudentUSB'
+    $stuVol = Get-CimInstance Win32_Volume | Where-Object { $_.Label -match '^STU-' -and $_.DriveType -eq 2 } | Select-Object -First 1
+    if ($stuVol) {
+        if (Test-Path -LiteralPath $mp) {
+            # Resolve the mount point's actual target volume via Get-Volume -FilePath.
+            # UniqueId is the volume GUID in the same \\?\Volume{...}\ format Win32_Volume.DeviceID uses.
+            $mpVol = Get-Volume -FilePath $mp -ErrorAction SilentlyContinue
+            if ($mpVol -and $mpVol.UniqueId -eq $stuVol.DeviceID) {
+                Add-Result "Patch" "Mount point bound" "STU volume GUID" "$mp -> $($stuVol.Label)" "PASS"
+            } else {
+                $foundLabel = if ($mpVol) { $mpVol.FileSystemLabel } else { '(unresolved)' }
+                Add-Result "Patch" "Mount point bound" "STU volume GUID" "bound to $foundLabel" "FAIL"
+            }
+        } else {
+            Add-Result "Patch" "Mount point bound" "$mp present" "missing (STU USB plugged in)" "FAIL"
+        }
+    } else {
+        if (Test-Path -LiteralPath $mp) {
+            Add-Result "Patch" "Mount point cleanup" "$mp removed when no STU USB" "still present (cleanup didn't run)" "WARN"
+        } else {
+            Add-Result "Patch" "Mount point cleanup" "$mp removed when no STU USB" "removed (loud-fail mode active)" "PASS"
+        }
+    }
+
+    # USB.lnk target. Pre-patch: explorer.exe + shell:MyComputerFolder. Post-patch: explorer.exe + C:\StudentUSB.
+    # explorer.exe-as-target avoids Windows broken-shortcut maintenance flagging the shortcut during
+    # USB-unplug cleanup windows; explorer surfaces "can't find C:\StudentUSB" if folder missing.
+    $lnkPath           = 'C:\Users\Public\Desktop\USB.lnk'
+    $expectedLnkTarget = "$env:SystemRoot\explorer.exe"
+    $expectedLnkArgs   = 'C:\StudentUSB'
+    $expectedLnkLabel  = "$expectedLnkTarget + $expectedLnkArgs"
+    if (Test-Path -LiteralPath $lnkPath) {
+        try {
+            $sc = (New-Object -ComObject WScript.Shell).CreateShortcut($lnkPath)
+            $actualLnkLabel = "$($sc.TargetPath) + $($sc.Arguments)"
+            if ($sc.TargetPath -eq $expectedLnkTarget -and $sc.Arguments -eq $expectedLnkArgs) {
+                Add-Result "Patch" "USB.lnk target" $expectedLnkLabel $actualLnkLabel "PASS"
+            } else {
+                Add-Result "Patch" "USB.lnk target" $expectedLnkLabel $actualLnkLabel "FAIL"
+            }
+        } catch {
+            Add-Result "Patch" "USB.lnk target" $expectedLnkLabel "shortcut unreadable" "FAIL"
+        }
+    } else {
+        Add-Result "Patch" "USB.lnk target" $expectedLnkLabel "shortcut missing (resolver will self-heal)" "WARN"
+    }
+
+    # Audacity cloud-save prompt suppression. Without SaveLocationMode=local in [cloud/audiocom],
+    # Audacity 3.x prompts "save to cloud or computer?" on every save -- a confusing UX for blind
+    # students. Resolver writes this on every fire (when USB plugged); persists across replugs.
+    $audCfgPatch = 'C:\Users\Student\AppData\Roaming\audacity\audacity.cfg'
+    if (Test-Path -LiteralPath $audCfgPatch) {
+        $cfgRawPatch = Get-Content $audCfgPatch -Raw
+        if ($cfgRawPatch -match '(?ms)^\[cloud/audiocom\][^\[]*?^SaveLocationMode\s*=\s*(\S+)') {
+            $cloudMode = $Matches[1].Trim()
+            if ($cloudMode -ieq 'local') {
+                Add-Result "Patch" "Audacity Cloud Save Mode" "local" $cloudMode "PASS"
+            } else {
+                Add-Result "Patch" "Audacity Cloud Save Mode" "local" $cloudMode "FAIL"
+            }
+        } else {
+            Add-Result "Patch" "Audacity Cloud Save Mode" "local" "(SaveLocationMode not set)" "FAIL"
+        }
+    } else {
+        Add-Result "Patch" "Audacity Cloud Save Mode" "local" "audacity.cfg not present" "WARN"
+    }
+
+    # LabReassignStudentUSB must have an EventTrigger subscribing to Microsoft-Windows-Ntfs/Operational EventID 4.
+    # Without it the patch loses its sub-second response on USB plug; the 1-min poll trigger remains as fallback.
+    try {
+        $task = Get-ScheduledTask -TaskName 'LabReassignStudentUSB' -ErrorAction Stop
+        $evtTrig = $task.Triggers | Where-Object { $_.CimClass.CimClassName -eq 'MSFT_TaskEventTrigger' -and $_.Subscription -match 'Microsoft-Windows-Ntfs/Operational' -and $_.Subscription -match 'EventID=4' }
+        if ($evtTrig) {
+            Add-Result "Patch" "Task Ntfs/4 EventTrigger" "Present" "Present (sub-second plug response)" "PASS"
+        } else {
+            Add-Result "Patch" "Task Ntfs/4 EventTrigger" "Present" "Missing (1-min poll fallback only)" "FAIL"
+        }
+    } catch {
+        Add-Result "Patch" "Task Ntfs/4 EventTrigger" "Readable" "Task missing" "FAIL"
+    }
 }
 
 # -----------------------------------------------
