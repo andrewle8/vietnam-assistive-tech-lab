@@ -1,449 +1,464 @@
-Hướng Dẫn Sử Dụng Máy Tính
+Hướng Dẫn Sử Dụng Máy Tính (Dell Latitude 5420)
 
-Tài liệu này hướng dẫn cách sử dụng máy tính với trình đọc màn hình NVDA.
+Cổng Kết Nối
 
-Bắt Đầu
+Từ phía sau ra phía trước (bàn phím gần bạn nhất - màn hình xa nhất):
 
-Khi máy tính bật lên, NVDA sẽ tự động chạy và nói "NVDA đang chạy".
+Bên Trái:
 
-Sau đó, bạn ở màn hình Desktop.
+1. Cổng USB-C nhỏ: dùng để cắm sạc
+2. Cổng USB-C nhỏ thứ hai: dùng để sạc hoặc cắm thiết bị USB
 
-Các Cổng Kết Nối
+Bên Phải:
 
-Máy tính Dell Latitude 5420 có các cổng ở hai bên và phía sau.
+Từ phía sau ra phía trước (từ màn hình về phía bạn):
 
-Đặt máy tính trước mặt bạn, màn hình mở lên. Phía bản lề ở xa bạn.
+1. Khe khóa chống trộm (khe nhỏ hình nêm)
+2. Cổng Ethernet (để cắm dây mạng)
+3. Cổng HDMI (kết nối với màn hình ngoài)
+4. Cổng USB-A lớn (hình chữ nhật): dành cho USB của học sinh hoặc bất kỳ USB-A nào
+	1. Cổng USB-A lớn thứ hai (hình chữ nhật): dành cho USB của học sinh hoặc bất kỳ USB-A nào
+5. Lỗ cắm tai nghe (lỗ tròn nhỏ)
+6. Khe thẻ microSD (khe mỏng)
 
-Bên Trái
+Phía trên màn hình:
 
-Từ phía sau ra phía trước (từ bản lề về phía bạn):
+- Có một Webcam ở giữa cạnh trên của màn hình. Khi dùng Webcam, hãy chắc chắn rằng nắp che camera (mỏng, hình chữ nhật, có vân) đã được gạt sang trái.
+	- (Nếu nắp ở bên phải, camera đang bị che. Gạt nắp sang trái để dùng camera.)
 
-1. Cổng USB-C nhỏ (Thunderbolt) - dùng để sạc hoặc kết nối màn hình ngoài
-2. Cổng USB-C nhỏ thứ hai (Thunderbolt)
-3. Cổng USB-A lớn (hình chữ nhật) - cắm USB của bạn vào đây
-4. Cổng HDMI (hình thang) - kết nối màn hình ngoài
+Cổng Quan Trọng
 
-Bên Phải
-
-Từ phía sau ra phía trước (từ bản lề về phía bạn):
-
-1. Khe khóa chống trộm (khe nhỏ hình tam giác)
-2. Cổng USB-A lớn thứ hai (hình chữ nhật) - cũng cắm được USB
-3. Lỗ cắm tai nghe (lỗ tròn nhỏ) - cắm tai nghe vào đây
-4. Khe thẻ microSD (khe mỏng)
-
-Phía Sau
-
-Phía sau (gần bản lề):
-
-1. Cổng mạng RJ-45 (cổng vuông lớn) - kết nối mạng dây
-
-Tóm Tắt Nhanh
-
-- Cắm tai nghe: bên phải, lỗ tròn, gần giữa cạnh
-- Cắm USB: cổng hình chữ nhật lớn, một cổng mỗi bên (trái và phải)
-- Sạc máy: cắm dây sạc vào cổng USB-C bên trái (cổng gần bản lề nhất)
+- Tai nghe: bên phải, lỗ tròn, gần giữa cạnh
+- USB: cổng hình chữ nhật lớn, một cổng mỗi bên (trái và phải)
+- Sạc: cắm dây sạc vào cổng USB-C bên trái (cổng gần bản lề nhất)
 
 Tai Nghe
 
 Máy tính dùng tai nghe Audio-Technica ATH-M40x.
 
-- Cắm dây tai nghe vào lỗ tròn bên phải máy tính.
-- Dây cáp có thể tháo rời. Đầu nhỏ (2.5mm) cắm vào tai nghe, đầu lớn (3.5mm) cắm vào máy tính.
-- Dùng phím âm lượng trên bàn phím để tăng hoặc giảm âm lượng.
-- Âm lượng được đặt ở 50% mỗi khi bật máy.
-- Độ sáng màn hình được đặt sẵn trong BIOS: khoảng 50% khi cắm sạc, khoảng 13% khi dùng pin (tiết kiệm pin).
+- Đeo tai nghe với dây ở phía bên trái tai. Điều chỉnh độ vừa bằng cách giữ phần trên của tai nghe rồi kéo bên trái hoặc bên phải lên hoặc xuống.
+- Cắm dây tai nghe vào lỗ tròn nhỏ ở bên phải máy tính, ngay sau cổng USB-A.
+- Dây cáp có thể tháo rời. Đầu cáp được gắn vào bên trái của tai nghe.
+- Âm lượng được đặt ở mức 50% mỗi khi máy tính khởi động.
+
+Thay Dây Cáp Tai Nghe
+
+- Để thay dây tai nghe, tháo dây bằng cách xoay ngược chiều kim đồng hồ.
+- Đầu nhỏ (2.5mm) cắm vào tai nghe, đầu lớn (3.5mm) cắm vào máy tính.
 
 USB Của Bạn
 
-Mỗi học sinh có một USB riêng (16GB) với số hiệu (ví dụ: STU-001).
+Mỗi học sinh có một USB cá nhân (16GB) với số hiệu (ví dụ: STU-001).
 
-USB của bạn có thẻ nhãn bằng chữ nổi Braille.
+USB của bạn có nhãn chữ nổi Braille gắn kèm.
 
 Cắm USB
 
-1. Tìm cổng USB-A (hình chữ nhật lớn) ở bên trái hoặc bên phải máy tính.
-2. Đầu cắm USB chỉ vào được một chiều. Nếu không vào, lật ngược lại.
-3. Đẩy nhẹ nhàng cho đến khi nghe tiếng "tách".
+1. Tìm cổng USB-A (hình chữ nhật lớn) ở bên phải máy tính, gần lỗ cắm tai nghe.
+2. Đầu cắm USB chỉ vào được một chiều. Nhãn Braille phải hướng lên trên.
 
 Mở USB
 
 1. Dùng phím mũi tên đến biểu tượng "USB" trên Desktop (nhấn phím "U" để nhảy nhanh).
 2. Nhấn Enter. Cửa sổ "This PC" sẽ mở ra.
-3. Nhấn Tab để di chuyển vào danh sách ổ đĩa, dùng phím mũi tên để tìm USB của bạn.
-4. Nhấn Enter để mở USB.
+3. Vị trí lưu sẽ chỉ về USB của bạn.
 
-Lưu File Vào USB
+Lưu Tập Tin Vào USB
+
+Lưu tất cả các tài liệu quan trọng vào USB của học sinh.
 
 Trong các chương trình như Word:
 
-1. Nhấn phím F12 để mở cửa sổ "Lưu thành" (Save As). Cửa sổ này tự động trỏ đến USB của bạn (ổ D).
-2. Gõ tên file (ví dụ: baitap.docx).
-3. Nhấn Enter để lưu.
+1. Nhấn F12 để mở hộp thoại "Save As" (Lưu Dưới Dạng). Hộp thoại tự động chỉ vào USB của học sinh.
+2. Chọn thư mục lưu trên USB.
+3. Gõ tên tập tin (ví dụ: baitap.docx).
+4. Nhấn Enter để lưu.
 
-Mẹo: Sau khi đã lưu file một lần, nhấn Ctrl + S sẽ lưu ngay tại vị trí cũ — không cần hỏi lại.
+Sau lần lưu đầu tiên, Ctrl + S sẽ lưu vào cùng vị trí mà không hỏi.
 
-Nếu USB không được cắm vào máy, Word sẽ lưu file vào thư mục Documents trên máy tính. Cắm USB rồi lưu lại bằng F12 để chuyển file sang USB.
+Nếu USB chưa được cắm, Word sẽ lưu vào thư mục Documents trên máy tính. Cắm USB vào và nhấn F12 để lưu lại vào USB.
 
-Rút USB An Toàn
+Tư Thế Đặt Tay Khi Gõ Phím
 
-Luôn rút USB an toàn để tránh mất dữ liệu.
+Tư thế đặt tay này giúp các ngón tay tìm và ghi nhớ vị trí từng phím.
 
-1. Nhấn phím Windows + E để mở File Explorer.
-2. Nhấn Tab đến phần ổ đĩa, dùng phím mũi tên đến USB của bạn.
-3. Nhấn phím Menu (hoặc Shift + F10) để mở menu chuột phải.
-4. Chọn "Eject" và nhấn Enter.
-5. Đợi cho đến khi nghe thông báo an toàn để rút USB.
-6. Rút USB ra.
+- Dùng hai ngón trỏ tìm phím F và J. Phím F và J có một gờ nhỏ ở dưới mặt phím và nằm gần giữa bàn phím, ở hàng phím thứ ba từ dưới lên.
+	- F và J nằm ở "hàng phím chính" (home row) — nơi tất cả các ngón tay (trừ ngón cái) đặt nghỉ.
+	- Đặt các ngón còn lại lên các phím kế bên. Từ F/J, đếm sang các phím khác: bên trái F là D, S, A; bên phải J là K, L và dấu chấm phẩy (;).
+	- Bên phải F là G. Bên trái J là H.
+- Cả hai ngón cái có thể đặt hờ hoặc nghỉ trên thanh dài (phím lớn hình chữ nhật ở giữa hàng phím dưới cùng — hai hàng dưới hàng F/J).
+
+Bố Cục Bàn Phím
+
+- Các phím mũi tên ở góc dưới bên phải bàn phím.
+- Tìm phím Mũi tên xuống — phím này có gờ nhỏ giống F và J. Phía trên là Mũi tên lên, hai bên là Mũi tên trái và Mũi tên phải.
+- Từ thanh dài (Spacebar), đếm sang phải: Alt phải, Control, rồi đến các phím mũi tên.
+- Phím Delete và Mũi tên xuống cũng có gờ nhỏ ở mép dưới phím.
+- CapsLock hoặc Insert đều có thể dùng làm phím NVDA. CapsLock là phím ngoài cùng bên trái của hàng phím chính (hàng A/S/D/F), ngay phía trên phím Shift trái. Insert ở ngay cạnh phím Delete, bên phải bàn phím.
 
 Điều Hướng Trên Desktop
 
-Desktop có các biểu tượng xếp theo thứ tự ABC.
+Để về Desktop từ bất kỳ đâu:
+
+1. Nhấn Windows + D
+2. Nhấn phím Mũi tên xuống một lần
+3. NVDA sẽ đọc tên biểu tượng đầu tiên trên Desktop
+4. Dùng phím mũi tên để di chuyển giữa các biểu tượng (không dùng Tab)
+5. Nhấn Enter để mở biểu tượng đã chọn
+
+
+Các biểu tượng trên Desktop được sắp xếp theo thứ tự bảng chữ cái.
 
 Dùng phím mũi tên (Trái, Phải, Lên, Xuống) để di chuyển giữa các biểu tượng.
 
 Nhấn Enter để mở chương trình.
 
-Mẹo: Nhấn chữ cái đầu của tên chương trình để nhảy nhanh. Ví dụ, nhấn "F" để nhảy đến Firefox, nhấn "W" để nhảy đến Word.
+Mẹo: Nhấn chữ cái đầu của tên chương trình để nhảy nhanh đến đó. Ví dụ: nhấn "F" cho Firefox, "W" cho Word.
 
-Nếu nhấn chữ cái không có phản ứng, tiêu điểm bàn phím đã rời khỏi Desktop. Nhấn phím Tab một lần — NVDA sẽ thông báo "Desktop, danh sách". Bây giờ nhấn chữ cái để nhảy sẽ hoạt động. Nếu Tab chuyển đến thanh tác vụ hoặc khay hệ thống, nhấn Tab thêm một lần để quay lại danh sách Desktop. Hoặc nhấn một phím mũi tên bất kỳ để ép tiêu điểm lên biểu tượng.
-
-Giữa các lần nhảy, nhấn chữ cái tiếp theo trong vòng khoảng một giây, hoặc đợi hai giây để bộ đệm "gõ chữ" reset. Tạm dừng giữa hai chữ (ví dụ: "F" rồi tạm dừng rồi "W") có thể khiến Windows hiểu là tiền tố "FW" và không tìm thấy gì.
+Nếu nhấn một chữ cái mà không có gì xảy ra, nghĩa là tiêu điểm bàn phím đã rời khỏi Desktop. Nhấn Tab một lần — NVDA sẽ thông báo "Desktop". Lúc đó nhấn chữ cái đầu sẽ hoạt động lại. Nếu Tab nhảy vào thanh tác vụ hoặc khay hệ thống, nhấn Tab thêm lần nữa để quay lại danh sách Desktop. Bạn cũng có thể nhấn bất kỳ phím mũi tên nào để buộc tiêu điểm trở về lưới biểu tượng.
 
 Danh Sách Chương Trình
 
-- Audacity - Chỉnh sửa âm thanh
-- Calculator - Máy tính bỏ túi
-- Excel - Bảng tính
-- Firefox - Trình duyệt web
-- NVDA - Trình đọc màn hình
-- PowerPoint - Trình chiếu
-- Readmate - Đọc sách giáo khoa (103 sách đã được cài sẵn)
-- Sao Mai Typing Tutor - Luyện gõ phím tiếng Việt
-- Thùng Rác - Khôi phục tập tin đã xóa
-- Từ Điển - Từ điển Anh-Việt
-- USB - Mở cửa sổ "This PC" để chọn USB của bạn
-- VLC media player - Nghe nhạc, xem video
-- Wikipedia - Bách khoa toàn thư offline
-- Word - Soạn thảo văn bản
+- Audacity – Chương trình biên tập âm thanh
+- Calculator – Máy tính bỏ túi
+- Excel – Bảng tính
+- Firefox – Trình duyệt web
+- NVDA – Trình đọc màn hình
+- PowerPoint – Trình chiếu
+- Readmate – Trình đọc sách giáo khoa tiếng Việt (đã cài sẵn 103 cuốn)
+- Sao Mai Typing Tutor – Phần mềm luyện gõ phím tiếng Việt
+- Thùng Rác – Khôi phục các tập tin đã xóa
+- Từ Điển – Từ điển Anh-Việt
+- USB – Mở "This PC" để chọn USB của bạn
+- VLC media player – Trình phát đa phương tiện
+- Wikipedia – Bách khoa toàn thư offline
+- Word – Trình soạn thảo văn bản
 
-Phím Tắt NVDA Quan Trọng
 
-Máy tính này dùng chế độ bàn phím "Laptop". Phím NVDA là phím Insert (phím Insert bên phải hoặc phím Insert trên bàn phím số).
+Các Phím Tắt NVDA Quan Trọng
+
+NVDA là phần mềm đọc màn hình và điều hướng đã được cài sẵn.
+
+- CapsLock là phím NVDA chính. Để bật/tắt phím Caps Lock thật (gõ chữ HOA), nhấn CapsLock hai lần liên tiếp.
+	- Phím NVDA có thể là CapsLock hoặc Insert (bên trái phím Delete – phím thứ ba từ phải sang trên hàng đầu).
 
   Phím - Chức năng
-  NVDA + 1 - Chế độ học phím - nhấn bất kỳ phím nào để nghe chức năng của nó
-  NVDA + T - Nghe tiêu đề cửa sổ
-  NVDA + A - Đọc từ vị trí hiện tại (Say All)
-  NVDA + L - Đọc dòng hiện tại
-  NVDA + F7 - Danh sách liên kết / tiêu đề
-  NVDA + Space - Chuyển chế độ duyệt/tập trung
+  NVDA + 1 - Chế độ Trợ giúp Phím — nhấn phím nào sẽ nghe tên phím
+  NVDA + T - Đọc tiêu đề cửa sổ
+  NVDA + A - Đọc tất cả — đọc liên tục từ vị trí hiện tại
+  NVDA + L - Đọc lại dòng hiện tại
+  NVDA + F7 - Danh sách phần tử (tiêu đề / liên kết)
+  NVDA + Space - Bật/tắt chế độ Duyệt / Tiêu điểm
   NVDA + N - Mở menu NVDA
   NVDA + Q - Thoát NVDA
-  NVDA + S - Chuyển chế độ nói (nói / beep / tắt)
-  NVDA + Ctrl + Mũi tên lên - Tăng tốc độ nói
-  NVDA + Ctrl + Mũi tên xuống - Giảm tốc độ nói
-  NVDA + Ctrl + F - Tìm văn bản trong tài liệu
+  NVDA + S - Đổi chế độ giọng nói (giọng / bíp / tắt)
+  NVDA + Ctrl + Mũi tên Lên - Tăng tốc độ đọc
+  NVDA + Ctrl + Mũi tên Xuống - Giảm tốc độ đọc
+  NVDA + Ctrl + F - Tìm chữ trong văn bản
+  NVDA + Shift + B - Đọc phần trăm pin
   Ctrl - Dừng đọc
-  Tab - Di chuyển đến mục tiếp theo
-  Shift + Tab - Di chuyển đến mục trước
+  Tab - Sang mục tiếp theo
+  Shift + Tab - Quay lại mục trước
   Ctrl + Alt + N - Khởi động NVDA
   Alt + F4 - Đóng chương trình
-  Alt + Tab - Chuyển chương trình
+  Alt + Tab - Chuyển giữa các chương trình
 
-Chế Độ Tập Trung
+Các Phím Tắt Windows Hữu Ích
 
-Khi dùng PowerShell, Command Prompt, hoặc các ứng dụng khác mà bàn phím không hoạt động bình thường:
+  Phím - Chức năng
+  Windows + E - Mở File Explorer (Trình quản lý tập tin)
+  F12 - Save As — mở hộp thoại lưu trên USB của học sinh
+  Ctrl + W - Đóng tab hoặc cửa sổ hiện tại
+  F10 - Mở thanh menu (File/Edit/View ở phía trên)
+  Shift + F10 - Menu chuột phải (Context Menu)
+  Ctrl + A - Chọn tất cả văn bản trong cửa sổ
+  Ctrl + C - Sao chép văn bản đã chọn (NVDA + C để đọc nội dung đã sao chép)
+  Ctrl + V - Dán văn bản đã sao chép
 
-Nhấn Insert + Space để chuyển sang "Chế độ tập trung".
+Học Phím
 
-Ở chế độ này, tất cả phím bạn nhấn sẽ gửi thẳng đến ứng dụng (bao gồm Backspace, Delete).
+Nếu ngón tay bạn lỡ chạm vào một phím và bạn không biết đó là phím gì, có hai cách an toàn để tìm hiểu:
 
-Nhấn Insert + Space lần nữa để quay lại chế độ duyệt.
+Cách 1: Chế độ Trợ giúp Phím của NVDA (NVDA + 1)
 
-Cài Đặt Đặc Biệt Của NVDA Trên Máy Này
+1. Nhấn NVDA + 1 để bật "Chế độ Trợ giúp Phím". NVDA thông báo "Input help on (vietnamese)".
+2. Bây giờ nhấn bất kỳ phím nào — NVDA sẽ đọc tên và chức năng của phím đó mà không thực thi phím. Bạn có thể thử mọi phím trên bàn phím.
+3. Nhấn NVDA + 1 lần nữa để thoát (các phím trở lại hoạt động bình thường).
 
-NVDA đã được tinh chỉnh sẵn cho học sinh khiếm thị Việt Nam:
+Đây là cách nhanh nhất để gợi nhớ một phím.
 
-- CapsLock là phím NVDA chính. Để bật/tắt Caps Lock thực sự (gõ chữ HOA), nhấn CapsLock 2 lần nhanh liên tục.
-- Giọng Vi-Vu đọc cả tiếng Việt và tiếng Anh trong cùng một văn bản. NVDA không tự đổi giọng, vẫn dùng cùng một giọng quen thuộc.
-- NVDA tự động giảm âm lượng Readmate, VLC, Firefox khi NVDA nói. Bạn nghe rõ NVDA mà không phải tự chỉnh âm lượng.
-- Thanh tiến trình đọc theo phần trăm (ví dụ "50 phần trăm"). Không có tiếng beep.
+Cách 2: Sao Mai Typing Tutor (SMTT)
+
+Phần mềm luyện gõ phím tiếng Việt của Sao Mai:
+
+1. Trên Desktop, nhấn "S" để nhảy đến "Sao Mai Typing Tutor" → Enter.
+2. Chọn "Khám phá bàn phím" (Explore Keyboard).
+3. Nhấn bất kỳ phím nào → SMTT sẽ đọc tên phím bằng tiếng Việt.
+4. SMTT cũng có các bài luyện gõ hằng ngày — đặc biệt hữu ích cho cả bàn phím tiếng Việt và tiếng Anh.
+
+So sánh: NVDA+1 phù hợp khi cần tra phím nhanh ở bất cứ đâu; SMTT phù hợp để luyện tập có hệ thống.
 
 Gõ Tiếng Việt
 
-UniKey tự động chạy khi bật máy.
+Máy tính dùng UniKey và bàn phím mặc định là tiếng Việt.
 
-Mặc định dùng kiểu gõ Telex.
+Để chuyển giữa Tiếng Việt và Tiếng Anh: nhấn Ctrl + Shift.
 
-Ví dụ Telex:
-- aa = â (a mũ)
-- aw = ă (a ngắn)
-- oo = ô (o mũ)
-- ow = ơ (o móc)
-- uw = ư (u móc)
-- dd = đ (d ngang)
-- s = dấu sắc, f = dấu huyền, r = dấu hỏi, x = dấu ngã, j = dấu nặng
-- z = xóa dấu (ví dụ "af" cho ra "à", sau đó thêm "z" trở lại "a")
+Phương pháp gõ mặc định là Telex.
 
-Chuyển tiếng Việt/Anh: nhấn Ctrl + Shift. Xem biểu tượng UniKey trên thanh tác vụ (V = tiếng Việt, E = tiếng Anh).
+Ví dụ Telex (chữ ghép — mỗi dòng có ghi chú trong ngoặc để bản không dấu vẫn hiểu được):
 
-Phím Tắt Windows Hữu Ích
+- aa = â (a có dấu mũ / a-circumflex)
+- aw = ă (a có dấu trăng / a-breve)
+- ee = ê (e có dấu mũ / e-circumflex)
+- oo = ô (o có dấu mũ / o-circumflex)
+- ow = ơ (o có dấu móc / o-horn)
+- uw = ư (u có dấu móc / u-horn)
+- dd = đ (d có gạch ngang / d-stroke)
 
-  Phím - Chức năng
-  Windows + E - Mở File Explorer
-  Ctrl + C - Sao chép
-  Ctrl + V - Dán
-  Ctrl + X - Cắt
-  Ctrl + Z - Hoàn tác
-  Ctrl + S - Lưu
-  Ctrl + A - Chọn tất cả
-  F12 - Lưu thành file mới (cửa sổ Lưu Thành mở ở USB D:)
-  Windows + L - Khóa máy tính
-  Ctrl + W - Đóng tab hoặc cửa sổ hiện tại
+Ví dụ Telex (dấu thanh):
+
+- s = dấu sắc (acute) — ví dụ á, é, í, ó, ú, ý
+- f = dấu huyền (grave) — ví dụ à, è, ì, ò, ù, ỳ
+- r = dấu hỏi (hook above) — ví dụ ả, ẻ, ỉ, ỏ, ủ, ỷ
+- x = dấu ngã (tilde) — ví dụ ã, ẽ, ĩ, õ, ũ, ỹ
+- j = dấu nặng (dot below) — ví dụ ạ, ẹ, ị, ọ, ụ, ỵ
+- z = bỏ dấu (ví dụ gõ "af" cho ra à, sau đó "z" cho ra a)
+
+Ví dụ kết hợp:
+
+- aas = ấ (â với dấu sắc / a-circumflex with acute)
+- aaf = ầ (â với dấu huyền / a-circumflex with grave)
+- aar = ẩ (â với dấu hỏi / a-circumflex with hook)
+- aax = ẫ (â với dấu ngã / a-circumflex with tilde)
+- aaj = ậ (â với dấu nặng / a-circumflex with dot)
+- aws/awf/awr/awx/awj cho ă (a-breve) với năm dấu thanh
+- ees/eef/eer/eex/eej cho ê (e-circumflex) với năm dấu thanh
+- oos/oof/oor/oox/ooj cho ô (o-circumflex) với năm dấu thanh
+- ows/owf/owr/owx/owj cho ơ (o-horn) với năm dấu thanh
+- uws/uwf/uwr/uwx/uwj cho ư (u-horn) với năm dấu thanh
+- DD = Đ (d-stroke chữ hoa), dd = đ (d-stroke chữ thường)
+- Vieejt = Việt
+- ngwowif = người
+- ddungs = đúng
+- caarm own = cảm ơn
+
+Chuyển Việt/Anh: nhấn Ctrl + Shift.
+
+Nghe Dấu Thanh Tiếng Việt
+
+Để nghe dấu thanh trên một ký tự: di chuyển con trỏ đến chữ cái → nhấn NVDA + dấu chấm (.) hai lần liên tiếp. NVDA sẽ đọc ký tự theo cách phát âm và nói tên dấu thanh.
+
+Ví dụ: con trỏ ở chữ "à" (gõ Telex là "af", a có dấu huyền) → NVDA đọc "a with grave accent".
+
+Để đọc cả từ, di chuyển từng chữ cái bằng phím mũi tên, mỗi chữ nhấn NVDA + dấu chấm (.) hai lần.
 
 Đọc Sách Giáo Khoa
 
-Máy tính có sẵn 103 sách giáo khoa tiếng Việt (Cánh Diều, Chân Trời Sáng Tạo, Kết Nối Tri Thức, Tiếng Anh).
+Máy tính đã cài sẵn 103 cuốn sách giáo khoa tiếng Việt (Cánh Diều, Chân Trời Sáng Tạo, Kết Nối Tri Thức, Tiếng Anh).
 
 Mở Readmate
 
-1. Trên Desktop, nhấn phím "R" để nhảy đến "Readmate".
-2. Nhấn Enter để mở chương trình.
+1. Trên Desktop, nhấn "R" để nhảy đến "Readmate".
+2. Nhấn Enter để mở.
 
 Chọn Và Mở Sách
 
-Khi Readmate mở, bạn ở màn hình chính với tiêu điểm tại menu bên trái.
+Khi Readmate mở, bạn ở màn hình chính với tiêu điểm trên thanh bên trái.
 
-1. Nhấn Ctrl + B để kích hoạt tab Kệ sách (nếu đang ở tab khác, Cài đặt hoặc Hướng dẫn).
-2. Nhấn F6 (hoặc Tab) để di chuyển tiêu điểm sang khung sách.
-3. Dùng phím mũi tên (Lên/Xuống/Trái/Phải) để di chuyển qua danh sách sách — NVDA sẽ đọc tên từng sách.
+1. Nhấn Ctrl + B để mở tab Bookshelf (Kệ Sách) — nếu đang ở Settings hoặc User Guide.
+2. Nhấn F6 (hoặc Tab) để chuyển tiêu điểm sang khung danh sách sách.
+3. Dùng phím mũi tên (Lên/Xuống/Trái/Phải) để duyệt qua danh sách — NVDA sẽ đọc tên từng cuốn sách.
 4. Hoặc nhấn Ctrl + F để tìm sách theo tên.
-5. Khi tìm được sách, nhấn Enter để mở.
+5. Khi tìm thấy cuốn muốn đọc, nhấn Enter để mở.
 
-Sách sẽ tự động bắt đầu đọc sau khi mở — không cần bấm Ctrl+P. Bấm Ctrl+P để tạm dừng hoặc tiếp tục.
+Lưu ý: Tab không duyệt qua hết danh sách sách. Hãy dùng phím mũi tên hoặc Ctrl+F.
 
-Lưu ý: Phím Tab không duyệt qua tất cả sách — chỉ dùng phím mũi tên hoặc Ctrl+F.
+NVDA sẽ đọc tiêu đề sách và tiến độ đọc. Nhấn Control nếu muốn dừng giọng đọc.
 
-Đọc Sách — Phím Tắt Quan Trọng
+Sau đó, khi đã sẵn sàng đọc sách, nhấn Ctrl + P để bắt đầu nghe sách.
 
-Khi sách đã mở, dùng các phím sau:
+Phím Tắt Khi Đang Đọc Sách
 
-  Phím - Chức năng
-  Ctrl + P - Bật / tạm dừng đọc
-  Mũi tên Phải / Trái - Đoạn kế tiếp / trước
-  Ctrl + Mũi tên Xuống / Lên - Đoạn văn kế tiếp / trước
-  Ctrl + Page Down / Page Up - Trang kế tiếp / trước
-  Alt + Mũi tên Phải / Trái - Chương kế tiếp / trước
-  H / Shift + H - Tiêu đề kế tiếp / trước
+Khi sách đã mở:
+
+  Phím - Hành động
+  Ctrl + P - Phát / Tạm dừng
+  Mũi tên phải / Mũi tên trái - Câu kế tiếp / Câu trước
+  Ctrl + Xuống / Ctrl + Lên - Đoạn kế tiếp / Đoạn trước
+  Ctrl + Page Down / Page Up - Trang kế tiếp / Trang trước
+  Alt + Phải / Alt + Trái - Chương kế tiếp / Chương trước
+  H / Shift + H - Tiêu đề kế tiếp / Tiêu đề trước
   ] (ngoặc vuông phải) - Đọc nhanh hơn
   [ (ngoặc vuông trái) - Đọc chậm hơn
-  Ctrl + ] / Ctrl + [ - Tăng âm / giảm âm lượng
+  Ctrl + ] / Ctrl + [ - Tăng / Giảm âm lượng
   Ctrl + F - Tìm chữ trong sách
   Ctrl + N - Thêm ghi chú tại vị trí hiện tại
-  Ctrl + Shift + N - Xem danh sách ghi chú
-  Ctrl + H - Danh sách tiêu đề (mục lục sách)
+  Ctrl + Shift + N - Xem tất cả ghi chú
+  Ctrl + H - Danh sách tiêu đề (mục lục)
   Ctrl + G - Danh sách trang
-  Ctrl + W - Đóng sách và quay lại Kệ sách
+  Ctrl + W - Đóng sách, quay về Bookshelf
   Esc - Quay lại màn hình trước
 
 Điều Hướng Trong Readmate
 
-- Ctrl + Tab hoặc F6: chuyển giữa các khung (sidebar trái, nội dung chính, v.v.)
-- Tab: di chuyển trong một khung (ví dụ: từ thanh tìm kiếm đến danh sách sách)
-- Ctrl + B: nhảy thẳng đến Kệ sách
-- Ctrl + S: Cài đặt
-- Ctrl + H (ở màn hình chính, không phải khi đang đọc sách): Tab Hướng dẫn của Sao Mai
+- Ctrl + Tab hoặc F6: chuyển giữa các khung (thanh bên, nội dung chính, v.v.)
+- Tab: di chuyển trong cùng một khung (ví dụ từ ô tìm kiếm sang danh sách sách)
+- Ctrl + B: nhảy thẳng đến Bookshelf (Kệ Sách)
+- Ctrl + S: Settings (Cài đặt)
+- Ctrl + H (từ màn hình chính, không phải khi đang đọc sách): tab Hướng dẫn của Sao Mai
 
-Nếu NVDA im lặng sau khi chuyển qua chương trình khác rồi quay lại Readmate: nhấn Alt rồi Esc để kích hoạt lại.
+Nếu NVDA im lặng sau khi chuyển sang chương trình khác rồi quay lại Readmate, nhấn Alt rồi Esc để kích hoạt lại.
+
 
 Duyệt Web Với Firefox
 
 Hai Chế Độ Của NVDA Trên Web
 
-Khi bạn dùng Firefox, NVDA hoạt động ở một trong hai chế độ:
+Khi dùng Firefox, NVDA hoạt động ở một trong hai chế độ:
 
-- Chế độ Duyệt (Browse) — mặc định trên trang web. NVDA tạo ra "tài liệu ảo" để bạn di chuyển qua bằng các phím tắt chữ cái (H, K, F, v.v.).
-- Chế độ Tập Trung (Focus) — tự động bật khi bạn bấm vào ô nhập văn bản. Các phím chữ cái sẽ gõ thay vì nhảy.
+- Chế độ Duyệt (Browse Mode): chế độ mặc định trên trang web. NVDA tạo ra một "tài liệu ảo" để bạn duyệt bằng các phím tắt một chữ cái (H, K, F, v.v.).
+- Chế độ Tiêu điểm (Focus Mode): tự động bật khi bạn vào ô nhập văn bản. Phím chữ cái sẽ gõ bình thường thay vì nhảy.
 
-Nhấn NVDA + Space để chuyển thủ công giữa hai chế độ. NVDA tự động chuyển khi bạn ra vào ô nhập văn bản.
+Nhấn NVDA + Space để chuyển giữa hai chế độ. NVDA tự đổi chế độ khi vào/rời ô nhập văn bản.
 
-Phím Tắt Duyệt Web (Chế Độ Duyệt)
+Phím Tắt Duyệt Web (Chế độ Duyệt)
 
-  Phím - Chức năng
-  Mũi tên Xuống / Lên - Đọc dòng kế tiếp / trước
-  H / Shift + H - Tiêu đề (heading) kế tiếp / trước
-  K / Shift + K - Liên kết (link) kế tiếp / trước
-  F / Shift + F - Ô nhập văn bản kế tiếp / trước
-  B / Shift + B - Nút (button) kế tiếp / trước
-  D / Shift + D - Vùng mốc (landmark) — nhảy qua menu, quảng cáo
-  1 đến 6 - Tiêu đề cấp 1 đến 6
-  NVDA + F7 - Danh sách tất cả tiêu đề / liên kết / mốc
-  NVDA + Mũi tên Xuống - Đọc liên tục từ đây (Say All)
+  Phím - Hành động
+  Mũi tên xuống / lên - Đọc dòng kế tiếp / dòng trước
+  H / Shift + H - Tiêu đề kế tiếp / Tiêu đề trước
+  K / Shift + K - Liên kết kế tiếp / Liên kết trước
+  F / Shift + F - Ô nhập kế tiếp / Ô nhập trước
+  B / Shift + B - Nút kế tiếp / Nút trước
+  D / Shift + D - Vùng mốc kế tiếp / trước (bỏ qua menu + quảng cáo)
+  1 – 6 - Tiêu đề cấp 1–6
+  NVDA + F7 - Danh sách phần tử (tất cả tiêu đề / liên kết / vùng mốc)
+  NVDA + Mũi tên xuống - Đọc liên tục từ đây (Say All)
   Enter - Mở liên kết
 
 Phím Tắt Firefox
 
-  Phím - Chức năng
+  Phím - Hành động
   Ctrl + L - Nhảy đến thanh địa chỉ
-  Alt + Mũi tên Trái - Quay lại trang trước
-  Alt + Mũi tên Phải - Tiến đến trang sau
-  Ctrl + T / Ctrl + W - Mở tab mới / Đóng tab
+  Alt + Mũi tên trái - Quay lại trang trước
+  Alt + Mũi tên phải - Sang trang tiếp theo
+  Ctrl + T / Ctrl + W - Tab mới / Đóng tab
   Ctrl + Shift + T - Mở lại tab vừa đóng
-  Ctrl + F - Tìm chữ trong trang
-  F9 - Chế Độ Đọc (Reader Mode) — bỏ quảng cáo, chỉ hiện bài viết
-  F5 - Làm mới trang
-  Ctrl + + / Ctrl + - / Ctrl + 0 - Phóng to / thu nhỏ / trả lại mặc định
+  Ctrl + F - Tìm trong trang
+  F9 - Chế độ Đọc (Reader Mode) — chỉ giữ lại bài viết
+  F5 - Tải lại trang
+  Ctrl + + / Ctrl + - / Ctrl + 0 - Phóng to / Thu nhỏ / Trở lại kích thước gốc
 
-Mẹo Đọc Trang Tin Tức (vnexpress.net, tuoitre.vn)
+Mẹo: Đọc Báo Mạng (vnexpress.net, tuoitre.vn, v.v.)
 
-1. Mở trang tin → nhấn D 2-3 lần để nhảy qua menu và quảng cáo đến vùng "main" (nội dung chính).
-2. Nhấn H một lần → thường nhảy đến tiêu đề bài viết.
-3. Nhấn NVDA + Mũi tên Xuống → đọc cả bài từ đầu đến cuối.
-4. Nếu trang quá nhiều quảng cáo → nhấn F9 → Chế Độ Đọc — chỉ còn bài viết, xóa sạch quảng cáo.
-5. Nhấn F9 lần nữa hoặc Alt + Mũi tên Trái để quay lại.
+1. Mở trang: nhấn D 2-3 lần để bỏ qua menu/quảng cáo, đến vùng mốc "main" (nội dung chính).
+2. Nhấn H một lần: thường sẽ vào tiêu đề bài viết.
+3. Nhấn NVDA + Mũi tên xuống: đọc toàn bộ bài viết.
+4. Nếu trang có quá nhiều quảng cáo: nhấn F9 để bật Chế độ Đọc (chỉ bài viết, không phiền nhiễu).
+5. Nhấn F9 lần nữa hoặc Alt + Mũi tên trái để quay lại.
 
-Quảng cáo tiếng Anh sẽ bị chặn tự động nhờ Firefox có uBlock Origin cài sẵn. Nếu vẫn nghe quảng cáo xen vào, nhấn D nhiều lần đến khi NVDA nói "main" (nội dung chính).
 
 Nghe Nhạc Và Sách Nói Với VLC
 
-  Phím - Chức năng
-  Ctrl + O - Mở file
-  Space - Phát / tạm dừng
-  Shift + Mũi tên Phải / Trái - Tiến / lùi 5 giây
-  Alt + Mũi tên Phải / Trái - Tiến / lùi 10 giây
-  Ctrl + Mũi tên Phải / Trái - Tiến / lùi 1 phút
-  ] / [ - Phát nhanh hơn / chậm hơn (giữ nguyên cao độ)
+  Phím - Hành động
+  Ctrl + O - Mở tập tin
+  Space - Phát / Tạm dừng
+  Shift + Mũi tên phải / trái - Tiến / Lùi 5 giây
+  Alt + Mũi tên phải / trái - Tiến / Lùi 10 giây
+  Ctrl + Mũi tên phải / trái - Tiến / Lùi 1 phút
+  ] / [ - Nhanh hơn / Chậm hơn (giữ nguyên cao độ)
   = - Tốc độ bình thường
-  Ctrl + T - Nhảy đến thời gian cụ thể
-  Ctrl + Mũi tên Lên / Xuống - Tăng âm / nhỏ âm
-  M - Tắt / bật âm
-  N / P - Bài kế tiếp / trước trong danh sách
-  Ctrl + B - Quản lý dấu trang
-  I - Nói thông tin bài (vị trí / tổng thời gian)
+  Ctrl + T - Nhảy đến mốc thời gian cụ thể
+  Ctrl + Mũi tên lên / xuống - Tăng / Giảm âm lượng
+  M - Tắt / Bật tiếng
+  N / P - Bài kế tiếp / Bài trước trong danh sách
+  Ctrl + B - Quản lý đánh dấu (bookmark)
+  I - Đọc thông tin vị trí hiện tại
 
-Mẹo: Khi nghe sách nói, dùng ] và [ để chỉnh tốc độ — VLC giữ nguyên cao độ giọng. Dùng Ctrl + B để đánh dấu vị trí đang nghe.
+Mẹo: Khi nghe sách nói, dùng `]` và `[` để chỉnh tốc độ — VLC giữ nguyên cao độ giọng. Dùng Ctrl + B để đánh dấu vị trí đang nghe.
 
-Đọc Bách Khoa Offline Với Wikipedia
 
-Máy tính có Wikipedia tiếng Việt offline (không cần mạng).
+Đọc Bách Khoa Offline Với Wikipedia Và Wiktionary
 
-1. Từ Desktop, nhấn phím "W" để nhảy đến "Wikipedia" → Enter.
-2. Nhấn F6 để nhảy đến thanh tìm kiếm.
-3. Gõ chủ đề muốn tìm (ví dụ: "Việt Nam") → nhấn Enter để mở bài viết.
-4. Lưu ý quan trọng: nếu NVDA không đọc bài viết tự động, nhấn NVDA + Space để bật Chế Độ Duyệt. Đó là sự cố đã biết của Kiwix khi dùng với NVDA.
-5. Trong bài viết: dùng H để nhảy qua tiêu đề, K qua liên kết — giống như duyệt web.
-6. Ctrl + F để tìm chữ trong bài.
-7. Alt + Mũi tên Trái để quay lại kết quả tìm kiếm.
+Máy tính có Wikipedia và Wiktionary tiếng Việt offline (không cần mạng). Cả hai đều mở trong Firefox để các phím tắt chế độ Duyệt của NVDA hoạt động bình thường.
+
+Cách Nhanh Nhất: Tìm Trong Cả Hai Cuốn Sách Cùng Lúc
+
+1. Trên Desktop, nhấn W để nhảy đến "Wikipedia" → nhấn Enter. Firefox sẽ mở trang chủ Kiwix.
+2. Nhấn Tab 3 lần — tiêu điểm sẽ vào ô tìm kiếm chung (tìm cả Wikipedia và Wiktionary).
+3. Gõ chủ đề muốn tìm (ví dụ: "Việt Nam") → nhấn Enter. Một danh sách kết quả sẽ hiện ra với các mục từ cả hai cuốn sách.
+4. Nhấn Mũi tên xuống để duyệt qua các kết quả, rồi nhấn Enter vào kết quả muốn đọc.
+
+Tìm Riêng Trong Wikipedia (Hoặc Wiktionary)
+
+1. Từ trang chủ Kiwix, nhấn Tab 5 lần để đến ô Wikipedia. (Thêm một Tab nữa — tổng cộng 6 — sẽ đến ô Wiktionary.) Nhấn Enter để mở cuốn sách; Trang Chính (đối với Wikipedia) sẽ hiện ra.
+2. Nhấn Tab một lần — tiêu điểm sẽ vào ô tìm kiếm riêng của cuốn sách đó.
+3. Gõ chủ đề → nhấn Enter. Các kết quả chỉ từ cuốn sách đó sẽ hiện ra.
+4. Nhấn Mũi tên xuống để duyệt qua các kết quả, Enter trên một kết quả để mở bài viết.
+
+Trong Bài Viết
+
+- NVDA sẽ tự đọc bài viết.
+- H / Shift + H — tiêu đề kế tiếp / tiêu đề trước
+- K / Shift + K — liên kết kế tiếp / liên kết trước
+- Mũi tên xuống — đọc dòng theo dòng
+- Ctrl + F — tìm chữ trong bài hiện tại (chức năng Tìm trên trang của Firefox; có thể bật "Match Diacritics" để tìm chính xác theo dấu thanh)
+- Alt + Mũi tên Trái — quay lại danh sách kết quả (hoặc quay xa hơn về trang chủ Kiwix)
 
 Đọc File PDF Với Microsoft Edge
 
-Khi bạn mở file PDF (ví dụ: bài tập của giáo viên), máy tính sẽ mở bằng Microsoft Edge. Edge đọc được nội dung PDF với NVDA.
+Khi bạn mở file PDF, máy tính sẽ mở bằng Microsoft Edge. NVDA đọc file PDF tốt nhất qua Edge.
 
 1. Mở file PDF (bấm Enter trên file, hoặc mở từ Word).
-2. NVDA sẽ chuyển sang chế độ duyệt tự động.
+2. NVDA sẽ tự chuyển sang chế độ Duyệt.
 3. Dùng H để nhảy qua tiêu đề, mũi tên xuống để đọc dòng theo dòng.
-4. Hoặc nhấn Ctrl + Shift + U trong Edge để bật "Đọc To" (Read Aloud) — Edge sẽ tự đọc bài cho bạn với giọng tiếng Việt.
+4. Hoặc nhấn Ctrl + Shift + U trong Edge để bật "Đọc To" (Read Aloud) — Edge sẽ đọc tài liệu cho bạn bằng giọng tiếng Việt.
 5. Ctrl + F để tìm chữ trong PDF.
 
-Lưu ý: nếu gặp PDF được "quét hình" (PDF hình ảnh không có chữ) → NVDA sẽ không đọc được. Phải nhờ giáo viên cho bạn file có chữ.
 
 Từ Điển Anh-Việt Với GoldenDict
 
-1. Từ Desktop, mở "Từ Điển" (hoặc nhấn phím "T").
-2. Nhấn Ctrl + L để nhảy đến ô tìm kiếm.
-3. Gõ từ cần tra → nhấn Enter → NVDA đọc định nghĩa.
-4. Nhấn Alt + Page Down hoặc Alt + Page Up để chuyển giữa nhóm từ điển (Anh-Việt / Việt-Anh).
-5. Nhấn Alt + Mũi tên Xuống / Lên để xem kết quả từ từ điển khác cho cùng một từ.
+1. Từ Desktop, mở "Từ Điển" (hoặc nhấn "T").
+2. Chương trình sẽ vào ngay ô tìm kiếm.
+3. Gõ từ cần tra, nhấn Enter. Hoặc nhấn Mũi tên xuống / lên để xem các kết quả tương tự rồi nhấn Enter.
+4. Nhấn Control + A, Control + C, rồi NVDA + C.
+	(Chọn tất cả, sao chép. Sau đó NVDA đọc nội dung đã sao chép qua phím tắt NVDA + C.)
 
 Máy Tính Bỏ Túi (Calculator)
 
-1. Mở Calculator từ Desktop (nhấn phím "C" hoặc dùng phím mũi tên).
-2. Gõ phép tính bằng phím số và phím toán học: + - * / =
-3. Nhấn Enter để nghe kết quả — NVDA chỉ đọc kết quả khi bạn bấm Enter, không đọc sau mỗi phím.
-4. Esc hoặc Delete để xóa và bắt đầu lại — NVDA sẽ thông báo.
+1. Mở Calculator từ Desktop (nhấn "C" hoặc dùng mũi tên đến).
+2. Gõ phép tính bằng phím số và toán tử: + - * / =
+3. Nhấn Enter để nghe kết quả — NVDA chỉ đọc kết quả sau khi nhấn Enter, không đọc sau mỗi lần gõ.
+4. Esc hoặc Delete để xóa và bắt đầu lại — NVDA sẽ xác nhận.
 
-Ví dụ: gõ 25 + 17 rồi nhấn Enter → NVDA đọc "42".
+Ví dụ: gõ `25 + 17` rồi nhấn Enter → NVDA đọc "42".
 
-Đánh Vần Dấu Tiếng Việt
 
-Các dấu thanh trong tiếng Việt (á, à, ả, ã, ạ) nghe khá giống nhau khi NVDA đọc với tốc độ nhanh.
+Các Phím Tắt NVDA Hằng Ngày (Tóm Tắt)
 
-Để nghe rõ dấu thanh trên một ký tự: đặt con trỏ lên chữ cái → nhấn NVDA + dấu chấm (.) 2 lần nhanh. NVDA sẽ đọc ký tự theo phiên âm và nêu tên dấu thanh.
-
-Ví dụ: con trỏ trên "à" → NVDA đọc "a có dấu huyền".
-
-Để đánh vần cả một từ: di chuyển qua từng chữ bằng phím mũi tên, tại mỗi chữ nhấn NVDA + dấu chấm (.) 2 lần.
-
-Phím Tắt NVDA Dùng Hàng Ngày (Tóm Tắt)
-
-  Phím - Chức năng
-  Ctrl - Dừng nói ngay (không làm gì khác)
-  NVDA + A hoặc NVDA + Mũi tên Xuống - Đọc liên tục từ đây (Say All)
+  Phím - Hành động
+  Ctrl - Dừng đọc ngay lập tức
+  NVDA + A hoặc NVDA + Mũi tên xuống - Đọc liên tục (Say All)
   NVDA + L - Đọc lại dòng hiện tại
-  NVDA + dấu chấm (.) 2 lần - Đọc ký tự hiện tại theo phiên âm (nêu tên dấu thanh)
+  NVDA + dấu chấm (.) hai lần - Đọc ký tự hiện tại theo phát âm (đọc cả tên dấu thanh)
   NVDA + T - Đọc tiêu đề cửa sổ
-  NVDA + Ctrl + Mũi tên Lên / Xuống - Tăng / giảm tốc độ nói
-  NVDA + S - Bật / tắt NVDA nói (phục vụ khi làm bài kiểm tra)
-  NVDA + C - Đọc nội dung clipboard (kiểm tra sau khi Ctrl + C)
-  NVDA + Ctrl + F - Tìm chữ trong tài liệu
-  NVDA + 1 - Chế độ học phím (bấm phím nào NVDA nói tên phím đó)
+  NVDA + Ctrl + Mũi tên Lên / Xuống - Tăng / Giảm tốc độ đọc
+  NVDA + S - Bật / Tắt giọng đọc (hữu ích khi làm bài kiểm tra)
+  NVDA + C - Đọc nội dung clipboard (Ctrl + C để sao chép vào clipboard)
+  NVDA + Ctrl + F - Tìm chữ trong văn bản
+  NVDA + 1 - Chế độ học bàn phím (nhấn phím nào sẽ nghe tên phím đó)
 
-Học Phím — Khi Bạn Không Biết Phím Nào Là Gì
 
-Khi bạn chạm tay lên bàn phím và không chắc phím đó làm gì, có hai cách để học mà không làm gì sai:
+Khi NVDA Không Đọc Hoặc Đọc Sai:
 
-Cách 1: Chế Độ Học Phím Của NVDA (NVDA + 1)
+1. Nhấn Ctrl + Alt + N để khởi động lại NVDA.
+2. Thử nhấn NVDA + Shift + B để nghe trạng thái pin. Có thể pin yếu.
+3. Nếu vẫn không được, hỏi giáo viên.
 
-Bất cứ lúc nào, bất cứ chương trình nào:
 
-1. Nhấn NVDA + 1 để bật "Chế độ học phím". NVDA nói "Input help on".
-2. Bây giờ nhấn bất kỳ phím nào → NVDA đọc tên phím và chức năng, không thực thi phím đó. An toàn tuyệt đối.
-3. Bạn có thể thăm dò toàn bộ bàn phím mà không sợ gây lỗi.
-4. Nhấn NVDA + 1 lần nữa để tắt chế độ (phím hoạt động bình thường trở lại).
+Bảo Quản Máy
 
-Đây là cách nhanh nhất để nhớ lại một phím.
+- Cắm sạc vào cổng USB-C phía sau bên trái, gần bản lề nhất.
+- Tháo tai nghe bằng cách cầm đầu cắm, không kéo dây.
+- Không bật BitLocker, không đổi mật khẩu, không đăng nhập tài khoản Microsoft.
 
-Cách 2: Sao Mai Typing Tutor (SMTT)
-
-Chương trình dạy gõ phím của Sao Mai, đã được cài sẵn trên máy:
-
-1. Trên Desktop, nhấn phím "S" để nhảy đến "Sao Mai Typing Tutor" → Enter.
-2. Chọn "Khám phá bàn phím" (Explore Keyboard).
-3. Nhấn bất kỳ phím nào → SMTT đọc tên phím bằng tiếng Việt.
-4. SMTT còn có bài học gõ phím có cấu trúc để luyện hàng ngày — đặc biệt hữu ích cho Telex.
-
-So sánh: NVDA+1 dùng nhanh ở bất kỳ đâu; SMTT tốt cho học cơ bản có cấu trúc.
-
-Cách Định Hướng Trên Bàn Phím (Dell Latitude 5420)
-
-- F và J có nốt nổi sẵn — đây là vị trí "hàng chính" (home row) cho 8 ngón tay.
-- Delete và Mũi tên Xuống cũng có nốt nổi từ nhà sản xuất.
-- Insert (phím NVDA) nằm ngay cạnh Delete — có nốt nổi nhỏ thêm vào.
-- Từ F/J, đếm ra các phím khác: bên trái F là D → S → A; bên phải J là K → L → dấu chấm phẩy.
-
-Giữ An Toàn Phần Cứng
-
-- Đóng màn hình bằng hai tay, giữ hai góc ngoài để khỏi hỏng bản lề.
-- Các biểu tượng định vị: trackpad = phía trước, bản lề = phía sau.
-- Cắm dây sạc vào cổng USB-C bên trái, gần bản lề nhất.
-- Không ăn uống gần máy. Bàn phím chống tràn nhưng không chống nước tràn.
-- Rút tai nghe bằng cách cầm đầu cáp, không kéo dây.
-- Nếu NVDA bất ngờ im lặng, nhấn NVDA + Shift + B để nghe trạng thái pin — có thể pin sắp hết.
-- Không bật BitLocker, không đổi mật khẩu, không đăng nhập tài khoản Microsoft — gọi thầy cô trước.
-
-Khi NVDA Bị Lỗi
-
-Nếu NVDA không nói hoặc nói sai:
-
-1. Nhấn Ctrl + Alt + N để khởi động lại NVDA
-2. Nếu vẫn không được, hỏi thầy cô
-
-Lưu Ý
-
-- Không cần mật khẩu để đăng nhập
-- Lưu file quan trọng vào USB của bạn
-- Nếu cần giúp đỡ, gọi thầy cô
-- Luôn rút USB an toàn trước khi tắt máy
-
-*Cập nhật lần cuối: 2026-04-25*

@@ -1,440 +1,464 @@
-Huong Dan Su Dung May Tinh
+Huong Dan Su Dung May Tinh (Dell Latitude 5420)
 
-Tai lieu nay huong dan cach su dung may tinh voi trinh doc man hinh NVDA.
+Cong Ket Noi
 
-Bat Dau
+Tu phia sau ra phia truoc (ban phim gan ban nhat - man hinh xa nhat):
 
-Khi may tinh bat len, NVDA se tu dong chay va noi "NVDA dang chay".
+Ben Trai:
 
-Sau do, ban o man hinh Desktop.
+1. Cong USB-C nho: dung de cam sac
+2. Cong USB-C nho thu hai: dung de sac hoac cam thiet bi USB
 
-Cac Cong Ket Noi
+Ben Phai:
 
-May tinh Dell Latitude 5420 co cac cong o hai ben va phia sau.
+Tu phia sau ra phia truoc (tu man hinh ve phia ban):
 
-Dat may tinh truoc mat ban, man hinh mo len. Phia ban le o xa ban.
+1. Khe khoa chong trom (khe nho hinh nem)
+2. Cong Ethernet (de cam day mang)
+3. Cong HDMI (ket noi voi man hinh ngoai)
+4. Cong USB-A lon (hinh chu nhat): danh cho USB cua hoc sinh hoac bat ky USB-A nao
+	1. Cong USB-A lon thu hai (hinh chu nhat): danh cho USB cua hoc sinh hoac bat ky USB-A nao
+5. Lo cam tai nghe (lo tron nho)
+6. Khe the microSD (khe mong)
 
-Ben Trai
+Phia tren man hinh:
 
-Tu phia sau ra phia truoc (tu ban le ve phia ban):
+- Co mot Webcam o giua canh tren cua man hinh. Khi dung Webcam, hay chac chan rang nap che camera (mong, hinh chu nhat, co van) da duoc gat sang trai.
+	- (Neu nap o ben phai, camera dang bi che. Gat nap sang trai de dung camera.)
 
-1. Cong USB-C nho (Thunderbolt) - dung de sac hoac ket noi man hinh ngoai
-2. Cong USB-C nho thu hai (Thunderbolt)
-3. Cong USB-A lon (hinh chu nhat) - cam USB cua ban vao day
-4. Cong HDMI (hinh thang) - ket noi man hinh ngoai
+Cong Quan Trong
 
-Ben Phai
-
-Tu phia sau ra phia truoc (tu ban le ve phia ban):
-
-1. Khe khoa chong trom (khe nho hinh tam giac)
-2. Cong USB-A lon thu hai (hinh chu nhat) - cung cam duoc USB
-3. Lo cam tai nghe (lo tron nho) - cam tai nghe vao day
-4. Khe the microSD (khe mong)
-
-Phia Sau
-
-Phia sau (gan ban le):
-
-1. Cong mang RJ-45 (cong vuong lon) - ket noi mang day
-
-Tom Tat Nhanh
-
-- Cam tai nghe: ben phai, lo tron, gan giua canh
-- Cam USB: cong hinh chu nhat lon, mot cong moi ben (trai va phai)
-- Sac may: cam day sac vao cong USB-C ben trai (cong gan ban le nhat)
+- Tai nghe: ben phai, lo tron, gan giua canh
+- USB: cong hinh chu nhat lon, mot cong moi ben (trai va phai)
+- Sac: cam day sac vao cong USB-C ben trai (cong gan ban le nhat)
 
 Tai Nghe
 
 May tinh dung tai nghe Audio-Technica ATH-M40x.
 
-- Cam day tai nghe vao lo tron ben phai may tinh.
-- Day cap co the thao roi. Dau nho (2.5mm) cam vao tai nghe, dau lon (3.5mm) cam vao may tinh.
-- Dung phim am luong tren ban phim de tang hoac giam am luong.
-- Am luong duoc dat o 50% moi khi bat may.
-- Do sang man hinh duoc dat o 50% moi khi bat may (de tiet kiem dien va de chiu cho mat).
+- Deo tai nghe voi day o phia ben trai tai. Dieu chinh do vua bang cach giu phan tren cua tai nghe roi keo ben trai hoac ben phai len hoac xuong.
+- Cam day tai nghe vao lo tron nho o ben phai may tinh, ngay sau cong USB-A.
+- Day cap co the thao roi. Dau cap duoc gan vao ben trai cua tai nghe.
+- Am luong duoc dat o muc 50% moi khi may tinh khoi dong.
+
+Thay Day Cap Tai Nghe
+
+- De thay day tai nghe, thao day bang cach xoay nguoc chieu kim dong ho.
+- Dau nho (2.5mm) cam vao tai nghe, dau lon (3.5mm) cam vao may tinh.
 
 USB Cua Ban
 
-Moi hoc sinh co mot USB rieng (16GB) voi so hieu (vi du: STU-001).
+Moi hoc sinh co mot USB ca nhan (16GB) voi so hieu (vi du: STU-001).
 
-USB cua ban co the nhan bang chu noi Braille.
+USB cua ban co nhan chu noi Braille gan kem.
 
 Cam USB
 
-1. Tim cong USB-A (hinh chu nhat lon) o ben trai hoac ben phai may tinh.
-2. Dau cam USB chi vao duoc mot chieu. Neu khong vao, lat nguoc lai.
-3. Day nhe nhang cho den khi nghe tieng "tach".
+1. Tim cong USB-A (hinh chu nhat lon) o ben phai may tinh, gan lo cam tai nghe.
+2. Dau cam USB chi vao duoc mot chieu. Nhan Braille phai huong len tren.
 
 Mo USB
 
 1. Dung phim mui ten den bieu tuong "USB" tren Desktop (nhan phim "U" de nhay nhanh).
 2. Nhan Enter. Cua so "This PC" se mo ra.
-3. Nhan Tab de di chuyen vao danh sach o dia, dung phim mui ten de tim USB cua ban.
-4. Nhan Enter de mo USB.
+3. Vi tri luu se chi ve USB cua ban.
 
-Luu File Vao USB
+Luu Tap Tin Vao USB
+
+Luu tat ca cac tai lieu quan trong vao USB cua hoc sinh.
 
 Trong cac chuong trinh nhu Word:
 
-1. Nhan phim F12 de mo cua so "Luu thanh" (Save As). Cua so nay tu dong tro den USB cua ban (o D).
-2. Go ten file (vi du: baitap.docx).
-3. Nhan Enter de luu.
+1. Nhan F12 de mo hop thoai "Save As" (Luu Duoi Dang). Hop thoai tu dong chi vao USB cua hoc sinh.
+2. Chon thu muc luu tren USB.
+3. Go ten tap tin (vi du: baitap.docx).
+4. Nhan Enter de luu.
 
-Meo: Sau khi da luu file mot lan, nhan Ctrl + S se luu ngay tai vi tri cu — khong can hoi lai.
+Sau lan luu dau tien, Ctrl + S se luu vao cung vi tri ma khong hoi.
 
-Neu USB khong duoc cam vao may, Word se luu file vao thu muc Documents tren may tinh. Cam USB roi luu lai bang F12 de chuyen file sang USB.
+Neu USB chua duoc cam, Word se luu vao thu muc Documents tren may tinh. Cam USB vao va nhan F12 de luu lai vao USB.
 
-Rut USB An Toan
+Tu The Dat Tay Khi Go Phim
 
-Luon rut USB an toan de tranh mat du lieu.
+Tu the dat tay nay giup cac ngon tay tim va ghi nho vi tri tung phim.
 
-1. Nhan phim Windows + E de mo File Explorer.
-2. Nhan Tab den phan o dia, dung phim mui ten den USB cua ban.
-3. Nhan phim Menu (hoac Shift + F10) de mo menu chuot phai.
-4. Chon "Eject" va nhan Enter.
-5. Doi cho den khi nghe thong bao an toan de rut USB.
-6. Rut USB ra.
+- Dung hai ngon tro tim phim F va J. Phim F va J co mot go nho o duoi mat phim va nam gan giua ban phim, o hang phim thu ba tu duoi len.
+	- F va J nam o "hang phim chinh" (home row) — noi tat ca cac ngon tay (tru ngon cai) dat nghi.
+	- Dat cac ngon con lai len cac phim ke ben. Tu F/J, dem sang cac phim khac: ben trai F la D, S, A; ben phai J la K, L va dau cham phay (;).
+	- Ben phai F la G. Ben trai J la H.
+- Ca hai ngon cai co the dat ho hoac nghi tren thanh dai (phim lon hinh chu nhat o giua hang phim duoi cung — hai hang duoi hang F/J).
+
+Bo Cuc Ban Phim
+
+- Cac phim mui ten o goc duoi ben phai ban phim.
+- Tim phim Mui ten xuong — phim nay co go nho giong F va J. Phia tren la Mui ten len, hai ben la Mui ten trai va Mui ten phai.
+- Tu thanh dai (Spacebar), dem sang phai: Alt phai, Control, roi den cac phim mui ten.
+- Phim Delete va Mui ten xuong cung co go nho o mep duoi phim.
+- CapsLock hoac Insert deu co the dung lam phim NVDA. CapsLock la phim ngoai cung ben trai cua hang phim chinh (hang A/S/D/F), ngay phia tren phim Shift trai. Insert o ngay canh phim Delete, ben phai ban phim.
 
 Dieu Huong Tren Desktop
 
-Desktop co cac bieu tuong xep theo thu tu ABC.
+De ve Desktop tu bat ky dau:
+
+1. Nhan Windows + D
+2. Nhan phim Mui ten xuong mot lan
+3. NVDA se doc ten bieu tuong dau tien tren Desktop
+4. Dung phim mui ten de di chuyen giua cac bieu tuong (khong dung Tab)
+5. Nhan Enter de mo bieu tuong da chon
+
+
+Cac bieu tuong tren Desktop duoc sap xep theo thu tu bang chu cai.
 
 Dung phim mui ten (Trai, Phai, Len, Xuong) de di chuyen giua cac bieu tuong.
 
 Nhan Enter de mo chuong trinh.
 
-Meo: Nhan chu cai dau cua ten chuong trinh de nhay nhanh. Vi du, nhan "F" de nhay den Firefox, nhan "W" de nhay den Word.
+Meo: Nhan chu cai dau cua ten chuong trinh de nhay nhanh den do. Vi du: nhan "F" cho Firefox, "W" cho Word.
 
-Neu nhan chu cai khong co phan ung, tieu diem ban phim da roi khoi Desktop. Nhan phim Tab mot lan — NVDA se thong bao "Desktop, danh sach". Bay gio nhan chu cai de nhay se hoat dong. Neu Tab chuyen den thanh tac vu hoac khay he thong, nhan Tab them mot lan de quay lai danh sach Desktop. Hoac nhan mot phim mui ten bat ky de ep tieu diem len bieu tuong.
-
-Giua cac lan nhay, nhan chu cai tiep theo trong vong khoang mot giay, hoac doi hai giay de bo dem "go chu" reset. Tam dung giua hai chu (vi du: "F" roi tam dung roi "W") co the khien Windows hieu la tien to "FW" va khong tim thay gi.
+Neu nhan mot chu cai ma khong co gi xay ra, nghia la tieu diem ban phim da roi khoi Desktop. Nhan Tab mot lan — NVDA se thong bao "Desktop". Luc do nhan chu cai dau se hoat dong lai. Neu Tab nhay vao thanh tac vu hoac khay he thong, nhan Tab them lan nua de quay lai danh sach Desktop. Ban cung co the nhan bat ky phim mui ten nao de buoc tieu diem tro ve luoi bieu tuong.
 
 Danh Sach Chuong Trinh
 
-- Audacity - Chinh sua am thanh
-- Calculator - May tinh bo tui
-- Excel - Bang tinh
-- Firefox - Trinh duyet web
-- NVDA - Trinh doc man hinh
-- PowerPoint - Trinh chieu
-- Readmate - Doc sach giao khoa (103 sach da duoc cai san)
-- Sao Mai Typing Tutor - Luyen go phim tieng Viet
-- Thùng Rác - Thung rac (khoi phuc tap tin da xoa)
-- Từ Điển - Tu dien Anh-Viet
-- USB - Mo cua so "This PC" de chon USB cua ban
-- VLC media player - Nghe nhac, xem video
-- Wikipedia - Bach khoa toan thu offline
-- Word - Soan thao van ban
+- Audacity – Chuong trinh bien tap am thanh
+- Calculator – May tinh bo tui
+- Excel – Bang tinh
+- Firefox – Trinh duyet web
+- NVDA – Trinh doc man hinh
+- PowerPoint – Trinh chieu
+- Readmate – Trinh doc sach giao khoa tieng Viet (da cai san 103 cuon)
+- Sao Mai Typing Tutor – Phan mem luyen go phim tieng Viet
+- Thung Rac – Khoi phuc cac tap tin da xoa
+- Tu Dien – Tu dien Anh-Viet
+- USB – Mo "This PC" de chon USB cua ban
+- VLC media player – Trinh phat da phuong tien
+- Wikipedia – Bach khoa toan thu offline
+- Word – Trinh soan thao van ban
 
-Phim Tat NVDA Quan Trong
 
-May tinh nay dung che do ban phim "Laptop". Phim NVDA la phim Insert (phim Insert ben phai hoac phim Insert tren bang so).
+Cac Phim Tat NVDA Quan Trong
+
+NVDA la phan mem doc man hinh va dieu huong da duoc cai san.
+
+- CapsLock la phim NVDA chinh. De bat/tat phim Caps Lock that (go chu HOA), nhan CapsLock hai lan lien tiep.
+	- Phim NVDA co the la CapsLock hoac Insert (ben trai phim Delete – phim thu ba tu phai sang tren hang dau).
 
   Phim - Chuc nang
-  NVDA + 1 - Che do hoc phim - nhan bat ky phim nao de nghe chuc nang cua no
-  NVDA + T - Nghe tieu de cua so
-  NVDA + A - Doc tu vi tri hien tai (Say All)
-  NVDA + L - Doc dong hien tai
-  NVDA + F7 - Danh sach lien ket / tieu de
-  NVDA + Space - Chuyen che do duyet/tap trung
+  NVDA + 1 - Che do Tro giup Phim — nhan phim nao se nghe ten phim
+  NVDA + T - Doc tieu de cua so
+  NVDA + A - Doc tat ca — doc lien tuc tu vi tri hien tai
+  NVDA + L - Doc lai dong hien tai
+  NVDA + F7 - Danh sach phan tu (tieu de / lien ket)
+  NVDA + Space - Bat/tat che do Duyet / Tieu diem
   NVDA + N - Mo menu NVDA
   NVDA + Q - Thoat NVDA
-  NVDA + S - Chuyen che do noi (noi / beep / tat)
-  NVDA + Ctrl + Mui ten len - Tang toc do noi
-  NVDA + Ctrl + Mui ten xuong - Giam toc do noi
-  NVDA + Ctrl + F - Tim van ban trong tai lieu
+  NVDA + S - Doi che do giong noi (giong / bip / tat)
+  NVDA + Ctrl + Mui ten Len - Tang toc do doc
+  NVDA + Ctrl + Mui ten Xuong - Giam toc do doc
+  NVDA + Ctrl + F - Tim chu trong van ban
+  NVDA + Shift + B - Doc phan tram pin
   Ctrl - Dung doc
-  Tab - Di chuyen den muc tiep theo
-  Shift + Tab - Di chuyen den muc truoc
+  Tab - Sang muc tiep theo
+  Shift + Tab - Quay lai muc truoc
   Ctrl + Alt + N - Khoi dong NVDA
   Alt + F4 - Dong chuong trinh
-  Alt + Tab - Chuyen chuong trinh
+  Alt + Tab - Chuyen giua cac chuong trinh
 
-Che Do Tap Trung
+Cac Phim Tat Windows Huu Ich
 
-Khi dung PowerShell, Command Prompt, hoac cac ung dung khac ma ban phim khong hoat dong binh thuong:
+  Phim - Chuc nang
+  Windows + E - Mo File Explorer (Trinh quan ly tap tin)
+  F12 - Save As — mo hop thoai luu tren USB cua hoc sinh
+  Ctrl + W - Dong tab hoac cua so hien tai
+  F10 - Mo thanh menu (File/Edit/View o phia tren)
+  Shift + F10 - Menu chuot phai (Context Menu)
+  Ctrl + A - Chon tat ca van ban trong cua so
+  Ctrl + C - Sao chep van ban da chon (NVDA + C de doc noi dung da sao chep)
+  Ctrl + V - Dan van ban da sao chep
 
-Nhan Insert + Space de chuyen sang "Che do tap trung".
+Hoc Phim
 
-O che do nay, tat ca phim ban nhan se gui thang den ung dung (bao gom Backspace, Delete).
+Neu ngon tay ban lo cham vao mot phim va ban khong biet do la phim gi, co hai cach an toan de tim hieu:
 
-Nhan Insert + Space lan nua de quay lai che do duyet.
+Cach 1: Che do Tro giup Phim cua NVDA (NVDA + 1)
+
+1. Nhan NVDA + 1 de bat "Che do Tro giup Phim". NVDA thong bao "Input help on (vietnamese)".
+2. Bay gio nhan bat ky phim nao — NVDA se doc ten va chuc nang cua phim do ma khong thuc thi phim. Ban co the thu moi phim tren ban phim.
+3. Nhan NVDA + 1 lan nua de thoat (cac phim tro lai hoat dong binh thuong).
+
+Day la cach nhanh nhat de goi nho mot phim.
+
+Cach 2: Sao Mai Typing Tutor (SMTT)
+
+Phan mem luyen go phim tieng Viet cua Sao Mai:
+
+1. Tren Desktop, nhan "S" de nhay den "Sao Mai Typing Tutor" → Enter.
+2. Chon "Kham pha ban phim" (Explore Keyboard).
+3. Nhan bat ky phim nao → SMTT se doc ten phim bang tieng Viet.
+4. SMTT cung co cac bai luyen go hang ngay — dac biet huu ich cho ca ban phim tieng Viet va tieng Anh.
+
+So sanh: NVDA+1 phu hop khi can tra phim nhanh o bat cu dau; SMTT phu hop de luyen tap co he thong.
 
 Go Tieng Viet
 
-UniKey tu dong chay khi bat may.
+May tinh dung UniKey va ban phim mac dinh la tieng Viet.
 
-Mac dinh dung kieu go Telex.
+De chuyen giua Tieng Viet va Tieng Anh: nhan Ctrl + Shift.
 
-Vi du Telex:
-- aa = a (a mu)
-- aw = a (a ngan)
-- oo = o (o mu)
-- ow = o (o moc)
-- uw = u (u moc)
-- dd = d (d ngang)
-- s = dau sac, f = dau huyen, r = dau hoi, x = dau nga, j = dau nang
-- z = xoa dau (vi du "af" cho ra "à", sau do them "z" tro lai "a")
+Phuong phap go mac dinh la Telex.
 
-Chuyen tieng Viet/Anh: nhan Ctrl + Shift. Xem bieu tuong UniKey tren thanh tac vu (V = tieng Viet, E = tieng Anh).
+Vi du Telex (chu ghep — moi dong co ghi chu trong ngoac de ban khong dau van hieu duoc):
 
-Phim Tat Windows Huu Ich
+- aa = a (a co dau mu / a-circumflex)
+- aw = a (a co dau trang / a-breve)
+- ee = e (e co dau mu / e-circumflex)
+- oo = o (o co dau mu / o-circumflex)
+- ow = o (o co dau moc / o-horn)
+- uw = u (u co dau moc / u-horn)
+- dd = d (d co gach ngang / d-stroke)
 
-  Phim - Chuc nang
-  Windows + E - Mo File Explorer
-  Ctrl + C - Sao chep
-  Ctrl + V - Dan
-  Ctrl + X - Cat
-  Ctrl + Z - Hoan tac
-  Ctrl + S - Luu
-  Ctrl + A - Chon tat ca
-  F12 - Luu thanh file moi (cua so Luu Thanh mo o USB D:)
-  Windows + L - Khoa may tinh
-  Ctrl + W - Dong tab hoac cua so hien tai
+Vi du Telex (dau thanh):
+
+- s = dau sac (acute) — vi du a, e, i, o, u, y
+- f = dau huyen (grave) — vi du a, e, i, o, u, y
+- r = dau hoi (hook above) — vi du a, e, i, o, u, y
+- x = dau nga (tilde) — vi du a, e, i, o, u, y
+- j = dau nang (dot below) — vi du a, e, i, o, u, y
+- z = bo dau (vi du go "af" cho ra a, sau do "z" cho ra a)
+
+Vi du ket hop:
+
+- aas = a (a voi dau sac / a-circumflex with acute)
+- aaf = a (a voi dau huyen / a-circumflex with grave)
+- aar = a (a voi dau hoi / a-circumflex with hook)
+- aax = a (a voi dau nga / a-circumflex with tilde)
+- aaj = a (a voi dau nang / a-circumflex with dot)
+- aws/awf/awr/awx/awj cho a (a-breve) voi nam dau thanh
+- ees/eef/eer/eex/eej cho e (e-circumflex) voi nam dau thanh
+- oos/oof/oor/oox/ooj cho o (o-circumflex) voi nam dau thanh
+- ows/owf/owr/owx/owj cho o (o-horn) voi nam dau thanh
+- uws/uwf/uwr/uwx/uwj cho u (u-horn) voi nam dau thanh
+- DD = D (d-stroke chu hoa), dd = d (d-stroke chu thuong)
+- Vieejt = Viet
+- ngwowif = nguoi
+- ddungs = dung
+- caarm own = cam on
+
+Chuyen Viet/Anh: nhan Ctrl + Shift.
+
+Nghe Dau Thanh Tieng Viet
+
+De nghe dau thanh tren mot ky tu: di chuyen con tro den chu cai → nhan NVDA + dau cham (.) hai lan lien tiep. NVDA se doc ky tu theo cach phat am va noi ten dau thanh.
+
+Vi du: con tro o chu "a" (go Telex la "af", a co dau huyen) → NVDA doc "a with grave accent".
+
+De doc ca tu, di chuyen tung chu cai bang phim mui ten, moi chu nhan NVDA + dau cham (.) hai lan.
 
 Doc Sach Giao Khoa
 
-May tinh co san 103 sach giao khoa tieng Viet (Canh Dieu, Chan Troi Sang Tao, Ket Noi Tri Thuc, Tieng Anh).
+May tinh da cai san 103 cuon sach giao khoa tieng Viet (Canh Dieu, Chan Troi Sang Tao, Ket Noi Tri Thuc, Tieng Anh).
 
 Mo Readmate
 
-1. Tren Desktop, nhan phim "R" de nhay den "Readmate".
-2. Nhan Enter de mo chuong trinh.
+1. Tren Desktop, nhan "R" de nhay den "Readmate".
+2. Nhan Enter de mo.
 
 Chon Va Mo Sach
 
-Khi Readmate mo, ban o mang hinh chinh voi tieu diem tai menu ben trai.
+Khi Readmate mo, ban o man hinh chinh voi tieu diem tren thanh ben trai.
 
-1. Nhan Ctrl + B de kich hoat tab Ke sach (neu dang o tab khac, Cai dat hoac Huong dan).
-2. Nhan F6 (hoac Tab) de di chuyen tieu diem sang khung sach.
-3. Dung phim mui ten (Len/Xuong/Trai/Phai) de di chuyen qua danh sach sach — NVDA se doc ten tung sach.
+1. Nhan Ctrl + B de mo tab Bookshelf (Ke Sach) — neu dang o Settings hoac User Guide.
+2. Nhan F6 (hoac Tab) de chuyen tieu diem sang khung danh sach sach.
+3. Dung phim mui ten (Len/Xuong/Trai/Phai) de duyet qua danh sach — NVDA se doc ten tung cuon sach.
 4. Hoac nhan Ctrl + F de tim sach theo ten.
-5. Khi tim duoc sach, nhan Enter de mo.
+5. Khi tim thay cuon muon doc, nhan Enter de mo.
 
-Sach se tu dong bat dau doc sau khi mo — khong can bam Ctrl+P. Bam Ctrl+P de tam dung hoac tiep tuc.
+Luu y: Tab khong duyet qua het danh sach sach. Hay dung phim mui ten hoac Ctrl+F.
 
-Luu y: Phim Tab khong duyet qua tat ca sach — chi dung phim mui ten hoac Ctrl+F.
+NVDA se doc tieu de sach va tien do doc. Nhan Control neu muon dung giong doc.
 
-Doc Sach — Phim Tat Quan Trong
+Sau do, khi da san sang doc sach, nhan Ctrl + P de bat dau nghe sach.
 
-Khi sach da mo, dung cac phim sau:
+Phim Tat Khi Dang Doc Sach
 
-  Phim - Chuc nang
-  Ctrl + P - Bat / tam dung doc
-  Mui ten Phai / Trai - Doan ke tiep / truoc
-  Ctrl + Mui ten Xuong / Len - Doan van ke tiep / truoc
-  Ctrl + Page Down / Page Up - Trang ke tiep / truoc
-  Alt + Mui ten Phai / Trai - Chuong ke tiep / truoc
-  H / Shift + H - Tieu de ke tiep / truoc
+Khi sach da mo:
+
+  Phim - Hanh dong
+  Ctrl + P - Phat / Tam dung
+  Mui ten phai / Mui ten trai - Cau ke tiep / Cau truoc
+  Ctrl + Xuong / Ctrl + Len - Doan ke tiep / Doan truoc
+  Ctrl + Page Down / Page Up - Trang ke tiep / Trang truoc
+  Alt + Phai / Alt + Trai - Chuong ke tiep / Chuong truoc
+  H / Shift + H - Tieu de ke tiep / Tieu de truoc
   ] (ngoac vuong phai) - Doc nhanh hon
   [ (ngoac vuong trai) - Doc cham hon
-  Ctrl + ] / Ctrl + [ - To am / giam am luong
+  Ctrl + ] / Ctrl + [ - Tang / Giam am luong
   Ctrl + F - Tim chu trong sach
   Ctrl + N - Them ghi chu tai vi tri hien tai
-  Ctrl + Shift + N - Xem danh sach ghi chu
-  Ctrl + H - Danh sach tieu de (muc luc sach)
+  Ctrl + Shift + N - Xem tat ca ghi chu
+  Ctrl + H - Danh sach tieu de (muc luc)
   Ctrl + G - Danh sach trang
-  Ctrl + W - Dong sach va quay lai Ke sach
-  Esc - Quay lai mang hinh truoc
+  Ctrl + W - Dong sach, quay ve Bookshelf
+  Esc - Quay lai man hinh truoc
 
 Dieu Huong Trong Readmate
 
-- Ctrl + Tab hoac F6: chuyen giua cac khung (left sidebar, main content, v.v.)
-- Tab: di chuyen trong mot khung (vi du: tu thanh tim kiem den danh sach sach)
-- Ctrl + B: nhay thang den Ke sach
-- Ctrl + S: Cai dat
-- Ctrl + H (o mang hinh chinh, khong phai khi dang doc sach): Tab Huong dan cua Sao Mai
+- Ctrl + Tab hoac F6: chuyen giua cac khung (thanh ben, noi dung chinh, v.v.)
+- Tab: di chuyen trong cung mot khung (vi du tu o tim kiem sang danh sach sach)
+- Ctrl + B: nhay thang den Bookshelf (Ke Sach)
+- Ctrl + S: Settings (Cai dat)
+- Ctrl + H (tu man hinh chinh, khong phai khi dang doc sach): tab Huong dan cua Sao Mai
 
-Neu NVDA im lang sau khi chuyen qua chuong trinh khac roi quay lai Readmate: nhan Alt roi Esc de kich hoat lai.
+Neu NVDA im lang sau khi chuyen sang chuong trinh khac roi quay lai Readmate, nhan Alt roi Esc de kich hoat lai.
+
 
 Duyet Web Voi Firefox
 
 Hai Che Do Cua NVDA Tren Web
 
-Khi ban dung Firefox, NVDA hoat dong o mot trong hai che do:
+Khi dung Firefox, NVDA hoat dong o mot trong hai che do:
 
-- Che do Duyet (Browse) — mac dinh tren trang web. NVDA tao ra "tai lieu ao" de ban di chuyen qua bang cac phim tat chu cai (H, K, F, v.v.).
-- Che do Tap Trung (Focus) — tu dong bat khi ban bam vao o nhap van ban. Cac phim chu cai se go thay vi nhay.
+- Che do Duyet (Browse Mode): che do mac dinh tren trang web. NVDA tao ra mot "tai lieu ao" de ban duyet bang cac phim tat mot chu cai (H, K, F, v.v.).
+- Che do Tieu diem (Focus Mode): tu dong bat khi ban vao o nhap van ban. Phim chu cai se go binh thuong thay vi nhay.
 
-Nhan NVDA + Space de chuyen thu cong giua hai che do. NVDA tu dong chuyen khi ban ra vao o nhap van ban.
+Nhan NVDA + Space de chuyen giua hai che do. NVDA tu doi che do khi vao/roi o nhap van ban.
 
-Phim Tat Duyet Web (Che Do Duyet)
+Phim Tat Duyet Web (Che do Duyet)
 
-  Phim - Chuc nang
-  Mui ten Xuong / Len - Doc dong ke tiep / truoc
-  H / Shift + H - Tieu de (heading) ke tiep / truoc
-  K / Shift + K - Lien ket (link) ke tiep / truoc
-  F / Shift + F - O nhap van ban ke tiep / truoc
-  B / Shift + B - Nut (button) ke tiep / truoc
-  D / Shift + D - Vung moc (landmark) — nhay qua menu, quang cao
-  1 den 6 - Tieu de cap 1 den 6
-  NVDA + F7 - Danh sach tat ca tieu de / lien ket / moc
-  NVDA + Mui ten Xuong - Doc lien tuc tu day (Say All)
+  Phim - Hanh dong
+  Mui ten xuong / len - Doc dong ke tiep / dong truoc
+  H / Shift + H - Tieu de ke tiep / Tieu de truoc
+  K / Shift + K - Lien ket ke tiep / Lien ket truoc
+  F / Shift + F - O nhap ke tiep / O nhap truoc
+  B / Shift + B - Nut ke tiep / Nut truoc
+  D / Shift + D - Vung moc ke tiep / truoc (bo qua menu + quang cao)
+  1 – 6 - Tieu de cap 1–6
+  NVDA + F7 - Danh sach phan tu (tat ca tieu de / lien ket / vung moc)
+  NVDA + Mui ten xuong - Doc lien tuc tu day (Say All)
   Enter - Mo lien ket
 
 Phim Tat Firefox
 
-  Phim - Chuc nang
+  Phim - Hanh dong
   Ctrl + L - Nhay den thanh dia chi
-  Alt + Mui ten Trai - Quay lai trang truoc
-  Alt + Mui ten Phai - Tien den trang sau
-  Ctrl + T / Ctrl + W - Mo tab moi / Dong tab
+  Alt + Mui ten trai - Quay lai trang truoc
+  Alt + Mui ten phai - Sang trang tiep theo
+  Ctrl + T / Ctrl + W - Tab moi / Dong tab
   Ctrl + Shift + T - Mo lai tab vua dong
-  Ctrl + F - Tim chu trong trang
-  F9 - Che Do Doc (Reader Mode) — bo quang cao, chi hien bai viet
-  F5 - Lam moi trang
-  Ctrl + + / Ctrl + - / Ctrl + 0 - Phong to / thu nho / tra lai mac dinh
+  Ctrl + F - Tim trong trang
+  F9 - Che do Doc (Reader Mode) — chi giu lai bai viet
+  F5 - Tai lai trang
+  Ctrl + + / Ctrl + - / Ctrl + 0 - Phong to / Thu nho / Tro lai kich thuoc goc
 
-Meo Doc Trang Tin Tuc (vnexpress.net, tuoitre.vn)
+Meo: Doc Bao Mang (vnexpress.net, tuoitre.vn, v.v.)
 
-1. Mo trang tin → nhan D 2-3 lan de nhay qua menu va quang cao den vung "main" (noi dung chinh).
-2. Nhan H mot lan → thuong nhay den tieu de bai viet.
-3. Nhan NVDA + Mui ten Xuong → doc ca bai tu dau den cuoi.
-4. Neu trang qua nhieu quang cao → nhan F9 → Che Do Doc — chi con bai viet, xoa sach quang cao.
-5. Nhan F9 lan nua hoac Alt + Mui ten Trai de quay lai.
+1. Mo trang: nhan D 2-3 lan de bo qua menu/quang cao, den vung moc "main" (noi dung chinh).
+2. Nhan H mot lan: thuong se vao tieu de bai viet.
+3. Nhan NVDA + Mui ten xuong: doc toan bo bai viet.
+4. Neu trang co qua nhieu quang cao: nhan F9 de bat Che do Doc (chi bai viet, khong phien nhieu).
+5. Nhan F9 lan nua hoac Alt + Mui ten trai de quay lai.
 
-Quang cao tieng Anh se bi chan tu dong nho Firefox co uBlock Origin cai san. Neu van nghe quang cao xen vao, nhan D nhieu lan den khi NVDA noi "main" (noi dung chinh).
 
 Nghe Nhac Va Sach Noi Voi VLC
 
-  Phim - Chuc nang
-  Ctrl + O - Mo file
-  Space - Phat / tam dung
-  Shift + Mui ten Phai / Trai - Tien / lui 5 giay
-  Alt + Mui ten Phai / Trai - Tien / lui 10 giay
-  Ctrl + Mui ten Phai / Trai - Tien / lui 1 phut
-  ] / [ - Phat nhanh hon / cham hon (giu nguyen cao do)
+  Phim - Hanh dong
+  Ctrl + O - Mo tap tin
+  Space - Phat / Tam dung
+  Shift + Mui ten phai / trai - Tien / Lui 5 giay
+  Alt + Mui ten phai / trai - Tien / Lui 10 giay
+  Ctrl + Mui ten phai / trai - Tien / Lui 1 phut
+  ] / [ - Nhanh hon / Cham hon (giu nguyen cao do)
   = - Toc do binh thuong
-  Ctrl + T - Nhay den thoi gian cu the
-  Ctrl + Mui ten Len / Xuong - To am / nho am
-  M - Tat / bat am
-  N / P - Bai ke tiep / truoc trong danh sach
-  Ctrl + B - Quan ly dau trang
-  I - Noi thong tin bai (vi tri / tong thoi gian)
+  Ctrl + T - Nhay den moc thoi gian cu the
+  Ctrl + Mui ten len / xuong - Tang / Giam am luong
+  M - Tat / Bat tieng
+  N / P - Bai ke tiep / Bai truoc trong danh sach
+  Ctrl + B - Quan ly danh dau (bookmark)
+  I - Doc thong tin vi tri hien tai
 
-Meo: Khi nghe sach noi, dung ] va [ de chinh toc do — VLC giu nguyen cao do giong. Dung Ctrl + B de danh dau vi tri dang nghe.
+Meo: Khi nghe sach noi, dung `]` va `[` de chinh toc do — VLC giu nguyen cao do giong. Dung Ctrl + B de danh dau vi tri dang nghe.
 
-Doc Bach Khoa Offline Voi Wikipedia
 
-May tinh co Wikipedia tieng Viet offline (khong can mang).
+Doc Bach Khoa Offline Voi Wikipedia Va Wiktionary
 
-1. Tu Desktop, nhan phim "W" de nhay den "Wikipedia" → Enter.
-2. Nhan F6 de nhay den thanh tim kiem.
-3. Go chu de muon tim (vi du: "Vietnam") → nhan Enter de mo bai viet.
-4. Luu y quan trong: neu NVDA khong doc bai viet tu dong, nhan NVDA + Space de bat Che Do Duyet. Do la su co da biet cua Kiwix khi dung voi NVDA.
-5. Trong bai viet: dung H de nhay qua tieu de, K qua lien ket — giong nhu duyet web.
-6. Ctrl + F de tim chu trong bai.
-7. Alt + Mui ten Trai de quay lai ket qua tim kiem.
+May tinh co Wikipedia va Wiktionary tieng Viet offline (khong can mang). Ca hai deu mo trong Firefox de cac phim tat che do Duyet cua NVDA hoat dong binh thuong.
+
+Cach Nhanh Nhat: Tim Trong Ca Hai Cuon Sach Cung Luc
+
+1. Tren Desktop, nhan W de nhay den "Wikipedia" → nhan Enter. Firefox se mo trang chu Kiwix.
+2. Nhan Tab 3 lan — tieu diem se vao o tim kiem chung (tim ca Wikipedia va Wiktionary).
+3. Go chu de muon tim (vi du: "Viet Nam") → nhan Enter. Mot danh sach ket qua se hien ra voi cac muc tu ca hai cuon sach.
+4. Nhan Mui ten xuong de duyet qua cac ket qua, roi nhan Enter vao ket qua muon doc.
+
+Tim Rieng Trong Wikipedia (Hoac Wiktionary)
+
+1. Tu trang chu Kiwix, nhan Tab 5 lan de den o Wikipedia. (Them mot Tab nua — tong cong 6 — se den o Wiktionary.) Nhan Enter de mo cuon sach; Trang Chinh (doi voi Wikipedia) se hien ra.
+2. Nhan Tab mot lan — tieu diem se vao o tim kiem rieng cua cuon sach do.
+3. Go chu de → nhan Enter. Cac ket qua chi tu cuon sach do se hien ra.
+4. Nhan Mui ten xuong de duyet qua cac ket qua, Enter tren mot ket qua de mo bai viet.
+
+Trong Bai Viet
+
+- NVDA se tu doc bai viet.
+- H / Shift + H — tieu de ke tiep / tieu de truoc
+- K / Shift + K — lien ket ke tiep / lien ket truoc
+- Mui ten xuong — doc dong theo dong
+- Ctrl + F — tim chu trong bai hien tai (chuc nang Tim tren trang cua Firefox; co the bat "Match Diacritics" de tim chinh xac theo dau thanh)
+- Alt + Mui ten Trai — quay lai danh sach ket qua (hoac quay xa hon ve trang chu Kiwix)
 
 Doc File PDF Voi Microsoft Edge
 
-Khi ban mo file PDF (vi du: bai tap cua giao vien), may tinh se mo bang Microsoft Edge. Edge doc duoc noi dung PDF voi NVDA.
+Khi ban mo file PDF, may tinh se mo bang Microsoft Edge. NVDA doc file PDF tot nhat qua Edge.
 
 1. Mo file PDF (bam Enter tren file, hoac mo tu Word).
-2. NVDA se chuyen sang che do duyet tu dong.
+2. NVDA se tu chuyen sang che do Duyet.
 3. Dung H de nhay qua tieu de, mui ten xuong de doc dong theo dong.
-4. Hoac nhan Ctrl + Shift + U trong Edge de bat "Doc To" (Read Aloud) — Edge se tu doc bai cho ban voi giong tieng Viet.
+4. Hoac nhan Ctrl + Shift + U trong Edge de bat "Doc To" (Read Aloud) — Edge se doc tai lieu cho ban bang giong tieng Viet.
 5. Ctrl + F de tim chu trong PDF.
 
-Luu y: neu gap PDF duoc "quet hinh" (PDF hinh anh khong co chu) → NVDA se khong doc duoc. Phai nho giao vien cho ban file co chu.
 
 Tu Dien Anh-Viet Voi GoldenDict
 
-1. Tu Desktop, mo "Từ Điển" (hoac nhan phim "T").
-2. Nhan Ctrl + L de nhay den o tim kiem.
-3. Go tu can tra → nhan Enter → NVDA doc dinh nghia.
-4. Nhan Alt + Page Down hoac Alt + Page Up de chuyen giua nhom tu dien (Anh-Viet / Viet-Anh).
-5. Nhan Alt + Mui ten Xuong / Len de xem ket qua tu tu dien khac cho cung mot tu.
+1. Tu Desktop, mo "Tu Dien" (hoac nhan "T").
+2. Chuong trinh se vao ngay o tim kiem.
+3. Go tu can tra, nhan Enter. Hoac nhan Mui ten xuong / len de xem cac ket qua tuong tu roi nhan Enter.
+4. Nhan Control + A, Control + C, roi NVDA + C.
+	(Chon tat ca, sao chep. Sau do NVDA doc noi dung da sao chep qua phim tat NVDA + C.)
 
 May Tinh Bo Tui (Calculator)
 
-1. Mo Calculator tu Desktop (nhan phim "C" hoac dung phim mui ten).
-2. Go phep tinh bang phim so va phim toan hoc: + - * / =
-3. Nhan Enter de nghe ket qua — NVDA chi doc ket qua khi ban bam Enter, khong doc sau moi phim.
-4. Esc hoac Delete de xoa va bat dau lai — NVDA se thong bao.
+1. Mo Calculator tu Desktop (nhan "C" hoac dung mui ten den).
+2. Go phep tinh bang phim so va toan tu: + - * / =
+3. Nhan Enter de nghe ket qua — NVDA chi doc ket qua sau khi nhan Enter, khong doc sau moi lan go.
+4. Esc hoac Delete de xoa va bat dau lai — NVDA se xac nhan.
 
-Vi du: go 25 + 17 roi nhan Enter → NVDA doc "42".
+Vi du: go `25 + 17` roi nhan Enter → NVDA doc "42".
 
-Danh Van Dau Tieng Viet
 
-Cac dau thanh trong tieng Viet (á, à, ả, ã, ạ) nghe kha giong nhau khi NVDA doc voi toc do nhanh.
+Cac Phim Tat NVDA Hang Ngay (Tom Tat)
 
-De nghe ro dau thanh tren mot ky tu: dat con tro len chu cai → nhan NVDA + dau cham (.) 2 lan nhanh. NVDA se doc ky tu theo phien am va neu ten dau thanh.
-
-Vi du: con tro tren "à" → NVDA doc "a co dau huyen".
-
-De danh van ca mot tu: di chuyen qua tung chu bang phim mui ten, tai moi chu nhan NVDA + dau cham (.) 2 lan.
-
-Phim Tat NVDA Dung Hang Ngay (Tom Tat)
-
-  Phim - Chuc nang
-  Ctrl - Dung noi ngay (khong lam gi khac)
-  NVDA + A hoac NVDA + Mui ten Xuong - Doc lien tuc tu day (Say All)
+  Phim - Hanh dong
+  Ctrl - Dung doc ngay lap tuc
+  NVDA + A hoac NVDA + Mui ten xuong - Doc lien tuc (Say All)
   NVDA + L - Doc lai dong hien tai
-  NVDA + dau cham (.) 2 lan - Doc ky tu hien tai theo phien am (neu ten dau thanh)
+  NVDA + dau cham (.) hai lan - Doc ky tu hien tai theo phat am (doc ca ten dau thanh)
   NVDA + T - Doc tieu de cua so
-  NVDA + Ctrl + Mui ten Len / Xuong - Tang / giam toc do noi
-  NVDA + S - Bat / tat NVDA noi (phuc vu khi lam bai kiem tra)
-  NVDA + C - Doc noi dung clipboard (kiem tra sau khi Ctrl + C)
-  NVDA + Ctrl + F - Tim chu trong tai lieu
-  NVDA + 1 - Che do hoc phim (bam phim nao NVDA noi ten phim do)
+  NVDA + Ctrl + Mui ten Len / Xuong - Tang / Giam toc do doc
+  NVDA + S - Bat / Tat giong doc (huu ich khi lam bai kiem tra)
+  NVDA + C - Doc noi dung clipboard (Ctrl + C de sao chep vao clipboard)
+  NVDA + Ctrl + F - Tim chu trong van ban
+  NVDA + 1 - Che do hoc ban phim (nhan phim nao se nghe ten phim do)
 
-Hoc Phim — Khi Ban Khong Biet Phim Nao La Gi
 
-Khi ban cham tay len ban phim va khong chac phim do lam gi, co hai cach de hoc ma khong lam gi sai:
+Khi NVDA Khong Doc Hoac Doc Sai:
 
-Cach 1: Che Do Hoc Phim Cua NVDA (NVDA + 1)
+1. Nhan Ctrl + Alt + N de khoi dong lai NVDA.
+2. Thu nhan NVDA + Shift + B de nghe trang thai pin. Co the pin yeu.
+3. Neu van khong duoc, hoi giao vien.
 
-Bat cu luc nao, bat cu chuong trinh nao:
 
-1. Nhan NVDA + 1 de bat "Che do hoc phim". NVDA noi "Input help on".
-2. Bay gio nhan bat ky phim nao → NVDA doc ten phim va chuc nang, khong thuc thi phim do. An toan tuyet doi.
-3. Ban co the tham do toan bo ban phim ma khong so gay loi.
-4. Nhan NVDA + 1 lan nua de tat che do (phim hoat dong binh thuong tro lai).
+Bao Quan May
 
-Day la cach nhanh nhat de nho lai mot phim.
+- Cam sac vao cong USB-C phia sau ben trai, gan ban le nhat.
+- Thao tai nghe bang cach cam dau cam, khong keo day.
+- Khong bat BitLocker, khong doi mat khau, khong dang nhap tai khoan Microsoft.
 
-Cach 2: Sao Mai Typing Tutor (SMTT)
-
-Chuong trinh day go phim cua Sao Mai, da duoc cai san tren may:
-
-1. Tren Desktop, nhan phim "S" de nhay den "Sao Mai Typing Tutor" → Enter.
-2. Chon "Kham pha ban phim" (Explore Keyboard).
-3. Nhan bat ky phim nao → SMTT doc ten phim bang tieng Viet.
-4. SMTT con co bai hoc go phim co cau truc de luyen hang ngay — dac biet huu ich cho Telex.
-
-So sanh: NVDA+1 dung nhanh o bat ky dau; SMTT tot cho hoc co ban co cau truc.
-
-Cach Dinh Huong Tren Ban Phim (Dell Latitude 5420)
-
-- F va J co not noi san — day la vi tri "hang chinh" (home row) cho 8 ngon tay.
-- Delete va Mui ten Xuong cung co not noi tu nha san xuat.
-- Insert (phim NVDA) nam ngay canh Delete — co not noi nho them vao.
-- Tu F/J, dem ra cac phim khac: ben trai F la D → S → A; ben phai J la K → L → dau cham phay.
-
-Giu An Toan Phan Cung
-
-- Dong man hinh bang hai tay, giu hai goc ngoai de khoi hong ban le.
-- Cac bieu tuong dinh vi: trackpad = phia truoc, ban le = phia sau.
-- Cam day sac vao cong USB-C ben trai, gan ban le nhat.
-- Khong an uong gan may. Ban phim chong tran nhung khong chong nuoc tran.
-- Rut tai nghe bang cach cam dau cap, khong keo day.
-- Neu NVDA bat ngo im lang, nhan NVDA + Shift + B de nghe trang thai pin — co the pin sap het.
-- Khong bat BitLocker, khong doi mat khau, khong dang nhap tai khoan Microsoft — goi thay co truoc.
-
-Khi NVDA Bi Loi
-
-Neu NVDA khong noi hoac noi sai:
-
-1. Nhan Ctrl + Alt + N de khoi dong lai NVDA
-2. Neu van khong duoc, hoi thay co
-
-Luu Y
-
-- Khong can mat khau de dang nhap
-- Luu file quan trong vao USB cua ban
-- Neu can giup do, goi thay co
-- Luon rut USB an toan truoc khi tat may
-
-*Cap nhat lan cuoi: 2026-04-25*

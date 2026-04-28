@@ -381,17 +381,32 @@ Tip: For audiobooks, use `]` and `[` to tune speed — VLC preserves pitch. Use 
 
 ---
 
-Offline Wikipedia
+## Offline Wikipedia and Wiktionary
 
-The laptop has Vietnamese Wikipedia offline (no internet needed).
+The laptop has Vietnamese Wikipedia and Wiktionary offline (no internet needed). Both open in Firefox so NVDA browse-mode shortcuts work normally.
 
-1. On Desktop, press "W" to jump to "Wikipedia" . Press Enter.
-2. Press **F6** or Ctrl + L to jump to the search bar.
-3. Type a topic (e.g., "Vietnam"). Press **Enter** to open the article.
-4. The article will open in Firefox.
-5. In the article: use **H** to jump by heading, **K** by link. 
-6. **Ctrl + F** to find text in the article.
-7. **Alt + Left Arrow** to go back to search results.
+### Fastest: Search Both Books at Once
+
+1. On Desktop, press **W** to jump to "Wikipedia" → press **Enter**. Firefox opens the Kiwix server home page.
+2. Press **Tab** 3 times — focus lands in the global search bar (searches Wikipedia + Wiktionary together).
+3. Type a topic (e.g., "Việt Nam") → press **Enter**. A list of results appears with entries from both books.
+4. Press **Down Arrow** to step through results, then **Enter** on the one you want.
+
+### Searching Only Inside Wikipedia (or Wiktionary)
+
+1. From the Kiwix home page, press **Tab** 5 times to land on the **Wikipedia** book card. (One more Tab — 6 total — lands on **Wiktionary**.) Press **Enter** to open the book; the main page (Trang Chính for Wikipedia) loads.
+2. Press **Tab** once — focus moves into that book's own search box.
+3. Type a topic → press **Enter**. Results appear from that book only.
+4. Press **Down Arrow** to step through results, **Enter** on one to open the article.
+
+### Inside an Article
+
+- NVDA reads the article automatically.
+- **H** / **Shift + H** — next / previous heading
+- **K** / **Shift + K** — next / previous link
+- **Down Arrow** — read line by line
+- **Ctrl + F** — find text in this article (Firefox's find-in-page; tick "Match Diacritics" for tone-sensitive searches)
+- **Alt + Left Arrow** — go back to the results list (or further back to the Kiwix home)
 
 ---
 
