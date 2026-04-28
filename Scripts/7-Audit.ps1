@@ -299,6 +299,29 @@ if (Test-Path $remoteIniPath) {
     Add-Result "NVDA" "remote.ini" "Present" "Missing" "FAIL"
 }
 
+# NVDA Remote peer-join/leave chime silencing. 3-Configure-NVDA.ps1 Step 4d
+# overwrites addons\remote\sounds\disconnected.wav and controlling.wav with a
+# silent ~2.2KB PCM stub to suppress the chime that fires on every co-located
+# laptop when any one NVDA restarts (shared-key autoconnect = one big session).
+# Stock files are 100KB+ each, so any size below 4KB confirms our stub is in
+# place; anything larger means the silencing step did not run on this deploy.
+$remoteSoundsAudit = "C:\Users\Student\AppData\Roaming\nvda\addons\remote\sounds"
+if (Test-Path $remoteSoundsAudit) {
+    foreach ($wavName in @('disconnected.wav', 'controlling.wav')) {
+        $wavPath = Join-Path $remoteSoundsAudit $wavName
+        if (Test-Path $wavPath) {
+            $sizeBytes = (Get-Item $wavPath).Length
+            if ($sizeBytes -lt 4096) {
+                Add-Result "NVDA" "Remote chime: $wavName" "Silenced" "$sizeBytes bytes" "PASS"
+            } else {
+                Add-Result "NVDA" "Remote chime: $wavName" "Silenced" "$sizeBytes bytes (stock)" "FAIL"
+            }
+        } else {
+            Add-Result "NVDA" "Remote chime: $wavName" "Silenced" "Missing" "WARN"
+        }
+    }
+}
+
 # Check NVDA is running
 $nvdaProc = Get-Process nvda -ErrorAction SilentlyContinue
 if ($nvdaProc) {

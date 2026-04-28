@@ -230,6 +230,72 @@ _wp_kwargs = {"channels": 1, "samplesPerSec": self.__sample_rate, "bitsPerSample
     }
 }
 
+# Step 4d: Silence NVDA Remote peer-join/leave chimes for the shared lab session.
+# All laptops auto-connect to nvdaremote.com under shared key 'monarch-vn-lab'
+# (remote.ini deployed by Configure-Laptop.ps1), forming one persistent multi-peer
+# session. When any laptop's NVDA restarts, the relay broadcasts a leave then a
+# join to every other peer in that channel; each peer fires cues.client_disconnected
+# then cues.client_connected, which play disconnected.wav + controlling.wav from
+# addons\remote\sounds\. Co-located laptops play those nearly simultaneously --
+# the "synced chime" the user reported. Blind students don't need it: NVDA's own
+# startup speech announces NVDA is running, and arrow-key navigation already speaks
+# focus events. Note: setting [ui] play_sounds=False in remote.ini does NOT help --
+# cues.py falls through to a beep-tone sequence in that branch (still audible).
+# Overwriting the two WAVs with a 50 ms silent PCM stub kills the noise at source
+# while leaving controlled.wav (local "joined relay" cue, once-per-restart on the
+# joining laptop) and the clipboard cues intact for actual support sessions.
+# Step 4 above wipes addons\remote\sounds\ on every run by re-extracting from the
+# .nvda-addon archive, so this patch must run AFTER that to take effect -- same
+# pattern as the RHVoice __init__.py patch above.
+$remoteSoundsDir = Join-Path $addonsDestDir 'remote\sounds'
+if (Test-Path $remoteSoundsDir) {
+    # Build a minimal valid PCM WAV: 22050 Hz, mono, 16-bit, 50 ms of silence.
+    # Header (44 bytes) + 2205 samples * 2 bytes = 2249 bytes total. Standard
+    # nvwave.playWaveFile in NVDA accepts this without complaint.
+    $sampleRate = 22050
+    $bitsPerSample = 16
+    $channels = 1
+    $numSamples = [int]($sampleRate * 0.05)
+    $byteRate = $sampleRate * $channels * ($bitsPerSample / 8)
+    $blockAlign = $channels * ($bitsPerSample / 8)
+    $dataSize = $numSamples * $blockAlign
+    $ms = New-Object System.IO.MemoryStream
+    $bw = New-Object System.IO.BinaryWriter($ms)
+    $bw.Write([System.Text.Encoding]::ASCII.GetBytes('RIFF'))
+    $bw.Write([uint32](36 + $dataSize))
+    $bw.Write([System.Text.Encoding]::ASCII.GetBytes('WAVE'))
+    $bw.Write([System.Text.Encoding]::ASCII.GetBytes('fmt '))
+    $bw.Write([uint32]16)         # fmt chunk size
+    $bw.Write([uint16]1)          # PCM
+    $bw.Write([uint16]$channels)
+    $bw.Write([uint32]$sampleRate)
+    $bw.Write([uint32]$byteRate)
+    $bw.Write([uint16]$blockAlign)
+    $bw.Write([uint16]$bitsPerSample)
+    $bw.Write([System.Text.Encoding]::ASCII.GetBytes('data'))
+    $bw.Write([uint32]$dataSize)
+    $bw.Write((New-Object byte[] $dataSize))
+    $silentBytes = $ms.ToArray()
+    $bw.Dispose(); $ms.Dispose()
+
+    $silenceCount = 0
+    foreach ($wavName in @('disconnected.wav', 'controlling.wav')) {
+        $target = Join-Path $remoteSoundsDir $wavName
+        if (Test-Path $target) {
+            try {
+                [System.IO.File]::WriteAllBytes($target, $silentBytes)
+                Write-Log "Silenced NVDA Remote chime: $wavName ($($silentBytes.Length) bytes)" "SUCCESS"
+                $silenceCount++
+            } catch {
+                Write-Log "Could not silence ${wavName}: $($_.Exception.Message)" "WARNING"
+            }
+        }
+    }
+    if ($silenceCount -gt 0) {
+        Write-Log "NVDA Remote chime silencing: $silenceCount WAV(s) replaced (peer-join/leave audible on all co-located lab laptops otherwise)" "INFO"
+    }
+}
+
 # Step 5: Mirror VNVoice SAPI5 voices from 32-bit to 64-bit registry
 # VNVoice installs as 32-bit (WOW6432Node) but NVDA is 64-bit
 Write-Log "Mirroring VNVoice voices to 64-bit SAPI5 registry..." "INFO"
