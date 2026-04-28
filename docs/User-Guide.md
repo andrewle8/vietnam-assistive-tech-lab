@@ -1,10 +1,9 @@
-# Laptop User Guide
+# Laptop User Guide (Dell Latitude 5420)
+
 ---
 ## Ports and Connections
-
-The Dell Latitude 5420 has ports on both sides and the rear.
+From rear to front (keyboard closest to you - screen farthest):
 ### Left Side:
-From rear to front (from screen toward you):
 1. **Small USB-C port: for charger**
 2. Second Small USB-C port: for charging or USB Device
 ### Right Side:
@@ -13,13 +12,18 @@ From rear to front (from screen toward you)
 2. Ethernet port (for wired internet cable)
 3. HDMI port (connect to a monitor)
 4. **Full-size USB-A port (rectangular):** For your Student USB Drive or any USB-A
-5. Second full-size USB-A port (rectangular): For your Student USB Drive or any USB-A
-6. **Headphone jack (small round hole)**
-7. **microSD card slot (thin slot)**
+	1. Second full-size USB-A port (rectangular): For your Student USB Drive or any USB-A
+5. **Headphone jack (small round hole)**
+6. microSD card slot (thin slot)
+
+**Top of screen:**
+- There is a Web Camera on the top of the screen in the middle. When using the Web Camera, make sure that the thin rectangular, gridded camera cover is to the left.
+	- (If the cover is to the right, the camera is blocked. Slide the cover to the left to use the camera.)
 ## Important Ports
 - Headphones: right side, round hole, near the middle of the edge
 - USB drive: large rectangular port, one on each side (left and right)
 - Charging: plug charger into USB-C port on left side (port closest to hinge)
+
 ---
 ## Headphones
 The laptop uses Audio-Technica ATH-M40x headphones.
@@ -33,9 +37,7 @@ The laptop uses Audio-Technica ATH-M40x headphones.
 - To replace headphone cable, remove the cable by twisting it counter-clockwise. 
 - The small end (2.5mm) plugs into the headphones, the large end (3.5mm) plugs into the laptop.
 
-
 ---
-
 ## Your USB Drive
 
 Each student has a personal USB drive (16GB) with an ID number (e.g., STU-001).
@@ -51,8 +53,7 @@ Your USB drive has a Braille label tag attached.
 
 1. Use arrow keys to navigate to "USB" on the Desktop (press "U" to jump quickly).
 2. Press Enter. The "This PC" window will open.
-3. Press Tab to move into the drive list, use arrow keys to find your USB drive.
-4. Press Enter to open the USB.
+3. The location will save to your USB.
 
 ### Saving Files to USB
 
@@ -60,17 +61,47 @@ Save all your important documents to your student usb drive.
 
 In programs like Word:
 
-1. Press F12 to open the "Save As" dialog. It automatically points to your USB (drive D:).
-2. Type a filename (e.g., homework.docx).
-3. Press Enter to save.
+1. Press F12 to open the "Save As" dialog. It automatically points to your student USB drive.
+2. Select a folder location on your USB.
+3. Type a filename (e.g., homework.docx).
+4. Press Enter to save.
 
-Tip: After the first save, Ctrl + S saves to the same location without asking.
+After the first save, Ctrl + S saves to the same location without asking.
 
 If the USB is not plugged in, Word saves to the Documents folder on the laptop instead. Plug in the USB and press F12 to re-save to the USB.
 
 ---
+## Typing Position
 
+This typing position helps your fingers to reach and remember each key.
+
+- With your two pointer fingers feel for the F and J keys. The F and J keys have a bump on the bottom of the key and are near the middle of the keyboard, third row from the bottom.
+	-  F and J are in the "home row" where your all your fingers except your thumb rest.
+	- Place your other fingers on the keys next to them.  From F/J, count to other keys: left of F is D, S, and A; right of J is K, L and semicolon (;). 
+	- Right of F is G. Left of J is H.
+	
+- Both thumbs can hover or rest on the spacebar (The large, rectangular key  near the middle of the keyboard on the bottom row (two rows below the home row with F and J)
+---
+## Keyboard Layout
+
+- The arrow keys are on the bottom row on the right corner.
+- Feel for the down arrow which has a bump like the F and J keys. Above it is the up arrow and next to it are the left and right keys.
+-  From spacebar, count right Alt, Control, then arrow keys.
+- Delete and Down Arrow also have bumps near the bottom of the key.
+- **CapsLock** or **Insert** can both be used as the NVDA key. CapsLock is the leftmost key on the home row (the A/S/D/F row), directly above the left Shift. Insert is right next to Delete on the right side of the keyboard.
+
+---
 ## Desktop Navigation
+
+**To get to the desktop from anywhere:**
+
+1. Press **Windows + D**
+2. Press the **Down arrow** key once
+3. NVDA will announce the first icon on the desktop
+4. Use **arrow keys** to move between icons (not Tab)
+5. Press **Enter** to open the selected icon
+
+---
 
 The desktop icons are sorted alphabetically.
 
@@ -101,6 +132,7 @@ If pressing a letter does nothing, keyboard focus has drifted off the desktop. P
 ---
 
 ## Important NVDA Shortcuts
+NVDA is the screen reading and navigation software installed.
 
 - **CapsLock is the primary NVDA key.** To toggle actual Caps Lock state (for typing CAPITAL letters), press **CapsLock twice quickly**.
 	- The NVDA key can be either CapsLock or Insert (left of delete key - third from the right - top row)
@@ -127,38 +159,96 @@ If pressing a letter does nothing, keyboard focus has drifted off the desktop. P
 | Alt + F4                 | Close program                                        |
 | Alt + Tab                | Switch programs                                      |
 
----
+## Useful Windows Shortcuts
 
+| Key             | Function                                             |
+| --------------- | ---------------------------------------------------- |
+| Windows + E     | Open File Explorer                                   |
+| F12             | Save As (opens dialog on attached student USB drive) |
+| Ctrl + W        | Close current tab or window                          |
+| **F10**         | Activate Menu Bar (File/Edit/View at top)            |
+| **Shift + F10** | Context Menu (right-click equivalent)                |
+| Ctrl + A        | Select all text in window                            |
+| Ctrl + C        | Copy selected text (NVDA + C speaks the copied text) |
+| Ctrl + V        | Paste copied text                                    |
+
+---
+## Learning Keys
+
+If your finger lands on a key and you're not sure what it does, there are two safe ways to learn:
+### Option 1: NVDA Input Help Mode (NVDA + 1)
+
+1. Press **NVDA + 1** to enable "Input Help mode". NVDA announces "Input help on (vietnamese)".
+2. Now press any key. NVDA speaks the key's name and function, without executing the key. You can try any key on the keyboard.
+3. Press **NVDA + 1** again to exit (keys do their normal functions again).
+
+This is the fastest way to remind yourself of a key.
+
+### Option 2: Sao Mai Typing Tutor (SMTT)
+
+Vietnamese typing tutor from Sao Mai:
+
+1. On Desktop, press "S" to jump to "Sao Mai Typing Tutor" → Enter.
+2. Choose "Explore Keyboard" (Khám phá bàn phím).
+3. Press any key → SMTT speaks its name in Vietnamese.
+4. SMTT has typing lessons for daily practice especially useful for Vietnamese and English keyboard.
+
+**Comparison**: NVDA+1 is best for quick key lookup anywhere; SMTT is best for learning.
+
+---
 ## Typing Vietnamese
 
-UniKey starts automatically when the laptop turns on.
+The laptop uses UniKey and the default keyboard is Vietnamese. 
+
+To Switch Vietnamese or English: press Ctrl + Shift.
 
 Default input method is Telex.
 
 Telex examples:
-- aa = a with circumflex
-- aw = a with breve
-- oo = o with circumflex
-- ow = o with horn
-- uw = u with horn
-- dd = d with stroke
-- s = acute accent, f = grave accent, r = hook above, x = tilde, j = dot below
-- z = remove tone mark (e.g. "af" produces "à", then "z" strips back to "a")
+- aa = â
+- aw = ă
+- ee = ê
+- oo = ô
+- ow = ơ
+- uw = ư
+- dd = đ
+- s = sắc (á, é, í, ó, ú, ý)
+- f = huyền (à, è, ì, ò, ù, ỳ)
+- r = hỏi (ả, ẻ, ỉ, ỏ, ủ, ỷ)
+- x = ngã (ã, ẽ, ĩ, õ, ũ, ỹ)
+- j = nặng (ạ, ẹ, ị, ọ, ụ, ỵ)
+- z = removes tone (e.g. "af" → à, then "z" → a)
+
+Combined examples:
+
+- aas = ấ
+- aaf = ầ
+- aar = ẩ
+- aax = ẫ
+- aaj = ậ
+- aws = ắ, awf = ằ, awr = ẳ, awx = ẵ, awj = ặ
+- ees = ế, eef = ề, eer = ể, eex = ễ, eej = ệ
+- oos = ố, oof = ồ, oor = ổ, oox = ỗ, ooj = ộ
+- ows = ớ, owf = ờ, owr = ở, owx = ỡ, owj = ợ
+- uws = ứ, uwf = ừ, uwr = ử, uwx = ữ, uwj = ự
+- DD = Đ, dd = đ
+- Vieejt = Việt
+- ngwowif = người
+- ddungs = đúng
+- caarm own = cảm ơn
 
 Switch Vietnamese/English: press Ctrl + Shift.
 
 ---
+## Hearing Vietnamese Tone Marks
 
-## Useful Windows Shortcuts
+To hear the tone mark on a single character: move the cursor to the letter → press **NVDA + period (.) twice quickly**. NVDA says the character phonetically and names the tone mark.
 
-| Key         | Function                               |
-| ----------- | -------------------------------------- |
-| Windows + E | Open File Explorer                     |
-| F12         | Save As (opens dialog on USB drive D:) |
-| Ctrl + W    | Close current tab or window            |
+Example: cursor on "à" → NVDA says "a with grave accent".
+
+To spell a whole word, walk through it letter by letter with the arrow keys, pressing NVDA + period (.) twice at each character.
 
 ---
-
 ## Reading Textbooks
 
 The laptop comes with 103 Vietnamese textbooks pre-loaded (Canh Dieu, Chan Troi Sang Tao, Ket Noi Tri Thuc, Tieng Anh).
@@ -177,33 +267,35 @@ When Readmate opens, you are on the main screen with focus on the left sidebar.
 3. Use the **arrow keys** (Up/Down/Left/Right) to move through the book list — NVDA reads each book title.
 4. Or press **Ctrl + F** to search books by name.
 5. When you find the book you want, press **Enter** to open it.
+6. 
+Note: **Tab does not walk through all books**> Use the arrow keys or Ctrl+F.
 
-The book **starts reading automatically** when it opens — no need to press Ctrl+P. Press Ctrl+P to pause or resume.
+NVDA will start reading the book's title and reading progress. Press Control to stop the speech if needed.
 
-Note: **Tab does not walk through all books** — use arrow keys or Ctrl+F.
+Then, when you are ready to read the book, press **Ctrl + P** to start the book's narration.
 
-### Reading a Book — Essential Shortcuts
+### Shortcuts
 
 Once a book is open:
 
-| Key | Action |
-|---|---|
-| Ctrl + P | Play / pause reading |
-| Right Arrow / Left Arrow | Next / previous phrase |
-| Ctrl + Down / Ctrl + Up | Next / previous paragraph |
-| Ctrl + Page Down / Page Up | Next / previous page |
-| Alt + Right / Alt + Left | Next / previous chapter |
-| H / Shift + H | Next / previous heading |
-| ] (right bracket) | Faster reading |
-| [ (left bracket) | Slower reading |
-| Ctrl + ] / Ctrl + [ | Volume up / down |
-| Ctrl + F | Search text in book |
-| Ctrl + N | Add a note at current position |
-| Ctrl + Shift + N | View all notes |
-| Ctrl + H | Heading list (book's table of contents) |
-| Ctrl + G | Page list |
-| Ctrl + W | Close book, return to Bookshelf |
-| Esc | Back to previous screen |
+| Key                        | Action                                  |
+| -------------------------- | --------------------------------------- |
+| Ctrl + P                   | Play / pause reading                    |
+| Right Arrow / Left Arrow   | Next / previous phrase                  |
+| Ctrl + Down / Ctrl + Up    | Next / previous paragraph               |
+| Ctrl + Page Down / Page Up | Next / previous page                    |
+| Alt + Right / Alt + Left   | Next / previous chapter                 |
+| H / Shift + H              | Next / previous heading                 |
+| ] (right bracket)          | Faster reading                          |
+| [ (left bracket)           | Slower reading                          |
+| Ctrl + ] / Ctrl + [        | Volume up / down                        |
+| Ctrl + F                   | Search text in book                     |
+| Ctrl + N                   | Add a note at current position          |
+| Ctrl + Shift + N           | View all notes                          |
+| Ctrl + H                   | Heading list (book's table of contents) |
+| Ctrl + G                   | Page list                               |
+| Ctrl + W                   | Close book, return to Bookshelf         |
+| Esc                        | Back to previous screen                 |
 
 ### Navigating Readmate
 
@@ -223,80 +315,81 @@ If NVDA goes silent after switching to another program and back to Readmate, pre
 
 When you use Firefox, NVDA operates in one of two modes:
 
-- **Browse Mode** — default on web pages. NVDA creates a "virtual document" you navigate with single-letter shortcuts (H, K, F, etc.).
-- **Focus Mode** — auto-engaged when you enter a text field. Letter keys type normally instead of jumping.
+- **Browse Mode**: default on web pages. NVDA creates a "virtual document" you navigate with single-letter shortcuts (H, K, F, etc.).
+- **Focus Mode**: auto-engaged when you enter a text field. Letter keys type normally instead of jumping.
 
 Press **NVDA + Space** to manually toggle between them. NVDA auto-switches when you enter/leave text fields.
 
 ### Web Browsing Shortcuts (Browse Mode)
 
-| Key | Action |
-|---|---|
-| Down / Up Arrow | Read next / previous line |
-| H / Shift + H | Next / previous heading |
-| K / Shift + K | Next / previous link |
-| F / Shift + F | Next / previous form field |
-| B / Shift + B | Next / previous button |
-| D / Shift + D | Next / previous landmark (skips menus + ads) |
-| 1 – 6 | Heading level 1–6 |
-| NVDA + F7 | Elements List (all headings / links / landmarks) |
-| NVDA + Down Arrow | Read continuously from here (Say All) |
-| Enter | Follow the link |
+| Key               | Action                                           |
+| ----------------- | ------------------------------------------------ |
+| Down / Up Arrow   | Read next / previous line                        |
+| H / Shift + H     | Next / previous heading                          |
+| K / Shift + K     | Next / previous link                             |
+| F / Shift + F     | Next / previous form field                       |
+| B / Shift + B     | Next / previous button                           |
+| D / Shift + D     | Next / previous landmark (skips menus + ads)     |
+| 1 – 6             | Heading level 1–6                                |
+| NVDA + F7         | Elements List (all headings / links / landmarks) |
+| NVDA + Down Arrow | Read continuously from here (Say All)            |
+| Enter             | Follow the link                                  |
 
 ### Firefox Shortcuts
 
-| Key | Action |
-|---|---|
-| Ctrl + L | Jump to address bar |
-| Alt + Left Arrow | Back to previous page |
-| Alt + Right Arrow | Forward |
-| Ctrl + T / Ctrl + W | New tab / close tab |
-| Ctrl + Shift + T | Reopen last closed tab |
-| Ctrl + F | Find on page |
-| F9 | Reader Mode — strips ads, shows article only |
-| F5 | Refresh |
-| Ctrl + + / Ctrl + - / Ctrl + 0 | Zoom in / out / reset |
+| Key                            | Action                                       |
+| ------------------------------ | -------------------------------------------- |
+| Ctrl + L                       | Jump to address bar                          |
+| Alt + Left Arrow               | Back to previous page                        |
+| Alt + Right Arrow              | Forward                                      |
+| Ctrl + T / Ctrl + W            | New tab / close tab                          |
+| Ctrl + Shift + T               | Reopen last closed tab                       |
+| Ctrl + F                       | Find on page                                 |
+| F9                             | Reader Mode — strips ads, shows article only |
+| F5                             | Refresh                                      |
+| Ctrl + + / Ctrl + - / Ctrl + 0 | Zoom in / out / reset                        |
+|                                |                                              |
 
 ### Tip: Reading News Sites (vnexpress.net, tuoitre.vn, etc.)
 
-1. Open the site → press **D** 2-3 times to skip menus/ads to the "main" landmark.
-2. Press **H** once → usually lands on the article title.
-3. Press **NVDA + Down Arrow** → reads the whole article.
-4. If the page has too many ads → press **F9** for Reader Mode (article only, no clutter).
+1. Open the site: press **D** 2-3 times to skip menus/ads to the "main" landmark.
+2. Press **H** once: usually lands on the article title.
+3. Press **NVDA + Down Arrow**: reads the whole article.
+4. If the page has too many ads:  press **F9** for Reader Mode (article only, no clutter).
 5. Press **F9** again or **Alt + Left Arrow** to go back.
 ---
 
 ## Music and Audiobooks with VLC
 
-| Key | Action |
-|---|---|
-| Ctrl + O | Open file |
-| Space | Play / pause |
-| Shift + Right / Left Arrow | Forward / back 5 seconds |
-| Alt + Right / Left Arrow | Forward / back 10 seconds |
-| Ctrl + Right / Left Arrow | Forward / back 1 minute |
-| ] / [ | Faster / slower (pitch preserved) |
-| = | Normal speed |
-| Ctrl + T | Jump to specific time |
-| Ctrl + Up / Down Arrow | Volume up / down |
-| M | Mute / unmute |
-| N / P | Next / previous track in playlist |
-| Ctrl + B | Bookmark manager |
-| I | Speak current position info |
+| Key                        | Action                            |
+| -------------------------- | --------------------------------- |
+| Ctrl + O                   | Open file                         |
+| Space                      | Play / pause                      |
+| Shift + Right / Left Arrow | Forward / back 5 seconds          |
+| Alt + Right / Left Arrow   | Forward / back 10 seconds         |
+| Ctrl + Right / Left Arrow  | Forward / back 1 minute           |
+| ] / [                      | Faster / slower (pitch preserved) |
+| =                          | Normal speed                      |
+| Ctrl + T                   | Jump to specific time             |
+| Ctrl + Up / Down Arrow     | Volume up / down                  |
+| M                          | Mute / unmute                     |
+| N / P                      | Next / previous track in playlist |
+| Ctrl + B                   | Bookmark manager                  |
+| I                          | Speak current position info       |
 
 Tip: For audiobooks, use `]` and `[` to tune speed — VLC preserves pitch. Use Ctrl + B to mark where you stopped listening.
 
 ---
 
-## Offline Wikipedia
+Offline Wikipedia
 
 The laptop has Vietnamese Wikipedia offline (no internet needed).
 
-1. On Desktop, press "W" to jump to "Wikipedia" → Enter.
-2. Press **F6** to jump to the search bar.
-3. Type a topic (e.g., "Vietnam") → press **Enter** to open the article.
-4. **Important**: if NVDA doesn't auto-read the article, press **NVDA + Space** to toggle Browse Mode. This is a known Kiwix+NVDA quirk.
-5. In the article: use **H** to jump by heading, **K** by link — same as regular web browsing.
+1. On Desktop, press "W" to jump to "Wikipedia" . Press Enter.
+2. Press **F6** or Ctrl + L to jump to the search bar.
+3. Type a topic (e.g., "Vietnam"). Press **Enter** to open the article.
+4. The article will open in Firefox.
+5. In the article: use **H** to jump by heading, **K** by link. 
 6. **Ctrl + F** to find text in the article.
 7. **Alt + Left Arrow** to go back to search results.
 
@@ -304,7 +397,7 @@ The laptop has Vietnamese Wikipedia offline (no internet needed).
 
 ## Reading PDFs with Microsoft Edge
 
-When you open a PDF the laptop opens it with Microsoft Edge. Edge reads PDFs well with NVDA.
+When you open a PDF the laptop opens it with Microsoft Edge. NVDA reads PDFs best with Edge.
 
 1. Open the PDF file (press Enter on it, or open from Word).
 2. NVDA automatically switches to Browse Mode.
@@ -317,10 +410,10 @@ When you open a PDF the laptop opens it with Microsoft Edge. Edge reads PDFs wel
 ## English-Vietnamese Dictionary with GoldenDict
 
 1. From Desktop, open "Từ Điển" (or press "T").
-2. Press **Ctrl + L** to focus the search box.
-3. Type the word → **Enter** → NVDA reads the definition.
-4. Press **Alt + Page Down** or **Alt + Page Up** to switch dictionary groups (English-Vietnamese / Vietnamese-English).
-5. Press **Alt + Down / Up Arrow** to see other dictionaries' results for the same word.
+2. The program starts in the search box.
+3. Type the word, press Enter. Or press Down / Up Arrow to see other similar search results and press Enter.
+4. Press Control + A, Control + C, and NVDA + C. 
+	(Select all then copy. NVDA then plays the copied test with keyboard shortcut NVDA + C)
 
 ---
 
@@ -335,80 +428,34 @@ Example: type `25 + 17` then press Enter → NVDA says "42".
 
 ---
 
-## Spelling Vietnamese Diacritics
-
-To hear the tone mark on a single character: move the cursor to the letter → press **NVDA + period (.) twice quickly**. NVDA says the character phonetically and names the tone mark.
-
-Example: cursor on "à" → NVDA says "a with grave accent".
-
-To spell a whole word, walk through it letter by letter with the arrow keys, pressing NVDA + period (.) twice at each character.
-
----
-
 ## Daily NVDA Shortcuts (Summary)
 
-| Key | Action |
-|---|---|
-| Ctrl | Stop speech immediately |
-| NVDA + A or NVDA + Down Arrow | Read continuously (Say All) |
-| NVDA + L | Re-read current line |
-| NVDA + period (.) twice | Say current character phonetically (names tone marks) |
-| NVDA + T | Read window title |
-| NVDA + Ctrl + Up / Down Arrow | Increase / decrease speech rate |
-| NVDA + S | Toggle speech on / off (useful for exams) |
-| NVDA + C | Read clipboard contents (verify after Ctrl + C) |
-| NVDA + Ctrl + F | Find text in document |
-| NVDA + 1 | Keyboard learn mode (press any key to hear its name) |
+| Key                           | Action                                                        |
+| ----------------------------- | ------------------------------------------------------------- |
+| Ctrl                          | Stop speech immediately                                       |
+| NVDA + A or NVDA + Down Arrow | Read continuously (Say All)                                   |
+| NVDA + L                      | Re-read current line                                          |
+| NVDA + period (.) twice       | Say current character phonetically (names tone marks)         |
+| NVDA + T                      | Read window title                                             |
+| NVDA + Ctrl + Up / Down Arrow | Increase / decrease speech rate                               |
+| NVDA + S                      | Toggle speech on / off (useful for exams)                     |
+| NVDA + C                      | Read clipboard contents (Ctrl + C is copies to the clipboard) |
+| NVDA + Ctrl + F               | Find text in document                                         |
+| NVDA + 1                      | Keyboard learn mode (press any key to hear its name)          |
 
 ---
 
-## Learning Keys — When You Don't Know What a Key Does
+## If NVDA stops talking or speaks incorrectly:
 
-If your finger lands on a key and you're not sure what it does, there are two safe ways to learn without doing anything wrong:
-
-### Option 1: NVDA Input Help Mode (NVDA + 1)
-
-1. Press **NVDA + 1** to enable "Input Help mode". NVDA announces "Input help on".
-2. Now press any key → NVDA speaks the key's name and function, **without executing the key**. Completely safe.
-3. Explore the whole keyboard without breaking anything.
-4. Press **NVDA + 1** again to exit (keys do their normal functions again).
-
-This is the fastest way to remind yourself of a key.
-
-### Option 2: Sao Mai Typing Tutor (SMTT)
-
-Vietnamese typing tutor from Sao Mai:
-
-1. On Desktop, press "S" to jump to "Sao Mai Typing Tutor" → Enter.
-2. Choose "Explore Keyboard" (Khám phá bàn phím).
-3. Press any key → SMTT speaks its name in Vietnamese.
-4. SMTT also has structured typing lessons for daily practice — especially useful for Vietnamese Telex.
-
-**Comparison**: NVDA+1 is best for quick key lookup anywhere; SMTT is best for learning.
-
-### Keyboard Orientation (Dell Latitude 5420)
-
-- **F** and **J** have factory raised bumps — the "home row" where your 8 fingers rest. Put index fingers on F and J.
-- **Delete** and **Down Arrow** also have factory bumps.
-- **CapsLock** or **Insert** can both be used as the NVDA key. CapsLock is the leftmost key on the home row (the A/S/D/F row), directly above the left Shift. Insert sits right next to Delete on the right side of the keyboard.
-- From F/J, count to other keys: left of F is D → S → A; right of J is K → L → semicolon.
-
+1. Press **Ctrl + Alt + N** to restart NVDA
+2. Try pressing **NVDA + Shift + B** to hear battery status. The battery may be low.
+3. If that does not help, ask your teacher
 ---
 
 ## Hardware Care
 
 - Plug the charger into the **back-left USB-C port, closest to the hinge**.
 - Unplug headphones by gripping the connector, not the cable.
-- If NVDA goes silent unexpectedly, press **NVDA + Shift + B** to hear battery status — the battery may be low.
-- **Do not** enable BitLocker, change your password, or sign into a Microsoft Account — call your teacher first.
-
----
-
-## If NVDA Breaks
-
-If NVDA stops talking or speaks incorrectly:
-
-1. Press **Ctrl + Alt + N** to restart NVDA
-2. If that does not help, ask your teacher
+- Do not enable BitLocker, change your password, or sign into a Microsoft Account.
 
 ---
