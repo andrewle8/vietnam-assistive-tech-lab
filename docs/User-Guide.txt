@@ -365,26 +365,27 @@ The laptop has Vietnamese Wikipedia and Wiktionary offline (no internet needed).
 
 Fastest: Search Both Books at Once
 
-1. On Desktop, press W to jump to "Wikipedia" → press Enter. Firefox opens the Kiwix server home page (lists both books: Wikipedia and Wiktionary).
-2. Press Tab 3 times — focus lands in the global search bar (searches Wikipedia + Wiktionary together).
-3. Type a topic (e.g., "Việt Nam") → press Enter. A list of results appears with entries from both books.
+1. On Desktop, press W to jump to "Wikipedia". press Enter. Firefox opens the Kiwix server home page (lists both books: Wikipedia and Wiktionary).
+2. Press Tab 3 times. The focus lands in the global search bar (searches Wikipedia + Wiktionary together).
+3. Type a topic. Press Enter. A list of results appears with entries from both books.
 4. Press Down Arrow to step through results, then Enter on the one you want.
 
 Searching Only Inside Wikipedia (or Wiktionary)
 
 1. From the Kiwix home page, press Tab 5 times to land on the Wikipedia book card. (One more Tab — 6 total — lands on Wiktionary.) Press Enter to open the book; the main page (Trang Chính for Wikipedia) loads.
-2. Press Tab once — focus moves into that book's own search box.
-3. Type a topic → press Enter. Results appear from that book only.
+2. Press Tab once. The focus moves into that book's own search box.
+3. Type a topic. Press Enter. Results appear from that book only.
 4. Press Down Arrow to step through results, Enter on one to open the article.
 
 Inside an Article
 
 - NVDA reads the article automatically.
-- H / Shift + H — next / previous heading
-- K / Shift + K — next / previous link
-- Down Arrow — read line by line
-- Ctrl + F — find text in this article (Firefox's find-in-page; tick "Match Diacritics" for tone-sensitive searches)
-- Alt + Left Arrow — go back to the results list (or further back to the Kiwix home)
+- H / Shift + H: next / previous heading
+- K / Shift + K: next / previous link
+- Down Arrow: read line by line
+- Ctrl + F: find text in this article (Firefox's find-in-page; tick "Match Diacritics" for tone-sensitive searches)
+- Alt + Left Arrow: go back to the results list (or further back to the Kiwix home)
+	(Alt + Right Arrow goes forward one page - the standard firefox shortcut)
 
 
 Reading PDFs with Microsoft Edge
