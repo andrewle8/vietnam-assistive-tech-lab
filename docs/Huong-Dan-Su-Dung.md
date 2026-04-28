@@ -399,13 +399,13 @@ Meo: Khi nghe sach noi, dung `]` va `[` de chinh toc do — VLC giu nguyen cao d
 
 ---
 
-## Doc Bach Khoa Offline Voi Wikipedia Va Wiktionary
+## Wikipedia Va Wiktionary Offline
 
 May tinh co Wikipedia va Wiktionary tieng Viet offline (khong can mang). Ca hai deu mo trong Firefox de cac phim tat che do Duyet cua NVDA hoat dong binh thuong.
 
 ### Cach Nhanh Nhat: Tim Trong Ca Hai Cuon Sach Cung Luc
 
-1. Tren Desktop, nhan **W** de nhay den "Wikipedia" → nhan **Enter**. Firefox se mo trang chu Kiwix.
+1. Tren Desktop, nhan **W** de nhay den "Wikipedia" → nhan **Enter**. Firefox se mo trang chu Kiwix (liet ke hai cuon: Wikipedia va Wiktionary).
 2. Nhan **Tab** 3 lan — tieu diem se vao o tim kiem chung (tim ca Wikipedia va Wiktionary).
 3. Go chu de muon tim (vi du: "Viet Nam") → nhan **Enter**. Mot danh sach ket qua se hien ra voi cac muc tu ca hai cuon sach.
 4. Nhan **Mui ten xuong** de duyet qua cac ket qua, roi nhan **Enter** vao ket qua muon doc.
@@ -434,7 +434,7 @@ Khi ban mo file PDF, may tinh se mo bang Microsoft Edge. NVDA doc file PDF tot n
 1. Mo file PDF (bam Enter tren file, hoac mo tu Word).
 2. NVDA se tu chuyen sang che do Duyet.
 3. Dung **H** de nhay qua tieu de, **mui ten xuong** de doc dong theo dong.
-4. Hoac nhan **Ctrl + Shift + U** trong Edge de bat "Doc To" (Read Aloud) — Edge se doc tai lieu cho ban bang giong tieng Viet.
+4. Hoac nhan **Ctrl + Shift + U** trong Edge de bat "Doc Thanh Tieng" (Read Aloud) — Edge se doc tai lieu cho ban bang giong tieng Viet.
 5. **Ctrl + F** de tim chu trong PDF.
 
 ---

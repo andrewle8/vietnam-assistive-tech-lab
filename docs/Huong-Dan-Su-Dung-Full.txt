@@ -378,13 +378,13 @@ Nghe Nhạc Và Sách Nói Với VLC
 Mẹo: Khi nghe sách nói, dùng `]` và `[` để chỉnh tốc độ — VLC giữ nguyên cao độ giọng. Dùng Ctrl + B để đánh dấu vị trí đang nghe.
 
 
-Đọc Bách Khoa Offline Với Wikipedia Và Wiktionary
+Wikipedia Và Wiktionary Offline
 
 Máy tính có Wikipedia và Wiktionary tiếng Việt offline (không cần mạng). Cả hai đều mở trong Firefox để các phím tắt chế độ Duyệt của NVDA hoạt động bình thường.
 
 Cách Nhanh Nhất: Tìm Trong Cả Hai Cuốn Sách Cùng Lúc
 
-1. Trên Desktop, nhấn W để nhảy đến "Wikipedia" → nhấn Enter. Firefox sẽ mở trang chủ Kiwix.
+1. Trên Desktop, nhấn W để nhảy đến "Wikipedia" → nhấn Enter. Firefox sẽ mở trang chủ Kiwix (liệt kê hai cuốn: Wikipedia và Wiktionary).
 2. Nhấn Tab 3 lần — tiêu điểm sẽ vào ô tìm kiếm chung (tìm cả Wikipedia và Wiktionary).
 3. Gõ chủ đề muốn tìm (ví dụ: "Việt Nam") → nhấn Enter. Một danh sách kết quả sẽ hiện ra với các mục từ cả hai cuốn sách.
 4. Nhấn Mũi tên xuống để duyệt qua các kết quả, rồi nhấn Enter vào kết quả muốn đọc.
@@ -412,7 +412,7 @@ Khi bạn mở file PDF, máy tính sẽ mở bằng Microsoft Edge. NVDA đọc
 1. Mở file PDF (bấm Enter trên file, hoặc mở từ Word).
 2. NVDA sẽ tự chuyển sang chế độ Duyệt.
 3. Dùng H để nhảy qua tiêu đề, mũi tên xuống để đọc dòng theo dòng.
-4. Hoặc nhấn Ctrl + Shift + U trong Edge để bật "Đọc To" (Read Aloud) — Edge sẽ đọc tài liệu cho bạn bằng giọng tiếng Việt.
+4. Hoặc nhấn Ctrl + Shift + U trong Edge để bật "Đọc Thành Tiếng" (Read Aloud) — Edge sẽ đọc tài liệu cho bạn bằng giọng tiếng Việt.
 5. Ctrl + F để tìm chữ trong PDF.
 
 

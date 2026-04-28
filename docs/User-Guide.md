@@ -387,7 +387,7 @@ The laptop has Vietnamese Wikipedia and Wiktionary offline (no internet needed).
 
 ### Fastest: Search Both Books at Once
 
-1. On Desktop, press **W** to jump to "Wikipedia" → press **Enter**. Firefox opens the Kiwix server home page.
+1. On Desktop, press **W** to jump to "Wikipedia" → press **Enter**. Firefox opens the Kiwix server home page (lists both books: Wikipedia and Wiktionary).
 2. Press **Tab** 3 times — focus lands in the global search bar (searches Wikipedia + Wiktionary together).
 3. Type a topic (e.g., "Việt Nam") → press **Enter**. A list of results appears with entries from both books.
 4. Press **Down Arrow** to step through results, then **Enter** on the one you want.
