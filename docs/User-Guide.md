@@ -12,9 +12,9 @@ From rear to front (from screen toward you)
 2. Ethernet port (for wired internet cable)
 3. HDMI port (connect to a monitor)
 4. **Full-size USB-A port (rectangular):** For your Student USB Drive or any USB-A
-	1. Second full-size USB-A port (rectangular): For your Student USB Drive or any USB-A
-5. **Headphone jack (small round hole)**
-6. microSD card slot (thin slot)
+5. Second full-size USB-A port (rectangular): For your Student USB Drive or any USB-A
+6. **Headphone jack (small round hole)**
+7. microSD card slot (thin slot)
 
 **Top of screen:**
 - There is a Web Camera on the top of the screen in the middle. When using the Web Camera, make sure that the thin rectangular, gridded camera cover is to the left.
