@@ -350,7 +350,7 @@ Nhan **NVDA + Space** de chuyen giua hai che do. NVDA tu doi che do khi vao/roi 
 | D / Shift + D       | Vung moc ke tiep / truoc (bo qua menu + quang cao)             |
 | 1 – 6               | Tieu de cap 1–6                                                |
 | NVDA + F7           | Danh sach phan tu (tat ca tieu de / lien ket / vung moc)       |
-| NVDA + Mui ten xuong | Doc lien tuc tu day (Say All)                                 |
+| NVDA + A             | Doc lien tuc tu day (Say All)                                 |
 | Enter               | Mo lien ket                                                    |
 
 ### Phim Tat Firefox
@@ -371,7 +371,7 @@ Nhan **NVDA + Space** de chuyen giua hai che do. NVDA tu doi che do khi vao/roi 
 
 1. Mo trang: nhan **D** 2-3 lan de bo qua menu/quang cao, den vung moc "main" (noi dung chinh).
 2. Nhan **H** mot lan: thuong se vao tieu de bai viet.
-3. Nhan **NVDA + Mui ten xuong**: doc toan bo bai viet.
+3. Nhan **NVDA + A**: doc toan bo bai viet (Say All).
 4. Neu trang co qua nhieu quang cao: nhan **F9** de bat Che do Doc (chi bai viet, khong phien nhieu).
 5. Nhan **F9** lan nua hoac **Alt + Mui ten trai** de quay lai.
 
@@ -464,7 +464,7 @@ Vi du: go `25 + 17` roi nhan Enter → NVDA doc "42".
 | Phim                              | Hanh dong                                                              |
 | --------------------------------- | ---------------------------------------------------------------------- |
 | Ctrl                              | Dung doc ngay lap tuc                                                  |
-| NVDA + A hoac NVDA + Mui ten xuong | Doc lien tuc (Say All)                                                |
+| NVDA + A                           | Doc lien tuc (Say All)                                                |
 | NVDA + L                          | Doc lai dong hien tai                                                  |
 | NVDA + dau cham (.) hai lan        | Doc ky tu hien tai theo phat am (doc ca ten dau thanh)                |
 | NVDA + T                          | Doc tieu de cua so                                                     |

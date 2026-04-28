@@ -333,7 +333,7 @@ Phím Tắt Duyệt Web (Chế độ Duyệt)
   D / Shift + D - Vùng mốc kế tiếp / trước (bỏ qua menu + quảng cáo)
   1 – 6 - Tiêu đề cấp 1–6
   NVDA + F7 - Danh sách phần tử (tất cả tiêu đề / liên kết / vùng mốc)
-  NVDA + Mũi tên xuống - Đọc liên tục từ đây (Say All)
+  NVDA + A - Đọc liên tục từ đây (Say All)
   Enter - Mở liên kết
 
 Phím Tắt Firefox
@@ -353,7 +353,7 @@ Mẹo: Đọc Báo Mạng (vnexpress.net, tuoitre.vn, v.v.)
 
 1. Mở trang: nhấn D 2-3 lần để bỏ qua menu/quảng cáo, đến vùng mốc "main" (nội dung chính).
 2. Nhấn H một lần: thường sẽ vào tiêu đề bài viết.
-3. Nhấn NVDA + Mũi tên xuống: đọc toàn bộ bài viết.
+3. Nhấn NVDA + A: đọc toàn bộ bài viết (Say All).
 4. Nếu trang có quá nhiều quảng cáo: nhấn F9 để bật Chế độ Đọc (chỉ bài viết, không phiền nhiễu).
 5. Nhấn F9 lần nữa hoặc Alt + Mũi tên trái để quay lại.
 
@@ -438,7 +438,7 @@ Các Phím Tắt NVDA Hằng Ngày (Tóm Tắt)
 
   Phím - Hành động
   Ctrl - Dừng đọc ngay lập tức
-  NVDA + A hoặc NVDA + Mũi tên xuống - Đọc liên tục (Say All)
+  NVDA + A - Đọc liên tục (Say All)
   NVDA + L - Đọc lại dòng hiện tại
   NVDA + dấu chấm (.) hai lần - Đọc ký tự hiện tại theo phát âm (đọc cả tên dấu thanh)
   NVDA + T - Đọc tiêu đề cửa sổ

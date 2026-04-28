@@ -332,7 +332,7 @@ Press **NVDA + Space** to manually toggle between them. NVDA auto-switches when 
 | D / Shift + D     | Next / previous landmark (skips menus + ads)     |
 | 1 – 6             | Heading level 1–6                                |
 | NVDA + F7         | Elements List (all headings / links / landmarks) |
-| NVDA + Down Arrow | Read continuously from here (Say All)            |
+| NVDA + A          | Read continuously from here (Say All)            |
 | Enter             | Follow the link                                  |
 
 ### Firefox Shortcuts
@@ -354,7 +354,7 @@ Press **NVDA + Space** to manually toggle between them. NVDA auto-switches when 
 
 1. Open the site: press **D** 2-3 times to skip menus/ads to the "main" landmark.
 2. Press **H** once: usually lands on the article title.
-3. Press **NVDA + Down Arrow**: reads the whole article.
+3. Press **NVDA + A**: reads the whole article (Say All).
 4. If the page has too many ads:  press **F9** for Reader Mode (article only, no clutter).
 5. Press **F9** again or **Alt + Left Arrow** to go back.
 ---
@@ -448,7 +448,7 @@ Example: type `25 + 17` then press Enter → NVDA says "42".
 | Key                           | Action                                                        |
 | ----------------------------- | ------------------------------------------------------------- |
 | Ctrl                          | Stop speech immediately                                       |
-| NVDA + A or NVDA + Down Arrow | Read continuously (Say All)                                   |
+| NVDA + A                      | Read continuously (Say All)                                   |
 | NVDA + L                      | Re-read current line                                          |
 | NVDA + period (.) twice       | Say current character phonetically (names tone marks)         |
 | NVDA + T                      | Read window title                                             |
