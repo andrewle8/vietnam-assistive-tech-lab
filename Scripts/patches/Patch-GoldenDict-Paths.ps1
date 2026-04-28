@@ -1,6 +1,6 @@
 # Patch-GoldenDict-Paths.ps1
-# Surgical patch for the Student profile's GoldenDict config. Two fixes,
-# both needed by already-deployed laptops where Configure-Laptop.ps1's
+# Surgical patch for the Student profile's GoldenDict config. Three fixes,
+# all needed by already-deployed laptops where Configure-Laptop.ps1's
 # Step 35 ran an older repo stub:
 #
 # 1. <paths>: ensures the dictionary content directory is registered, so
@@ -17,7 +17,14 @@
 #    Hiding the three side panes makes that Tab cycle deterministic
 #    (one Tab from search box reaches the article view).
 #
-# Both targets are read from the repo stub (Config/goldendict-config/config)
+# 3. <preferences><enableScanPopup> + <startWithScanPopupOn>: forces both
+#    to 0. GoldenDict defaults the scan popup ON, which watches the system
+#    clipboard and pops a floating translation window every time clipboard
+#    contents change. That hijacked Ctrl+C in the article view: the popup
+#    grabbed focus before NVDA+C could read the copied article text. With
+#    scan popup off, Ctrl+C is a plain copy and the NVDA workflow works.
+#
+# All three targets are read from the repo stub (Config/goldendict-config/config)
 # so the patch and stub stay in sync — there is one source of truth.
 #
 # Background: 1-Install-All.ps1 copies the .ifo/.idx/.dict.dz files into
@@ -113,6 +120,22 @@ if (-not $goldenMainWindowState) {
     Write-Host "Patch-GoldenDict-Paths: repo stub has no <mainWindowState>; pane-state patch will be skipped." -ForegroundColor Yellow
 }
 
+# Read golden scan popup toggles from the repo stub. If either is missing
+# from the stub we silently skip that piece (don't enforce a value we don't
+# have); the deployed default of 1 stays.
+$goldenEnableScanPopup = $null
+$goldenStartWithScanPopupOn = $null
+$stubPrefs = $stubXml.SelectSingleNode("/config/preferences")
+if ($stubPrefs) {
+    $stubEspNode = $stubPrefs.SelectSingleNode("enableScanPopup")
+    if ($stubEspNode) { $goldenEnableScanPopup = $stubEspNode.InnerText }
+    $stubSspNode = $stubPrefs.SelectSingleNode("startWithScanPopupOn")
+    if ($stubSspNode) { $goldenStartWithScanPopupOn = $stubSspNode.InnerText }
+}
+if (-not $goldenEnableScanPopup -and -not $goldenStartWithScanPopupOn) {
+    Write-Host "Patch-GoldenDict-Paths: repo stub has neither <enableScanPopup> nor <startWithScanPopupOn>; scan-popup patch will be skipped." -ForegroundColor Yellow
+}
+
 # Idempotency: parse the live config and decide whether either fix is needed.
 [xml]$xml = Get-Content -Path $gdConfig -Raw -Encoding UTF8
 
@@ -138,8 +161,25 @@ if ($goldenMainWindowState) {
     $alreadyHasGoldenState = $true
 }
 
-if ($alreadyHasPath -and $alreadyHasGoldenState) {
-    Write-Host "Patch-GoldenDict-Paths: <paths> and <mainWindowState> already match. Nothing to do." -ForegroundColor Green
+# Idempotency for the scan-popup pair. Missing key in live config never
+# matches a golden "0", so first patch run flips it; subsequent runs no-op.
+$alreadyHasScanPopupGolden = $true
+$livePrefs = $xml.SelectSingleNode("/config/preferences")
+if ($goldenEnableScanPopup) {
+    $liveEsp = if ($livePrefs) { $livePrefs.SelectSingleNode("enableScanPopup") } else { $null }
+    if (-not $liveEsp -or $liveEsp.InnerText -ne $goldenEnableScanPopup) {
+        $alreadyHasScanPopupGolden = $false
+    }
+}
+if ($goldenStartWithScanPopupOn -and $alreadyHasScanPopupGolden) {
+    $liveSsp = if ($livePrefs) { $livePrefs.SelectSingleNode("startWithScanPopupOn") } else { $null }
+    if (-not $liveSsp -or $liveSsp.InnerText -ne $goldenStartWithScanPopupOn) {
+        $alreadyHasScanPopupGolden = $false
+    }
+}
+
+if ($alreadyHasPath -and $alreadyHasGoldenState -and $alreadyHasScanPopupGolden) {
+    Write-Host "Patch-GoldenDict-Paths: <paths>, <mainWindowState>, and scan-popup toggles already match. Nothing to do." -ForegroundColor Green
     exit 0
 }
 
@@ -195,6 +235,44 @@ if ($goldenMainWindowState -and -not $alreadyHasGoldenState) {
     $statePatched = $true
 }
 
+# Patch 3: ensure scan popup is disabled (enableScanPopup=0, startWithScanPopupOn=0).
+$scanPopupPatched = $false
+if (-not $alreadyHasScanPopupGolden) {
+    $prefs = $rootNode.SelectSingleNode("preferences")
+    if (-not $prefs) {
+        $prefs = $xml.CreateElement("preferences")
+        $rootNode.AppendChild($prefs) | Out-Null
+    }
+    if ($goldenEnableScanPopup) {
+        $espNode = $prefs.SelectSingleNode("enableScanPopup")
+        if ($espNode) {
+            if ($espNode.InnerText -ne $goldenEnableScanPopup) {
+                $espNode.InnerText = $goldenEnableScanPopup
+                $scanPopupPatched = $true
+            }
+        } else {
+            $newEsp = $xml.CreateElement("enableScanPopup")
+            $newEsp.InnerText = $goldenEnableScanPopup
+            $prefs.AppendChild($newEsp) | Out-Null
+            $scanPopupPatched = $true
+        }
+    }
+    if ($goldenStartWithScanPopupOn) {
+        $sspNode = $prefs.SelectSingleNode("startWithScanPopupOn")
+        if ($sspNode) {
+            if ($sspNode.InnerText -ne $goldenStartWithScanPopupOn) {
+                $sspNode.InnerText = $goldenStartWithScanPopupOn
+                $scanPopupPatched = $true
+            }
+        } else {
+            $newSsp = $xml.CreateElement("startWithScanPopupOn")
+            $newSsp.InnerText = $goldenStartWithScanPopupOn
+            $prefs.AppendChild($newSsp) | Out-Null
+            $scanPopupPatched = $true
+        }
+    }
+}
+
 # Write back. Encoding UTF-8 with declaration matches GoldenDict's own writes.
 $xml.Save($gdConfig)
 
@@ -223,6 +301,9 @@ if ($pathPatched) {
 }
 if ($statePatched) {
     Write-Host "Patch-GoldenDict-Paths: updated <mainWindowState> (History/Favorites/Dictionaries panes hidden)." -ForegroundColor Green
+}
+if ($scanPopupPatched) {
+    Write-Host "Patch-GoldenDict-Paths: disabled scan popup (enableScanPopup=$goldenEnableScanPopup, startWithScanPopupOn=$goldenStartWithScanPopupOn)." -ForegroundColor Green
 }
 if ($indexCleared) {
     Write-Host "Patch-GoldenDict-Paths: cleared $indexDir; dictionaries reindex on next launch." -ForegroundColor Green

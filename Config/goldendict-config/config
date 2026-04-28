@@ -8,6 +8,8 @@
     <zoomFactor>1.5</zoomFactor>
     <helpZoomFactor>1.5</helpZoomFactor>
     <wordsZoomLevel>2</wordsZoomLevel>
+    <enableScanPopup>0</enableScanPopup>
+    <startWithScanPopupOn>0</startWithScanPopupOn>
     <scanPopupUseUIAutomation>1</scanPopupUseUIAutomation>
     <scanPopupUseIAccessibleEx>1</scanPopupUseIAccessibleEx>
     <pronounceOnLoadMain>0</pronounceOnLoadMain>
