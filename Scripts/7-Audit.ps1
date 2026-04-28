@@ -609,6 +609,56 @@ if (Test-Path $kiwixLibrary) {
     Add-Result "System" "Kiwix library.xml" "Present" "Missing" "FAIL"
 }
 
+# kiwix-serve (NVDA-accessible reading path). Configure-Laptop.ps1 Step 34b +
+# Scripts/patches/Fix-Kiwix-Library.ps1 install kiwix-serve.exe and register a
+# "KiwixServe" scheduled task at Student logon that runs it on localhost:21808.
+# The "Wikipedia" desktop shortcut opens Firefox to that URL — Firefox supports
+# NVDA browse mode; kiwix-desktop's QtWebEngine view does not (NVDA #10838).
+$kiwixServePath = "C:\Program Files\Kiwix\kiwix-serve.exe"
+if (Test-Path $kiwixServePath) {
+    Add-Result "System" "kiwix-serve.exe" "Present" "Present" "PASS"
+} else {
+    Add-Result "System" "kiwix-serve.exe" "Present" "Missing (run Fix-Kiwix-Library.ps1)" "FAIL"
+}
+
+$kiwixTask = Get-ScheduledTask -TaskName "KiwixServe" -ErrorAction SilentlyContinue
+if ($kiwixTask) {
+    Add-Result "System" "KiwixServe scheduled task" "Registered" "Registered" "PASS"
+} else {
+    Add-Result "System" "KiwixServe scheduled task" "Registered" "Missing (run Fix-Kiwix-Library.ps1)" "FAIL"
+}
+
+# Live-server probe. Only reliable when Student is logged on (the task is per-user
+# AtLogon). On Admin-side audit runs, expect WARN if Student isn't currently logged on.
+try {
+    $resp = Invoke-WebRequest -Uri "http://localhost:21808/" -UseBasicParsing -TimeoutSec 2 -ErrorAction Stop
+    if ($resp.StatusCode -eq 200) {
+        Add-Result "System" "kiwix-serve responding" "HTTP 200 on :21808" "200" "PASS"
+    } else {
+        Add-Result "System" "kiwix-serve responding" "HTTP 200 on :21808" "$($resp.StatusCode)" "WARN"
+    }
+} catch {
+    Add-Result "System" "kiwix-serve responding" "HTTP 200 on :21808" "no response (server idle - log in as Student)" "WARN"
+}
+
+# Wikipedia desktop shortcut should target firefox.exe with the kiwix-serve URL.
+$wikiLnk = "C:\Users\Public\Desktop\Wikipedia.lnk"
+if (Test-Path $wikiLnk) {
+    try {
+        $shellWS = New-Object -ComObject WScript.Shell
+        $sc = $shellWS.CreateShortcut($wikiLnk)
+        if ($sc.TargetPath -like "*firefox.exe" -and $sc.Arguments -like "*localhost:21808*") {
+            Add-Result "System" "Wikipedia.lnk -> Firefox" "firefox.exe + :21808" "OK" "PASS"
+        } else {
+            Add-Result "System" "Wikipedia.lnk -> Firefox" "firefox.exe + :21808" "$($sc.TargetPath) $($sc.Arguments)" "FAIL"
+        }
+    } catch {
+        Add-Result "System" "Wikipedia.lnk -> Firefox" "firefox.exe + :21808" "Could not read shortcut" "WARN"
+    }
+} else {
+    Add-Result "System" "Wikipedia.lnk -> Firefox" "Present" "Missing" "FAIL"
+}
+
 # -----------------------------------------------
 # Section 5: Remote Management
 # -----------------------------------------------

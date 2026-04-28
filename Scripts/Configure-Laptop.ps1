@@ -877,7 +877,7 @@ public class ShellLinkCreator {
         @{ Name = "Từ Điển"; Target = "C:\Program Files\GoldenDict\GoldenDict.exe"; AltTarget = "C:\Program Files (x86)\GoldenDict\GoldenDict.exe"; IconLocation = $goldenDictIcoPath; Desc = "GoldenDict - Offline Dictionary" },
         @{ Name = "USB"; Target = "explorer.exe"; Args = "C:\StudentUSB"; IconLocation = "%SystemRoot%\System32\imageres.dll,109"; Desc = "Open student USB folder" },
         @{ Name = "VLC media player"; Target = "C:\Program Files\VideoLAN\VLC\vlc.exe"; AltTarget = "C:\Program Files (x86)\VideoLAN\VLC\vlc.exe"; Desc = "VLC Media Player" },
-        @{ Name = "Wikipedia"; Target = "C:\Program Files\Kiwix\kiwix-desktop.exe"; Desc = "Kiwix - Offline Vietnamese Wikipedia" },
+        @{ Name = "Wikipedia"; Target = "C:\Program Files\Mozilla Firefox\firefox.exe"; AltTarget = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"; Args = "http://localhost:21808/"; IconLocation = "C:\Program Files\Kiwix\kiwix-desktop.exe,0"; Desc = "Wikipedia (offline) - opens in Firefox so NVDA browse mode works" },
         @{ Name = "Word"; Target = "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE"; Desc = "Microsoft Word" }
     )
 
@@ -2816,6 +2816,61 @@ try {
     }
 } catch {
     Write-Log "Could not deploy Kiwix config: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 34b: Install kiwix-serve.exe + register auto-start scheduled task for the
+# NVDA-accessible Firefox-rendered reading path. NVDA cannot browse-mode kiwix-
+# desktop's QtWebEngine article view (NVDA issue #10838), so we ship a parallel
+# accessible path: kiwix-serve runs at logon on localhost:21808; the Wikipedia
+# desktop shortcut opens Firefox to that URL where browse mode works natively.
+# kiwix-desktop stays installed and reachable from Start Menu for sighted users.
+Write-Log "Step 34b: Installing kiwix-serve for NVDA-accessible reading path..." "INFO"
+try {
+    $profileBase = if (Test-Path "C:\Users\Student") { "C:\Users\Student" } else { $env:USERPROFILE }
+    $kiwixInstallDir = "C:\Program Files\Kiwix"
+    $kiwixServeSource = Join-Path (Split-Path -Parent $PSScriptRoot) "Installers\Kiwix\kiwix-serve.exe"
+
+    if (-not (Test-Path $kiwixInstallDir)) {
+        Write-Log "kiwix-desktop install dir not found - skipping kiwix-serve setup" "WARNING"
+    } elseif (-not (Test-Path $kiwixServeSource)) {
+        Write-Log "kiwix-serve.exe not found at $kiwixServeSource (run 0-Download-Installers.ps1 first)" "WARNING"
+    } else {
+        $kiwixServeDest = Join-Path $kiwixInstallDir "kiwix-serve.exe"
+        Copy-Item -Path $kiwixServeSource -Destination $kiwixServeDest -Force
+
+        # Hidden VBS launcher: wscript is non-console subsystem, and Run with
+        # bWindowStyle=0 + bWaitOnReturn=False keeps the spawned kiwix-serve
+        # console invisible. Direct task-action launches of console apps would
+        # otherwise leave a visible window open for the lifetime of the server.
+        $libraryPathStudent = Join-Path $profileBase "AppData\Roaming\kiwix-desktop\library.xml"
+        $vbsPath = Join-Path $kiwixInstallDir "start-kiwix-serve.vbs"
+        $vbsContent = @"
+Set WshShell = CreateObject("WScript.Shell")
+WshShell.Run """$kiwixServeDest"" --address=127.0.0.1 --port=21808 --library ""$libraryPathStudent""", 0, False
+Set WshShell = Nothing
+"@
+        Set-Content -Path $vbsPath -Value $vbsContent -Encoding ASCII -Force
+
+        # Scheduled Task fires at every Student logon. Restart 3x on crash.
+        $studentUser = "$env:COMPUTERNAME\Student"
+        $action    = New-ScheduledTaskAction -Execute "wscript.exe" -Argument "`"$vbsPath`""
+        $trigger   = New-ScheduledTaskTrigger -AtLogOn -User $studentUser
+        $principal = New-ScheduledTaskPrincipal -UserId $studentUser -LogonType Interactive
+        $settings  = New-ScheduledTaskSettingsSet `
+            -AllowStartIfOnBatteries `
+            -DontStopIfGoingOnBatteries `
+            -ExecutionTimeLimit (New-TimeSpan -Days 0) `
+            -RestartCount 3 `
+            -RestartInterval (New-TimeSpan -Minutes 1) `
+            -MultipleInstances IgnoreNew
+        Register-ScheduledTask -TaskName "KiwixServe" -Action $action -Trigger $trigger -Principal $principal -Settings $settings -Force | Out-Null
+
+        Write-Log "kiwix-serve.exe installed + 'KiwixServe' task registered (localhost:21808, Firefox-accessible)" "SUCCESS"
+        $successCount++
+    }
+} catch {
+    Write-Log "Could not set up kiwix-serve: $($_.Exception.Message)" "ERROR"
     $failCount++
 }
 

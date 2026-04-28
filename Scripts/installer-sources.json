@@ -32,6 +32,16 @@
     "extract_to": "Kiwix/",
     "final_path": "Kiwix/kiwix-desktop.exe"
   },
+  "kiwix_tools": {
+    "source": "vendor",
+    "version": "3.8.1",
+    "url_template": "https://download.kiwix.org/release/kiwix-tools/kiwix-tools_win-x86_64-{version}.zip",
+    "destination": "Kiwix/kiwix-tools_win-x86_64-{version}.zip",
+    "extract": true,
+    "extract_to": "Kiwix/",
+    "final_path": "Kiwix/kiwix-serve.exe",
+    "_note": "Standalone 64-bit kiwix-serve binary. Powers the NVDA-accessible Firefox-rendered reading path: kiwix-serve runs at logon on localhost:21808; the Wikipedia desktop shortcut opens Firefox to that URL. NVDA cannot browse-mode QtWebEngine surfaces (kiwix-desktop, GoldenDict — NVDA issue #10838), so Firefox is the accessible default. kiwix-desktop stays installed and reachable from Start Menu for sighted users. Source is download.kiwix.org rather than GitHub Releases because kiwix-tools' GitHub releases stopped attaching Windows binaries in the 3.8.x line — the win-x86_64 zip only ships on download.kiwix.org."
+  },
   "wikipedia_vi": {
     "source": "kiwix",
     "url_template": "https://download.kiwix.org/zim/wikipedia/wikipedia_vi_all_mini_{date}.zim",
