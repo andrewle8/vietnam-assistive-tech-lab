@@ -67,6 +67,82 @@ After the first save, Ctrl + S saves to the same location without asking.
 
 If the USB is not plugged in, Word saves to the Documents folder on the laptop instead. Plug in the USB and press F12 to re-save to the USB.
 
+Unplugging Your USB Safely
+
+Your USB is formatted as NTFS, which protects the drive from corruption when you unplug it. You do not need to use the "Safely Remove Hardware" eject step.
+
+The one rule: Only unplug your USB when nothing is being saved to it.
+
+- Wait until the Save dialog has closed.
+- Wait until NVDA stops speaking about the save (silence means the save is finished).
+- If you just pressed Ctrl + S, count to three before unplugging.
+
+If you unplug while a file is being saved, you may lose that one file. The rest of the USB stays safe.
+
+Using Your USB on a Public or Library PC
+
+Your student USB drive contains a portable copy of NVDA at the root of the drive (file name: NVDA). This means you can plug your USB into almost any Windows computer at a library, internet cafe, or a friend's house, and run your own screen reader from the USB. Nothing gets installed on the other computer, and your settings, voice, and add-ons all come with you.
+
+The challenge: when you sit down at a public PC, NVDA is not yet running. You cannot hear anything. You will need to either:
+
+- Option A (independent): Turn on Windows Narrator just long enough to launch NVDA from your USB.
+- Option B (with a sighted helper): Ask someone nearby to click NVDA on your USB for you.
+
+Try Option A first. Use Option B if Narrator does not work or you cannot find the right port.
+
+Option A: Using Windows Narrator to Start Your NVDA
+
+Windows Narrator is a screen reader built into every Windows PC. It is not as good as NVDA, but it always works without setup. You only use Narrator for about one minute, then switch to NVDA.
+
+Step 1 - Plug in headphones. Public PCs often have speakers muted. Headphones bypass this and also keep your work private. The headphone jack is usually on the front of a desktop tower or on the side of a laptop.
+
+Step 2 - Turn on Narrator. Press Ctrl + Windows + Enter.
+
+Narrator will start speaking in a different voice than NVDA. That is expected. If you hear nothing, the volume may be muted; press the Volume Up key several times. If you still hear nothing, switch to Option B.
+
+Step 3 - Plug in your USB drive. Find a rectangular USB-A port on the front of the desktop tower or on the side of the laptop. The plug only fits one way. The Braille label faces upward. Wait about 5 seconds; Windows may announce a notification, which you can ignore.
+
+Step 4 - Open File Explorer. Press Windows + E. A File Explorer window opens.
+
+Step 5 - Find your USB drive. Press Tab until Narrator announces a list of drives (usually 2 to 4 Tab presses). Use the Down arrow to move through drives. Listen for a drive named STU-001 (or your own student number). It will be near the bottom of the list, after Local Disk (C:) and any DVD drives.
+
+Step 6 - Open your USB. When you hear your STU number, press Enter.
+
+Step 7 - Launch NVDA. Press the letter N to jump to "NVDA". Press Enter. Wait 5 to 10 seconds. You will hear the NVDA startup sound. NVDA is now running from your USB.
+
+Step 8 - Turn off Narrator. Press Ctrl + Windows + Enter again. Narrator stops. Now only NVDA is speaking.
+
+You can now use this PC the same way you use your lab laptop.
+
+Option B: Asking a Sighted Helper
+
+If a sighted person is available (a librarian, internet cafe staff, friend, or family member), this is the fastest path.
+
+Ask them, in this order:
+
+1. "Please plug my USB drive into a USB port. The Braille label should face up."
+2. "Please open File Explorer." (They press Windows + E.)
+3. "Please open the drive named STU- followed by my number." (For example: STU-042.)
+4. "Please double-click NVDA." (It is at the very top of the file list.)
+5. "Thank you. I will hear a startup sound when NVDA is ready."
+
+Wait for the NVDA startup sound. Once you hear it, you can take over from the keyboard.
+
+When You Are Finished
+
+1. Save any files you created to your USB. Do not save them to the public PC's Desktop or Documents folder - other people use that PC and your files would not be private.
+2. Close all programs (Alt + F4 in each one).
+3. Quit NVDA: press NVDA + Q, then press Enter to confirm.
+4. Wait until NVDA stops speaking and you hear silence.
+5. Unplug your USB. Because the drive is NTFS, this is safe as long as no file is currently being saved.
+
+Important Warnings
+
+- Do not save personal files to the public PC. Always save to your USB. Public PCs are often reset when you log off, and your files would be erased - or other people could read them.
+- Some public PCs block running programs from a USB. If pressing Enter on NVDA does nothing and you hear no startup sound after 30 seconds, that PC has a security policy that blocks USB programs. Try a different PC, or use Option B and have the helper try a different way.
+- Do not unplug while saving. Wait until the Save dialog closes and NVDA stops speaking before pulling the USB out.
+- Do not lend your USB. It contains your personal NVDA settings, your homework, and your student ID file. Each STU- drive belongs to one student.
+
 Typing Position
 
 This typing position helps your fingers to reach and remember each key.
