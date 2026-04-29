@@ -92,7 +92,9 @@ Neu rut USB trong luc tap tin dang duoc luu, ban co the mat tap tin do. Phan con
 
 Dung USB Tren May Tinh Cong Cong Hoac Thu Vien
 
-USB cua hoc sinh co san mot ban NVDA di dong o thu muc goc cua o dia (ten tap tin: NVDA). Nghia la ban co the cam USB vao hau het may tinh Windows o thu vien, tiem internet, hoac nha ban be, va chay trinh doc man hinh cua rieng minh tu USB. Khong co gi duoc cai dat len may tinh do, va moi cai dat, giong doc, tien ich mo rong cua ban deu di theo USB.
+Ban khong can dung phan nay tren laptop o phong tin hoc - NVDA tu dong khoi dong khi ban dang nhap. Phan nay chi danh cho may tinh cong cong, thu vien, hoac may khac chua cai san NVDA.
+
+USB cua hoc sinh co san mot ban NVDA di dong o thu muc goc cua o dia (ten tap tin: Start-NVDA). Nghia la ban co the cam USB vao hau het may tinh Windows o thu vien, tiem internet, hoac nha ban be, va chay trinh doc man hinh cua rieng minh tu USB. Khong co gi duoc cai dat len may tinh do, va moi cai dat, giong doc, tien ich mo rong cua ban deu di theo USB.
 
 Van de: khi ban ngoi xuong mot may tinh la, NVDA chua chay. Ban khong nghe thay gi. Ban can chon mot trong hai cach:
 
@@ -115,11 +117,11 @@ Buoc 3 - Cam USB vao may. Tim cong USB-A hinh chu nhat o mat truoc thung may hoa
 
 Buoc 4 - Mo File Explorer. Nhan Windows + E. Cua so File Explorer mo ra.
 
-Buoc 5 - Tim USB cua ban. Nhan Tab cho den khi Narrator doc danh sach o dia (thuong khoang 2 den 4 lan Tab). Dung phim Mui ten xuong de di chuyen qua cac o dia. Lang nghe o dia ten STU-001 (hoac so hieu cua ban). O nay nam gan cuoi danh sach, sau Local Disk (C:) va cac o DVD.
+Buoc 5 - Tim USB cua ban. Nhan Tab cho den khi Narrator doc danh sach o dia. Nhan Mui ten xuong cho den khi nghe STU-001 (hoac so hieu cua ban).
 
 Buoc 6 - Mo USB. Khi nghe thay so STU cua ban, nhan Enter.
 
-Buoc 7 - Khoi dong NVDA. Nhan chu N de nhay den "NVDA". Nhan Enter. Doi 5 den 10 giay. Ban se nghe am thanh khoi dong cua NVDA. NVDA da chay tu USB cua ban.
+Buoc 7 - Khoi dong NVDA. Nhan S, roi Enter. Doi 5 den 10 giay cho am thanh khoi dong NVDA.
 
 Buoc 8 - Tat Narrator. Nhan Ctrl + Windows + Enter lan nua. Narrator dung lai. Bay gio chi NVDA dang doc.
 
@@ -134,7 +136,7 @@ Hay nho ho lam theo thu tu sau:
 1. "Xin hay cam USB cua em vao may. Nhan Braille phai huong len tren."
 2. "Xin hay mo File Explorer." (Ho nhan Windows + E.)
 3. "Xin hay mo o dia ten STU- va so cua em." (Vi du: STU-042.)
-4. "Xin hay nhap dup vao NVDA." (No nam tren cung danh sach tap tin.)
+4. "Xin hay nhap dup vao Start-NVDA." (No nam o dau danh sach tap tin trong o dia.)
 5. "Cam on anh/chi. Em se nghe am thanh khoi dong khi NVDA san sang."
 
 Doi nghe am thanh khoi dong NVDA. Khi nghe duoc roi, ban co the tu dung ban phim tiep.

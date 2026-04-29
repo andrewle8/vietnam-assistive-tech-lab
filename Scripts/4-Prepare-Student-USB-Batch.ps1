@@ -197,7 +197,9 @@ if ($succeeded.Count -eq 0) {
 # rights or installation. Layout per USB:
 #   <STU>:\NVDA\nvda.exe            <- the portable executable
 #   <STU>:\NVDA\userConfig\         <- baked Vi-Vu + 11 addons + lab settings
-#   <STU>:\NVDA.lnk                 <- one-click launcher at USB root
+#   <STU>:\Start-NVDA.lnk           <- one-click launcher at USB root
+#                                      (S- prefix avoids first-letter clash with the NVDA folder
+#                                       so blind users can press "S" in File Explorer to reach it)
 #   <STU>:\Tài liệu\, Âm thanh\, Bài tập\
 #   <STU>:\.student-id (hidden)
 # ----------------------------------------------------------------------------
@@ -251,7 +253,7 @@ while ($queue.Count -gt 0 -or $running.Count -gt 0) {
         if ($rcExit -lt 8 -and (Test-Path (Join-Path $stuNvda "nvda.exe"))) {
             # Create launcher .lnk at USB root pointing to NVDA\nvda.exe.
             try {
-                $lnkPath = Join-Path $stuRoot "NVDA.lnk"
+                $lnkPath = Join-Path $stuRoot "Start-NVDA.lnk"
                 $ws = New-Object -ComObject WScript.Shell
                 $sc = $ws.CreateShortcut($lnkPath)
                 $sc.TargetPath       = (Join-Path $stuNvda "nvda.exe")

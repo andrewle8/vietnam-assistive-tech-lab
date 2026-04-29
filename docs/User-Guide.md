@@ -84,7 +84,9 @@ If you unplug while a file is being saved, you may lose that one file. The rest 
 
 ### Using Your USB on a Public or Library PC
 
-Your student USB drive contains a portable copy of NVDA at the root of the drive (file name: **NVDA**). This means you can plug your USB into almost any Windows computer at a library, internet café, or a friend's house, and run your own screen reader from the USB. Nothing gets installed on the other computer, and your settings, voice, and add-ons all come with you.
+**You do not need this on your lab laptop** — NVDA starts automatically when you log in. This section is only for public, library, or other computers where NVDA is not already installed.
+
+Your student USB drive contains a portable copy of NVDA at the root of the drive (file name: **Start-NVDA**). This means you can plug your USB into almost any Windows computer at a library, internet café, or a friend's house, and run your own screen reader from the USB. Nothing gets installed on the other computer, and your settings, voice, and add-ons all come with you.
 
 The challenge: when you sit down at a public PC, NVDA is not yet running. You cannot hear anything. You will need to either:
 
@@ -107,11 +109,11 @@ Narrator will start speaking in a different voice than NVDA. That is expected. I
 
 **Step 4 — Open File Explorer.** Press **Windows + E**. A File Explorer window opens.
 
-**Step 5 — Find your USB drive.** Press **Tab** until Narrator announces a list of drives (usually 2 to 4 Tab presses). Use the **Down arrow** to move through drives. Listen for a drive named **STU-001** (or your own student number). It will be near the bottom of the list, after Local Disk (C:) and any DVD drives.
+**Step 5 — Find your USB drive.** Press **Tab** until Narrator announces a list of drives. Arrow down until you hear **STU-001** (or your student number).
 
 **Step 6 — Open your USB.** When you hear your STU number, press **Enter**.
 
-**Step 7 — Launch NVDA.** Press the letter **N** to jump to "NVDA". Press **Enter**. Wait 5 to 10 seconds. You will hear the NVDA startup sound. NVDA is now running from your USB.
+**Step 7 — Launch NVDA.** Press **S**, then **Enter**. Wait 5 to 10 seconds for the NVDA startup sound.
 
 **Step 8 — Turn off Narrator.** Press **Ctrl + Windows + Enter** again. Narrator stops. Now only NVDA is speaking.
 
@@ -126,7 +128,7 @@ Ask them, in this order:
 1. "Please plug my USB drive into a USB port. The Braille label should face up."
 2. "Please open File Explorer." (They press Windows + E.)
 3. "Please open the drive named STU- followed by my number." (For example: STU-042.)
-4. "Please double-click NVDA." (It is at the very top of the file list.)
+4. "Please double-click Start-NVDA." (It is in the file list at the top of the drive.)
 5. "Thank you. I will hear a startup sound when NVDA is ready."
 
 Wait for the NVDA startup sound. Once you hear it, you can take over from the keyboard.
