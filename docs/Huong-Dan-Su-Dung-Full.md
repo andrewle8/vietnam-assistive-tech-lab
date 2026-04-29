@@ -93,72 +93,6 @@ USB của bạn được định dạng NTFS, giúp bảo vệ ổ đĩa khỏi 
 
 Nếu rút USB trong lúc tập tin đang được lưu, bạn có thể mất tập tin đó. Phần còn lại của USB vẫn an toàn.
 
-### Dùng USB Trên Máy Tính Công Cộng Hoặc Thư Viện
-
-**Bạn không cần dùng phần này trên laptop ở phòng tin học** — NVDA tự động khởi động khi bạn đăng nhập. Phần này chỉ dành cho máy tính công cộng, thư viện, hoặc máy khác chưa cài sẵn NVDA.
-
-USB của học sinh có sẵn một bản NVDA di động ở thư mục gốc của ổ đĩa (tên tập tin: **Start-NVDA**). Nghĩa là bạn có thể cắm USB vào hầu hết máy tính Windows ở thư viện, tiệm internet, hoặc nhà bạn bè, và chạy trình đọc màn hình của riêng mình từ USB. Không có gì được cài đặt lên máy tính đó, và mọi cài đặt, giọng đọc, tiện ích mở rộng của bạn đều đi theo USB.
-
-Vấn đề: khi bạn ngồi xuống một máy tính lạ, NVDA chưa chạy. Bạn không nghe thấy gì. Bạn cần chọn một trong hai cách:
-
-- **Cách A (tự làm):** Bật Windows Narrator (Tường Thuật) đủ lâu để khởi động NVDA từ USB của bạn.
-- **Cách B (nhờ người sáng mắt):** Nhờ người gần đó nhấp vào NVDA trên USB giúp bạn.
-
-Hãy thử Cách A trước. Dùng Cách B nếu Narrator không hoạt động hoặc bạn không tìm được cổng cắm.
-
-#### Cách A: Dùng Windows Narrator Để Khởi Động NVDA
-
-Windows Narrator (Tường Thuật) là trình đọc màn hình có sẵn trong mọi máy tính Windows. Nó không tốt bằng NVDA, nhưng luôn hoạt động được mà không cần cài đặt. Bạn chỉ dùng Narrator khoảng một phút, sau đó chuyển sang NVDA.
-
-**Bước 1 — Cắm tai nghe.** Máy tính công cộng thường tắt tiếng loa. Tai nghe sẽ tránh được điều này và cũng giúp bảo mật công việc của bạn. Lỗ cắm tai nghe thường ở mặt trước thùng máy hoặc cạnh bên của laptop.
-
-**Bước 2 — Bật Narrator.** Nhấn **Ctrl + Windows + Enter**.
-
-Narrator sẽ bắt đầu đọc với giọng khác giọng NVDA. Đó là điều bình thường. Nếu không nghe thấy gì, có thể loa đã tắt tiếng; nhấn phím **Tăng Âm Lượng** vài lần. Nếu vẫn không nghe được, hãy chuyển sang Cách B.
-
-**Bước 3 — Cắm USB vào máy.** Tìm cổng USB-A hình chữ nhật ở mặt trước thùng máy hoặc cạnh laptop. Đầu cắm chỉ vào được một chiều. Nhãn Braille phải hướng lên trên. Đợi khoảng 5 giây; Windows có thể phát thông báo, bạn có thể bỏ qua.
-
-**Bước 4 — Mở File Explorer.** Nhấn **Windows + E**. Cửa sổ File Explorer mở ra.
-
-**Bước 5 — Tìm USB của bạn.** Nhấn **Tab** cho đến khi Narrator đọc danh sách ổ đĩa. Nhấn **Mũi tên xuống** cho đến khi nghe **STU-001** (hoặc số hiệu của bạn).
-
-**Bước 6 — Mở USB.** Khi nghe thấy số STU của bạn, nhấn **Enter**.
-
-**Bước 7 — Khởi động NVDA.** Nhấn **S**, rồi **Enter**. Đợi 5 đến 10 giây cho âm thanh khởi động NVDA.
-
-**Bước 8 — Tắt Narrator.** Nhấn **Ctrl + Windows + Enter** lần nữa. Narrator dừng lại. Bây giờ chỉ NVDA đang đọc.
-
-Bạn có thể dùng máy tính này giống như dùng laptop ở phòng tin học.
-
-#### Cách B: Nhờ Người Sáng Mắt Giúp
-
-Nếu có người sáng mắt ở gần (thủ thư, nhân viên tiệm internet, bạn bè, hoặc người thân), đây là cách nhanh nhất.
-
-Hãy nhờ họ làm theo thứ tự sau:
-
-1. "Xin hãy cắm USB của em vào máy. Nhãn Braille phải hướng lên trên."
-2. "Xin hãy mở File Explorer." (Họ nhấn Windows + E.)
-3. "Xin hãy mở ổ đĩa tên STU- và số của em." (Ví dụ: STU-042.)
-4. "Xin hãy nhấp đúp vào Start-NVDA." (Nó nằm ở đầu danh sách tập tin trong ổ đĩa.)
-5. "Cảm ơn anh/chị. Em sẽ nghe âm thanh khởi động khi NVDA sẵn sàng."
-
-Đợi nghe âm thanh khởi động NVDA. Khi nghe được rồi, bạn có thể tự dùng bàn phím tiếp.
-
-#### Khi Đã Xong Việc
-
-1. Lưu mọi tập tin vào USB. **Không** lưu vào Desktop hay thư mục Documents của máy công cộng — người khác cũng dùng máy đó và tập tin của bạn sẽ không riêng tư.
-2. Đóng tất cả chương trình (Alt + F4 cho từng chương trình).
-3. Tắt NVDA: nhấn **NVDA + Q**, rồi nhấn **Enter** để xác nhận.
-4. Đợi NVDA ngừng đọc và nghe tiếng im lặng.
-5. Rút USB. Vì ổ đĩa là NTFS nên việc này an toàn miễn là không có tập tin nào đang được lưu.
-
-#### Lưu Ý Quan Trọng
-
-- **Không lưu tập tin cá nhân vào máy công cộng.** Luôn luôn lưu vào USB. Máy công cộng thường được khôi phục lại sau khi bạn đăng xuất, và tập tin của bạn sẽ bị xóa — hoặc người khác có thể đọc được.
-- **Một số máy công cộng chặn việc chạy chương trình từ USB.** Nếu nhấn Enter trên NVDA mà không có gì xảy ra và sau 30 giây vẫn không nghe âm thanh khởi động, máy đó có chính sách bảo mật chặn chương trình từ USB. Hãy thử máy khác, hoặc dùng Cách B để nhờ người giúp bằng cách khác.
-- **Không rút USB khi đang lưu.** Đợi hộp thoại Save đóng và NVDA ngừng đọc trước khi rút.
-- **Không cho mượn USB.** USB chứa cài đặt NVDA cá nhân, bài tập, và tập tin số hiệu học sinh của bạn. Mỗi USB STU- thuộc về một học sinh.
-
 ---
 ## Tư Thế Đặt Tay Khi Gõ Phím
 
@@ -568,5 +502,60 @@ Ví dụ: gõ `25 + 17` rồi nhấn Enter. NVDA đọc "42".
 - Cắm sạc vào **cổng USB-C phía sau bên trái, gần bản lề nhất**.
 - Tháo tai nghe bằng cách cầm đầu cắm, không kéo dây.
 - Không bật BitLocker, không đổi mật khẩu, không đăng nhập tài khoản Microsoft.
+
+---
+
+## Dùng NVDA Trên Máy Tính Khác
+
+**Bạn không cần dùng phần này trên laptop ở phòng tin học** — NVDA tự động khởi động khi bạn đăng nhập. Phần này dành cho khi bạn muốn dùng USB trên máy tính công cộng, thư viện, hoặc máy của gia đình chưa cài sẵn NVDA.
+
+USB của bạn có một bộ khởi động tên **Start-NVDA** ở đầu ổ đĩa. Bạn có thể cắm USB vào hầu hết máy tính Windows và chạy NVDA của riêng mình từ USB. Không có gì được cài đặt lên máy tính đó, và mọi cài đặt của bạn đều đi theo.
+
+### Cách Khởi Động NVDA Trên Máy Mới
+
+Khi bạn ngồi vào máy tính, NVDA chưa chạy nên bạn không nghe được gì. Hãy dùng giọng nói có sẵn của máy (Narrator - Tường Thuật) trong một phút để khởi động NVDA của bạn, sau đó tắt giọng nói có sẵn đi.
+
+**Bước 1 — Cắm tai nghe.** Máy tính công cộng thường tắt tiếng loa, và tai nghe giúp giữ riêng tư công việc của bạn.
+
+**Bước 2 — Bật giọng nói của máy.** Nhấn **Ctrl + Windows + Enter**. Máy tính sẽ bắt đầu nói. Giọng này khác với NVDA của bạn. Đó là bình thường.
+
+Nếu không nghe thấy gì, có thể loa đã tắt tiếng. Nhấn phím **Tăng Âm Lượng** vài lần. Nếu vẫn không nghe được, hãy nhờ người giúp (xem bên dưới).
+
+**Bước 3 — Cắm USB vào máy.** Tìm cổng USB hình chữ nhật ở mặt trước máy tính hoặc cạnh bên laptop. Nhãn Braille hướng lên trên.
+
+**Bước 4 — Mở File Explorer.** Nhấn **Windows + E**.
+
+**Bước 5 — Tìm USB của bạn.** Nhấn **Tab** cho đến khi nghe danh sách ổ đĩa. Nhấn **Mũi tên xuống** cho đến khi nghe **STU-001** (hoặc số hiệu của bạn). Nhấn **Enter** để mở.
+
+**Bước 6 — Khởi động NVDA.** Nhấn **S**, rồi **Enter**. Đợi 5 đến 10 giây. Bạn sẽ nghe âm thanh khởi động NVDA.
+
+**Bước 7 — Tắt giọng nói của máy.** Nhấn **Ctrl + Windows + Enter** lần nữa. Bây giờ chỉ NVDA của bạn đang nói.
+
+Bạn có thể dùng máy tính như bình thường.
+
+### Nếu Có Người Giúp Ở Gần
+
+Nếu có người sáng mắt ở gần (thủ thư, nhân viên quán cà phê, bạn bè, hoặc người thân), hãy nhờ họ:
+
+1. "Xin hãy cắm USB của em vào máy. Nhãn Braille hướng lên trên."
+2. "Xin hãy mở File Explorer. Phím tắt là Windows + E."
+3. "Xin hãy mở ổ đĩa tên STU- và số của em." (Ví dụ: STU-042.)
+4. "Xin hãy nhấp đúp vào Start-NVDA."
+5. "Cảm ơn anh/chị. Em sẽ nghe âm thanh khởi động khi sẵn sàng."
+
+Khi bạn nghe âm thanh khởi động NVDA, bạn có thể tự dùng bàn phím tiếp.
+
+### Khi Đã Xong
+
+1. Lưu tập tin vào USB của bạn. **Không** lưu vào máy tính đó.
+2. Tắt NVDA: nhấn **NVDA + Q**, rồi **Enter**.
+3. Đợi cho NVDA ngừng nói.
+4. Rút USB.
+
+### Những Điều Cần Nhớ
+
+- **Luôn lưu tập tin vào USB.** Tập tin để trên máy công cộng không riêng tư và có thể bị xóa.
+- **Không cho mượn USB.** USB có cài đặt cá nhân và bài tập của bạn.
+- **Nếu nhấn Enter trên Start-NVDA mà không có gì xảy ra,** máy tính đó có thể chặn chương trình từ USB. Hãy thử máy khác hoặc nhờ người giúp.
 
 ---
