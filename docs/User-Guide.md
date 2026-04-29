@@ -472,6 +472,6 @@ Example: type `25 + 17` then press Enter → NVDA says "42".
 
 - Plug the charger into the **back-left USB-C port, closest to the hinge**.
 - Unplug headphones by gripping the connector, not the cable.
-- Do not enable BitLocker, change your password, or sign into a Microsoft Account.
+- Do not change your password or sign into a Microsoft Account.
 
 ---
