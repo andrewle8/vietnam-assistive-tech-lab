@@ -222,7 +222,7 @@ if ($results.Critical -gt 0) {
 } else {
     Write-Host "`n" -NoNewline
     Write-Host "All software verified successfully!" -ForegroundColor Green
-    Write-Host "`nNext step: Run .\3-Configure-NVDA.ps1" -ForegroundColor Yellow
+    Write-Host "`nNext step: Run .\Configure-Laptop.ps1 -PCNumber <N>" -ForegroundColor Yellow
 }
 
 Write-Host "`nLog file: $LogPath" -ForegroundColor Cyan

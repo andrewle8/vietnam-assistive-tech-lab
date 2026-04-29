@@ -655,11 +655,6 @@ try {
 
 # Step 5b: (Removed — previously copied SumatraPDF per-user install from Admin to Student.
 # SumatraPDF was removed from deployment; Edge handles PDFs accessibly without per-user copy.)
-try {
-    $successCount++
-} catch {
-    Write-Log "Step 5b placeholder: $($_.Exception.Message)" "WARNING"
-}
 
 # Step 6: Clean desktop and create shortcuts for screen reader navigation
 Write-Log "Step 6: Creating managed desktop shortcuts and removing unmanaged ones..." "INFO"
@@ -668,7 +663,7 @@ try {
     $publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
     $userDesktop = [Environment]::GetFolderPath("Desktop")
 
-    # User desktop: wipe entirely. No lab shortcuts belong here — Step 14 later creates
+    # User desktop: wipe entirely. No lab shortcuts belong here — Step 16 later creates
     # NVDA.lnk in the user desktop for hotkey registration. Public desktop is cleaned
     # SELECTIVELY AFTER the create loop (remove only unmanaged .lnk names), so that if
     # an app is installed at an unexpected path and we can't resolve its target, the
@@ -1641,21 +1636,9 @@ try {
         Write-Log "Could not configure NVDA shortcuts: $($_.Exception.Message)" "WARNING"
     }
 
-    # Copy NVDA addons from Admin profile to Student (3-Configure-NVDA.ps1 installs
-    # addons to $env:APPDATA which resolves to Admin when run from Bootstrap).
-    # Prune Student's addon dir first so removed-from-manifest addons don't linger on redeploy.
-    $adminAddons = Join-Path $env:APPDATA "nvda\addons"
-    $studentAddons = Join-Path $nvdaConfigDir "addons"
-    if ((Test-Path $adminAddons) -and (Get-ChildItem $adminAddons -ErrorAction SilentlyContinue)) {
-        if (Test-Path $studentAddons) {
-            Remove-Item "$studentAddons\*" -Recurse -Force -ErrorAction SilentlyContinue
-        } else {
-            New-Item -Path $studentAddons -ItemType Directory -Force | Out-Null
-        }
-        Copy-Item -Path "$adminAddons\*" -Destination $studentAddons -Recurse -Force -ErrorAction SilentlyContinue
-        $addonCount = (Get-ChildItem $studentAddons -Directory -ErrorAction SilentlyContinue).Count
-        Write-Log "Copied $addonCount NVDA addon(s) from Admin to Student profile (pruned first)" "SUCCESS"
-    }
+    # NVDA addons are placed directly in C:\Users\Student\AppData\Roaming\nvda\addons
+    # by 3-Configure-NVDA.ps1 (hard-coded Student path, not $env:APPDATA). No
+    # Admin→Student ferry step is needed here.
 
     # NVDA Remote firewall pre-authorization. The Remote 2.6.4 addon binds a local
     # listening port (for direct master-server mode and some local-network features),
@@ -2701,9 +2684,7 @@ try {
 Write-Log "Step 31: Deploying VLC accessibility config..." "INFO"
 
 try {
-    $studentProfile = "C:\Users\Student"
-    $currentProfile = $env:USERPROFILE
-    $profileBase = if (Test-Path $studentProfile) { $studentProfile } else { $currentProfile }
+    $profileBase = "C:\Users\Student"
 
     $vlcConfigDir = Join-Path $profileBase "AppData\Roaming\vlc"
     if (-not (Test-Path $vlcConfigDir)) {
@@ -2731,7 +2712,7 @@ try {
     # Close Audacity if running — otherwise it rewrites the config on exit and undoes our pins.
     Stop-Process -Name audacity -Force -ErrorAction SilentlyContinue
 
-    $profileBase = if (Test-Path "C:\Users\Student") { "C:\Users\Student" } else { $env:USERPROFILE }
+    $profileBase = "C:\Users\Student"
 
     $audacityConfigDir = Join-Path $profileBase "AppData\Roaming\audacity"
     if (-not (Test-Path $audacityConfigDir)) {
@@ -2784,7 +2765,7 @@ try {
 Write-Log "Step 34: Deploying Kiwix accessibility config..." "INFO"
 
 try {
-    $profileBase = if (Test-Path "C:\Users\Student") { "C:\Users\Student" } else { $env:USERPROFILE }
+    $profileBase = "C:\Users\Student"
 
     $kiwixConfigDir = Join-Path $profileBase "AppData\Local\kiwix-desktop"
     if (-not (Test-Path $kiwixConfigDir)) {
@@ -2827,7 +2808,7 @@ try {
 # kiwix-desktop stays installed and reachable from Start Menu for sighted users.
 Write-Log "Step 34b: Installing kiwix-serve for NVDA-accessible reading path..." "INFO"
 try {
-    $profileBase = if (Test-Path "C:\Users\Student") { "C:\Users\Student" } else { $env:USERPROFILE }
+    $profileBase = "C:\Users\Student"
     $kiwixInstallDir = "C:\Program Files\Kiwix"
     $kiwixServeSource = Join-Path (Split-Path -Parent $PSScriptRoot) "Installers\Kiwix\kiwix-serve.exe"
 
@@ -2878,7 +2859,7 @@ Set WshShell = Nothing
 Write-Log "Step 35: Deploying GoldenDict accessibility config..." "INFO"
 
 try {
-    $profileBase = if (Test-Path "C:\Users\Student") { "C:\Users\Student" } else { $env:USERPROFILE }
+    $profileBase = "C:\Users\Student"
 
     $gdConfigDir = Join-Path $profileBase "AppData\Roaming\GoldenDict"
     $gdStylesDir = Join-Path $gdConfigDir "styles"

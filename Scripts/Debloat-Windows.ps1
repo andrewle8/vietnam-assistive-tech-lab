@@ -1,4 +1,4 @@
-# Vietnam Lab Deployment - Windows 11 Debloat
+﻿# Vietnam Lab Deployment - Windows 11 Debloat
 # Standalone script containing Steps 23-29 from Configure-Laptop.ps1
 # Run this on machines that already have Configure-Laptop applied but need debloating.
 # Requires Administrator.
@@ -35,6 +35,31 @@ if (-not $isAdmin) {
 }
 
 Write-Log "=== Windows 11 Debloat Started on $env:COMPUTERNAME ===" "INFO"
+
+# Resolve Student profile + hive. The Lab-PostStudent-Debloat scheduled task
+# runs this script as SYSTEM at logon, when Student's hive is loaded at
+# HKEY_USERS\<StudentSID>. Per-user keys (HKCU equivalents) target that hive
+# explicitly, otherwise SYSTEM's HKCU resolves to .DEFAULT and the writes
+# silently land in the wrong place. Same logic for $env:USERPROFILE etc.
+# If we can't reach Student's hive (e.g. standalone admin re-run while
+# Student is logged off), per-user steps are skipped and the script exits
+# non-zero so the SYSTEM task retries on the next logon (no marker dropped).
+$studentProfile = "C:\Users\Student"
+$studentRegRoot = $null
+if (Test-Path $studentProfile) {
+    try {
+        $studentSid = (Get-CimInstance Win32_UserAccount -Filter "Name='Student'" -ErrorAction Stop).SID
+        if ($studentSid -and (Test-Path "Registry::HKEY_USERS\$studentSid")) {
+            $studentRegRoot = "Registry::HKEY_USERS\$studentSid"
+            Write-Log "Resolved Student hive: $studentRegRoot" "INFO"
+        }
+    } catch {
+        Write-Log "Could not resolve Student SID: $($_.Exception.Message)" "WARNING"
+    }
+}
+if (-not $studentRegRoot) {
+    Write-Log "Student hive not loaded — per-user keys will be skipped (re-run while Student is logged in to apply)" "WARNING"
+}
 
 $successCount = 0
 $failCount = 0
@@ -113,8 +138,8 @@ try {
     }
 
     $oneDriveFolders = @(
-        "$env:USERPROFILE\OneDrive"
-        "$env:LOCALAPPDATA\Microsoft\OneDrive"
+        "$studentProfile\OneDrive"
+        "$studentProfile\AppData\Local\Microsoft\OneDrive"
         "$env:PROGRAMDATA\Microsoft OneDrive"
         "C:\OneDriveTemp"
     )
@@ -151,13 +176,15 @@ try {
     if (-not (Test-Path $searchPath)) { New-Item -Path $searchPath -Force | Out-Null }
     Set-ItemProperty -Path $searchPath -Name "AllowCortana" -Value 0 -Force
 
-    $searchSettings = "HKCU:\Software\Microsoft\Windows\CurrentVersion\SearchSettings"
-    if (-not (Test-Path $searchSettings)) { New-Item -Path $searchSettings -Force | Out-Null }
-    Set-ItemProperty -Path $searchSettings -Name "IsDynamicSearchBoxEnabled" -Value 0 -Force
+    if ($studentRegRoot) {
+        $searchSettings = "$studentRegRoot\Software\Microsoft\Windows\CurrentVersion\SearchSettings"
+        if (-not (Test-Path $searchSettings)) { New-Item -Path $searchSettings -Force | Out-Null }
+        Set-ItemProperty -Path $searchSettings -Name "IsDynamicSearchBoxEnabled" -Value 0 -Force
 
-    $explorerPolicies = "HKCU:\Software\Policies\Microsoft\Windows\Explorer"
-    if (-not (Test-Path $explorerPolicies)) { New-Item -Path $explorerPolicies -Force | Out-Null }
-    Set-ItemProperty -Path $explorerPolicies -Name "DisableSearchBoxSuggestions" -Value 1 -Force
+        $explorerPolicies = "$studentRegRoot\Software\Policies\Microsoft\Windows\Explorer"
+        if (-not (Test-Path $explorerPolicies)) { New-Item -Path $explorerPolicies -Force | Out-Null }
+        Set-ItemProperty -Path $explorerPolicies -Name "DisableSearchBoxSuggestions" -Value 1 -Force
+    }
 
     Write-Log "Widgets, Cortana, and Search Highlights disabled" "SUCCESS"
     $successCount++
@@ -208,36 +235,40 @@ try {
 Write-Log "Step 5: Cleaning taskbar..." "INFO"
 
 try {
-    $taskbarPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+    if ($studentRegRoot) {
+        $taskbarPath = "$studentRegRoot\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+        if (-not (Test-Path $taskbarPath)) { New-Item -Path $taskbarPath -Force | Out-Null }
+        Set-ItemProperty -Path $taskbarPath -Name "TaskbarMn" -Value 0 -Force
+        Set-ItemProperty -Path $taskbarPath -Name "ShowTaskViewButton" -Value 0 -Force
+        Set-ItemProperty -Path $taskbarPath -Name "TaskbarDa" -Value 0 -Force
+        Set-ItemProperty -Path $taskbarPath -Name "ShowCopilotButton" -Value 0 -Force -ErrorAction SilentlyContinue
 
-    Set-ItemProperty -Path $taskbarPath -Name "TaskbarMn" -Value 0 -Force
-    Set-ItemProperty -Path $taskbarPath -Name "ShowTaskViewButton" -Value 0 -Force
-    Set-ItemProperty -Path $taskbarPath -Name "TaskbarDa" -Value 0 -Force
-    Set-ItemProperty -Path $taskbarPath -Name "ShowCopilotButton" -Value 0 -Force -ErrorAction SilentlyContinue
+        $searchRegPath = "$studentRegRoot\Software\Microsoft\Windows\CurrentVersion\Search"
+        if (-not (Test-Path $searchRegPath)) { New-Item -Path $searchRegPath -Force | Out-Null }
+        Set-ItemProperty -Path $searchRegPath -Name "SearchboxTaskbarMode" -Value 0 -Force
 
-    $searchRegPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search"
-    if (-not (Test-Path $searchRegPath)) { New-Item -Path $searchRegPath -Force | Out-Null }
-    Set-ItemProperty -Path $searchRegPath -Name "SearchboxTaskbarMode" -Value 0 -Force
+        # Also clear the Win10-era Taskband registry (in case it's used)
+        $taskband = "$studentRegRoot\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband"
+        if (Test-Path $taskband) {
+            Remove-ItemProperty -Path $taskband -Name "Favorites" -Force -ErrorAction SilentlyContinue
+            Remove-ItemProperty -Path $taskband -Name "FavoritesResolve" -Force -ErrorAction SilentlyContinue
+        }
+    }
 
-    # Clear pinned taskbar items (Win11 stores these as shortcut files, not registry)
-    $pinnedPath = "$env:APPDATA\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar"
+    # Clear pinned taskbar items (Win11 stores these as shortcut files, not registry).
+    # Explicit Student path — never $env:APPDATA, which under SYSTEM resolves to systemprofile.
+    $pinnedPath = "$studentProfile\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar"
     if (Test-Path $pinnedPath) {
         Get-ChildItem -Path $pinnedPath -Filter "*.lnk" -ErrorAction SilentlyContinue |
             Where-Object { $_.Name -notlike "*File Explorer*" } |
             Remove-Item -Force -ErrorAction SilentlyContinue
     }
 
-    # Also clear the Win10-era Taskband registry (in case it's used)
-    $taskband = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband"
-    if (Test-Path $taskband) {
-        Remove-ItemProperty -Path $taskband -Name "Favorites" -Force -ErrorAction SilentlyContinue
-        Remove-ItemProperty -Path $taskband -Name "FavoritesResolve" -Force -ErrorAction SilentlyContinue
-    }
-
-    # Restart Explorer to apply changes
+    # Restart Explorer in Student's session to apply changes. Stop-Process -Name explorer
+    # under SYSTEM kills ALL explorer.exe instances (including Student's), and Student's
+    # session restarts it automatically. Skip the manual Start-Process explorer because
+    # under SYSTEM it would launch a SYSTEM-owned explorer (no UI, just leaks a process).
     Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
-    Start-Sleep -Seconds 2
-    Start-Process explorer
 
     Write-Log "Taskbar cleaned (pins removed, Chat/Task View/Search/Widgets/Copilot hidden)" "SUCCESS"
     $successCount++
@@ -254,9 +285,11 @@ try {
     if (-not (Test-Path $dataCollection)) { New-Item -Path $dataCollection -Force | Out-Null }
     Set-ItemProperty -Path $dataCollection -Name "AllowTelemetry" -Value 0 -Force
 
-    $adInfo = "HKCU:\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo"
-    if (-not (Test-Path $adInfo)) { New-Item -Path $adInfo -Force | Out-Null }
-    Set-ItemProperty -Path $adInfo -Name "Enabled" -Value 0 -Force
+    if ($studentRegRoot) {
+        $adInfo = "$studentRegRoot\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo"
+        if (-not (Test-Path $adInfo)) { New-Item -Path $adInfo -Force | Out-Null }
+        Set-ItemProperty -Path $adInfo -Name "Enabled" -Value 0 -Force
+    }
 
     $systemPolicies = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System"
     if (-not (Test-Path $systemPolicies)) { New-Item -Path $systemPolicies -Force | Out-Null }
@@ -281,46 +314,50 @@ try {
 Write-Log "Step 7: Additional UX cleanup..." "INFO"
 
 try {
-    # Disable Xbox Game Bar
-    $gameBar = "HKCU:\Software\Microsoft\GameBar"
-    if (-not (Test-Path $gameBar)) { New-Item -Path $gameBar -Force | Out-Null }
-    Set-ItemProperty -Path $gameBar -Name "UseNexusForGameBarEnabled" -Value 0 -Force
-    $gameDVR = "HKCU:\System\GameConfigStore"
-    if (-not (Test-Path $gameDVR)) { New-Item -Path $gameDVR -Force | Out-Null }
-    Set-ItemProperty -Path $gameDVR -Name "GameDVR_Enabled" -Value 0 -Force
+    # GameDVR machine-wide policy (always applied)
     $gameDVRPolicy = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR"
     if (-not (Test-Path $gameDVRPolicy)) { New-Item -Path $gameDVRPolicy -Force | Out-Null }
     Set-ItemProperty -Path $gameDVRPolicy -Name "AllowGameDVR" -Value 0 -Force
 
-    # Disable Snap Layouts hover tooltip
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "EnableSnapAssistFlyout" -Value 0 -Force
+    if ($studentRegRoot) {
+        # Disable Xbox Game Bar (per-user)
+        $gameBar = "$studentRegRoot\Software\Microsoft\GameBar"
+        if (-not (Test-Path $gameBar)) { New-Item -Path $gameBar -Force | Out-Null }
+        Set-ItemProperty -Path $gameBar -Name "UseNexusForGameBarEnabled" -Value 0 -Force
+        $gameDVR = "$studentRegRoot\System\GameConfigStore"
+        if (-not (Test-Path $gameDVR)) { New-Item -Path $gameDVR -Force | Out-Null }
+        Set-ItemProperty -Path $gameDVR -Name "GameDVR_Enabled" -Value 0 -Force
 
-    # Disable "Let's finish setting up your device" OOBE nag
-    $contentDelivery = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
-    $userProfileEngagement = "HKCU:\Software\Microsoft\Windows\CurrentVersion\UserProfileEngagement"
-    if (-not (Test-Path $userProfileEngagement)) { New-Item -Path $userProfileEngagement -Force | Out-Null }
-    Set-ItemProperty -Path $userProfileEngagement -Name "ScoobeSystemSettingEnabled" -Value 0 -Force
+        # Disable Snap Layouts hover tooltip
+        $snapPath = "$studentRegRoot\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+        if (-not (Test-Path $snapPath)) { New-Item -Path $snapPath -Force | Out-Null }
+        Set-ItemProperty -Path $snapPath -Name "EnableSnapAssistFlyout" -Value 0 -Force
 
-    # Disable Start menu suggestions / promoted apps
-    if (Test-Path $contentDelivery) {
-        Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-338388Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-353694Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-353696Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $contentDelivery -Name "OemPreInstalledAppsEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $contentDelivery -Name "PreInstalledAppsEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $contentDelivery -Name "SilentInstalledAppsEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+        # Disable "Let's finish setting up your device" OOBE nag
+        $contentDelivery = "$studentRegRoot\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
+        $userProfileEngagement = "$studentRegRoot\Software\Microsoft\Windows\CurrentVersion\UserProfileEngagement"
+        if (-not (Test-Path $userProfileEngagement)) { New-Item -Path $userProfileEngagement -Force | Out-Null }
+        Set-ItemProperty -Path $userProfileEngagement -Name "ScoobeSystemSettingEnabled" -Value 0 -Force
+
+        # Disable Start menu suggestions / promoted apps
+        if (Test-Path $contentDelivery) {
+            Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-338388Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-353694Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path $contentDelivery -Name "SubscribedContent-353696Enabled" -Value 0 -Force -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path $contentDelivery -Name "OemPreInstalledAppsEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path $contentDelivery -Name "PreInstalledAppsEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path $contentDelivery -Name "SilentInstalledAppsEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+
+            # Disable lock screen tips and trivia
+            Set-ItemProperty -Path $contentDelivery -Name "RotatingLockScreenOverlayEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path $contentDelivery -Name "RotatingLockScreenEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
+        }
+
+        # Disable touch keyboard auto-show
+        $touchKB = "$studentRegRoot\Software\Microsoft\TabletTip\1.7"
+        if (-not (Test-Path $touchKB)) { New-Item -Path $touchKB -Force | Out-Null }
+        Set-ItemProperty -Path $touchKB -Name "TipbandDesiredVisibility" -Value 0 -Force
     }
-
-    # Disable lock screen tips and trivia
-    if (Test-Path $contentDelivery) {
-        Set-ItemProperty -Path $contentDelivery -Name "RotatingLockScreenOverlayEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $contentDelivery -Name "RotatingLockScreenEnabled" -Value 0 -Force -ErrorAction SilentlyContinue
-    }
-
-    # Disable touch keyboard auto-show
-    $touchKB = "HKCU:\Software\Microsoft\TabletTip\1.7"
-    if (-not (Test-Path $touchKB)) { New-Item -Path $touchKB -Force | Out-Null }
-    Set-ItemProperty -Path $touchKB -Name "TipbandDesiredVisibility" -Value 0 -Force
 
     Write-Log "Additional UX cleanup complete (Game Bar, Snap Layouts, OOBE nag, Start suggestions, lock screen tips, touch keyboard)" "SUCCESS"
     $successCount++
@@ -354,8 +391,12 @@ Write-Host ""
 Write-Host "NOTE: A reboot is recommended for all changes to take effect." -ForegroundColor Yellow
 
 # On success: drop marker + unregister task so subsequent logons no-op.
-# On failure: leave both so next logon retries.
-if ($MarkerFile -and $failCount -eq 0) {
+# On failure (or Student hive unreachable): leave both so next logon retries.
+# The $studentRegRoot gate is the failsafe for when Lab-PostStudent-Debloat
+# fires before Student has logged in (e.g., Admin first logon during dev work)
+# — per-user keys can't be written, so retry on next logon.
+$perUserApplied = [bool]$studentRegRoot
+if ($MarkerFile -and $failCount -eq 0 -and $perUserApplied) {
     try {
         $markerDir = Split-Path $MarkerFile -Parent
         if ($markerDir -and -not (Test-Path $markerDir)) {
@@ -367,7 +408,7 @@ if ($MarkerFile -and $failCount -eq 0) {
         Write-Log "Could not create marker file: $($_.Exception.Message)" "WARNING"
     }
 }
-if ($SelfUnregister -and $failCount -eq 0) {
+if ($SelfUnregister -and $failCount -eq 0 -and $perUserApplied) {
     try {
         Unregister-ScheduledTask -TaskName 'Lab-PostStudent-Debloat' -Confirm:$false -ErrorAction SilentlyContinue
         Write-Log "Unregistered Lab-PostStudent-Debloat scheduled task (one-shot complete)" "INFO"

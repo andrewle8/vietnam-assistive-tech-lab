@@ -764,8 +764,9 @@ foreach ($lf in $labToolsFiles) {
 # Public desktop shortcuts. Configure-Laptop Step 6 maintains a fixed alphabetized set
 # for first-letter screen-reader navigation. Vietnamese filenames (Từ Điển, Thùng Rác)
 # require IShellLink Unicode save — WScript.Shell silently corrupts them via CP-1252.
-# NVDA.lnk is intentionally NOT on the public desktop: Step 14 removes it there and
-# places it on the Student user desktop (so the Win+Ctrl+N hotkey registers per-user).
+# NVDA.lnk is intentionally NOT on the public desktop: Step 16 removes it there and
+# places it on the Student user desktop and Start Menu (so the Ctrl+Alt+N hotkey
+# registers per-user — Win11 22H2+ only honors .lnk HotKey from the user's own profile).
 $publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
 $expectedShortcuts = @(
     "Audacity.lnk", "Calculator.lnk", "Excel.lnk", "Firefox.lnk",

@@ -117,7 +117,7 @@ Audio-Technica ATH-M40x — 20 units ordered via Sweetwater (Order W308lsXB, 202
 | **Qty** | 100 |
 
 - Each USB drive is assigned an Asset Number (STU-001, etc.) via `4-Prepare-Student-USB-Batch.ps1`
-  - Asset number labeled in both print and 3D-printed Braille tag (see `Documentation/USB-Braille-Tags.md`)
+  - Asset number labeled in both print and 3D-printed Braille tag
   - Braille tag clips onto drive keyring loop, lanyard attaches to tag
 - Pre-created folders (Documents, Audio, Schoolwork)
 - Asset numbers also stored as hidden `.student-id` file on USB drive

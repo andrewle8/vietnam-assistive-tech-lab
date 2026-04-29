@@ -16,7 +16,7 @@ Scripts and config to deploy 19 Windows 11 laptops with NVDA, a Vietnamese TTS v
 | **Sao Mai Typing Tutor** | Free (non-commercial) | Vietnamese typing lessons with audio |
 | **SM Readmate** | Free (non-commercial) | Accessible e-book reader (connects to sachtiepcan.vn library) |
 | **Microsoft Office 365** | Non-profit license | Office suite (Word, Excel, PowerPoint, Outlook) |
-| **Firefox 147** | MPL-2.0 | Accessible web browser |
+| **Firefox 149** | MPL-2.0 | Accessible web browser |
 | **VLC Media Player 3.0.23** | GPL-2.0 | Media playback |
 | **Audacity 3.7** | GPL-3.0 | Audio recording/editing |
 | **UniKey 4.6** | GPL | Vietnamese Telex keyboard input |
@@ -61,7 +61,7 @@ Software updates are automatic — push update-manifest.json and all online PCs 
 | `Configure-Laptop.ps1` | Windows hardening, power, shortcuts, scheduled tasks (called by Bootstrap) |
 | `Populate-ReadmateDB.ps1` | Import 103 Vietnamese textbooks into SM Readmate library |
 | `Debloat-Windows.ps1` | Remove Windows bloatware (standalone re-run) |
-| `Fix-Student-Account.ps1` | Repair per-user app paths and shortcuts for Student profile |
+| `patches/Apply-All-Field-Patches.ps1` | One-shot field patch wrapper for already-deployed laptops (self-elevates, runs Kiwix/GoldenDict/Readmate/STU-resolver/NVDA refresh in sequence with transcript log) |
 | `Uninstall-Legacy.ps1` | Remove obsolete fleet/Tailscale/rclone scripts from older deploys |
 | `Update-Agent.ps1` | Daily scheduled task — pulls update-manifest.json from GitHub |
 | `Verify-Installers.ps1` | Validate installer files and SHA256 checksums |

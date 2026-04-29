@@ -263,7 +263,7 @@ Write-Log "Failed installations: $failCount" $(if($failCount -gt 0){"ERROR"}else
 
 if ($failCount -eq 0) {
     Write-Log "`nAll software installed successfully!" "SUCCESS"
-    Write-Log "Next step: Run 2-Verify-Installation.ps1" "INFO"
+    Write-Log "Next step: Run 3-Configure-NVDA.ps1" "INFO"
 } else {
     Write-Log "`nSome installations failed. Check log at: $LogPath" "WARNING"
     Write-Log "You can re-run this script or install failed components manually" "INFO"
@@ -277,5 +277,5 @@ Write-Host "Installation Complete!" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Green
 Write-Host "Successful: $successCount | Failed: $failCount" -ForegroundColor $(if($failCount -gt 0){"Yellow"}else{"Green"})
 Write-Host "`nLog file: $LogPath" -ForegroundColor Cyan
-Write-Host "`nNext step: Run .\2-Verify-Installation.ps1" -ForegroundColor Yellow
+Write-Host "`nNext step: Run .\3-Configure-NVDA.ps1" -ForegroundColor Yellow
 Write-Host "========================================" -ForegroundColor Green

@@ -31,7 +31,7 @@
 | **Kiwix** | 2.5.1 | GPL-3.0 | Offline encyclopedia reader |
 | **Vietnamese Wikipedia** | Nov 2025 | CC BY-SA | Offline Vietnamese encyclopedia (~550 MB) |
 | **GoldenDict** | 1.5.1 | GPL-3.0 | Offline dictionary (Vietnamese-English/Vietnamese-Vietnamese) |
-| **SM Readmate** | 1.0.5 | Free (non-commercial) | Accessible ebook reader with 103 Vietnamese textbooks pre-loaded |
+| **SM Readmate** | 1.1.0 | Free (non-commercial) | Accessible ebook reader with 103 Vietnamese textbooks pre-loaded |
 
 **NVDA Add-ons:**
 
@@ -51,7 +51,7 @@
 No VPN, no remote access, no cloud sync — a foreign-donated orphanage laptop with cross-border sync invites questions under Vietnam's 2026 Cybersecurity Law, especially with minors' data.
 
 Replaced by:
-- **Update agent** — each PC checks `update-manifest.json` on GitHub daily 2–4 AM and pulls updates over plain HTTPS.
+- **Update agent** — each PC checks `update-manifest.json` on GitHub at 6 PM Vietnam time (after-class window). A safety guard skips runs between 7 AM and 5 PM so a re-trigger never interrupts a student in class or during homework. Pulls updates over plain HTTPS.
 - **On-site support** — staff can re-run `Bootstrap-Laptop.ps1` from USB.
 - **Annual visits** — any hands-on changes happen then.
 
@@ -272,7 +272,7 @@ This validates:
    - Spot-check 2-3 apps per PC (NVDA reads them correctly)
 
 2. **Verify update agent**
-   - Verify from Update Agent logs that `update-manifest.json` was pulled (check `C:\LabTools\update-agent\update.log` on a sample of PCs)
+   - Verify from Update Agent logs that `update-manifest.json` was pulled (check `C:\LabTools\update-agent\logs\<yyyy-MM-dd>.log` on a sample of PCs — one log file per day)
 
 3. **Train staff on maintenance**
    - How to restart NVDA if it stops talking

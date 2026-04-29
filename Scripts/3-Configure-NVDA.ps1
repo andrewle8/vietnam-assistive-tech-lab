@@ -25,12 +25,34 @@ Write-Log "=== NVDA Configuration Started on $env:COMPUTERNAME ===" "INFO"
 # Navigate to USB root
 $usbRoot = Split-Path -Parent $PSScriptRoot
 $sourceConfig = Join-Path $usbRoot "Config\nvda-config\nvda.ini"
-$nvdaConfigDir = Join-Path $env:APPDATA "nvda"
+# Hard-coded Student profile, not $env:APPDATA — UAC-elevated PS sessions resolve
+# $env:APPDATA to whichever account answered the elevation prompt (Admin if you
+# typed the Admin password, Student if Student is itself an admin). Writing to
+# the wrong profile silently strands NVDA config + addons where Student can't
+# see them. Standalone re-runs of this script (post-deploy patches) need to be
+# correct regardless of which user ran the elevated shell.
+$nvdaConfigDir = "C:\Users\Student\AppData\Roaming\nvda"
 $nvdaConfigPath = Join-Path $nvdaConfigDir "nvda.ini"
 
 Write-Log "USB Root: $usbRoot" "INFO"
 Write-Log "Source config: $sourceConfig" "INFO"
 Write-Log "Target config: $nvdaConfigPath" "INFO"
+
+# Step 0: If NVDA is running, stop it before we touch nvda.ini or the addons
+# directory. On already-deployed laptops where Student is auto-logged in, NVDA
+# holds open file handles into addons\<name>\synthDrivers\*.pyd and
+# globalPlugins\*; deleting those directories with Remove-Item -Recurse -Force
+# (Step 4) while NVDA is loaded throws sharing violations, leaves the addon
+# half-installed, and on the next reload NVDA crashes — student loses speech.
+# Save the running-state so Step 8 knows to restart.
+$wasNvdaRunning = $false
+$nvdaInitial = Get-Process -Name "nvda" -ErrorAction SilentlyContinue
+if ($nvdaInitial) {
+    Write-Log "NVDA is running (PID $($nvdaInitial.Id)) — stopping before config + addon work (will restart at end)..." "INFO"
+    Stop-Process -Name "nvda" -Force -ErrorAction SilentlyContinue
+    Start-Sleep -Seconds 2
+    $wasNvdaRunning = $true
+}
 
 # Step 1: Create NVDA config directory if it doesn't exist
 if (-not (Test-Path $nvdaConfigDir)) {
@@ -38,11 +60,26 @@ if (-not (Test-Path $nvdaConfigDir)) {
     New-Item -Path $nvdaConfigDir -ItemType Directory -Force | Out-Null
 }
 
-# Step 2: Copy pre-configured NVDA profile
+# Step 2: Copy pre-configured NVDA profile.
+# Hash-compare to skip if already canonical: on already-deployed laptops where the
+# nvda.ini hasn't drifted, this avoids overwriting any student-saved tweaks (e.g.
+# voice rate, punctuation level via NVDA+Ctrl+C). When config has actually changed
+# (e.g. new chime-suppression block, schema bump), we deploy the canonical version.
 if (Test-Path $sourceConfig) {
     try {
-        Copy-Item $sourceConfig $nvdaConfigPath -Force
-        Write-Log "NVDA configuration profile applied successfully" "SUCCESS"
+        $skipDeploy = $false
+        if (Test-Path $nvdaConfigPath) {
+            $srcHash = (Get-FileHash $sourceConfig).Hash
+            $dstHash = (Get-FileHash $nvdaConfigPath).Hash
+            if ($srcHash -eq $dstHash) {
+                Write-Log "NVDA config already at canonical (hash $srcHash) — preserving in place" "INFO"
+                $skipDeploy = $true
+            }
+        }
+        if (-not $skipDeploy) {
+            Copy-Item $sourceConfig $nvdaConfigPath -Force
+            Write-Log "NVDA configuration profile applied successfully" "SUCCESS"
+        }
     } catch {
         Write-Log "ERROR copying NVDA config: $($_.Exception.Message)" "ERROR"
     }
@@ -396,23 +433,50 @@ if (Test-Path $unikeySourceDir) {
 # received nvda.ini and the addons, which happens in Configure-Laptop.ps1 —
 # not here.
 
-# Step 8: Start NVDA now (if not already running)
+# Step 8: Start NVDA. Prefer the LabNVDAStart scheduled task because it brokers
+# UIAccess elevation through `cmd /c start` (ShellExecute) — direct CreateProcess
+# of nvda.exe from a non-admin principal returns 0x800702E4 because nvda.exe ships
+# with manifest level=asInvoker uiAccess=true. The task was registered by
+# Configure-Laptop.ps1 Step 16 and runs in the BUILTIN\Users group context, so it
+# starts NVDA in Student's interactive session even when this wrapper was elevated
+# to Admin via UAC.
 $nvdaProcess = Get-Process -Name "nvda" -ErrorAction SilentlyContinue
-
 if (-not $nvdaProcess) {
     Write-Log "Starting NVDA..." "INFO"
     try {
-        Start-Process -FilePath $nvdaExePath
-        Start-Sleep -Seconds 3
-        Write-Log "NVDA started successfully" "SUCCESS"
+        $labTask = Get-ScheduledTask -TaskName 'LabNVDAStart' -ErrorAction SilentlyContinue
+        if ($labTask) {
+            Start-ScheduledTask -TaskName 'LabNVDAStart' -ErrorAction Stop
+            Start-Sleep -Seconds 3
+            $nvdaProcess = Get-Process -Name "nvda" -ErrorAction SilentlyContinue
+            if ($nvdaProcess) {
+                Write-Log "NVDA started via LabNVDAStart task (PID $($nvdaProcess.Id))" "SUCCESS"
+            } else {
+                Write-Log "LabNVDAStart task fired but nvda.exe not visible yet; should appear shortly" "WARNING"
+            }
+        } else {
+            $nvdaExePath = if (Test-Path "C:\Program Files\NVDA\nvda.exe") {
+                "C:\Program Files\NVDA\nvda.exe"
+            } elseif (Test-Path "C:\Program Files (x86)\NVDA\nvda.exe") {
+                "C:\Program Files (x86)\NVDA\nvda.exe"
+            } else { $null }
+            if ($nvdaExePath) {
+                # Fallback: cmd /c start brokers ShellExecute for UIAccess.
+                Start-Process -FilePath cmd.exe -ArgumentList "/c", "start", '""', "`"$nvdaExePath`"" -WindowStyle Hidden
+                Start-Sleep -Seconds 3
+                Write-Log "NVDA started ($nvdaExePath via cmd /c start)" "SUCCESS"
+            } else {
+                Write-Log "NVDA executable not found in either Program Files location; LabNVDAStart will start it on next logon" "WARNING"
+            }
+        }
     } catch {
         Write-Log "ERROR starting NVDA: $($_.Exception.Message)" "ERROR"
+        if ($wasNvdaRunning) {
+            Write-Log "CRITICAL: NVDA was running before this script started but is not running now. Student has no speech until logon/reboot triggers LabNVDAStart." "ERROR"
+        }
     }
 } else {
     Write-Log "NVDA is already running" "INFO"
-    Write-Host "`nNVDA is already running. Restart NVDA to apply new settings:" -ForegroundColor Yellow
-    Write-Host "   Press NVDA+Q (Insert+Q), then start NVDA again" -ForegroundColor White
-    Write-Host ""
 }
 
 # Step 9: Validate deployed config loaded without schema errors.
@@ -476,8 +540,8 @@ Write-Host ""
 
 Write-Host "Next Steps:" -ForegroundColor Yellow
 Write-Host "  1. Test speech output (NVDA should speak in Vietnamese)" -ForegroundColor White
-Write-Host "  2. Copy training materials to Desktop" -ForegroundColor White
-Write-Host "  3. Repeat for remaining PCs" -ForegroundColor White
+Write-Host "  2. Run .\2-Verify-Installation.ps1 to confirm install + addons" -ForegroundColor White
+Write-Host "  3. Then .\Configure-Laptop.ps1 -PCNumber <N> for hardening + scheduled tasks" -ForegroundColor White
 Write-Host ""
 
 Write-Host "Log file: $LogPath" -ForegroundColor Cyan
@@ -485,3 +549,8 @@ Write-Host "`n========================================" -ForegroundColor Green
 Write-Host ""
 
 Write-Log "=== NVDA Configuration Complete ===" "INFO"
+
+# Explicit exit 0 — without this, $LASTEXITCODE leaks from the last native command
+# (icacls, robocopy, reg.exe, etc.) and the Apply-All-Field-Patches.ps1 wrapper
+# misreports this step as FAIL even when everything succeeded.
+exit 0

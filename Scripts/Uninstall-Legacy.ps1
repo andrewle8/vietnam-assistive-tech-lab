@@ -87,8 +87,8 @@ foreach ($userName in @("Admin", "Student")) {
 }
 Remove-Item "C:\Users\Public\Desktop\Thorium Reader.lnk" -Force -ErrorAction SilentlyContinue
 
-# nvdaRemote addon (all profiles)
-Get-ChildItem "C:\Users\*\AppData\Roaming\nvda\addons\remote*" -Directory -ErrorAction SilentlyContinue |
+# nvdaRemote addon (legacy name; current addon is 'remote' from manifest and must NOT match)
+Get-ChildItem "C:\Users\*\AppData\Roaming\nvda\addons\nvdaRemote*" -Directory -ErrorAction SilentlyContinue |
     Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
 
 # Top Speed 3 (LEAP audio game) — Inno Setup uninstaller
