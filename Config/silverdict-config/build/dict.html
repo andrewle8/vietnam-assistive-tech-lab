@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <title>Từ điển - Vietnamese-English Dictionary</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 18px; padding: 20px; max-width: 800px; margin: 0 auto; }
+    h1 { color: #003366; }
+    h2 { color: #555; font-size: 22px; font-weight: normal; }
+    .search-box { padding: 15px; background: #f5f5f5; border-radius: 5px; margin: 15px 0; }
+    label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 18px; }
+    input[type=text] { font-size: 20px; padding: 8px; width: 100%; box-sizing: border-box; }
+    button { font-size: 18px; padding: 10px 20px; margin-top: 10px; cursor: pointer; }
+    .help { color: #444; margin-top: 25px; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <h1>Từ điển Anh-Việt / Việt-Anh</h1>
+  <h2>English &harr; Vietnamese Dictionary</h2>
+
+  <main class="search-box">
+    <form id="dict-form" role="search">
+      <label for="word">Tra từ (Look up word):</label>
+      <input type="text" id="word" name="word" autofocus required autocomplete="off" spellcheck="false">
+      <button type="submit">Tra (Look up)</button>
+    </form>
+  </main>
+
+  <section class="help">
+    <p>Gõ từ tiếng Anh hoặc tiếng Việt rồi nhấn Enter để tra.</p>
+    <p>Type an English or Vietnamese word and press Enter to look it up.</p>
+  </section>
+
+  <script>
+    document.getElementById('dict-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var w = document.getElementById('word').value.trim();
+      if (w) {
+        window.location.href = '/api/query/Default%20Group/' + encodeURIComponent(w);
+      }
+    });
+  </script>
+</body>
+</html>

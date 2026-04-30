@@ -452,13 +452,15 @@ Khi ban mo file PDF, may tinh se mo bang Microsoft Edge. NVDA doc file PDF tot n
 
 ---
 
-## Tu Dien Anh-Viet Voi GoldenDict
+## Tu Dien Anh-Viet
 
-1. Tu Desktop, mo "Tu Dien" (hoac nhan "T").
-2. Chuong trinh se vao ngay o tim kiem.
-3. Go tu can tra, nhan Enter. Hoac nhan Mui ten xuong / len de xem cac ket qua tuong tu roi nhan Enter.
-4. Nhan Control + A, Control + C, roi NVDA + C.
-	(Chon tat ca, sao chep. Sau do NVDA doc noi dung da sao chep qua phim tat NVDA + C.)
+1. Tu Desktop, mo "Tu Dien" (hoac nhan "T"). Firefox se mo trang tu dien.
+2. Con tro o ngay o tim kiem (khong can nhan Tab).
+3. Go tu can tra (tieng Anh hoac tieng Viet), nhan Enter.
+4. NVDA tu dong doc nghia. Nhan Mui ten xuong de doc tiep, hoac nhan H de nhay den tieu de tu dien.
+5. De tra tu khac, nhan Tab den o tim kiem o dau trang, go tu moi, nhan Enter.
+
+Meo: Nhan NVDA + F7 de mo danh sach tieu de tren trang.
 
 ---
 ## May Tinh Bo Tui (Calculator)

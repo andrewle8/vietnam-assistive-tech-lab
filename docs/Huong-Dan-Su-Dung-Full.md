@@ -452,13 +452,15 @@ Khi bạn mở file PDF, máy tính sẽ mở bằng Microsoft Edge. NVDA đọc
 
 ---
 
-## Từ Điển Anh-Việt Với GoldenDict
+## Từ Điển Anh-Việt
 
-1. Từ Desktop, mở "Từ Điển" (hoặc nhấn "T").
-2. Chương trình sẽ vào ngay ô tìm kiếm.
-3. Gõ từ cần tra, nhấn Enter. Hoặc nhấn Mũi tên xuống / lên để xem các kết quả tương tự rồi nhấn Enter.
-4. Nhấn Control + A, Control + C, rồi NVDA + C.
-	(Chọn tất cả, sao chép. Sau đó NVDA đọc nội dung đã sao chép qua phím tắt NVDA + C.)
+1. Từ Desktop, mở "Từ Điển" (hoặc nhấn "T"). Firefox sẽ mở trang từ điển.
+2. Con trỏ ở ngay ô tìm kiếm (không cần nhấn Tab).
+3. Gõ từ cần tra (tiếng Anh hoặc tiếng Việt), nhấn Enter.
+4. NVDA tự động đọc nghĩa. Nhấn Mũi tên xuống để đọc tiếp, hoặc nhấn H để nhảy đến tiêu đề từ điển.
+5. Để tra từ khác, nhấn Tab đến ô tìm kiếm ở đầu trang, gõ từ mới, nhấn Enter.
+
+Mẹo: Nhấn NVDA + F7 để mở danh sách tiêu đề trên trang.
 
 ---
 ## Máy Tính Bỏ Túi (Calculator)

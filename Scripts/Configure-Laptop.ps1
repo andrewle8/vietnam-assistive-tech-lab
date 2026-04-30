@@ -869,7 +869,7 @@ public class ShellLinkCreator {
         @{ Name = "Readmate"; Target = "C:\Program Files\SaoMai\sm_readmate\sm_readmate.exe"; AltTarget = "C:\Program Files (x86)\SaoMai\sm_readmate\sm_readmate.exe"; Desc = "Sao Mai Readmate Accessible Reader" },
         @{ Name = "Sao Mai Typing Tutor"; Target = "C:\Program Files (x86)\SaoMai\SMTT\SMTT.exe"; AltTarget = "C:\Program Files\SaoMai\SMTT\SMTT.exe"; IconLocation = "%SystemRoot%\System32\imageres.dll,116"; Desc = "Sao Mai Vietnamese Typing Tutor" },
         @{ Name = "Thùng Rác"; Target = "explorer.exe"; Args = "shell:RecycleBinFolder"; IconLocation = "%SystemRoot%\System32\shell32.dll,31"; Desc = "Thùng rác - khôi phục tập tin đã xóa" },
-        @{ Name = "Từ Điển"; Target = "C:\Program Files\GoldenDict\GoldenDict.exe"; AltTarget = "C:\Program Files (x86)\GoldenDict\GoldenDict.exe"; IconLocation = $goldenDictIcoPath; Desc = "GoldenDict - Offline Dictionary" },
+        @{ Name = "Từ Điển"; Target = "C:\Program Files\Mozilla Firefox\firefox.exe"; AltTarget = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"; Args = "http://localhost:2628/dict.html"; IconLocation = $goldenDictIcoPath; Desc = "Từ điển Anh-Việt (offline) - opens in Firefox so NVDA browse mode works" },
         @{ Name = "USB"; Target = "explorer.exe"; Args = "C:\StudentUSB"; IconLocation = "%SystemRoot%\System32\imageres.dll,109"; Desc = "Open student USB folder" },
         @{ Name = "VLC media player"; Target = "C:\Program Files\VideoLAN\VLC\vlc.exe"; AltTarget = "C:\Program Files (x86)\VideoLAN\VLC\vlc.exe"; Desc = "VLC Media Player" },
         @{ Name = "Wikipedia"; Target = "C:\Program Files\Mozilla Firefox\firefox.exe"; AltTarget = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"; Args = "http://localhost:21808/"; IconLocation = "C:\Program Files\Kiwix\kiwix-desktop.exe,0"; Desc = "Wikipedia (offline) - opens in Firefox so NVDA browse mode works" },
@@ -2892,6 +2892,189 @@ try {
     }
 } catch {
     Write-Log "Could not deploy GoldenDict config: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 35b: Install SilverDict for the NVDA-accessible dictionary path. NVDA
+# cannot browse-mode GoldenDict's QtWebEngine article view (NVDA #10838 closed
+# Abandoned 2024-07-02, no upstream fix), so we run SilverDict (Flask backend
+# that reads StarDict directly) on localhost and front it with Firefox where
+# browse mode works natively. Mirrors the kiwix-serve pattern in Step 34b.
+# GoldenDict 1.5.1 stays installed for sighted users via Start Menu; the
+# 'Từ Điển' desktop shortcut now points at Firefox http://localhost:2628/dict.html.
+Write-Log "Step 35b: Installing SilverDict for NVDA-accessible dictionary path..." "INFO"
+try {
+    $silverInstallDir   = "C:\Program Files\SilverDict"
+    $silverBundleSource = Join-Path (Split-Path -Parent $PSScriptRoot) "Installers\SilverDict\SilverDict"
+    $silverConfigSource = Join-Path (Split-Path -Parent $PSScriptRoot) "Config\silverdict-config"
+    $goldenDictContent  = "C:\Program Files (x86)\GoldenDict\content"
+
+    if (-not (Test-Path $silverBundleSource)) {
+        Write-Log "SilverDict bundle not found at $silverBundleSource (run 0-Download-Installers.ps1 first)" "WARNING"
+    } else {
+        # Stop any running SilverDict so we can replace its bundled python.exe
+        # without sharing-violation errors. The scheduled task respawns it later.
+        $silverProcs = Get-Process -Name "pythonw","python" -ErrorAction SilentlyContinue |
+            Where-Object { $_.Path -and $_.Path -like "$silverInstallDir\*" }
+        if ($silverProcs) {
+            Stop-Process -InputObject $silverProcs -Force -ErrorAction SilentlyContinue
+            Start-Sleep -Seconds 1
+        }
+
+        if (-not (Test-Path $silverInstallDir)) {
+            New-Item -Path $silverInstallDir -ItemType Directory -Force | Out-Null
+        }
+
+        # robocopy /E (no /MIR/PURGE) — additive copy, idempotent across re-runs.
+        $null = robocopy $silverBundleSource $silverInstallDir /E /R:1 /W:1 /NJH /NJS /NFL /NDL
+        if ($LASTEXITCODE -ge 8) {
+            throw "robocopy failed (exit $LASTEXITCODE) copying $silverBundleSource to $silverInstallDir"
+        }
+
+        # Replace the 3 NVDA-friendly HTML files. These bundle edits make every
+        # served page (entry / results / not-found) screen-reader-clean: <h1>
+        # for the looked-up word, <h2> per dictionary heading, lang="vi", and a
+        # search box at the top of every page so students do back-to-back lookups
+        # without leaving the dictionary surface.
+        $htmlReplacements = @(
+            @{ Source = (Join-Path $silverConfigSource "build\dict.html");                              Dest = (Join-Path $silverInstallDir "program\server\build\dict.html") },
+            @{ Source = (Join-Path $silverConfigSource "templates\articles_standalone.html");           Dest = (Join-Path $silverInstallDir "program\server\app\templates\articles_standalone.html") },
+            @{ Source = (Join-Path $silverConfigSource "templates\suggestions.html");                   Dest = (Join-Path $silverInstallDir "program\server\app\templates\suggestions.html") }
+        )
+        foreach ($r in $htmlReplacements) {
+            if (Test-Path $r.Source) {
+                Copy-Item -Path $r.Source -Destination $r.Dest -Force
+            } else {
+                Write-Log "SilverDict HTML override missing: $($r.Source)" "WARNING"
+            }
+        }
+
+        # Stage StarDict files into SilverDict's source dir (mirroring GoldenDict's
+        # content layout). Duplication is intentional: GoldenDict reads from its
+        # own content dir, SilverDict reads from here. ~12 MB total.
+        $silverSourceDir = Join-Path $silverInstallDir "source"
+        if (-not (Test-Path $silverSourceDir)) {
+            New-Item -Path $silverSourceDir -ItemType Directory -Force | Out-Null
+        }
+        $stardictFiles = @(
+            "$goldenDictContent\en-vi\star_anhviet.ifo",
+            "$goldenDictContent\en-vi\star_anhviet.idx",
+            "$goldenDictContent\en-vi\star_anhviet.dict.dz",
+            "$goldenDictContent\vi-en\star_vietanh.ifo",
+            "$goldenDictContent\vi-en\star_vietanh.idx",
+            "$goldenDictContent\vi-en\star_vietanh.dict.dz"
+        )
+        $copied = 0
+        foreach ($f in $stardictFiles) {
+            if (Test-Path $f) {
+                Copy-Item -Path $f -Destination $silverSourceDir -Force
+                $copied++
+            }
+        }
+
+        # Pre-seed Student's ~/.silverdict/ with the dict list, group, and source path
+        # so SilverDict has everything it needs at first launch — no manual UI scan.
+        # On first server start the StarDict readers index into dictionaries.db; the
+        # 30-second indexing pass overlaps with the rest of Student logon, so the
+        # dict shortcut is ready by the time the student opens it.
+        $studentSilverDir = "C:\Users\Student\.silverdict"
+        if (-not (Test-Path $studentSilverDir)) {
+            New-Item -Path $studentSilverDir -ItemType Directory -Force | Out-Null
+        }
+
+        # Configure-Laptop.ps1 already ships with a UTF-8 BOM so the literal
+        # Vietnamese chars below round-trip correctly (PS5.1 would otherwise
+        # read .ps1 as ANSI/CP1252 and double-encode on Set-Content).
+        $dictionariesYaml = @"
+- dictionary_display_name: "Từ điển Anh-Việt"
+  dictionary_filename: 'C:\Program Files\SilverDict\source\star_anhviet.ifo'
+  dictionary_format: StarDict (.ifo)
+  dictionary_name: __star_anhviet
+- dictionary_display_name: "Từ điển Việt-Anh"
+  dictionary_filename: 'C:\Program Files\SilverDict\source\star_vietanh.ifo'
+  dictionary_format: StarDict (.ifo)
+  dictionary_name: __star_vietanh
+"@
+        # The "Memory" group is special-cased in SilverDict (settings.py:130 +
+        # dictionaries.py:129): if ANY dict is in this group, the startup loader
+        # uses a serial for-loop instead of ThreadPoolExecutor.map. That matters
+        # because executor.map silently swallows exceptions in worker threads —
+        # and the bigger 387k-word star_anhviet dict (~9 MB .idx) loses the
+        # parallel-load race, so it gets dropped from self._dictionaries with
+        # no log entry, causing /api/lookup/__star_anhviet/X to KeyError.
+        # Putting both dicts in "Memory" forces serial load AND keeps both
+        # indexes in RAM for sub-ms lookups (~60 MB RAM total — fine on 8GB+).
+        $groupsYaml = @"
+- lang: !!set {}
+  name: Default Group
+- lang: !!set {}
+  name: Memory
+"@
+        $junctionYaml = @"
+__star_anhviet: !!set
+  Default Group: null
+  Memory: null
+__star_vietanh: !!set
+  Default Group: null
+  Memory: null
+"@
+        $miscYaml = @"
+history_size: 100
+num_suggestions: 10
+sources:
+- 'C:\Program Files\SilverDict\source'
+"@
+        $preferencesYaml = @"
+listening_address: 127.0.0.1
+stardict_load_syns: false
+suggestions_mode: right-side
+ngram_stores_keys: false
+running_mode: normal
+chinese_preference: none
+check_for_updates: false
+full_text_search_diacritic_insensitive: false
+autoplay_audio: false
+"@
+        Set-Content -Path (Join-Path $studentSilverDir "dictionaries.yaml")  -Value $dictionariesYaml  -Encoding UTF8 -Force
+        Set-Content -Path (Join-Path $studentSilverDir "groups.yaml")        -Value $groupsYaml        -Encoding UTF8 -Force
+        Set-Content -Path (Join-Path $studentSilverDir "junction_table.yaml") -Value $junctionYaml     -Encoding UTF8 -Force
+        Set-Content -Path (Join-Path $studentSilverDir "misc.yaml")          -Value $miscYaml          -Encoding UTF8 -Force
+        Set-Content -Path (Join-Path $studentSilverDir "preferences.yaml")   -Value $preferencesYaml   -Encoding UTF8 -Force
+
+        icacls $studentSilverDir /grant "Student:(OI)(CI)M" /T /Q 2>$null | Out-Null
+
+        # Hidden VBS launcher: wscript is non-console subsystem; pythonw.exe is
+        # the console-less Python. Together they keep SilverDict invisible for
+        # the lifetime of the server (no flicker on logon).
+        $silverPythonw  = Join-Path $silverInstallDir "env\pythonw.exe"
+        $silverServerPy = Join-Path $silverInstallDir "program\server\server.py"
+        $vbsPath        = Join-Path $silverInstallDir "start-silverdict.vbs"
+        $vbsContent = @"
+Set WshShell = CreateObject("WScript.Shell")
+WshShell.Run """$silverPythonw"" -Xutf8 ""$silverServerPy"" 127.0.0.1:2628", 0, False
+Set WshShell = Nothing
+"@
+        Set-Content -Path $vbsPath -Value $vbsContent -Encoding ASCII -Force
+
+        # Scheduled Task fires at every Student logon. Restart 3x on crash.
+        $studentUser = "$env:COMPUTERNAME\Student"
+        $action    = New-ScheduledTaskAction -Execute "wscript.exe" -Argument "`"$vbsPath`""
+        $trigger   = New-ScheduledTaskTrigger -AtLogOn -User $studentUser
+        $principal = New-ScheduledTaskPrincipal -UserId $studentUser -LogonType Interactive
+        $settings  = New-ScheduledTaskSettingsSet `
+            -AllowStartIfOnBatteries `
+            -DontStopIfGoingOnBatteries `
+            -ExecutionTimeLimit (New-TimeSpan -Days 0) `
+            -RestartCount 3 `
+            -RestartInterval (New-TimeSpan -Minutes 1) `
+            -MultipleInstances IgnoreNew
+        Register-ScheduledTask -TaskName "SilverDictServe" -Action $action -Trigger $trigger -Principal $principal -Settings $settings -Force | Out-Null
+
+        Write-Log "SilverDict installed ($copied/$($stardictFiles.Count) StarDict files) + 'SilverDictServe' task registered (localhost:2628, Firefox at /dict.html)" "SUCCESS"
+        $successCount++
+    }
+} catch {
+    Write-Log "Could not set up SilverDict: $($_.Exception.Message)" "ERROR"
     $failCount++
 }
 

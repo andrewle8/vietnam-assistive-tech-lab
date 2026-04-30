@@ -81,6 +81,16 @@
     "url_template": "https://github.com/goldendict/goldendict/releases/download/{version}/GoldenDict-{version}-Install.exe",
     "destination": "Utilities/GoldenDict/GoldenDict-{version}-Install.exe"
   },
+  "silverdict": {
+    "source": "vendor",
+    "version": "1.3.1",
+    "url_template": "https://github.com/Crissium/SilverDict/releases/download/v{version}/SilverDict-windows.zip",
+    "destination": "SilverDict/SilverDict-windows-v{version}.zip",
+    "extract": true,
+    "extract_to": "SilverDict/",
+    "final_path": "SilverDict/SilverDict/program/server/server.py",
+    "_note": "SilverDict v1.3.1 bundled-Windows release: ~66MB zip with embedded Python 3.12 + Flask backend that serves StarDict over HTTP. Powers the NVDA-accessible dictionary path: server runs at Student logon on localhost:2628; the Tu Dien desktop shortcut opens Firefox to /dict.html. NVDA cannot browse-mode GoldenDict's QtWebEngine article view (NVDA #10838 is closed-Abandoned 2024-07-02 with no upstream fix), so Firefox is the accessible default. GoldenDict 1.5.1 stays installed for sighted users via Start Menu. Bundle layout: SilverDict/SilverDict/{env,program,source,setup.bat}. SHA256 (vendor-published): 748dc21899dcd79ffbb64f3480bd6e2e6d0698ef522de524ece20fa0f89043e7"
+  },
   "stardict_en_vi": {
     "source": "vendor",
     "url_template": "https://raw.githubusercontent.com/dynamotn/stardict-vi/master/en-vi/star_anhviet.ifo",

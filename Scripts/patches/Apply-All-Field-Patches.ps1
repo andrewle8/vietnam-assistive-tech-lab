@@ -15,11 +15,15 @@
 #                                    Wikipedia.lnk → Firefox+localhost
 #   2. Patch-GoldenDict-Paths.ps1  — dictionary path, hide side panes,
 #                                    disable scan popup
-#   3. Patch-Readmate-Prefs.ps1    — Microsoft An TTS, no double-read,
+#   3. Fix-SilverDict.ps1          — install SilverDict + scheduled task,
+#                                    Từ Điển.lnk → Firefox+localhost:2628 (the
+#                                    NVDA-accessible dictionary path; GoldenDict
+#                                    stays for sighted Start-Menu use)
+#   4. Patch-Readmate-Prefs.ps1    — Microsoft An TTS, no double-read,
 #                                    disable auto-play
-#   4. stu-resolver/Apply-Patch.ps1 — STU- USB → drive D: pinning + Office,
+#   5. stu-resolver/Apply-Patch.ps1 — STU- USB → drive D: pinning + Office,
 #                                    Firefox, Audacity defaults
-#   5. 3-Configure-NVDA.ps1        — Student nvda.ini + addons + SAPI5 mirror
+#   6. 3-Configure-NVDA.ps1        — Student nvda.ini + addons + SAPI5 mirror
 #                                    + UniKey + RHVoice/manifest patches
 
 [CmdletBinding()]
@@ -74,6 +78,7 @@ Start-Transcript -Path $transcriptPath -IncludeInvocationHeader | Out-Null
 $steps = @(
     @{ Name = 'Fix-Kiwix-Library';      Path = Join-Path $patchesDir 'Fix-Kiwix-Library.ps1' }
     @{ Name = 'Patch-GoldenDict-Paths'; Path = Join-Path $patchesDir 'Patch-GoldenDict-Paths.ps1' }
+    @{ Name = 'Fix-SilverDict';         Path = Join-Path $patchesDir 'Fix-SilverDict.ps1' }
     @{ Name = 'Patch-Readmate-Prefs';   Path = Join-Path $patchesDir 'Patch-Readmate-Prefs.ps1' }
     @{ Name = 'stu-resolver';           Path = Join-Path $patchesDir 'stu-resolver\Apply-Patch.ps1' }
     @{ Name = '3-Configure-NVDA';       Path = Join-Path $scriptsDir '3-Configure-NVDA.ps1' }
@@ -136,6 +141,7 @@ Write-Host ""
 Write-Host "Before continuing:" -ForegroundColor Yellow
 Write-Host "  - Close GoldenDict if open (this patch will force-stop it)" -ForegroundColor Yellow
 Write-Host "  - Close SM Readmate if open (this patch will force-stop it)" -ForegroundColor Yellow
+Write-Host "  - SilverDict (Python server) will be force-stopped if running" -ForegroundColor Yellow
 Write-Host "  - NVDA will be stopped briefly during the addon refresh and restarted" -ForegroundColor Yellow
 Write-Host "    automatically at the end (student loses speech for ~10 seconds)" -ForegroundColor Yellow
 Write-Host ""

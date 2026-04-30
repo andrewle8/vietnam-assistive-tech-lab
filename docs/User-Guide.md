@@ -435,13 +435,15 @@ When you open a PDF the laptop opens it with Microsoft Edge. NVDA reads PDFs bes
 
 ---
 
-## English-Vietnamese Dictionary with GoldenDict
+## English-Vietnamese Dictionary
 
-1. From Desktop, open "Từ Điển" (or press "T").
-2. The program starts in the search box.
-3. Type the word, press Enter. Or press Down / Up Arrow to see other similar search results and press Enter.
-4. Press Control + A, Control + C, and NVDA + C. 
-	(Select all then copy. NVDA then plays the copied test with keyboard shortcut NVDA + C)
+1. From Desktop, open "Từ Điển" (or press "T"). Firefox opens to the dictionary page.
+2. The cursor is already in the search box (no need to press Tab).
+3. Type the word (English or Vietnamese), press Enter.
+4. NVDA reads the definition automatically. Press Down Arrow to keep reading, or H to jump between dictionary headings.
+5. To look up another word, Tab back to the search box at the top of the page, type the new word, press Enter.
+
+Tip: Press NVDA + F7 to open the headings list for the page.
 
 ---
 
