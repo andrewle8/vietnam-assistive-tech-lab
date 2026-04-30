@@ -512,7 +512,7 @@ If you hear nothing, the volume may be muted. Press the **Volume Up** key severa
 
 **Step 5.** Find your USB. Press **Tab** until you hear "navigation tree". Arrow down until you hear your USB drive named "STU-" followed by your student ID number. Press **Enter** to open it and press tab once to move to the USB files.
 
-**Step 6.** Start NVDA. Press **S**, or arrow until you hear "Start-NVDA" then **Enter**. Wait 5 to 10 seconds. You will hear the NVDA startup sound. Wait another 5-10 seconds and you will hear "starting NVDA". Please wait at least 30-60 seconds for it to load. It takes time for the PC to load NVDA fully. Then you will hear NVDA read "Start-NVDA" icon if no buttons were pressed after waiting.
+**Step 6.** Start NVDA. Press **S** to find Start-NVDA, then **Enter**. After 5-10 seconds you will hear the startup sound. After another 5-10 seconds you will hear "starting NVDA". Wait 30-60 seconds total for NVDA to fully load. If you did not press any keys, NVDA will then read "Start-NVDA" icon.
 
 **Step 7.** Turn off the computer's voice. Press **Ctrl + Windows + Enter** again. Now only your NVDA is talking.
 
@@ -524,8 +524,6 @@ You can now use the computer like normal.
 2. Quit NVDA: press **NVDA + Q**, then **Enter**.
 3. Wait until NVDA stops talking.
 4. Unplug your USB.
-
-It is important to quit NVDA before unplugging your USB.
 
 ### If You Have Help Nearby
 

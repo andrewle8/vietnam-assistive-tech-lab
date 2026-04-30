@@ -534,7 +534,7 @@ Nếu không nghe thấy gì, có thể loa đã tắt tiếng. Nhấn phím **T
 
 **Bước 5.** Tìm USB của bạn. Nhấn **Tab** cho đến khi nghe "navigation tree" (cây điều hướng). Nhấn mũi tên xuống cho đến khi nghe ổ USB của bạn có tên "STU-" theo sau là số hiệu học sinh của bạn. Nhấn **Enter** để mở, rồi nhấn Tab một lần để chuyển đến các tập tin trong USB.
 
-**Bước 6.** Khởi động NVDA. Nhấn **S**, hoặc nhấn mũi tên cho đến khi nghe "Start-NVDA" rồi **Enter**. Đợi 5 đến 10 giây. Bạn sẽ nghe âm thanh khởi động NVDA. Đợi thêm 5-10 giây nữa và bạn sẽ nghe "đang khởi động NVDA". Vui lòng đợi ít nhất 30-60 giây để NVDA tải xong. Máy tính cần thời gian để tải NVDA hoàn toàn. Nếu không nhấn nút nào sau khi đợi, bạn sẽ nghe NVDA đọc biểu tượng "Start-NVDA".
+**Bước 6.** Khởi động NVDA. Nhấn **S** để tìm Start-NVDA, rồi **Enter**. Sau 5-10 giây bạn sẽ nghe âm thanh khởi động. Sau thêm 5-10 giây nữa bạn sẽ nghe "đang khởi động NVDA". Đợi tổng cộng 30-60 giây để NVDA tải xong. Nếu không nhấn phím nào, NVDA sẽ đọc biểu tượng "Start-NVDA".
 
 **Bước 7.** Tắt giọng nói của máy. Nhấn **Ctrl + Windows + Enter** lần nữa. Bây giờ chỉ NVDA của bạn đang nói.
 
@@ -546,8 +546,6 @@ Bạn có thể dùng máy tính như bình thường.
 2. Tắt NVDA: nhấn **NVDA + Q**, rồi **Enter**.
 3. Đợi cho NVDA ngừng nói.
 4. Rút USB.
-
-Quan trọng: hãy tắt NVDA trước khi rút USB.
 
 ### Nếu Có Người Giúp Ở Gần
 
