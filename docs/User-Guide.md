@@ -508,23 +508,32 @@ Your USB has a launcher called **Start-NVDA** at the top of the drive. You can p
 
 When you sit down at the computer, NVDA is not running yet, so you cannot hear anything. Use the computer's built-in voice (Narrator) for one minute to start your own NVDA, then turn the built-in voice off.
 
-**Step 1 — Plug in your headphones.** Public computers often have the speakers turned off, and headphones keep your work private.
+**Step 1 — Plug in your headphones if possible**.
 
 **Step 2 — Turn on the computer's voice.** Press **Ctrl + Windows + Enter**. The computer will start talking. The voice sounds different from your NVDA. That is normal.
 
-If you hear nothing, the volume may be muted. Press the **Volume Up** key several times. If you still hear nothing, ask for help (see below).
+If you hear nothing, the volume may be muted. Press the **Volume Up** key several times (usually Fn + F4 or F4 on a laptop). If you still hear nothing, ask for help (see below).
 
 **Step 3 — Plug in your USB.** Find a rectangular USB port on the front of the computer or the side of a laptop. The Braille label faces upward.
 
 **Step 4 — Open File Explorer.** Press **Windows + E**.
 
-**Step 5 — Find your USB.** Press **Tab** until you hear a list of drives. Arrow down until you hear **STU-001** (or your student number). Press **Enter** to open it.
+**Step 5 — Find your USB.** Press **Tab** until you hear "navigation tree". Arrow down until you hear your USB drive named "STU-" followed by your student ID number. Press **Enter** to open it and press tab once to move to the USB files.
 
-**Step 6 — Start NVDA.** Press **S**, then **Enter**. Wait 5 to 10 seconds. You will hear the NVDA startup sound.
+**Step 6 — Start NVDA.** Press **S**, or arrow until you hear "Start-NVDA" then **Enter**. Wait 5 to 10 seconds. You will hear the NVDA startup sound. Wait another 5-10 seconds and you will hear "starting NVDA". Please wait at least 30-60 seconds for it to load. It takes time for the PC to load. Then you will hear NVDA read "Start-NVDA" icon if no buttons were pressed after waiting.
 
 **Step 7 — Turn off the computer's voice.** Press **Ctrl + Windows + Enter** again. Now only your NVDA is talking.
 
 You can now use the computer like normal.
+
+### When You Are Done: Quit NVDA
+
+1. Save your files to your USB. Do **not** save them to the other computer.
+2. Quit NVDA: press **NVDA + Q**, then **Enter**.
+3. Wait until NVDA stops talking.
+4. Unplug your USB.
+
+It is important to quit NVDA before unplugging your USB.
 
 ### If You Have Help Nearby
 
@@ -534,19 +543,5 @@ If a sighted person is nearby (a librarian, café staff, friend, or family membe
 2. "Please open File Explorer. The shortcut is Windows + E."
 3. "Please open the drive named STU- and my number." (For example: STU-042.)
 4. "Please double-click Start-NVDA."
-5. "Thank you. I will hear a startup sound when it is ready."
 
-When you hear the NVDA startup sound, you can take over from the keyboard.
-
-### When You Are Done
-
-1. Save your files to your USB. Do **not** save them to the other computer.
-2. Quit NVDA: press **NVDA + Q**, then **Enter**.
-3. Wait until NVDA stops talking.
-4. Unplug your USB.
-
-### Things to Remember
-
-- **Always save your files to your USB.** Files left on a public computer are not private and may be erased.
-- **Do not lend your USB.** It has your personal settings and your homework.
-- **If pressing Enter on Start-NVDA does nothing,** that computer may block USB programs. Try a different computer or ask for help.
+When you hear the NVDA startup sound, you can take over from the keyboard. It will take a minute or so to fully load.
