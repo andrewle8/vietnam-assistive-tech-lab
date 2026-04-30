@@ -70,6 +70,19 @@ try {
     if (-not (Test-Path $KiwixServeSource)) {
         throw "kiwix-serve.exe source not found at $KiwixServeSource (run 0-Download-Installers.ps1 first)"
     }
+    # Stop kiwix-serve before overwriting the binary. On previously-deployed
+    # laptops the KiwixServe scheduled task has already auto-launched it at
+    # Student logon, holding an exclusive write lock on kiwix-serve.exe.
+    # Without this stop, Copy-Item below fails with "process cannot access the
+    # file ... because it is being used by another process" and the binary
+    # stays at the prior version. The end-of-script Start-ScheduledTask kick
+    # respawns it on the new binary. Confirmed in 2026-04-30 PC-07 field-patch.
+    $kiwixProcs = Get-Process -Name "kiwix-serve" -ErrorAction SilentlyContinue
+    if ($kiwixProcs) {
+        Write-Host "  Stopping kiwix-serve (PIDs: $($kiwixProcs.Id -join ', ')) so binary can be replaced..."
+        Stop-Process -InputObject $kiwixProcs -Force -ErrorAction SilentlyContinue
+        Start-Sleep -Seconds 1
+    }
     $kiwixServeDest = Join-Path $KiwixInstallDir "kiwix-serve.exe"
     Copy-Item -Path $KiwixServeSource -Destination $kiwixServeDest -Force
     $sizeMB = [math]::Round((Get-Item $kiwixServeDest).Length / 1MB, 1)
