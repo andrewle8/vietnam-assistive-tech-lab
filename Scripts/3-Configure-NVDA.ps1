@@ -41,17 +41,32 @@ Write-Log "Target config: $nvdaConfigPath" "INFO"
 # Step 0: If NVDA is running, stop it before we touch nvda.ini or the addons
 # directory. On already-deployed laptops where Student is auto-logged in, NVDA
 # holds open file handles into addons\<name>\synthDrivers\*.pyd and
-# globalPlugins\*; deleting those directories with Remove-Item -Recurse -Force
-# (Step 4) while NVDA is loaded throws sharing violations, leaves the addon
-# half-installed, and on the next reload NVDA crashes — student loses speech.
-# Save the running-state so Step 8 knows to restart.
+# globalPlugins\*; replacing those directories while NVDA is loaded races with
+# its still-open handles, and on next reload NVDA can't load the addon
+# (ModuleNotFoundError on the synthDriver) — student gets English fallback
+# instead of Vietnamese. Stop-Process returns immediately but file-handle
+# release lags, so poll until the processes are actually gone before
+# proceeding. Save the running-state so Step 8 knows to restart.
 $wasNvdaRunning = $false
-$nvdaInitial = Get-Process -Name "nvda" -ErrorAction SilentlyContinue
+$nvdaInitial = Get-Process -Name "nvda", "nvda_slave" -ErrorAction SilentlyContinue
 if ($nvdaInitial) {
-    Write-Log "NVDA is running (PID $($nvdaInitial.Id)) — stopping before config + addon work (will restart at end)..." "INFO"
-    Stop-Process -Name "nvda" -Force -ErrorAction SilentlyContinue
-    Start-Sleep -Seconds 2
+    Write-Log "NVDA is running (PIDs: $($nvdaInitial.Id -join ', ')) — stopping before config + addon work (will restart at end)..." "INFO"
     $wasNvdaRunning = $true
+    Stop-Process -InputObject $nvdaInitial -Force -ErrorAction SilentlyContinue
+
+    # Poll until processes are gone. 15s is generous; in practice handles release within 2-3s.
+    # The previous fixed 2s sleep raced on slower laptops and was the proximate cause of the
+    # 2026-04-30 "RHVoice ModuleNotFoundError after patch" incident.
+    $deadline = (Get-Date).AddSeconds(15)
+    while ((Get-Process -Name "nvda", "nvda_slave" -ErrorAction SilentlyContinue) -and ((Get-Date) -lt $deadline)) {
+        Start-Sleep -Milliseconds 500
+    }
+    $stillRunning = Get-Process -Name "nvda", "nvda_slave" -ErrorAction SilentlyContinue
+    if ($stillRunning) {
+        Write-Log "WARNING: NVDA still running after 15s; addon files may be in use during Step 4 (PIDs: $($stillRunning.Id -join ', '))" "WARNING"
+    } else {
+        Write-Log "NVDA stopped cleanly; file handles released" "INFO"
+    }
 }
 
 # Step 1: Create NVDA config directory if it doesn't exist
@@ -145,7 +160,17 @@ if (Test-Path $addonsSourceDir) {
 
                 $targetPath = Join-Path $addonsDestDir $manifestName
                 if (Test-Path $targetPath) { Remove-Item -Path $targetPath -Recurse -Force }
-                Move-Item -Path $tempExtract -Destination $targetPath -Force
+                # Copy-Item + Remove-Item rather than Move-Item: Move-Item from $env:TEMP
+                # (Admin's profile) into the Student profile preserved the source's
+                # directory entries, and on previously-deployed laptops where NVDA had
+                # the old folder cached (or held a handle past Step 0), NVDA's import
+                # system would fail to load the synth on next start (ModuleNotFoundError
+                # on synthDrivers.<name>) even though the files looked correct on disk.
+                # Copying creates fresh dirEntries that NVDA picks up cleanly. Confirmed
+                # in field 2026-04-30: a laptop where Move-Item left RHVoice unloadable
+                # was fixed by exactly this Copy + Remove sequence (sideline+restore).
+                Copy-Item -Path $tempExtract -Destination $targetPath -Recurse -Force
+                Remove-Item -Path $tempExtract -Recurse -Force -ErrorAction SilentlyContinue
                 Write-Log "Add-on '$($addon.Name)' installed as '$manifestName'" "SUCCESS"
                 $extractedManifestNames[$manifestName] = $true
             } catch {
@@ -408,6 +433,19 @@ $publicDesktop = [Environment]::GetFolderPath("CommonDesktopDirectory")
 
 if (Test-Path $unikeySourceDir) {
     try {
+        # Stop UniKey if it's running. On previously-deployed laptops the
+        # UniKey-Startup-Vietnamese scheduled task has already auto-launched
+        # UniKeyNT.exe, which holds an exclusive write lock on Program Files\UniKey\
+        # binaries. Without this stop, Copy-Item below fails with
+        # "process cannot access the file ... because it is being used by another
+        # process" and the binaries are left at the prior version (silent failure
+        # — confirmed in 2026-04-30 field-patch log).
+        $unikeyProcs = Get-Process -Name "UniKeyNT" -ErrorAction SilentlyContinue
+        if ($unikeyProcs) {
+            Write-Log "Stopping UniKey (PIDs: $($unikeyProcs.Id -join ', ')) so binaries can be replaced" "INFO"
+            Stop-Process -InputObject $unikeyProcs -Force -ErrorAction SilentlyContinue
+            Start-Sleep -Seconds 1
+        }
         if (-not (Test-Path $unikeyDestDir)) {
             New-Item -Path $unikeyDestDir -ItemType Directory -Force | Out-Null
         }
@@ -479,51 +517,102 @@ if (-not $nvdaProcess) {
     Write-Log "NVDA is already running" "INFO"
 }
 
-# Step 9: Validate deployed config loaded without schema errors.
-# NVDA's config schema changes between releases (e.g. old boolean fields becoming
-# featureFlag enums). If our deployed nvda.ini has syntax NVDA no longer accepts,
-# NVDA saves it to nvda.ini.corrupted.bak and reverts to defaults, showing a
-# Vietnamese error popup on first boot. Fail deployment loud here rather than
-# letting 18 laptops ship with silently-reset configs.
-Write-Log "Validating NVDA config loaded without schema errors..." "INFO"
-Start-Sleep -Seconds 4  # give NVDA time to write its log
+# Step 9: Validate that NVDA actually came up healthy with the configured synth.
+# Three classes of failure can ship silently if we don't check the log:
+#   1. Config-schema rejection — NVDA renames nvda.ini to nvda.ini.corrupted.bak
+#      and reverts to defaults (we shipped a config NVDA's parser no longer accepts).
+#   2. Synth load failure — NVDA tried to load synthDrivers.rhvoice but couldn't,
+#      so it falls back to oneCore (English Microsoft An). Student loses Vietnamese
+#      speech and the script's old success/fail check missed this entirely.
+#   3. NVDA process didn't even start.
+# All three were observed in the field; the script must fail LOUD on each so the
+# field tech doesn't walk away with the laptop in a half-broken state.
+Write-Log "Validating NVDA started with the configured synth..." "INFO"
+Start-Sleep -Seconds 6  # let NVDA finish init + write log
+
+$nvdaRunningNow = Get-Process -Name "nvda" -ErrorAction SilentlyContinue
 $logCandidates = @(
     "C:\Users\Student\AppData\Local\Temp\nvda.log",
     "C:\Users\Admin\AppData\Local\Temp\nvda.log"
 )
 $configRejected = $false
+$synthFailed = $false
+$synthLoaded = $null
 $logChecked = $null
+
 foreach ($logPath in $logCandidates) {
     if (Test-Path $logPath) {
         $logChecked = $logPath
         $logContent = Get-Content $logPath -Raw -ErrorAction SilentlyContinue
         # Only look at current session — previous corruption events are irrelevant.
-        # Each NVDA start logs "Starting NVDA version" — check only since the last one.
         $lastStart = ($logContent -split "`n" | Select-String -Pattern 'Starting NVDA version' | Select-Object -Last 1).LineNumber
         if ($lastStart) {
             $sessionLines = ($logContent -split "`n") | Select-Object -Skip ($lastStart - 1)
             $sessionText = $sessionLines -join "`n"
+
+            # 1. Schema rejection
             if ($sessionText -match 'ValidateError|Error loading base configuration') {
                 Write-Log "ERROR: NVDA rejected the deployed config on this start." "ERROR"
                 Write-Log "Log: $logPath" "ERROR"
-                Write-Log "Check the log for 'ValidateError' — config/nvda-config/nvda.ini likely has a key whose type changed in a newer NVDA release (e.g. boolean -> featureFlag)." "ERROR"
                 $configRejected = $true
+            }
+
+            # 2. Synth load failure — NVDA fell back from configured RHVoice.
+            if ($sessionText -match "ModuleNotFoundError: No module named 'synthDrivers\.rhvoice'") {
+                Write-Log "ERROR: NVDA could not import synthDrivers.rhvoice — RHVoice addon failed to register." "ERROR"
+                $synthFailed = $true
+            }
+            if ($sessionText -match 'Falling back to next synthDriver (\S+)') {
+                Write-Log "ERROR: NVDA fell back to '$($Matches[1])' instead of configured RHVoice. Student gets English fallback." "ERROR"
+                $synthFailed = $true
+            }
+            $synthMatch = [regex]::Match($sessionText, 'Loaded synthDriver (\S+)')
+            if ($synthMatch.Success) { $synthLoaded = $synthMatch.Groups[1].Value.Trim() }
+            if ($synthLoaded -and $synthLoaded -ne 'RHVoice') {
+                Write-Log "ERROR: NVDA loaded synthDriver '$synthLoaded' but config wanted RHVoice." "ERROR"
+                $synthFailed = $true
             }
         }
         break
     }
 }
-if ($configRejected) {
-    Write-Host "`n========================================" -ForegroundColor Red
-    Write-Host "CONFIG VALIDATION FAILED" -ForegroundColor Red
-    Write-Host "========================================" -ForegroundColor Red
-    Write-Host "NVDA rejected the deployed config. See $logChecked for the ValidateError trace." -ForegroundColor Red
-    Write-Host "Fix Config/nvda-config/nvda.ini in the repo before deploying to more laptops." -ForegroundColor Red
+
+# 3. NVDA didn't start at all
+$nvdaMissing = -not $nvdaRunningNow
+
+# Loud summary banner — field tech sees pass/fail at a glance, no log-parsing required.
+Write-Host ""
+$validationFailed = $configRejected -or $synthFailed -or $nvdaMissing
+if ($validationFailed) {
+    Write-Host "============================================================" -ForegroundColor Red
+    Write-Host "  NVDA CONFIGURATION FAILED — DO NOT WALK AWAY" -ForegroundColor Red
+    Write-Host "============================================================" -ForegroundColor Red
+    if ($nvdaMissing) {
+        Write-Host "  - nvda.exe is not running 6s after Step 8 attempted to start it." -ForegroundColor Red
+        Write-Host "    Try: Start-ScheduledTask -TaskName 'LabNVDAStart' manually." -ForegroundColor Red
+    }
+    if ($configRejected) {
+        Write-Host "  - Config schema rejected. Fix Config/nvda-config/nvda.ini" -ForegroundColor Red
+        Write-Host "    in the repo before deploying to more laptops." -ForegroundColor Red
+    }
+    if ($synthFailed) {
+        Write-Host "  - Configured synth (RHVoice) did not load. Loaded: '$synthLoaded'." -ForegroundColor Red
+        Write-Host "    Student will hear English fallback instead of Vietnamese." -ForegroundColor Red
+        Write-Host "    Recovery: kill nvda; rename addons -> addons.broken; restart NVDA;" -ForegroundColor Red
+        Write-Host "    Copy-Item addons.broken contents back into addons; restart NVDA." -ForegroundColor Red
+    }
+    if ($logChecked) { Write-Host "  Log: $logChecked" -ForegroundColor Red }
+    Write-Host "============================================================" -ForegroundColor Red
     Write-Host ""
-} elseif ($logChecked) {
-    Write-Log "NVDA config validated (no schema errors in $logChecked)" "SUCCESS"
+    Write-Log "=== NVDA Configuration FAILED — see banner ===" "ERROR"
+    exit 1
+} elseif ($logChecked -and $synthLoaded) {
+    Write-Host "============================================================" -ForegroundColor Green
+    Write-Host "  NVDA OK: synthDriver '$synthLoaded' loaded; no schema errors" -ForegroundColor Green
+    Write-Host "============================================================" -ForegroundColor Green
+    Write-Log "NVDA validated: synth=$synthLoaded, no schema errors" "SUCCESS"
 } else {
-    Write-Log "WARNING: Could not locate NVDA log to validate (NVDA may not have started yet)" "WARNING"
+    Write-Log "WARNING: NVDA running but log not yet parseable — synth load not confirmed (this is rare; if you can't hear Vi-Vu, treat as FAIL)" "WARNING"
 }
 
 Write-Host "`n========================================" -ForegroundColor Green
