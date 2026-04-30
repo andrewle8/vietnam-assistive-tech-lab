@@ -864,6 +864,7 @@ public class ShellLinkCreator {
         @{ Name = "Calculator"; Target = "calc.exe"; IconLocation = "%SystemRoot%\System32\imageres.dll,76"; Desc = "Windows Calculator" },
         @{ Name = "Excel"; Target = "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE"; Desc = "Microsoft Excel" },
         @{ Name = "Firefox"; Target = "C:\Program Files\Mozilla Firefox\firefox.exe"; AltTarget = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"; Desc = "Firefox Web Browser" },
+        @{ Name = "Hướng Dẫn"; Target = "C:\Program Files\Mozilla Firefox\firefox.exe"; AltTarget = "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"; Args = "file:///C:/LabTools/help/index.html"; IconLocation = "%SystemRoot%\System32\imageres.dll,94"; Desc = "Hướng dẫn sử dụng máy tính (Firefox + NVDA browse mode)" },
         @{ Name = "NVDA"; Target = "C:\Program Files\NVDA\nvda.exe"; AltTarget = "C:\Program Files (x86)\NVDA\nvda.exe"; Desc = "NVDA Screen Reader" },
         @{ Name = "PowerPoint"; Target = "C:\Program Files\Microsoft Office\root\Office16\POWERPNT.EXE"; AltTarget = "C:\Program Files (x86)\Microsoft Office\root\Office16\POWERPNT.EXE"; IconLocation = "C:\Program Files\Microsoft Office\root\Office16\POWERPNT.EXE,0"; Desc = "Microsoft PowerPoint" },
         @{ Name = "Readmate"; Target = "C:\Program Files\SaoMai\sm_readmate\sm_readmate.exe"; AltTarget = "C:\Program Files (x86)\SaoMai\sm_readmate\sm_readmate.exe"; Desc = "Sao Mai Readmate Accessible Reader" },
@@ -3075,6 +3076,37 @@ Set WshShell = Nothing
     }
 } catch {
     Write-Log "Could not set up SilverDict: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
+# Step 35c: Deploy the help portal HTML to C:\LabTools\help and refresh the
+# 'Hướng Dẫn' desktop shortcut. The portal is a static HTML page (built on the
+# dev machine via Scripts\Build-Help-HTML.ps1, output committed to docs\*.html).
+# NVDA browse mode works natively on local HTML in Firefox, so unlike kiwix /
+# SilverDict we don't need a server here - just copy the .html files into place
+# and point the shortcut at file:///. All real work is in Deploy-Help.ps1, which
+# is shared with the field-patch path (Fix-Help.ps1) and the remote-update path
+# (Deploy-Help-Remote.ps1).
+Write-Log "Step 35c: Deploying help portal HTML + 'Hướng Dẫn' shortcut..." "INFO"
+try {
+    $deployHelp = Join-Path $PSScriptRoot "Deploy-Help.ps1"
+    $usbRoot    = Split-Path -Parent $PSScriptRoot   # repo or USB root: <root>\Scripts\Configure-Laptop.ps1
+
+    if (-not (Test-Path $deployHelp)) {
+        Write-Log "Deploy-Help.ps1 not found at $deployHelp - skipping step 35c" "WARNING"
+        $successCount++   # Non-blocking: if missing, the laptop still functions
+    } else {
+        & $deployHelp -FromUSB $usbRoot
+        if ($LASTEXITCODE -eq 0) {
+            Write-Log "Help portal deployed to C:\LabTools\help (Hướng Dẫn shortcut refreshed)" "SUCCESS"
+            $successCount++
+        } else {
+            Write-Log "Deploy-Help.ps1 reported failures (exit $LASTEXITCODE) - see its per-stage summary above" "ERROR"
+            $failCount++
+        }
+    }
+} catch {
+    Write-Log "Could not deploy help portal: $($_.Exception.Message)" "ERROR"
     $failCount++
 }
 

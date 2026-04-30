@@ -151,6 +151,100 @@ Same pattern, but the package is the real installer (`.exe` or `.msi`):
 
 Same pattern as the book push (trigger EPUB/file in `packages`, script in `scripts`). The script runs as SYSTEM — it can touch registry, services, scheduled tasks, any user profile via absolute paths. Be careful.
 
+## Pushing user-guide HTML updates (Hướng Dẫn portal)
+
+The student-facing help portal at `C:\LabTools\help\index.html` (opened by the "Hướng Dẫn" desktop shortcut) is built from `docs/Huong-Dan-Su-Dung-Full.md` and `docs/User-Guide.md` via `Scripts/Build-Help-HTML.ps1` on the dev machine. Generated `.html` files are committed to `docs/` and ride USB syncs automatically.
+
+There are **two ways** to push doc updates to deployed laptops:
+
+### Path 1 — USB walkup (no internet required, primary path)
+
+Doc updates ride the existing field-patch chain via `Scripts/patches/Fix-Help.ps1` (step 4 of `Apply-All-Field-Patches.ps1`).
+
+```bash
+# On the dev machine
+# 1. Edit docs/Huong-Dan-Su-Dung-Full.md (or docs/User-Guide.md)
+# 2. Rebuild HTML
+.\Scripts\Build-Help-HTML.ps1
+# 3. Commit + push
+git add docs/*.html docs/*.md update-manifest.json
+git commit -m "update"
+git push
+# 4. Sync DEPLOY_ USBs (your standard robocopy)
+# 5. Plug USB into each laptop, run:
+#    <USB>:\Scripts\patches\Apply-All-Field-Patches.ps1
+```
+
+`Fix-Help.ps1` is idempotent — re-running just refreshes the HTML and shortcut. Safe at any time.
+
+### Path 2 — Remote via LabUpdateAgent (requires internet on the laptop, optional)
+
+Use this when laptops are out of physical reach but have internet at 6 PM ICT. Requires a one-time Release-asset upload; subsequent doc updates only need a manifest version bump.
+
+**One-time setup** (do once before the first remote doc push):
+
+```bash
+# Upload the remote-deploy wrapper to the installers-v1 release.
+# This script is small, stable, and never needs to change — it always pulls
+# the LATEST Deploy-Help.ps1 + LATEST docs/*.html from raw.githubusercontent.com
+# at run time.
+gh release upload installers-v1 Scripts/Deploy-Help-Remote.ps1 --repo andrewle8/vietnam-assistive-tech-lab
+
+# Compute and note the SHA256:
+shasum -a 256 Scripts/Deploy-Help-Remote.ps1
+# (or on Windows: Get-FileHash Scripts\Deploy-Help-Remote.ps1 -Algorithm SHA256)
+```
+
+**Per doc update**:
+
+```bash
+# 1. Edit MD, rebuild, commit (same as Path 1)
+.\Scripts\Build-Help-HTML.ps1
+git add docs/*.html docs/*.md
+git commit -m "update"
+git push
+
+# 2. Edit update-manifest.json — bump update_version and add the script entry
+#    (the entry stays the same on every push; only update_version changes):
+```
+
+```json
+{
+  "schema_version": 1,
+  "update_version": "2026.05.10",
+  "min_local_version": "2026.04.01",
+  "release_tag": "installers-v1",
+  "release_base": "https://github.com/andrewle8/vietnam-assistive-tech-lab/releases/download/installers-v1",
+  "notes": "Doc update — Hướng Dẫn rev N",
+  "packages": [],
+  "scripts": [
+    {
+      "id": "deploy-help",
+      "filename": "Deploy-Help-Remote.ps1",
+      "sha256": "<hash from one-time setup>"
+    }
+  ],
+  "bios_settings": {}
+}
+```
+
+```bash
+# 3. Push manifest
+git add update-manifest.json
+git commit -m "update"
+git push
+
+# 4. Wait for 6 PM ICT. Each online laptop:
+#    - Pulls the manifest, sees newer update_version
+#    - Fetches Deploy-Help-Remote.ps1 from the Release asset, verifies SHA256
+#    - The script in turn pulls the latest Deploy-Help.ps1 + docs/*.html from
+#      raw.githubusercontent.com and refreshes C:\LabTools\help\ + shortcut
+```
+
+**Why two layers (`Deploy-Help-Remote.ps1` → `Deploy-Help.ps1`)?** The agent fetches one file by URL; it does not clone the repo. The remote wrapper is a tiny stable shim that pulls the full `Deploy-Help.ps1` from raw GitHub at run time, so doc-only updates never require re-uploading anything to the Release. Only edits to `Deploy-Help.ps1` itself (which should be rare) require a re-upload + new SHA256.
+
+After the rollout settles, reset the manifest scripts array to `[]` to put the agent back in dormant mode (don't roll `update_version` backward).
+
 ## Pushing BIOS settings remotely (Dell Command | Configure)
 
 Use this to change a Dell BIOS setting across the fleet without physical access. Settings are applied via `cctk.exe` (installed on every laptop by `Configure-Laptop.ps1` Step 18 + the DCC entry in `1-Install-All.ps1`).

@@ -1,0 +1,131 @@
+/* Vietnam Lab - Help Portal stylesheet
+ * Embedded into every generated HTML page via pandoc --embed-resources.
+ * Designed for NVDA users on Firefox (file:// + browse mode):
+ *   - 18px base, 1.6 line-height: legible at default zoom for low-vision sighted helpers
+ *   - High contrast on text and table borders
+ *   - Visible focus rings (NVDA+Tab)
+ *   - Real <table> markup with header cells (NVDA reads "table 3 columns N rows")
+ */
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  font-size: 18px;
+  line-height: 1.6;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  color: #1a1a1a;
+  background: #ffffff;
+}
+
+h1 { font-size: 2em;    margin: 0 0 1rem 0; }
+h2 { font-size: 1.5em;  margin: 2em 0 0.5em 0; padding-top: 0.5em; border-top: 1px solid #ddd; }
+h3 { font-size: 1.25em; margin: 1.5em 0 0.5em 0; }
+h4 { font-size: 1.1em;  margin: 1.25em 0 0.4em 0; }
+
+p { margin: 0.6em 0; }
+
+a { color: #0042c0; }
+a:focus, a:hover { outline: 3px solid #0042c0; outline-offset: 2px; }
+
+ul, ol { padding-left: 1.5em; }
+li { margin: 0.2em 0; }
+
+code, pre {
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 0.95em;
+}
+code {
+  background: #f0f0f0;
+  padding: 0.1em 0.3em;
+  border-radius: 2px;
+}
+pre {
+  background: #f7f7f7;
+  border: 1px solid #ddd;
+  padding: 0.75em 1em;
+  overflow-x: auto;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+}
+th, td {
+  border: 1px solid #888;
+  padding: 0.5em 0.75em;
+  text-align: left;
+  vertical-align: top;
+}
+th {
+  background: #eef2f7;
+  font-weight: 600;
+}
+tr:nth-child(even) td { background: #fafafa; }
+
+hr { border: 0; border-top: 1px solid #ccc; margin: 2em 0; }
+
+blockquote {
+  margin: 1em 0;
+  padding: 0.5em 1em;
+  border-left: 4px solid #0042c0;
+  background: #f5f8ff;
+}
+
+/* Pandoc default ToC */
+nav#TOC {
+  background: #f5f5f5;
+  padding: 1em 1.5em;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin: 1.5em 0 2em 0;
+}
+nav#TOC ul { padding-left: 1.5em; margin: 0.3em 0; }
+nav#TOC > ul { padding-left: 0; list-style: none; }
+nav#TOC > ul > li { margin: 0.4em 0; }
+nav#TOC > ul > li > a { font-weight: 600; }
+nav#TOC h2 { display: none; }  /* hide pandoc's "Contents" heading; the <nav> landmark is enough */
+
+/* Index portal */
+body.help-portal h2 { border-top: none; padding-top: 0; }
+body.help-portal section {
+  margin: 1.5em 0;
+  padding: 1em 1.25em;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+body.help-portal section h2 { margin-top: 0; }
+body.help-portal .lang-links {
+  list-style: none;
+  padding: 0;
+  margin: 0.75em 0 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75em;
+}
+body.help-portal .lang-links li { margin: 0; }
+body.help-portal .lang-links a {
+  display: inline-block;
+  padding: 0.5em 1.25em;
+  font-size: 1.05em;
+  font-weight: 500;
+  border: 2px solid #0042c0;
+  border-radius: 6px;
+  text-decoration: none;
+  background: #ffffff;
+  color: #0042c0;
+}
+body.help-portal .lang-links a:hover,
+body.help-portal .lang-links a:focus {
+  background: #0042c0;
+  color: #ffffff;
+}
+
+footer {
+  margin-top: 3em;
+  padding-top: 1em;
+  border-top: 1px solid #ddd;
+  font-size: 0.9em;
+  color: #555;
+}

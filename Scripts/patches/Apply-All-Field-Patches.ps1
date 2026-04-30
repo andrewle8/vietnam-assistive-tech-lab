@@ -19,11 +19,15 @@
 #                                    Từ Điển.lnk → Firefox+localhost:2628 (the
 #                                    NVDA-accessible dictionary path; GoldenDict
 #                                    stays for sighted Start-Menu use)
-#   4. Patch-Readmate-Prefs.ps1    — Microsoft An TTS, no double-read,
+#   4. Fix-Help.ps1                — copy help-portal HTML to C:\LabTools\help,
+#                                    Hướng Dẫn.lnk → Firefox + file:// (the
+#                                    NVDA-accessible user guide; static HTML so
+#                                    no server needed unlike kiwix/SilverDict)
+#   5. Patch-Readmate-Prefs.ps1    — Microsoft An TTS, no double-read,
 #                                    disable auto-play
-#   5. stu-resolver/Apply-Patch.ps1 — STU- USB → drive D: pinning + Office,
+#   6. stu-resolver/Apply-Patch.ps1 — STU- USB → drive D: pinning + Office,
 #                                    Firefox, Audacity defaults
-#   6. 3-Configure-NVDA.ps1        — Student nvda.ini + addons + SAPI5 mirror
+#   7. 3-Configure-NVDA.ps1        — Student nvda.ini + addons + SAPI5 mirror
 #                                    + UniKey + RHVoice/manifest patches
 
 [CmdletBinding()]
@@ -79,6 +83,7 @@ $steps = @(
     @{ Name = 'Fix-Kiwix-Library';      Path = Join-Path $patchesDir 'Fix-Kiwix-Library.ps1' }
     @{ Name = 'Patch-GoldenDict-Paths'; Path = Join-Path $patchesDir 'Patch-GoldenDict-Paths.ps1' }
     @{ Name = 'Fix-SilverDict';         Path = Join-Path $patchesDir 'Fix-SilverDict.ps1' }
+    @{ Name = 'Fix-Help';               Path = Join-Path $patchesDir 'Fix-Help.ps1' }
     @{ Name = 'Patch-Readmate-Prefs';   Path = Join-Path $patchesDir 'Patch-Readmate-Prefs.ps1' }
     @{ Name = 'stu-resolver';           Path = Join-Path $patchesDir 'stu-resolver\Apply-Patch.ps1' }
     @{ Name = '3-Configure-NVDA';       Path = Join-Path $scriptsDir '3-Configure-NVDA.ps1' }

@@ -1,0 +1,20 @@
+{
+  "_comment": "List of docs that appear in the Help portal (docs/index.html). Each entry is built into two HTML files (vi + en) by Scripts/Build-Help-HTML.ps1. To add a new doc: drop two .md files into docs/, append an entry here, run Build-Help-HTML.ps1. Output paths are relative to docs/. Source paths are relative to repo root.",
+  "portal_title_vi": "Hướng Dẫn",
+  "portal_title_en": "User Guide",
+  "portal_intro_vi": "Chọn một tài liệu bên dưới để xem.",
+  "portal_intro_en": "Choose a document below.",
+  "docs": [
+    {
+      "id": "user-guide",
+      "title_vi": "Hướng dẫn sử dụng máy tính",
+      "title_en": "Computer User Guide",
+      "desc_vi": "Cách sử dụng máy tính, NVDA, Readmate, Wikipedia, từ điển và các phần mềm khác.",
+      "desc_en": "How to use the laptop, NVDA, Readmate, Wikipedia, dictionary, and other software.",
+      "source_vi": "docs/Huong-Dan-Su-Dung-Full.md",
+      "source_en": "docs/User-Guide.md",
+      "output_vi": "huong-dan.html",
+      "output_en": "user-guide.html"
+    }
+  ]
+}
