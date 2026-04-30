@@ -329,6 +329,8 @@ Then, when you are ready to read the book, press **Ctrl + P** to start the book'
 
 Once a book is open. **These shortcuts work when focus is on Readmate's top toolbar.** If Ctrl+P opens a Print dialog instead of starting narration, focus is on the article content — press F6 (or Tab / Shift+Tab) to return to the top bar.
 
+**Important: pause TTS (Ctrl+P) before pressing any navigation key (Up/Down, Alt+arrows, H).** Pressing navigation keys during active playback makes the page scroll rapidly and skips content. Pause first, navigate, then Ctrl+P to resume.
+
 | Key                        | Action                                  |
 | -------------------------- | --------------------------------------- |
 | Ctrl + P                   | Play / pause reading                    |
