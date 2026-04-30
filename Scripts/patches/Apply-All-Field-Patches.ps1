@@ -138,14 +138,11 @@ if (-not (Test-Path $kiwixServeProbe)) {
 # end (so addon directories can be replaced without sharing violations on the
 # loaded .pyd files). Student can lose unsaved state in any of these apps.
 Write-Host ""
-Write-Host "Before continuing:" -ForegroundColor Yellow
-Write-Host "  - Close GoldenDict if open (this patch will force-stop it)" -ForegroundColor Yellow
-Write-Host "  - Close SM Readmate if open (this patch will force-stop it)" -ForegroundColor Yellow
-Write-Host "  - SilverDict (Python server) will be force-stopped if running" -ForegroundColor Yellow
-Write-Host "  - NVDA will be stopped briefly during the addon refresh and restarted" -ForegroundColor Yellow
-Write-Host "    automatically at the end (student loses speech for ~10 seconds)" -ForegroundColor Yellow
+Write-Host "Heads up - the patches will force-stop these if running:" -ForegroundColor Yellow
+Write-Host "  - GoldenDict, SM Readmate, SilverDict (Python server)" -ForegroundColor Yellow
+Write-Host "  - NVDA briefly during addon refresh, restarted automatically" -ForegroundColor Yellow
+Write-Host "    at the end (student loses speech for ~10 seconds)" -ForegroundColor Yellow
 Write-Host ""
-Read-Host "Press Enter to start patching, or Ctrl+C to abort" | Out-Null
 
 # --- Run each step ---------------------------------------------------------
 
