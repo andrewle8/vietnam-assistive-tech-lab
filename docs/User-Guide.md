@@ -334,9 +334,8 @@ Once a book is open. **These shortcuts work when focus is on Readmate's top tool
 | Key                        | Action                                  |
 | -------------------------- | --------------------------------------- |
 | Ctrl + P                   | Play / pause reading                    |
-| Down Arrow / Up Arrow      | Next / previous page                    |
-| Alt + Right / Alt + Left   | Next / previous chapter                 |
-| H / Shift + H              | Next / previous heading                 |
+| Down Arrow / Up Arrow      | Next / previous line (pause first with Ctrl+P) |
+| Alt + Right / Alt + Left   | Next / previous chapter (pause first with Ctrl+P) |
 | ] / [                      | Faster / slower reading (takes effect after the current line finishes) |
 | Ctrl + ] / Ctrl + [        | Volume up / down                        |
 | Ctrl + F                   | Search text in book                     |
