@@ -64,7 +64,7 @@ The **Fn** key is on the bottom-left of the keyboard, immediately to the right o
 | Fn + F2 | Volume down      |
 | Fn + F3 | Volume up        |
 
-If you ever press a Fn combination by mistake and the F-keys start doing the wrong thing (for example, F12 stops opening Save As), you may have hit Fn + Esc — it switches the function-key default. Press **Fn + Esc** again to switch it back.
+If you ever press a Fn combination by mistake and the F-keys start doing the wrong thing (for example, F12 stops opening Save As), you may have hit Fn + Esc. That combination switches the function-key default. Press **Fn + Esc** again to switch it back.
 
 For VLC playback, use Ctrl + Up / Down inside VLC. For NVDA's voice rate (not system volume), use NVDA + Ctrl + Up / Down.
 
@@ -115,10 +115,10 @@ Vietnamese typing tutor from Sao Mai:
 ---
 ## If NVDA stops talking or speaks incorrectly:
 
-1. Press **NVDA + S** to cycle speech mode. If you accidentally pressed NVDA + S earlier, NVDA was silenced — this brings the voice back.
+1. Press **NVDA + S** to cycle speech mode. If you accidentally pressed NVDA + S earlier, NVDA was silenced. This brings the voice back.
 2. Press **Ctrl + Alt + N** to restart NVDA.
 3. Check that the headphones are plugged in and volume is up (see the Volume section above).
-4. If nothing works, ask a sighted helper to look at the screen — there may be a dialog or error message you cannot hear.
+4. If nothing works, ask a sighted helper to look at the screen. There may be a dialog or error message you cannot hear.
 
 ---
 ## Desktop Navigation
@@ -141,7 +141,7 @@ Press Enter to open a program.
 
 Tip: Press the first letter of a program name to jump to it. For example, press "F" for Firefox, "W" for Word.
 
-If pressing a letter does nothing, keyboard focus has drifted off the desktop. Press Tab once — NVDA should announce "Desktop". Now first-letter jump works. If Tab lands on the taskbar or system tray instead, press Tab again to cycle into the desktop list. You can also press any arrow key to force focus onto the icon grid.
+If pressing a letter does nothing, keyboard focus has drifted off the desktop. Press Tab once. NVDA should announce "Desktop". Now first-letter jump works. If Tab lands on the taskbar or system tray instead, press Tab again to cycle into the desktop list. You can also press any arrow key to force focus onto the icon grid.
 ### Program List
 
 - Audacity - Audio editor
@@ -315,21 +315,21 @@ When Readmate opens, you are on the main screen with focus on the left sidebar.
 
 1. Press **Ctrl + B** to activate the Bookshelf tab (if you're currently on Settings or User Guide).
 2. Press **F6** (or Tab) to move focus into the book list pane.
-3. Use the **arrow keys** (Up/Down/Left/Right) to move through the book list — NVDA reads each book title.
+3. Use the **arrow keys** (Up/Down/Left/Right) to move through the book list. NVDA reads each book title.
 4. Or press **Ctrl + F** to search books by name.
 5. When you find the book you want, press **Enter** to open it.
 
 Note: **Tab does not walk through all books**. Use the arrow keys or Ctrl+F.
 
-NVDA will start reading the book's title and reading progress. Press Control to stop the speech if needed.
+NVDA will read the book's title and progress. Press Ctrl to stop NVDA if needed.
 
-Then, when you are ready to read the book, press **Ctrl + P** to start the book's narration.
+When ready, press **Ctrl + P** to start reading aloud.
 
 ### Shortcuts
 
-Once a book is open. **These shortcuts work when focus is on Readmate's top toolbar.** If Ctrl+P opens a Print dialog instead of starting narration, focus is on the article content — press F6 (or Tab / Shift+Tab) to return to the top bar.
+These shortcuts work when focus is on the toolbar at the top of Readmate. If Ctrl+P opens a Print dialog, press F6 to return to the toolbar.
 
-**Important: pause TTS (Ctrl+P) before pressing any navigation key (Up/Down, Alt+arrows, H).** Pressing navigation keys during active playback makes the page scroll rapidly and skips content. Pause first, navigate, then Ctrl+P to resume.
+**Pause the book (Ctrl+P) before pressing any navigation key.** Pressing navigation keys while the book is reading makes the page scroll fast and skip content.
 
 | Key                        | Action                                  |
 | -------------------------- | --------------------------------------- |
@@ -351,7 +351,7 @@ Once a book is open. **These shortcuts work when focus is on Readmate's top tool
 - **Ctrl + Tab** or **F6**: switch between panes (sidebar, main content, etc.)
 - **Tab**: move within a single pane (e.g. from search field to book list)
 - **Ctrl + B**: jump directly to Bookshelf
-- **Ctrl + L**: download new books from the Sách Tiếp Cận online library. Requires a login — ask your teacher.
+- **Ctrl + L**: download new books from the Sách Tiếp Cận online library. Requires a login. Ask your teacher.
 - **Ctrl + S**: Settings
 - **Ctrl + H** (from main screen, not while reading a book): Sao Mai user guide tab
 
@@ -394,7 +394,7 @@ Press **NVDA + Space** to manually toggle between them. NVDA auto-switches when 
 | Ctrl + T / Ctrl + W            | New tab / close tab                          |
 | Ctrl + Shift + T               | Reopen last closed tab                       |
 | Ctrl + F                       | Find on page                                 |
-| F9                             | Reader Mode — strips ads, shows article only |
+| F9                             | Reader Mode (strips ads, shows article only) |
 | F5                             | Refresh                                      |
 | Ctrl + + / Ctrl + - / Ctrl + 0 | Zoom in / out / reset                        |
 |                                |                                              |
@@ -421,7 +421,7 @@ The laptop has Vietnamese Wikipedia and Wiktionary offline (no internet needed).
 
 ### Searching Only Inside Wikipedia (or Wiktionary)
 
-1. From the Kiwix home page, press **Tab** 5 times to land on the **Wikipedia** book card. (One more Tab — 6 total — lands on **Wiktionary**.) Press **Enter** to open the book; the main page (Trang Chính for Wikipedia) loads.
+1. From the Kiwix home page, press **Tab** 5 times to land on the **Wikipedia** book card. (One more Tab, 6 total, lands on **Wiktionary**.) Press **Enter** to open the book; the main page (Trang Chính for Wikipedia) loads.
 2. Press **Tab** once. The focus moves into that book's own search box.
 3. Type a topic. Press **Enter**. Results appear from that book only.
 4. Press **Down Arrow** to step through results, **Enter** on one to open the article.
@@ -444,7 +444,7 @@ When you open a PDF the laptop opens it with Microsoft Edge. NVDA reads PDFs bes
 1. Open the PDF file (press Enter on it, or open from Word).
 2. NVDA automatically switches to Browse Mode.
 3. Use **H** to jump by heading, **down arrow** to read line by line.
-4. Or press **Ctrl + Shift + U** in Edge to enable "Read Aloud" — Edge will read the document aloud using a Vietnamese voice.
+4. Or press **Ctrl + Shift + U** in Edge to enable "Read Aloud". Edge will read the document aloud using a Vietnamese voice.
 5. **Ctrl + F** to find text in the PDF.
 
 ---
@@ -477,15 +477,15 @@ Tip: Press NVDA + F7 to open the headings list for the page.
 | Ctrl + B                   | Bookmark manager                  |
 | I                          | Speak current position info       |
 
-Tip: For audiobooks, use `]` and `[` to tune speed — VLC preserves pitch. Use Ctrl + B to mark where you stopped listening.
+Tip: For audiobooks, use `]` and `[` to tune speed (VLC preserves pitch). Use Ctrl + B to mark where you stopped listening.
 
 ---
 ## Calculator
 
 1. Open Calculator from Desktop (press "C" or arrow to it).
 2. Type the calculation using number keys and operators: + - * / =
-3. **Press Enter to hear the result** — NVDA only speaks the result after you press Enter, not after each keystroke.
-4. **Esc** or **Delete** to clear and start over — NVDA confirms.
+3. **Press Enter to hear the result.** NVDA only speaks the result after you press Enter, not after each keystroke.
+4. **Esc** or **Delete** to clear and start over. NVDA confirms.
 
 Example: type `25 + 17` then press Enter → NVDA says "42".
 
@@ -499,7 +499,7 @@ Example: type `25 + 17` then press Enter → NVDA says "42".
 ---
 ## Using NVDA on Other Computers
 
-**You do not need this on your lab laptop** — NVDA starts automatically when you log in. This section is for when you want to use your USB on a public, library, or family computer that does not already have NVDA.
+**You do not need this on your lab laptop.** NVDA starts automatically when you log in. This section is for when you want to use your USB on a public, library, or family computer that does not already have NVDA.
 
 Your USB has a launcher called **Start-NVDA** at the top of the drive. You can plug your USB into almost any Windows computer and run your own NVDA from it. Nothing gets installed on the other computer, and your settings come with you.
 
@@ -507,21 +507,21 @@ Your USB has a launcher called **Start-NVDA** at the top of the drive. You can p
 
 When you sit down at the computer, NVDA is not running yet, so you cannot hear anything. Use the computer's built-in voice (Narrator) for one minute to start your own NVDA, then turn the built-in voice off.
 
-**Step 1 — Plug in your headphones if possible**.
+**Step 1.** Plug in your headphones if possible.
 
-**Step 2 — Turn on the computer's voice.** Press **Ctrl + Windows + Enter**. The computer will start talking. The voice sounds different from your NVDA. That is normal.
+**Step 2.** Turn on the computer's voice. Press **Ctrl + Windows + Enter**. The computer will start talking. The voice sounds different from your NVDA. That is normal.
 
 If you hear nothing, the volume may be muted. Press the **Volume Up** key several times (usually Fn + F4 or F4 on a laptop). If you still hear nothing, ask for help (see below).
 
-**Step 3 — Plug in your USB.** Find a rectangular USB port on the front of the computer or the side of a laptop. The Braille label faces upward.
+**Step 3.** Plug in your USB. Find a rectangular USB port on the front of the computer or the side of a laptop. The Braille label faces upward.
 
-**Step 4 — Open File Explorer.** Press **Windows + E**.
+**Step 4.** Open File Explorer. Press **Windows + E**.
 
-**Step 5 — Find your USB.** Press **Tab** until you hear "navigation tree". Arrow down until you hear your USB drive named "STU-" followed by your student ID number. Press **Enter** to open it and press tab once to move to the USB files.
+**Step 5.** Find your USB. Press **Tab** until you hear "navigation tree". Arrow down until you hear your USB drive named "STU-" followed by your student ID number. Press **Enter** to open it and press tab once to move to the USB files.
 
-**Step 6 — Start NVDA.** Press **S**, or arrow until you hear "Start-NVDA" then **Enter**. Wait 5 to 10 seconds. You will hear the NVDA startup sound. Wait another 5-10 seconds and you will hear "starting NVDA". Please wait at least 30-60 seconds for it to load. It takes time for the PC to load NVDA fully. Then you will hear NVDA read "Start-NVDA" icon if no buttons were pressed after waiting.
+**Step 6.** Start NVDA. Press **S**, or arrow until you hear "Start-NVDA" then **Enter**. Wait 5 to 10 seconds. You will hear the NVDA startup sound. Wait another 5-10 seconds and you will hear "starting NVDA". Please wait at least 30-60 seconds for it to load. It takes time for the PC to load NVDA fully. Then you will hear NVDA read "Start-NVDA" icon if no buttons were pressed after waiting.
 
-**Step 7 — Turn off the computer's voice.** Press **Ctrl + Windows + Enter** again. Now only your NVDA is talking.
+**Step 7.** Turn off the computer's voice. Press **Ctrl + Windows + Enter** again. Now only your NVDA is talking.
 
 You can now use the computer like normal.
 
