@@ -19,6 +19,8 @@ From rear to front (from screen toward you)
 **Top of screen:**
 - There is a Web Camera on the top of the screen in the middle. When using the Web Camera, make sure that the thin rectangular, gridded camera cover is to the left.
 	- (If the cover is to the right, the camera is blocked. Slide the cover to the left to use the camera.)
+
+---
 ## Important Ports
 - Headphones: right side, round hole, near the middle of the edge
 - USB drive: large rectangular port, one on each side (left and right)
@@ -31,11 +33,176 @@ The laptop uses Audio-Technica ATH-M40x headphones.
 - Put the headphone on with cable on left side of ear. Adjust the fit by holding the top of headphone and pulling the left or right side down or up.
 - Plug the headphone cable into the small round jack on the right side of the laptop right after USB-A Port.
 - The cable is detachable. It is attached to the left side of the headphone.
-- Volume is set to 50% each time the laptop starts.
 
 ### Cable replacement
 - To replace headphone cable, remove the cable by twisting it counter-clockwise. 
 - The small end (2.5mm) plugs into the headphones, the large end (3.5mm) plugs into the laptop.
+
+---
+## Volume
+
+Volume resets to 50% each time the laptop starts. Two ways to adjust:
+
+### Volume via Windows + B (safer, recommended)
+
+This walks through the system tray. No risk of accidentally pressing the wrong key combination.
+
+1. Press **Windows + B**. Focus jumps to the system tray (clock, battery, speakers area).
+2. Press **Right Arrow** until you hear "Speakers".
+3. Press **Enter** to open the speakers slider.
+4. Press **Tab** once to move past the Mute button.
+5. Press **Left** or **Right Arrow** to adjust the volume.
+6. Press **Escape** to close.
+
+### Volume via Fn Keys (quicker, find the Fn key first)
+
+The **Fn** key is on the bottom-left of the keyboard, immediately to the right of the left Ctrl key (between Ctrl and the Windows key).
+
+| Keys    | Action           |
+| ------- | ---------------- |
+| Fn + F1 | Mute / unmute    |
+| Fn + F2 | Volume down      |
+| Fn + F3 | Volume up        |
+
+If you ever press a Fn combination by mistake and the F-keys start doing the wrong thing (for example, F12 stops opening Save As), you may have hit Fn + Esc — it switches the function-key default. Press **Fn + Esc** again to switch it back.
+
+For VLC playback, use Ctrl + Up / Down inside VLC. For NVDA's voice rate (not system volume), use NVDA + Ctrl + Up / Down.
+
+---
+## Typing Position
+
+This typing position helps your fingers to reach and remember each key.
+
+- With your two pointer fingers feel for the F and J keys. The F and J keys have a bump on the bottom of the key and are near the middle of the keyboard, third row from the bottom.
+	-  F and J are in the "home row" where your all your fingers except your thumb rest.
+	- Place your other fingers on the keys next to them.  From F/J, count to other keys: left of F is D, S, and A; right of J is K, L and semicolon (;). 
+	- Right of F is G. Left of J is H.
+	
+- Both thumbs can hover or rest on the spacebar (The large, rectangular key  near the middle of the keyboard on the bottom row (two rows below the home row with F and J)
+
+---
+## Keyboard Layout
+
+- The arrow keys are on the bottom row on the right corner.
+- Feel for the down arrow which has a bump like the F and J keys. Above it is the up arrow and next to it are the left and right keys.
+-  From spacebar, count right Alt, Control, then arrow keys.
+- Delete and Down Arrow also have bumps near the bottom of the key.
+- **CapsLock** or **Insert** can both be used as the NVDA key. CapsLock is the leftmost key on the home row (the A/S/D/F row), directly above the left Shift. Insert is right next to Delete on the right side of the keyboard.
+
+---
+## Learning Keys
+
+If your finger lands on a key and you're not sure what it does, there are two safe ways to learn:
+### Option 1: NVDA Input Help Mode (NVDA + 1)
+
+1. Press **NVDA + 1** to enable "Input Help mode". NVDA announces "Input help on (vietnamese)".
+2. Now press any key. NVDA speaks the key's name and function, without executing the key. You can try any key on the keyboard.
+3. Press **NVDA + 1** again to exit (keys do their normal functions again).
+
+This is the fastest way to remind yourself of a key.
+
+### Option 2: Sao Mai Typing Tutor (SMTT)
+
+Vietnamese typing tutor from Sao Mai:
+
+1. On Desktop, press "S" to jump to "Sao Mai Typing Tutor" → Enter.
+2. Choose "Explore Keyboard" (Khám phá bàn phím).
+3. Press any key → SMTT speaks its name in Vietnamese.
+4. SMTT has typing lessons for daily practice especially useful for Vietnamese and English keyboard.
+
+**Comparison**: NVDA+1 is best for quick key lookup anywhere; SMTT is best for learning.
+
+---
+## If NVDA stops talking or speaks incorrectly:
+
+1. Press **NVDA + S** to cycle speech mode. If you accidentally pressed NVDA + S earlier, NVDA was silenced — this brings the voice back.
+2. Press **Ctrl + Alt + N** to restart NVDA.
+3. Check that the headphones are plugged in and volume is up (see the Volume section above).
+4. If nothing works, ask a sighted helper to look at the screen — there may be a dialog or error message you cannot hear.
+
+---
+## Desktop Navigation
+
+**To get to the desktop from anywhere:**
+
+1. Press **Windows + D**
+2. Press the **Down arrow** key once
+3. NVDA will announce the first icon on the desktop
+4. Use **arrow keys** to move between icons (not Tab)
+5. Press **Enter** to open the selected icon
+
+---
+
+The desktop icons are sorted alphabetically.
+
+Use arrow keys (Left, Right, Up, Down) to move between icons.
+
+Press Enter to open a program.
+
+Tip: Press the first letter of a program name to jump to it. For example, press "F" for Firefox, "W" for Word.
+
+If pressing a letter does nothing, keyboard focus has drifted off the desktop. Press Tab once — NVDA should announce "Desktop". Now first-letter jump works. If Tab lands on the taskbar or system tray instead, press Tab again to cycle into the desktop list. You can also press any arrow key to force focus onto the icon grid.
+### Program List
+
+- Audacity - Audio editor
+- Calculator - Calculator
+- Excel - Spreadsheet
+- Firefox - Web browser
+- NVDA - Screen reader
+- PowerPoint - Presentations
+- Readmate - Vietnamese textbook reader (103 books pre-loaded)
+- Sao Mai Typing Tutor - Vietnamese typing tutor
+- Thùng Rác - Recycle Bin (restore deleted files)
+- Từ Điển - English-Vietnamese dictionary
+- USB - Opens "This PC" so you can pick your USB drive
+- VLC media player - Media player
+- Wikipedia - Offline encyclopedia
+- Word - Word processor
+
+---
+## Important NVDA Shortcuts
+NVDA is the screen reading and navigation software installed.
+
+- **CapsLock is the primary NVDA key.** To toggle actual Caps Lock state (for typing CAPITAL letters), press **CapsLock twice quickly**.
+	- The NVDA key can be either CapsLock or Insert (left of delete key - third from the right - top row)
+
+| Key                      | Function                                             |
+| ------------------------ | ---------------------------------------------------- |
+| NVDA + 1                 | Input Help Mode - press any key to hear what it does |
+| NVDA + T                 | Read window title                                    |
+| NVDA + A                 | Say All - read from current position                 |
+| NVDA + L                 | Read current line                                    |
+| NVDA + F7                | Elements list (headings / links)                     |
+| NVDA + Space             | Toggle browse/focus mode                             |
+| NVDA + N                 | Open NVDA menu                                       |
+| NVDA + Q                 | Quit NVDA                                            |
+| NVDA + S                 | Cycle speech modes (speech / beep / off)             |
+| NVDA + Ctrl + Up Arrow   | Increase speech rate                                 |
+| NVDA + Ctrl + Down Arrow | Decrease speech rate                                 |
+| NVDA + Ctrl + F          | Find text in document                                |
+| NVDA + Shift + B         | Battery Percentage                                   |
+| Ctrl                     | Stop reading                                         |
+| Tab                      | Move to next item                                    |
+| Shift + Tab              | Move to previous item                                |
+| Ctrl + Alt + N           | Launch NVDA                                          |
+| Alt + F4                 | Close program                                        |
+| Alt + Tab                | Switch programs                                      |
+| NVDA + period (.) twice  | Say current character phonetically (names tone marks)         |
+| NVDA + C                 | Read clipboard contents (Ctrl + C is copies to the clipboard) |
+
+---
+## Useful Windows Shortcuts
+
+| Key             | Function                                             |
+| --------------- | ---------------------------------------------------- |
+| Windows + E     | Open File Explorer                                   |
+| F12             | Save As (opens dialog on attached student USB drive) |
+| Ctrl + W        | Close current tab or window                          |
+| **F10**         | Activate Menu Bar (File/Edit/View at top)            |
+| **Shift + F10** | Context Menu (right-click equivalent)                |
+| Ctrl + A        | Select all text in window                            |
+| Ctrl + C        | Copy selected text (NVDA + C speaks the copied text) |
+| Ctrl + V        | Paste copied text                                    |
 
 ---
 ## Your USB Drive
@@ -83,131 +250,6 @@ Your USB is formatted as NTFS, which protects the drive from corruption when you
 If you unplug while a file is being saved, you may lose that one file. The rest of the USB stays safe.
 
 ---
-## Typing Position
-
-This typing position helps your fingers to reach and remember each key.
-
-- With your two pointer fingers feel for the F and J keys. The F and J keys have a bump on the bottom of the key and are near the middle of the keyboard, third row from the bottom.
-	-  F and J are in the "home row" where your all your fingers except your thumb rest.
-	- Place your other fingers on the keys next to them.  From F/J, count to other keys: left of F is D, S, and A; right of J is K, L and semicolon (;). 
-	- Right of F is G. Left of J is H.
-	
-- Both thumbs can hover or rest on the spacebar (The large, rectangular key  near the middle of the keyboard on the bottom row (two rows below the home row with F and J)
----
-## Keyboard Layout
-
-- The arrow keys are on the bottom row on the right corner.
-- Feel for the down arrow which has a bump like the F and J keys. Above it is the up arrow and next to it are the left and right keys.
--  From spacebar, count right Alt, Control, then arrow keys.
-- Delete and Down Arrow also have bumps near the bottom of the key.
-- **CapsLock** or **Insert** can both be used as the NVDA key. CapsLock is the leftmost key on the home row (the A/S/D/F row), directly above the left Shift. Insert is right next to Delete on the right side of the keyboard.
-
----
-## Desktop Navigation
-
-**To get to the desktop from anywhere:**
-
-1. Press **Windows + D**
-2. Press the **Down arrow** key once
-3. NVDA will announce the first icon on the desktop
-4. Use **arrow keys** to move between icons (not Tab)
-5. Press **Enter** to open the selected icon
-
----
-
-The desktop icons are sorted alphabetically.
-
-Use arrow keys (Left, Right, Up, Down) to move between icons.
-
-Press Enter to open a program.
-
-Tip: Press the first letter of a program name to jump to it. For example, press "F" for Firefox, "W" for Word.
-
-If pressing a letter does nothing, keyboard focus has drifted off the desktop. Press Tab once — NVDA should announce "Desktop". Now first-letter jump works. If Tab lands on the taskbar or system tray instead, press Tab again to cycle into the desktop list. You can also press any arrow key to force focus onto the icon grid.
-### Program List
-
-- Audacity - Audio editor
-- Calculator - Calculator
-- Excel - Spreadsheet
-- Firefox - Web browser
-- NVDA - Screen reader
-- PowerPoint - Presentations
-- Readmate - Vietnamese textbook reader (103 books pre-loaded)
-- Sao Mai Typing Tutor - Vietnamese typing tutor
-- Thùng Rác - Recycle Bin (restore deleted files)
-- Từ Điển - English-Vietnamese dictionary
-- USB - Opens "This PC" so you can pick your USB drive
-- VLC media player - Media player
-- Wikipedia - Offline encyclopedia
-- Word - Word processor
-
----
-
-## Important NVDA Shortcuts
-NVDA is the screen reading and navigation software installed.
-
-- **CapsLock is the primary NVDA key.** To toggle actual Caps Lock state (for typing CAPITAL letters), press **CapsLock twice quickly**.
-	- The NVDA key can be either CapsLock or Insert (left of delete key - third from the right - top row)
-
-| Key                      | Function                                             |
-| ------------------------ | ---------------------------------------------------- |
-| NVDA + 1                 | Input Help Mode - press any key to hear what it does |
-| NVDA + T                 | Read window title                                    |
-| NVDA + A                 | Say All - read from current position                 |
-| NVDA + L                 | Read current line                                    |
-| NVDA + F7                | Elements list (headings / links)                     |
-| NVDA + Space             | Toggle browse/focus mode                             |
-| NVDA + N                 | Open NVDA menu                                       |
-| NVDA + Q                 | Quit NVDA                                            |
-| NVDA + S                 | Cycle speech modes (speech / beep / off)             |
-| NVDA + Ctrl + Up Arrow   | Increase speech rate                                 |
-| NVDA + Ctrl + Down Arrow | Decrease speech rate                                 |
-| NVDA + Ctrl + F          | Find text in document                                |
-| NVDA + Shift + B         | Battery Percentage                                   |
-| Ctrl                     | Stop reading                                         |
-| Tab                      | Move to next item                                    |
-| Shift + Tab              | Move to previous item                                |
-| Ctrl + Alt + N           | Launch NVDA                                          |
-| Alt + F4                 | Close program                                        |
-| Alt + Tab                | Switch programs                                      |
-
-## Useful Windows Shortcuts
-
-| Key             | Function                                             |
-| --------------- | ---------------------------------------------------- |
-| Windows + E     | Open File Explorer                                   |
-| F12             | Save As (opens dialog on attached student USB drive) |
-| Ctrl + W        | Close current tab or window                          |
-| **F10**         | Activate Menu Bar (File/Edit/View at top)            |
-| **Shift + F10** | Context Menu (right-click equivalent)                |
-| Ctrl + A        | Select all text in window                            |
-| Ctrl + C        | Copy selected text (NVDA + C speaks the copied text) |
-| Ctrl + V        | Paste copied text                                    |
-
----
-## Learning Keys
-
-If your finger lands on a key and you're not sure what it does, there are two safe ways to learn:
-### Option 1: NVDA Input Help Mode (NVDA + 1)
-
-1. Press **NVDA + 1** to enable "Input Help mode". NVDA announces "Input help on (vietnamese)".
-2. Now press any key. NVDA speaks the key's name and function, without executing the key. You can try any key on the keyboard.
-3. Press **NVDA + 1** again to exit (keys do their normal functions again).
-
-This is the fastest way to remind yourself of a key.
-
-### Option 2: Sao Mai Typing Tutor (SMTT)
-
-Vietnamese typing tutor from Sao Mai:
-
-1. On Desktop, press "S" to jump to "Sao Mai Typing Tutor" → Enter.
-2. Choose "Explore Keyboard" (Khám phá bàn phím).
-3. Press any key → SMTT speaks its name in Vietnamese.
-4. SMTT has typing lessons for daily practice especially useful for Vietnamese and English keyboard.
-
-**Comparison**: NVDA+1 is best for quick key lookup anywhere; SMTT is best for learning.
-
----
 ## Typing Vietnamese
 
 The laptop uses UniKey and the default keyboard is Vietnamese. 
@@ -249,10 +291,7 @@ Combined examples:
 - ddungs = đúng
 - caarm own = cảm ơn
 
-Switch Vietnamese/English: press Ctrl + Shift.
-
----
-## Hearing Vietnamese Tone Marks
+### Hearing Vietnamese Tone Marks
 
 To hear the tone mark on a single character: move the cursor to the letter → press **NVDA + period (.) twice quickly**. NVDA says the character phonetically and names the tone mark.
 
@@ -320,7 +359,6 @@ Once a book is open:
 If NVDA goes silent after switching to another program and back to Readmate, press **Alt** then **Esc** to re-engage.
 
 ---
-
 ## Browsing the Web with Firefox
 
 ### NVDA's Two Modes on the Web
@@ -369,30 +407,8 @@ Press **NVDA + Space** to manually toggle between them. NVDA auto-switches when 
 3. Press **NVDA + A**: reads the whole article (Say All).
 4. If the page has too many ads:  press **F9** for Reader Mode (article only, no clutter).
 5. Press **F9** again or **Alt + Left Arrow** to go back.
----
-
-## Music and Audiobooks with VLC
-
-| Key                        | Action                            |
-| -------------------------- | --------------------------------- |
-| Ctrl + O                   | Open file                         |
-| Space                      | Play / pause                      |
-| Shift + Right / Left Arrow | Forward / back 5 seconds          |
-| Alt + Right / Left Arrow   | Forward / back 10 seconds         |
-| Ctrl + Right / Left Arrow  | Forward / back 1 minute           |
-| ] / [                      | Faster / slower (pitch preserved) |
-| =                          | Normal speed                      |
-| Ctrl + T                   | Jump to specific time             |
-| Ctrl + Up / Down Arrow     | Volume up / down                  |
-| M                          | Mute / unmute                     |
-| N / P                      | Next / previous track in playlist |
-| Ctrl + B                   | Bookmark manager                  |
-| I                          | Speak current position info       |
-
-Tip: For audiobooks, use `]` and `[` to tune speed — VLC preserves pitch. Use Ctrl + B to mark where you stopped listening.
 
 ---
-
 ## Offline Wikipedia and Wiktionary
 
 The laptop has Vietnamese Wikipedia and Wiktionary offline (no internet needed). Both open in Firefox so NVDA browse-mode shortcuts work normally.
@@ -422,7 +438,6 @@ The laptop has Vietnamese Wikipedia and Wiktionary offline (no internet needed).
 	(Alt + Right Arrow goes forward one page - the standard firefox shortcut)
 
 ---
-
 ## Reading PDFs with Microsoft Edge
 
 When you open a PDF the laptop opens it with Microsoft Edge. NVDA reads PDFs best with Edge.
@@ -434,7 +449,6 @@ When you open a PDF the laptop opens it with Microsoft Edge. NVDA reads PDFs bes
 5. **Ctrl + F** to find text in the PDF.
 
 ---
-
 ## English-Vietnamese Dictionary
 
 1. From Desktop, open "Từ Điển" (or press "T"). Firefox opens to the dictionary page.
@@ -446,7 +460,27 @@ When you open a PDF the laptop opens it with Microsoft Edge. NVDA reads PDFs bes
 Tip: Press NVDA + F7 to open the headings list for the page.
 
 ---
+## Music and Audiobooks with VLC
 
+| Key                        | Action                            |
+| -------------------------- | --------------------------------- |
+| Ctrl + O                   | Open file                         |
+| Space                      | Play / pause                      |
+| Shift + Right / Left Arrow | Forward / back 5 seconds          |
+| Alt + Right / Left Arrow   | Forward / back 10 seconds         |
+| Ctrl + Right / Left Arrow  | Forward / back 1 minute           |
+| ] / [                      | Faster / slower (pitch preserved) |
+| =                          | Normal speed                      |
+| Ctrl + T                   | Jump to specific time             |
+| Ctrl + Up / Down Arrow     | Volume up / down                  |
+| M                          | Mute / unmute                     |
+| N / P                      | Next / previous track in playlist |
+| Ctrl + B                   | Bookmark manager                  |
+| I                          | Speak current position info       |
+
+Tip: For audiobooks, use `]` and `[` to tune speed — VLC preserves pitch. Use Ctrl + B to mark where you stopped listening.
+
+---
 ## Calculator
 
 1. Open Calculator from Desktop (press "C" or arrow to it).
@@ -457,31 +491,6 @@ Tip: Press NVDA + F7 to open the headings list for the page.
 Example: type `25 + 17` then press Enter → NVDA says "42".
 
 ---
-
-## Daily NVDA Shortcuts (Summary)
-
-| Key                           | Action                                                        |
-| ----------------------------- | ------------------------------------------------------------- |
-| Ctrl                          | Stop speech immediately                                       |
-| NVDA + A                      | Read continuously (Say All)                                   |
-| NVDA + L                      | Re-read current line                                          |
-| NVDA + period (.) twice       | Say current character phonetically (names tone marks)         |
-| NVDA + T                      | Read window title                                             |
-| NVDA + Ctrl + Up / Down Arrow | Increase / decrease speech rate                               |
-| NVDA + S                      | Toggle speech on / off (useful for exams)                     |
-| NVDA + C                      | Read clipboard contents (Ctrl + C is copies to the clipboard) |
-| NVDA + Ctrl + F               | Find text in document                                         |
-| NVDA + 1                      | Keyboard learn mode (press any key to hear its name)          |
-
----
-
-## If NVDA stops talking or speaks incorrectly:
-
-1. Press **Ctrl + Alt + N** to restart NVDA
-2. Try pressing **NVDA + Shift + B** to hear battery status. The battery may be low.
-3. If that does not help, ask your teacher
----
-
 ## Hardware Care
 
 - Plug the charger into the **back-left USB-C port, closest to the hinge**.
@@ -489,7 +498,6 @@ Example: type `25 + 17` then press Enter → NVDA says "42".
 - Do not change your password or sign into a Microsoft Account.
 
 ---
-
 ## Using NVDA on Other Computers
 
 **You do not need this on your lab laptop** — NVDA starts automatically when you log in. This section is for when you want to use your USB on a public, library, or family computer that does not already have NVDA.
@@ -542,5 +550,3 @@ When you hear the NVDA startup sound, you can take over from the keyboard.
 - **Always save your files to your USB.** Files left on a public computer are not private and may be erased.
 - **Do not lend your USB.** It has your personal settings and your homework.
 - **If pressing Enter on Start-NVDA does nothing,** that computer may block USB programs. Try a different computer or ask for help.
-
----

@@ -25,9 +25,13 @@
 #                                    no server needed unlike kiwix/SilverDict)
 #   5. Patch-Readmate-Prefs.ps1    — Microsoft An TTS, no double-read,
 #                                    disable auto-play
-#   6. stu-resolver/Apply-Patch.ps1 — STU- USB → drive D: pinning + Office,
+#   6. Remove-SMTT-Myanmar.ps1     — strip Myanmar (.mya) UI lang files from
+#                                    Sao Mai Typing Tutor; the option
+#                                    surfaced in the F5 config dialog and
+#                                    confused Vietnamese students
+#   7. stu-resolver/Apply-Patch.ps1 — STU- USB → drive D: pinning + Office,
 #                                    Firefox, Audacity defaults
-#   7. 3-Configure-NVDA.ps1        — Student nvda.ini + addons + SAPI5 mirror
+#   8. 3-Configure-NVDA.ps1        — Student nvda.ini + addons + SAPI5 mirror
 #                                    + UniKey + RHVoice/manifest patches
 
 [CmdletBinding()]
@@ -85,6 +89,7 @@ $steps = @(
     @{ Name = 'Fix-SilverDict';         Path = Join-Path $patchesDir 'Fix-SilverDict.ps1' }
     @{ Name = 'Fix-Help';               Path = Join-Path $patchesDir 'Fix-Help.ps1' }
     @{ Name = 'Patch-Readmate-Prefs';   Path = Join-Path $patchesDir 'Patch-Readmate-Prefs.ps1' }
+    @{ Name = 'Remove-SMTT-Myanmar';    Path = Join-Path $patchesDir 'Remove-SMTT-Myanmar.ps1' }
     @{ Name = 'stu-resolver';           Path = Join-Path $patchesDir 'stu-resolver\Apply-Patch.ps1' }
     @{ Name = '3-Configure-NVDA';       Path = Join-Path $scriptsDir '3-Configure-NVDA.ps1' }
 )
@@ -139,12 +144,15 @@ if (-not (Test-Path $kiwixServeProbe)) {
 
 # Pre-flight: warn the tech to close apps that the patches will Stop-Process.
 # Patch-GoldenDict-Paths kills GoldenDict.exe; Patch-Readmate-Prefs kills
-# sm_readmate.exe; 3-Configure-NVDA stops nvda.exe at start and restarts it at
-# end (so addon directories can be replaced without sharing violations on the
-# loaded .pyd files). Student can lose unsaved state in any of these apps.
+# sm_readmate.exe; Remove-SMTT-Myanmar kills SMTT/SMLB/SMUM so they release
+# the open language file before the .mya delete; 3-Configure-NVDA stops
+# nvda.exe at start and restarts it at end (so addon directories can be
+# replaced without sharing violations on the loaded .pyd files). Student
+# can lose unsaved state in any of these apps.
 Write-Host ""
 Write-Host "Heads up - the patches will force-stop these if running:" -ForegroundColor Yellow
 Write-Host "  - GoldenDict, SM Readmate, SilverDict (Python server)" -ForegroundColor Yellow
+Write-Host "  - SMTT / SMLB / SMUM (Sao Mai Typing Tutor and siblings)" -ForegroundColor Yellow
 Write-Host "  - NVDA briefly during addon refresh, restarted automatically" -ForegroundColor Yellow
 Write-Host "    at the end (student loses speech for ~10 seconds)" -ForegroundColor Yellow
 Write-Host ""

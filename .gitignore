@@ -67,6 +67,8 @@ docs/superpowers/
 *.temp
 *.log
 tmp-*.ps1
+*.bak
+*.bak.*
 
 # Keep README files everywhere
 !**/README.md

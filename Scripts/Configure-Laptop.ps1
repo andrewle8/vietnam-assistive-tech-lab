@@ -1889,6 +1889,15 @@ try {
     if (Test-Path $smttTemplate) {
         if (-not (Test-Path $smttDest)) { New-Item -Path $smttDest -ItemType Directory -Force | Out-Null }
         Copy-Item -Path "$smttTemplate\*" -Destination $smttDest -Recurse -Force
+
+        # Strip Myanmar UI lang files. The repo template no longer ships .mya
+        # (no Myanmar lessons or content here, and the option surfaced in
+        # SMTT's language picker confused students). Copy-Item -Force
+        # overwrites but never deletes, so on a re-run over a previously-
+        # deployed laptop we still need to scrub leftover .mya files.
+        Get-ChildItem -Path (Join-Path $smttDest 'Lang') -Filter '*.mya' -File -ErrorAction SilentlyContinue |
+            Remove-Item -Force -ErrorAction SilentlyContinue
+
         icacls $smttDest /grant "Student:(OI)(CI)M" /T /Q 2>$null | Out-Null
         Write-Log "SMTT data deployed to Student AppData" "SUCCESS"
         $successCount++
