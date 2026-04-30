@@ -64,7 +64,7 @@ The **Fn** key is on the bottom-left of the keyboard, immediately to the right o
 | Fn + F2 | Volume down      |
 | Fn + F3 | Volume up        |
 
-If you ever press a Fn combination by mistake and the F-keys start doing the wrong thing (for example, F12 stops opening Save As), you may have hit Fn + Esc. That combination switches the function-key default. Press **Fn + Esc** again to switch it back.
+If F-keys stop working right (for example, F12 no longer opens Save As), press **Fn + Esc** to switch them back.
 
 For VLC playback, use Ctrl + Up / Down inside VLC. For NVDA's voice rate (not system volume), use NVDA + Ctrl + Up / Down.
 
@@ -131,17 +131,10 @@ Vietnamese typing tutor from Sao Mai:
 4. Use **arrow keys** to move between icons (not Tab)
 5. Press **Enter** to open the selected icon
 
----
-
-The desktop icons are sorted alphabetically.
-
-Use arrow keys (Left, Right, Up, Down) to move between icons.
-
-Press Enter to open a program.
-
-Tip: Press the first letter of a program name to jump to it. For example, press "F" for Firefox, "W" for Word.
+Press the first letter of a program name to jump to it. For example, press "F" for Firefox, "W" for Word.
 
 If pressing a letter does nothing, keyboard focus has drifted off the desktop. Press Tab once. NVDA should announce "Desktop". Now first-letter jump works. If Tab lands on the taskbar or system tray instead, press Tab again to cycle into the desktop list. You can also press any arrow key to force focus onto the icon grid.
+
 ### Program List
 
 - Audacity - Audio editor
@@ -220,7 +213,7 @@ Your USB drive has a Braille label tag attached.
 
 1. Use arrow keys to navigate to "USB" on the Desktop (press "U" to jump quickly).
 2. Press Enter. The "This PC" window will open.
-3. The location will save to your USB.
+3. Use arrow keys to find your USB drive (named "STU-" and your number).
 
 ### Saving Files to USB
 
@@ -319,7 +312,7 @@ When Readmate opens, you are on the main screen with focus on the left sidebar.
 4. Or press **Ctrl + F** to search books by name.
 5. When you find the book you want, press **Enter** to open it.
 
-Note: **Tab does not walk through all books**. Use the arrow keys or Ctrl+F.
+**Tab does not walk through all books.** Use the arrow keys or Ctrl+F.
 
 NVDA will read the book's title and progress. Press Ctrl to stop NVDA if needed.
 
@@ -364,10 +357,10 @@ If NVDA goes silent after switching to another program and back to Readmate, pre
 
 When you use Firefox, NVDA operates in one of two modes:
 
-- **Browse Mode**: default on web pages. NVDA creates a "virtual document" you navigate with single-letter shortcuts (H, K, F, etc.).
-- **Focus Mode**: auto-engaged when you enter a text field. Letter keys type normally instead of jumping.
+- **Browse Mode**: default on web pages. Single-letter keys (H, K, F) jump around the page.
+- **Focus Mode**: turns on when you enter a text field. Letter keys type normally.
 
-Press **NVDA + Space** to manually toggle between them. NVDA auto-switches when you enter/leave text fields.
+Press **NVDA + Space** to switch manually. NVDA also switches automatically when you enter or leave a text field.
 
 ### Web Browsing Shortcuts (Browse Mode)
 
@@ -456,7 +449,7 @@ When you open a PDF the laptop opens it with Microsoft Edge. NVDA reads PDFs bes
 4. NVDA reads the definition automatically. Press Down Arrow to keep reading, or H to jump between dictionary headings.
 5. To look up another word, Tab back to the search box at the top of the page, type the new word, press Enter.
 
-Tip: Press NVDA + F7 to open the headings list for the page.
+Press NVDA + F7 to open the headings list for the page.
 
 ---
 ## Music and Audiobooks with VLC
@@ -477,7 +470,7 @@ Tip: Press NVDA + F7 to open the headings list for the page.
 | Ctrl + B                   | Bookmark manager                  |
 | I                          | Speak current position info       |
 
-Tip: For audiobooks, use `]` and `[` to tune speed (VLC preserves pitch). Use Ctrl + B to mark where you stopped listening.
+For audiobooks, use `]` and `[` to change speed (VLC preserves pitch). Press Ctrl + B to mark where you stopped listening.
 
 ---
 ## Calculator
