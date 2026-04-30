@@ -20,10 +20,11 @@ Scripts and config to deploy 19 Windows 11 laptops with NVDA, a Vietnamese TTS v
 | **VLC Media Player 3.0.23** | GPL-2.0 | Media playback |
 | **Audacity 3.7** | GPL-3.0 | Audio recording/editing |
 | **UniKey 4.6** | GPL | Vietnamese Telex keyboard input |
-| **Kiwix 2.5.1** | GPL-3.0 | Offline encyclopedia reader |
-| **Vietnamese Wikipedia** | CC BY-SA | Offline Vietnamese encyclopedia (~550 MB) |
+| **Kiwix 2.5.1 + kiwix-tools 3.8.1** | GPL-3.0 | Offline encyclopedia reader (kiwix-desktop for sighted users; kiwix-serve for the Firefox-fronted accessible path) |
+| **Vietnamese Wikipedia** | CC BY-SA | Offline Vietnamese encyclopedia (~550 MB), served on `localhost:21808` |
 | **Vietnamese Wiktionary** | CC BY-SA | Offline Vietnamese dictionary via Kiwix |
-| **GoldenDict** | GPL-3.0 | Offline dictionary (Vietnamese-English, Vietnamese-Vietnamese) |
+| **SilverDict 1.3.1** | GPL-3.0 | Flask-based StarDict server for the NVDA-accessible dictionary path; serves on `localhost:2628`, viewed in Firefox |
+| **GoldenDict 1.5.1** | GPL-3.0 | Offline dictionary with bundled Vietnamese↔English StarDicts; sighted-user UI (Start Menu only — see Accessibility Architecture below for why) |
 
 **NVDA Add-ons:** VLC, Speech History, Focus Highlight, Audacity Access, Clock & Calendar, MathCAT, Training Keyboard Commands — see [NVDA Add-on Store](https://addonstore.nvaccess.org/)
 
@@ -33,6 +34,65 @@ Scripts and config to deploy 19 Windows 11 laptops with NVDA, a Vietnamese TTS v
 - Student USB drives, labeled in print and Braille
 
 See [Hardware.md](Documentation/Hardware.md) for full specs.
+
+---
+
+## Accessibility Architecture: localhost HTTP + Firefox
+
+The lab uses a deliberate architectural pattern to work around a long-standing screen-reader limitation. It's the load-bearing design decision behind the whole deployment, so it's worth describing.
+
+### The problem
+
+NVDA cannot browse-mode any **QtWebEngine** surface — the article view in GoldenDict, kiwix-desktop's reader, goldendict-ng, and any other Qt-based content app. NVDA's browse-mode whitelist (in `browseMode.py`) is hard-keyed on Firefox / Chrome / Edge / Internet Explorer process names. Tracked as [NVDA issue #10838](https://github.com/nvaccess/nvda/issues/10838) — **closed as Abandoned 2024-07-02**, no upstream fix is planned. The QtWebEngine accessibility tree is buried inside Chromium under Qt's UIA wrapper and is unreachable from NVDA's process.
+
+For a deployment serving blind students, that means the off-the-shelf "open the desktop reader" experience is unusable: NVDA+Space does nothing, browse-mode keys (H, K, Tab, ↓) don't navigate, and the article surface reads as an unlabeled control.
+
+### The pattern
+
+For any application whose content can be served over HTTP locally, we run that server as a Student-logon scheduled task and front it with Firefox. **NVDA in Firefox is bulletproof** — full browse-mode, headings list (NVDA+F7), arrow-key reading, all the muscle memory students already have from web pages.
+
+```
+Student logs in
+   ↓
+Scheduled task (KiwixServe / SilverDictServe) fires
+   ↓
+wscript.exe runs hidden VBS launcher (no console flicker)
+   ↓
+Server binary listens on 127.0.0.1:<port>
+   ↓
+Student clicks desktop icon ("Wikipedia" / "Từ Điển")
+   ↓
+Firefox opens http://localhost:<port>/...
+   ↓
+NVDA reads everything natively
+```
+
+Three integrations currently use this pattern:
+
+| Surface | Server | Port | Desktop shortcut | Status |
+|---|---|---|---|---|
+| **Wikipedia + Wiktionary** | `kiwix-serve.exe` (kiwix-tools) | 21808 | `Wikipedia.lnk` → Firefox at `/` | shipped |
+| **Vietnamese ↔ English dictionary** | `SilverDict` (Flask + bundled Python) | 2628 | `Từ Điển.lnk` → Firefox at `/dict.html` | shipped |
+| **GoldenDict** (no HTTP API) | n/a — sighted Start Menu only | n/a | n/a (Start Menu) | sighted-only |
+
+The original Qt apps (kiwix-desktop, GoldenDict) stay installed and reachable from the Start Menu so sighted lab assistants and family members can use the familiar desktop UI. **Nobody loses anything; blind students get a parallel path that actually works.**
+
+### Why this is robust
+
+1. **Set-and-forget.** Each integration is a hidden VBS launcher + scheduled task at logon + idempotent patch script. No daemon to babysit, no sysadmin needed post-deploy.
+2. **Two-tier by design.** Sighted users keep the native Qt UI; blind students get the Firefox-rendered version. The architecture acknowledges that the lab serves both populations.
+3. **Idempotent USB-walkup patches.** Every Firefox-fronted integration ships with a `Scripts/patches/Fix-<App>.ps1` that brings any already-deployed laptop up to current state when an installer USB is plugged in. Wrapped together by `Apply-All-Field-Patches.ps1` for one-pass field rollouts.
+4. **Pattern, not one-off.** Wikipedia came first (the original insight). Dictionaries followed. Any future app with an HTTP/headless mode plugs in by copying the same shape: bundle in `Installers/`, NVDA-friendly HTML overrides in `Config/<app>-config/`, scheduled task + VBS launcher + Firefox shortcut, idempotent patch script under `Scripts/patches/`.
+
+### Custom NVDA-friendly HTML
+
+For SilverDict specifically, three of the bundle's HTML templates are replaced with semantic-HTML versions tuned for NVDA:
+
+- `dict.html` — entry page, search box with `autofocus` and `lang="vi"` for the Vietnamese voice
+- `articles_standalone.html` — results page with `<h1>{{key}}</h1>`, `<h2>` per dictionary heading, search box at the top so back-to-back lookups never leave the page
+- `suggestions.html` — "không tìm thấy" page with the same search box plus suggestion `<a>` links
+
+All three are pure HTML with one tiny `<script>` for the form-submit handler. NVDA's `H` key navigates between dictionary headings; `K` walks suggestion links; `Tab` returns to the search box. Reading speed is comparable to a native screen-reader-optimized desktop dictionary, with none of the QtWebEngine wall.
 
 ---
 
