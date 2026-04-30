@@ -316,8 +316,8 @@ Khi sach da mo:
 | Ctrl + Page Down / Page Up | Trang ke tiep / Trang truoc              |
 | Alt + Phai / Alt + Trai    | Chuong ke tiep / Chuong truoc            |
 | H / Shift + H              | Tieu de ke tiep / Tieu de truoc          |
-| ] (ngoac vuong phai)       | Doc nhanh hon                            |
-| [ (ngoac vuong trai)       | Doc cham hon                             |
+| Alt + ] (ngoac vuong phai) | Doc nhanh hon                            |
+| Alt + [ (ngoac vuong trai) | Doc cham hon                             |
 | Ctrl + ] / Ctrl + [        | Tang / Giam am luong                     |
 | Ctrl + F                   | Tim chu trong sach                       |
 | Ctrl + N                   | Them ghi chu tai vi tri hien tai         |

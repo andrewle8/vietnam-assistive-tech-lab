@@ -283,8 +283,8 @@ Once a book is open:
   Ctrl + Page Down / Page Up - Next / previous page
   Alt + Right / Alt + Left - Next / previous chapter
   H / Shift + H - Next / previous heading
-  ] (right bracket) - Faster reading
-  [ (left bracket) - Slower reading
+  Alt + ] (right bracket) - Faster reading
+  Alt + [ (left bracket) - Slower reading
   Ctrl + ] / Ctrl + [ - Volume up / down
   Ctrl + F - Search text in book
   Ctrl + N - Add a note at current position

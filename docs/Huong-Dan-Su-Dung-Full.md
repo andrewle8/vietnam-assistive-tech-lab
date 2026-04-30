@@ -316,8 +316,8 @@ Khi sách đã mở:
 | Ctrl + Page Down / Page Up | Trang kế tiếp / Trang trước              |
 | Alt + Phải / Alt + Trái    | Chương kế tiếp / Chương trước            |
 | H / Shift + H              | Tiêu đề kế tiếp / Tiêu đề trước          |
-| ] (ngoặc vuông phải)       | Đọc nhanh hơn                            |
-| [ (ngoặc vuông trái)       | Đọc chậm hơn                             |
+| Alt + ] (ngoặc vuông phải) | Đọc nhanh hơn                            |
+| Alt + [ (ngoặc vuông trái) | Đọc chậm hơn                             |
 | Ctrl + ] / Ctrl + [        | Tăng / Giảm âm lượng                     |
 | Ctrl + F                   | Tìm chữ trong sách                       |
 | Ctrl + N                   | Thêm ghi chú tại vị trí hiện tại         |
