@@ -318,8 +318,8 @@ When Readmate opens, you are on the main screen with focus on the left sidebar.
 3. Use the **arrow keys** (Up/Down/Left/Right) to move through the book list — NVDA reads each book title.
 4. Or press **Ctrl + F** to search books by name.
 5. When you find the book you want, press **Enter** to open it.
-6. 
-Note: **Tab does not walk through all books**> Use the arrow keys or Ctrl+F.
+
+Note: **Tab does not walk through all books**. Use the arrow keys or Ctrl+F.
 
 NVDA will start reading the book's title and reading progress. Press Control to stop the speech if needed.
 
@@ -327,18 +327,15 @@ Then, when you are ready to read the book, press **Ctrl + P** to start the book'
 
 ### Shortcuts
 
-Once a book is open:
+Once a book is open. **These shortcuts work when focus is on Readmate's top toolbar.** If Ctrl+P opens a Print dialog instead of starting narration, focus is on the article content — press F6 (or Tab / Shift+Tab) to return to the top bar.
 
 | Key                        | Action                                  |
 | -------------------------- | --------------------------------------- |
 | Ctrl + P                   | Play / pause reading                    |
-| Right Arrow / Left Arrow   | Next / previous phrase                  |
-| Ctrl + Down / Ctrl + Up    | Next / previous paragraph               |
-| Ctrl + Page Down / Page Up | Next / previous page                    |
+| Down Arrow / Up Arrow      | Next / previous page                    |
 | Alt + Right / Alt + Left   | Next / previous chapter                 |
 | H / Shift + H              | Next / previous heading                 |
-| Alt + ] (right bracket)    | Faster reading                          |
-| Alt + [ (left bracket)     | Slower reading                          |
+| ] / [                      | Faster / slower reading (takes effect after the current line finishes) |
 | Ctrl + ] / Ctrl + [        | Volume up / down                        |
 | Ctrl + F                   | Search text in book                     |
 | Ctrl + N                   | Add a note at current position          |
@@ -353,6 +350,7 @@ Once a book is open:
 - **Ctrl + Tab** or **F6**: switch between panes (sidebar, main content, etc.)
 - **Tab**: move within a single pane (e.g. from search field to book list)
 - **Ctrl + B**: jump directly to Bookshelf
+- **Ctrl + L**: download new books from the Sách Tiếp Cận online library. Requires a login — ask your teacher.
 - **Ctrl + S**: Settings
 - **Ctrl + H** (from main screen, not while reading a book): Sao Mai user guide tab
 

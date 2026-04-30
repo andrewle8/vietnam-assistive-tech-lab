@@ -1876,6 +1876,72 @@ try {
     Write-Log "Could not deploy SM Readmate preferences: $($_.Exception.Message)" "WARNING"
 }
 
+# Step 17d (cont.): Patch SM Readmate's bundled foliate-js book.js to force
+# paginated reading mode. Without this, the article view defaults to "scroll"
+# page-turn style: arrow keys then trigger smooth WebView scroll instead of
+# foliate's phrase-jump handler, which is unusable for blind students. The
+# setting (style.pageTurnStyle) is not stored in shared_preferences.json, the
+# SQLite app DB, or WebView2 storage - it's a Flutter-side hardcoded default
+# we cannot reach from Dart-land. We force the desired value by injecting one
+# line at the top of setStyle() in the bundled book.js. Marker-tagged with
+# "VL-FORCED-PAGINATED" so re-runs are idempotent. Lives in Program Files
+# (admin-only) so students cannot undo it. Same patch is reapplied via
+# Patch-Readmate-Prefs.ps1 in the field-patch path (Apply-All-Field-Patches).
+Write-Log "Step 17d (cont.): Patching book.js for paginated reading mode..." "INFO"
+
+try {
+    $bookJsPath       = "C:\Program Files\SaoMai\sm_readmate\data\flutter_assets\assets\foliate-js\book.js"
+    $bookJsMarker     = "VL-FORCED-PAGINATED"
+    $bookJsInjectLine = "  style.pageTurnStyle = 'noAnimation' // $bookJsMarker - paginated mode forced by Vietnam Lab deployment"
+
+    if (-not (Test-Path $bookJsPath)) {
+        Write-Log "book.js patch: file not found at $bookJsPath - SM Readmate may not be installed yet" "WARNING"
+    } else {
+        $bookJsRaw = Get-Content -Path $bookJsPath -Raw
+        if ($bookJsRaw -match [regex]::Escape($bookJsMarker)) {
+            Write-Log "book.js already patched (paginated mode forced) - skipping" "SUCCESS"
+        } else {
+            # Match setStyle() opening + trailing line ending. Capture groups
+            # preserve the file's existing line endings (LF or CRLF).
+            $pattern = '(const setStyle = \(\) => \{)(\r?\n)'
+
+            if ($bookJsRaw -notmatch $pattern) {
+                Write-Log "book.js patch: cannot locate 'const setStyle = () => {' - Readmate's installer likely shipped a new book.js shape; investigate before redeploying" "WARNING"
+            } else {
+                # Stop Readmate to release the WebView's lock on book.js, if running.
+                $rmProc = Get-Process -Name sm_readmate -ErrorAction SilentlyContinue
+                if ($rmProc) {
+                    Stop-Process -Name sm_readmate -Force -ErrorAction SilentlyContinue
+                    Start-Sleep -Milliseconds 1500
+                }
+
+                $replacement = "`$1`$2$bookJsInjectLine`$2"
+                $patchedJs = $bookJsRaw -replace $pattern, $replacement
+
+                if ($patchedJs -notmatch [regex]::Escape($bookJsMarker)) {
+                    Write-Log "book.js patch: regex replace produced no marker - aborted before write" "WARNING"
+                } else {
+                    # book.js ships without UTF-8 BOM; preserve that. PS 5.1's
+                    # Set-Content -Encoding UTF8 always emits a BOM, so use
+                    # .NET WriteAllText with an explicit no-BOM encoder.
+                    $utf8NoBom = New-Object System.Text.UTF8Encoding $false
+                    [System.IO.File]::WriteAllText($bookJsPath, $patchedJs, $utf8NoBom)
+
+                    $verifyJs = Get-Content -Path $bookJsPath -Raw
+                    if ($verifyJs -match [regex]::Escape($bookJsMarker)) {
+                        Write-Log "book.js patched - paginated reading mode forced" "SUCCESS"
+                        $successCount++
+                    } else {
+                        Write-Log "book.js patch verification failed (marker missing after write)" "WARNING"
+                    }
+                }
+            }
+        }
+    }
+} catch {
+    Write-Log "Could not patch book.js: $($_.Exception.Message)" "WARNING"
+}
+
 # Step 17e: Deploy SMTT per-user data (DB, lessons, UI lang, help)
 # SMTT looks for .\SMTT.ini / .\SMTT.smdb in %APPDATA%\SaoMai\SMTT. Without it,
 # first launch prompts "File not found. Press OK to select your data". Ship a
