@@ -350,6 +350,30 @@ These shortcuts work when focus is on the toolbar at the top of Readmate. If Ctr
 
 If NVDA goes silent after switching to another program and back to Readmate, press **Alt** then **Esc** to re-engage.
 
+### Đọc Sách (Web Reader)
+
+A second reader for the same 103 books. Đọc Sách opens in Firefox so NVDA reads each chapter directly. It works alongside Readmate. Pick whichever you prefer.
+
+**Opening a book:**
+
+1. On the Desktop, arrow to **Đọc Sách** and press Enter.
+2. Firefox opens a list of publishers. Press **H** to jump between publishers.
+3. Arrow or Tab to a book, press **Enter** to open it.
+
+**Reading:**
+
+| Key | Action |
+| --- | --- |
+| NVDA + A | Read continuously |
+| Ctrl | Stop reading |
+| Down / Up arrow | Next / previous line |
+| H / Shift + H | Next / previous heading |
+| Tab to Trang sau, Enter | Next page |
+| Tab to Trang trước, Enter | Previous page |
+| Alt + N | Next chapter |
+| Alt + P | Previous chapter |
+| Trang chủ link | Back to book list |
+
 ---
 ## Browsing the Web with Firefox
 

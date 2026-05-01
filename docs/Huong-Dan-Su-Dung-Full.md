@@ -373,6 +373,30 @@ Các phím tắt này hoạt động khi tiêu điểm ở thanh công cụ trê
 
 Nếu NVDA im lặng sau khi chuyển sang chương trình khác rồi quay lại Readmate, nhấn **Alt** rồi **Esc** để NVDA đọc lại.
 
+### Đọc Sách (Trình Đọc Web)
+
+Trình đọc thứ hai cho cùng 103 cuốn sách. Đọc Sách mở trong Firefox để NVDA đọc từng chương trực tiếp. Dùng song song với Readmate. Chọn trình đọc nào bạn thích.
+
+**Mở một cuốn sách:**
+
+1. Trên Desktop, dùng phím mũi tên đến **Đọc Sách** và nhấn Enter.
+2. Firefox mở danh sách bộ sách. Nhấn **H** để nhảy giữa các bộ sách.
+3. Dùng phím mũi tên hoặc Tab đến cuốn sách, nhấn **Enter** để mở.
+
+**Đọc sách:**
+
+| Phím | Hành động |
+| --- | --- |
+| NVDA + A | Đọc liên tục |
+| Ctrl | Dừng đọc |
+| Mũi tên xuống / lên | Dòng kế tiếp / Dòng trước |
+| H / Shift + H | Tiêu đề kế tiếp / Tiêu đề trước |
+| Tab đến Trang sau, Enter | Trang kế tiếp |
+| Tab đến Trang trước, Enter | Trang trước |
+| Alt + N | Chương kế tiếp |
+| Alt + P | Chương trước |
+| Liên kết Trang chủ | Quay lại danh sách sách |
+
 ---
 ## Duyệt Web Với Firefox
 

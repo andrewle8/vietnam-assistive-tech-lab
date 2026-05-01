@@ -3185,6 +3185,39 @@ try {
     $failCount++
 }
 
+# Step 35d: Install readmate-web (the NVDA-accessible EPUB reader). Mirrors the
+# kiwix-serve / SilverDict pattern: a tiny Python server runs at localhost:21810,
+# the Student desktop "Đọc Sách" shortcut opens Firefox at that URL, and NVDA
+# browse mode reads foliate-js' rendered pages natively. SM Readmate stays
+# installed and continues to manage the library tree at %APPDATA%\SaoMai\
+# SM Readmate\file - readmate-web just reads it. Reuses SilverDict's bundled
+# python.exe (Step 35b dependency) so we don't ship a second 80 MB CPython.
+# All real work happens in Install-Readmate-Web.ps1, which is shared with the
+# field-patch path (patches\Fix-Readmate-Web.ps1) so fresh-deploy and remote
+# patch use the same idempotent code path.
+Write-Log "Step 35d: Installing readmate-web for NVDA-accessible EPUB reading..." "INFO"
+try {
+    $installReadmateWeb = Join-Path $PSScriptRoot "Install-Readmate-Web.ps1"
+    $usbRoot            = Split-Path -Parent $PSScriptRoot   # repo or USB root: <root>\Scripts\Configure-Laptop.ps1
+
+    if (-not (Test-Path $installReadmateWeb)) {
+        Write-Log "Install-Readmate-Web.ps1 not found at $installReadmateWeb - skipping step 35d" "WARNING"
+        $successCount++   # Non-blocking: if missing, native SM Readmate still works for sighted users
+    } else {
+        & $installReadmateWeb -FromUSB $usbRoot
+        if ($LASTEXITCODE -eq 0) {
+            Write-Log "readmate-web installed to C:\LabTools\readmate-web (Đọc Sách shortcut + ReadmateServe task)" "SUCCESS"
+            $successCount++
+        } else {
+            Write-Log "Install-Readmate-Web.ps1 reported failures (exit $LASTEXITCODE) - see its per-stage summary above" "ERROR"
+            $failCount++
+        }
+    }
+} catch {
+    Write-Log "Could not install readmate-web: $($_.Exception.Message)" "ERROR"
+    $failCount++
+}
+
 # Step 36: Create System Restore point as post-configuration baseline
 Write-Log "Step 36: Creating System Restore point..." "INFO"
 

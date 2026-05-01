@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{BOOK_TITLE}} — Đọc Sách</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="reader">
+<header>
+<p><a href="/">← Trang chủ</a></p>
+<h1 lang="vi">{{BOOK_TITLE}}</h1>
+<p class="shortcuts" lang="vi">
+Phím tắt: <kbd>Alt</kbd>+<kbd>N</kbd> chương sau, <kbd>Alt</kbd>+<kbd>P</kbd> chương trước. Bấm nút để chuyển trang.
+</p>
+</header>
+<nav aria-label="Điều hướng đầu trang">
+<button type="button" class="nav-prev">← Trang trước</button>
+<button type="button" class="nav-next">Trang sau →</button>
+</nav>
+<main>
+<foliate-view id="view" tabindex="0" aria-label="Nội dung sách"></foliate-view>
+</main>
+<nav aria-label="Điều hướng cuối trang">
+<button type="button" class="nav-prev">← Trang trước</button>
+<button type="button" class="nav-next">Trang sau →</button>
+</nav>
+<script type="module">
+import { openEpubInView } from '/static/foliate-js/web-reader.js'
+
+const view = document.getElementById('view')
+
+const showError = (msg) => {
+    const main = view.parentElement
+    main.replaceChildren()
+    const p = document.createElement('p')
+    p.lang = 'vi'
+    p.className = 'error'
+    p.textContent = msg
+    main.appendChild(p)
+}
+
+// Page-level (advance one screenful). Wired to buttons + Page Down/Up.
+const goPrevPage = async () => {
+    try { await view.renderer?.prev() } catch (e) { console.error(e) }
+}
+const goNextPage = async () => {
+    try { await view.renderer?.next() } catch (e) { console.error(e) }
+}
+// Chapter-level (advance one EPUB spine entry). Wired to Alt+N / Alt+P.
+const goPrevChapter = async () => {
+    try { await view.renderer?.prevSection() } catch (e) { console.error(e) }
+}
+const goNextChapter = async () => {
+    try { await view.renderer?.nextSection() } catch (e) { console.error(e) }
+}
+
+document.querySelectorAll('.nav-prev').forEach(b => b.addEventListener('click', goPrevPage))
+document.querySelectorAll('.nav-next').forEach(b => b.addEventListener('click', goNextPage))
+
+// Document-level keydown (capture phase). Mirrors the iframe-level forwarder
+// in web-reader.js so the keys work regardless of where focus / NVDA browse
+// cursor is. Two-tier nav:
+//   - Page Down / Page Up = page (one screenful). Falls back to button click
+//     for laptops that don't have these keys (Dell Latitude config).
+//   - Alt+N / Alt+P = chapter (jump spine entry).
+// We DO NOT bind unmodified ArrowLeft/ArrowRight because NVDA browse mode
+// uses them for character-level caret movement.
+document.addEventListener('keydown', (e) => {
+    const tag = (e.target?.tagName || '').toLowerCase()
+    if (tag === 'input' || tag === 'textarea' || tag === 'select') return
+
+    if (e.key === 'PageDown' && !e.ctrlKey && !e.shiftKey && !e.altKey && !e.metaKey) {
+        e.preventDefault(); goNextPage(); return
+    }
+    if (e.key === 'PageUp' && !e.ctrlKey && !e.shiftKey && !e.altKey && !e.metaKey) {
+        e.preventDefault(); goPrevPage(); return
+    }
+    if (e.altKey && !e.ctrlKey && !e.shiftKey && !e.metaKey) {
+        if (e.code === 'KeyN') { e.preventDefault(); goNextChapter(); return }
+        if (e.code === 'KeyP') { e.preventDefault(); goPrevChapter(); return }
+    }
+}, true)
+
+try {
+    const res = await fetch('{{EPUB_URL}}')
+    if (!res.ok) throw new Error('HTTP ' + res.status)
+    const blob = await res.blob()
+    await openEpubInView(view, blob, { goPrevPage, goNextPage, goPrevChapter, goNextChapter })
+} catch (err) {
+    console.error('Failed to open EPUB', err)
+    showError('Không thể mở sách. Vui lòng quay lại trang chủ và chọn sách khác.')
+}
+</script>
+</body>
+</html>

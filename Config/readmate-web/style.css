@@ -1,0 +1,158 @@
+/* readmate-web stylesheet, shared by index.html and read.html.
+   Goal: NVDA + Firefox browse-mode-friendly. Big targets, visible focus,
+   high-contrast safe (no custom rounded buttons that disappear in forced-
+   colors mode), no JavaScript-driven layout. */
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+    font-size: 18px;
+    line-height: 1.5;
+    color: #111;
+    background: #fff;
+    max-width: 60em;
+    margin: 0 auto;
+    padding: 1em;
+}
+
+/* Headings - clear hierarchy. */
+h1 { font-size: 2em;    line-height: 1.2; margin: 0.5em 0 0.4em; }
+h2 { font-size: 1.5em;  line-height: 1.25; margin: 1em 0 0.4em; }
+h3 { font-size: 1.25em; line-height: 1.3;  margin: 1em 0 0.4em; }
+
+a { color: #003c8f; }
+a:visited { color: #4b0082; }
+a:hover { text-decoration: underline; }
+
+/* Visible focus rings for keyboard / NVDA users. Wide and high-contrast
+   so they remain visible in Windows High Contrast mode. */
+*:focus-visible {
+    outline: 3px solid #005fcc;
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* Index page - book list. */
+.meta {
+    color: #555;
+    font-size: 0.9em;
+    margin: 0.5em 0 1.5em;
+}
+
+ul.books {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2em;
+}
+
+ul.books li {
+    padding: 0.4em 0;
+    border-bottom: 1px solid #eee;
+}
+
+ul.books a {
+    display: inline-block;
+    padding: 0.4em 0;
+    font-size: 1.2em;
+    text-decoration: underline;
+}
+
+/* Reader page navigation. Native button look so high-contrast mode and
+   forced-colors mode both render visible affordances. */
+nav[aria-label] {
+    margin: 1em 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+}
+
+nav button {
+    min-width: 10em;
+    min-height: 2.5em;
+    font-size: 1em;
+    padding: 0.4em 0.8em;
+}
+
+/* Keyboard shortcut hint shown above the reader. Plain text styling so
+   NVDA reads it as a normal paragraph; <kbd> just gets a subtle outline
+   so sighted users see it as a key cap. */
+p.shortcuts {
+    margin: 0.5em 0 0;
+    font-size: 0.95em;
+    color: #444;
+}
+
+p.shortcuts kbd {
+    font-family: inherit;
+    font-size: 0.95em;
+    padding: 0.05em 0.35em;
+    border: 1px solid #888;
+    border-radius: 3px;
+    background: #f4f4f4;
+    color: #111;
+}
+
+@media (prefers-color-scheme: dark) {
+    p.shortcuts { color: #bbb; }
+    p.shortcuts kbd { background: #222; border-color: #666; color: #eee; }
+}
+
+/* The reading surface. Foliate paints the EPUB inside a shadow DOM iframe
+   which NVDA can browse-mode into. We keep the wrapper white in dark mode
+   too because the EPUB content is the priority - inverting the publisher's
+   stylesheet makes textbooks unreadable.
+   Note: foliate's <foliate-paginator> inside our shadow root uses
+   height: 100% which requires the host to have a *definite* height (not
+   min-height, otherwise the paginator collapses to 0px). */
+foliate-view {
+    display: block;
+    width: 100%;
+    height: 80vh;
+    background: #fff;
+    color: #111;
+}
+
+main {
+    margin-top: 1em;
+}
+
+p.error {
+    padding: 1em;
+    border: 2px solid #b00;
+    background: #fff5f5;
+    color: #b00;
+    font-weight: bold;
+}
+
+footer {
+    margin-top: 2em;
+    padding-top: 1em;
+    border-top: 1px solid #ddd;
+    color: #555;
+    font-size: 0.9em;
+}
+
+/* Dark mode for the chrome (book list, header, nav). The reader surface
+   itself stays light so EPUB content renders as the publisher intended. */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #111;
+        color: #eee;
+    }
+    a { color: #6cf; }
+    a:visited { color: #c8a2ff; }
+    .meta { color: #aaa; }
+    ul.books li { border-bottom-color: #333; }
+    footer { border-top-color: #333; color: #aaa; }
+    p.error { background: #2a0a0a; color: #ff8a8a; border-color: #ff8a8a; }
+    *:focus-visible { outline-color: #66b3ff; }
+    /* Native button styling - browser draws system colors, no override. */
+}

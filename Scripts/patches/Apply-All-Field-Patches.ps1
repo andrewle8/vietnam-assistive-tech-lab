@@ -33,6 +33,12 @@
 #                                    Firefox, Audacity defaults
 #   8. 3-Configure-NVDA.ps1        — Student nvda.ini + addons + SAPI5 mirror
 #                                    + UniKey + RHVoice/manifest patches
+#   9. Fix-Readmate-Web.ps1        — install readmate-web (Python server +
+#                                    foliate-js EPUB renderer) at logon,
+#                                    Đọc Sách.lnk → Firefox + localhost:21810
+#                                    (NVDA-accessible parallel to native SM
+#                                    Readmate, mirrors the kiwix/SilverDict
+#                                    Firefox-localhost workaround pattern)
 
 [CmdletBinding()]
 param(
@@ -92,6 +98,7 @@ $steps = @(
     @{ Name = 'Remove-SMTT-Myanmar';    Path = Join-Path $patchesDir 'Remove-SMTT-Myanmar.ps1' }
     @{ Name = 'stu-resolver';           Path = Join-Path $patchesDir 'stu-resolver\Apply-Patch.ps1' }
     @{ Name = '3-Configure-NVDA';       Path = Join-Path $scriptsDir '3-Configure-NVDA.ps1' }
+    @{ Name = 'Fix-Readmate-Web';       Path = Join-Path $patchesDir 'Fix-Readmate-Web.ps1' }
 )
 
 # --- Banner ----------------------------------------------------------------
@@ -152,6 +159,7 @@ if (-not (Test-Path $kiwixServeProbe)) {
 Write-Host ""
 Write-Host "Heads up - the patches will force-stop these if running:" -ForegroundColor Yellow
 Write-Host "  - GoldenDict, SM Readmate, SilverDict (Python server)" -ForegroundColor Yellow
+Write-Host "  - readmate-web (Python server, restarted automatically)" -ForegroundColor Yellow
 Write-Host "  - SMTT / SMLB / SMUM (Sao Mai Typing Tutor and siblings)" -ForegroundColor Yellow
 Write-Host "  - NVDA briefly during addon refresh, restarted automatically" -ForegroundColor Yellow
 Write-Host "    at the end (student loses speech for ~10 seconds)" -ForegroundColor Yellow
