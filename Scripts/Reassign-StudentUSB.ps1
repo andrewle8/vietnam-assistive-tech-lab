@@ -139,10 +139,18 @@ if (-not (Test-Path -LiteralPath $mountPoint)) {
 $currentlyBound = $null
 try {
     $rp = & fsutil reparsepoint query $mountPoint 2>&1
-    if ($LASTEXITCODE -eq 0 -and (($rp | Out-String) -match '\\\\\?\\Volume\{[^}]+\}')) { $currentlyBound = $matches[0] }
+    # Match the GUID portion only. fsutil emits NT-path form '\??\Volume{xxx}', while
+    # $stuGuid (from Win32_Volume.DeviceID) is DOS-device form '\\?\Volume{xxx}\'.
+    # Comparing the 'Volume{xxx}' substring sidesteps the format mismatch -- prior
+    # versions matched the literal '\\?\Volume{...}' against fsutil output and never
+    # found a binding, so the detach-before-rebind path was never taken and swaps
+    # silently failed with "directory is not empty".
+    if ($LASTEXITCODE -eq 0 -and (($rp | Out-String) -match 'Volume\{[^}]+\}')) { $currentlyBound = $matches[0] }
 } catch {}
 
-if (-not $currentlyBound -or ($currentlyBound -and $currentlyBound.TrimEnd('\') -ne $stuGuid.TrimEnd('\'))) {
+$stuGuidShort = if ($stuGuid -match 'Volume\{[^}]+\}') { $matches[0] } else { $null }
+
+if (-not $currentlyBound -or $currentlyBound -ne $stuGuidShort) {
     if ($currentlyBound) { try { & mountvol $mountPoint /D 2>&1 | Out-Null } catch {} }
     try { & mountvol $mountPoint $stuGuid 2>&1 | Out-Null } catch { Write-LogLine "  mountvol bind failed: $($_.Exception.Message)" }
 }
